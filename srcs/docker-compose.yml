@@ -1,0 +1,146 @@
+# For Portainer:
+# Link: localhost:9000
+# ========================================
+# For Adminer
+# System: MySQL
+# Server: mariadb
+# Username: $MARIADB_USER
+# Password: $MARIADB_PASSWORD
+# Database: $MARIADB_DATABASE
+
+services:
+  portainer:
+    image: portainer/portainer-ce:2.25.1
+    container_name: portainer
+    ports:
+      - "9000:9000"
+      - "9443:9443"
+    networks:
+      inception:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    init: true
+
+  ftp:
+    image: fauria/vsftpd:latest
+    container_name: ftp
+    env_file: ".env"
+    ports:
+        - "20:20"
+        - "21:21"
+        - "21100-21110:21100-21110"
+    depends_on:
+      - wordpress
+    networks:
+      inception:
+    volumes:
+      - wp:/home/vsftpd/admin
+      - vsftpd_log:/var/log/vsftpd
+      - wp:/var/www/html
+    restart: always
+    init: true
+
+  redis:
+    image: redis:8.0-M02-alpine3.21
+    container_name: redis
+    env_file: ".env"
+    ports:
+      - "6379:6379"
+    networks:
+      inception:
+    restart: always
+    init: true
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    env_file: ".env"
+    ports:
+      - "8080:8080"
+    depends_on:
+        mariadb:
+            condition: service_healthy
+    networks:
+      inception:
+    restart: always
+    init: true
+
+  nginx:
+    build:
+      context: requirements/nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+    env_file: ".env"
+    depends_on:
+      - wordpress
+      - adminer
+    volumes:
+      - wp:/var/www/html
+    networks:
+      inception:
+    restart: always
+    init: true
+
+  wordpress:
+    build: 
+      context: requirements/wordpress
+      args:
+        - GL_USER=${GL_USER}
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+    container_name: wordpress
+    env_file: ".env"
+    depends_on:
+        mariadb:
+            condition: service_healthy
+    volumes:
+      - wp:/var/www/html
+    networks:
+      inception:
+    restart: always
+    init: true
+
+  mariadb:
+    build:
+      context: requirements/mariadb
+    container_name: mariadb
+    env_file: ".env"
+    privileged: true
+    volumes:
+      - mariadb:/usr/local/mysql/var
+    networks:
+      inception:
+    restart: always
+    init: true
+    healthcheck:
+        test:		"mariadb-admin ping"
+        interval:	5s
+        timeout:	1m
+        retries:	3
+
+volumes:
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mhaouas/.data/database
+      o: bind
+  wp:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mhaouas/.data/web
+      o: bind
+  vsftpd_log:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mhaouas/.data/log/vsftpd
+      o: bind
+
+
+networks:
+  inception:
+    driver: bridge
