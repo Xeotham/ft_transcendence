@@ -6,6 +6,11 @@ if [ ! -f requirements.txt ]; then
   exit 1
 fi
 
+if [ -d .venv ]; then
+  echo ".venv already exists!"
+  exit 0
+fi
+
 # Create a virtual environment named 'venv'
 python3 -m venv .venv
 
