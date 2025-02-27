@@ -1,2 +1,4 @@
 */.idea
 srcs/.venv
+.env
+.idea

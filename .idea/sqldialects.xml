@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/src/back/database/db.ts" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/back/database/models/Friends.ts" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/back/database/models/Games.ts" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/back/database/models/UserStats.ts" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/back/database/models/Users.ts" dialect="GenericSQL" />
+  </component>
+</project>
