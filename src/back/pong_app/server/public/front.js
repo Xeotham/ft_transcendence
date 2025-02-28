@@ -4,17 +4,20 @@ var gameState = {
     ball: { x: 400, y: 200 },
     paddles: { left: 150, right: 150 }
 };
-var socket = new WebSocket("ws://localhost:8080");
-console.log("Is server ready : " + socket.readyState);
+var socket = new WebSocket("ws://localhost:3000/ws");
+// socket.addEventListener("error", (error) => {
+// 	console.error(error);
+// })
+// console.log("Is server ready : " + socket.readyState);
 // Connection opened
 socket.addEventListener("open", function (event) {
     alert("Socket opened!!!!!!!!!!!!!!!");
     socket.send("Hello Server!");
 });
-socket.onerror = function (error) {
-    // an error occurred when sending/receiving data
-    alert('Error');
-};
+// socket.onerror = function (error) {
+// 	// an error occurred when sending/receiving data
+// 	alert('Error');
+// };
 // Listen for messages
 socket.addEventListener("message", function (event) {
     alert("Message from server + " + event.data);

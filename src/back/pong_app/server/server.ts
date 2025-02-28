@@ -1,41 +1,11 @@
 import Fastify from 'fastify';
 import fastifyWebsocket from '@fastify/websocket';
-import fastifyStatic from "@fastify/static";
-import path from 'path';
+import {fastifyStatic} from "@fastify/static";
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { WebSocket } from 'ws';
+import path from 'path'
 
 const fastify = Fastify({ logger: true });
-
-fastify.register(fastifyWebsocket);
-
-fastify.get('/ws', { websocket: true }, (connection, req) => {
-	try {
-		fastify.log.info('Client connected');
-		connection.send('Welcome to the WebSocket server!');
-
-		connection.on('message', (message) => {
-			fastify.log.info(`Received: ${message.toString()}`);
-			connection.send(`Echo: ${message.toString()}`);
-		});
-
-		connection.on('close', () => {
-			fastify.log.info('Client disconnected');
-		});
-
-		connection.on('error', (error) => {
-			fastify.log.error('WebSocket error:', error);
-		});
-	} catch (error) {
-		fastify.log.error('Unexpected error:', error);
-	}
-});
-
-fastify.listen({ port: 8080 }, (err, address) => {
-	if (err) {
-		fastify.log.error(err);
-		process.exit(1);
-	}
-	fastify.log.info(`🚀 Server listening at ${address}`);
-});
 
 // Register fastify-static to serve static files
 fastify.register(fastifyStatic, {
@@ -43,9 +13,52 @@ fastify.register(fastifyStatic, {
 	prefix: '/', // Serve files under the root URL
 });
 
-fastify.get('/', async (request, reply) => {
+fastify.register(fastifyWebsocket);
+
+fastify.register(async function (fastify) {
+	fastify.get('/ws', { websocket: true }, (socket: WebSocket, req: FastifyRequest) => {
+		socket.on('message', message => {
+			// message.toString() === 'hi from client'
+			socket.send('hi from ws route')
+		})
+	})
+})
+
+fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile('index.html');
 });
+
+fastify.listen({ port: 3000 }, (err: Error | null, address: string) => {
+	if (err) {
+		fastify.log.error(err);
+		process.exit(1);
+	}
+	fastify.log.info(`🚀 Server listening at ${address}`);
+});
+
+
+// fastify.get('/ws', { websocket: true }, (connection, req) => {
+// 	try {
+// 		fastify.log.info('Client connected');
+// 		connection.send('Welcome to the WebSocket server!');
+//
+// 		connection.on('message', (message) => {
+// 			fastify.log.info(`Received: ${message.toString()}`);
+// 			connection.send(`Echo: ${message.toString()}`);
+// 		});
+//
+// 		connection.on('close', () => {
+// 			fastify.log.info('Client disconnected');
+// 		});
+//
+// 		connection.on('error', (error) => {
+// 			fastify.log.error('WebSocket error:', error);
+// 		});
+// 	} catch (error) {
+// 		fastify.log.error('Unexpected error:', error);
+// 	}
+
+// });
 
 
 

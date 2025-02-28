@@ -8,9 +8,13 @@ let gameState = {
 	paddles: { left: 150, right: 150 }
 };
 
-const socket = new WebSocket("ws://localhost:8080");
+const socket = new WebSocket("ws://localhost:3000/ws");
 
-console.log("Is server ready : " + socket.readyState);
+// socket.addEventListener("error", (error) => {
+// 	console.error(error);
+// })
+
+// console.log("Is server ready : " + socket.readyState);
 
 // Connection opened
 socket.addEventListener("open", (event) => {
@@ -18,10 +22,10 @@ socket.addEventListener("open", (event) => {
 	socket.send("Hello Server!");
 });
 
-socket.onerror = function (error) {
-	// an error occurred when sending/receiving data
-	alert('Error');
-};
+// socket.onerror = function (error) {
+// 	// an error occurred when sending/receiving data
+// 	alert('Error');
+// };
 
 // Listen for messages
 socket.addEventListener("message", (event) => {
