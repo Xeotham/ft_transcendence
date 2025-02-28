@@ -1,2 +1,7 @@
 */.idea
-srcs/.venv
+src/.venv
+*.nfs*
+*.env
+fastify-blog/
+#node_modules/
+.idea
