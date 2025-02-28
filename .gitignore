@@ -2,3 +2,6 @@
 srcs/.venv
 .env
 .idea
+*.nfs*
+fastify-blog/
+#node_modules/
