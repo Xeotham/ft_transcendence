@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PADDLE_Y = exports.PADDLE2_X = exports.PADDLE1_X = exports.PADDLE_SPEED = exports.BALL_SPEED = exports.BALL_SIZE = exports.PADDLE_HEIGHT = exports.PADDLE_WIDTH = exports.HEIGHT = exports.WIDTH = void 0;
+exports.WIDTH = 800;
+exports.HEIGHT = 400;
+exports.PADDLE_WIDTH = 10;
+exports.PADDLE_HEIGHT = 80;
+exports.BALL_SIZE = 10;
+exports.BALL_SPEED = 5;
+exports.PADDLE_SPEED = 5;
+exports.PADDLE1_X = 30;
+exports.PADDLE2_X = 760;
+exports.PADDLE_Y = exports.HEIGHT / 2 - exports.PADDLE_HEIGHT / 2;

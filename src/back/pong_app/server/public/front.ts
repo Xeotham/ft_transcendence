@@ -3,42 +3,26 @@ const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 
 const c = canvas?.getContext("2d");
 
-let gameState = {
-	ball: { x: 400, y: 200 },
-	paddles: { left: 150, right: 150 }
-};
-
 const socket = new WebSocket("ws://localhost:3000/ws");
 
-// socket.addEventListener("error", (error) => {
-// 	console.error(error);
-// })
-
-// console.log("Is server ready : " + socket.readyState);
+socket.addEventListener("error", (error) => {
+	console.error(error);
+})
 
 // Connection opened
 socket.addEventListener("open", (event) => {
 	alert("Socket opened!!!!!!!!!!!!!!!");
+	console.log("Is server ready : " + socket.readyState);
 	socket.send("Hello Server!");
 });
-
-// socket.onerror = function (error) {
-// 	// an error occurred when sending/receiving data
-// 	alert('Error');
-// };
 
 // Listen for messages
 socket.addEventListener("message", (event) => {
 	alert("Message from server + " +  event.data);
 });
 
-// socket.onmessage = (event) => {
-//     gameState = JSON.parse(event.data);
-// };
 
-console.log("Page loaded");
 
-//
 // function drawGame() {
 // 	if (!c)
 // 		return;

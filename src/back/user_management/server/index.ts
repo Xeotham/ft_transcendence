@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
 import userRoutes from '../../api/user_management/routes';
-// import pongRoutes from '../../api/pong/routes';
+import pongRoutes from '../../api/pong/routes';
 // import tetrisRoutes from '../../api/tetris/routes';
 
 const fastify = Fastify({ logger: true });
@@ -8,7 +8,7 @@ const fastify = Fastify({ logger: true });
 // Register routes
 // TODO: Create the others API
 fastify.register(userRoutes, { prefix: '/api/user' });
-// fastify.register(pongRoutes, { prefix: '/api/pong' });
+fastify.register(pongRoutes, { prefix: '/pong' });
 // fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 
 
