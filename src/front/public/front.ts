@@ -48,7 +48,10 @@ socket.addEventListener("message", (event: MessageEvent<{ res: responseFormat }>
 		console.log("[INFO] : " +  res.message);
 	else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING")
 		alert(res.message);
+	else if (res.type === "GAME") {
+		console.log(res.data);
 
+	}
 
 });
 
