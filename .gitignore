@@ -3,4 +3,4 @@ src/.venv
 *.nfs*
 *.env
 fastify-blog/
-#node_modules/
+*node_modules/
