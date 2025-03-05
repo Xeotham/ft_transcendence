@@ -5,22 +5,54 @@ import { Game } from "../../back/pong_app/server/pong_game";
 let roomNumber = 0;
 let game : Game | null = null;
 
-const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+async function loadPage(page: string) {
+
+	const content = document.getElementById("content")!;
+	if (page === "no-room") {
+		noRoom(content)
+	}
+	if (page === "room-found") {
+		room_found(content)
+	}
+
+}
+
+function	room_found(content: HTMLElement) {
+	content.innerHTML= `
+		<p>Room found!</p>
+		<button id="quit-room">Quit Room</button>
+	`
+	document.getElementById("quit-room").addEventListener("click", quitRoom)
+}
 
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
+async function quitRoom() {
+	console.log("quit room");
+	loadPage("no-room");
+}
 
 const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 
-const socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
 
-socket.addEventListener("error", (error) => {
-	console.error(error);
-})
+function	noRoom(content: HTMLElement) {
+	content.innerHTML = `
+		<button id="join-game">Join the Game</button>
+		`
+	document.getElementById("join-game").addEventListener("click", joinRoom);
+}
+async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 
-// Connection opened
-socket.onopen = () => {
-	console.log("Connected to the server");
+	loadPage("room-found");
+	const socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
+
+	socket.addEventListener("error", (error) => {
+		console.error(error);
+	})
+
+	// Connection opened
+	socket.onopen = () => {
+		console.log("Connected to the server");
 
 	// fetch('http://localhost:3000/api/pong/finishGame')
 	// 	.then(response => response.json())
@@ -36,9 +68,9 @@ socket.onopen = () => {
 	// })
 }
 
-socket.onclose = () => {
-	fetch('http://localhost:3000/api/pong/quitRoom').then();
-}
+	socket.onclose = () => {
+		fetch('http://localhost:3000/api/pong/quitRoom').then();
+	}
 
 // Listen for messages
 socket.addEventListener("message", (event: MessageEvent) => {
@@ -77,6 +109,16 @@ socket.addEventListener("message", (event: MessageEvent) => {
 		drawGame();
 	}
 });
+
+loadPage("no-room");
+
+	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+
+// canvas.width = Constants.WIDTH;
+// canvas.height = Constants.HEIGHT;
+
+	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
+
 
 // function gameLoop() {
 // 	if (!game)

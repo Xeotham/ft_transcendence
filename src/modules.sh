@@ -5,7 +5,7 @@ npm update npm -g;																																# update it
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash;
 nvm install 22;																																		# update it again
 node -v;																																					# Should print "v22.13.1".
-npm install --save-dev ts-node-dev typescript @types/node
+npm install --save-dev ts-node-dev typescript @types/node;
 npm install -D typescript;
 npm i fastify;																																		# install fastify
 npm i @fastify/websocket;																													# install websockets
