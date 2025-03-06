@@ -30,7 +30,10 @@ export class Game {
 			this.Players.player1.send(JSON.stringify({type: "GAME", data: this}));
 			this.Players.player2.send(JSON.stringify({type: "GAME", data: this}));
 		}
-		this.Over = true;
+		if (!this.Over) {
+			this.Winner = (this.Score.player1 === 10) ? this.Players.player1 : this.Players.player2;
+			this.Over = true;
+		}
 	}
 
 	MoveBall() {

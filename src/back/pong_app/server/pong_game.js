@@ -19,7 +19,10 @@ var Game = /** @class */ (function () {
             this.Players.player1.send(JSON.stringify({ type: "GAME", data: this }));
             this.Players.player2.send(JSON.stringify({ type: "GAME", data: this }));
         }
-        this.Over = true;
+        if (!this.Over) {
+            this.Winner = (this.Score.player1 === 10) ? this.Players.player1 : this.Players.player2;
+            this.Over = true;
+        }
     };
     Game.prototype.MoveBall = function () {
         this.Ball.x += Constants.BALL_SPEED * Math.cos(this.Ball.orientation);

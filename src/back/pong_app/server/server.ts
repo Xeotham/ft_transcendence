@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import fastifyCors from '@fastify/cors';
 import fastifyWebsocket from '@fastify/websocket';
 import {fastifyStatic} from "@fastify/static";
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
@@ -7,6 +8,12 @@ import * as path from 'path';
 
 const fastify = Fastify();
 fastify.register(fastifyWebsocket);
+
+// Register the CORS plugin
+// fastify.register(fastifyCors, {
+// 	origin: `http://localhost:${PORT}`, // Allow all origins, or specify your frontend's origin
+// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+// });
 
 // Register fastify-static to serve static files
 fastify.register(fastifyStatic, {

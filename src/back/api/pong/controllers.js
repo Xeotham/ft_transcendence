@@ -58,12 +58,16 @@ function idGenerator() {
 }
 var idGen = idGenerator();
 var joinRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
+    var _i, Rooms_1, room, id, newRoom;
     return __generator(this, function (_a) {
         console.log("Joining room");
-        exports.Rooms.forEach(function (room) {
-            if (socket === room.P1 || socket === room.P2)
-                return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
-            if (room.P1 && !room.full) {
+        // Check existing rooms for an available spot
+        for (_i = 0, Rooms_1 = exports.Rooms; _i < Rooms_1.length; _i++) {
+            room = Rooms_1[_i];
+            if (room.P1 === socket || room.P2 === socket) {
+                return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }))];
+            }
+            if (room.P1 && !room.P2) {
                 room.P2 = socket;
                 room.full = true;
                 room.game = new pong_game_1.Game(room.id, room.P1, room.P2);
@@ -71,44 +75,43 @@ var joinRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0,
                 room.P2.send(JSON.stringify({ type: "ALERT", message: "Room found, ready to start, awaiting confirmation" }));
                 room.P1.send(JSON.stringify({ type: "CONFIRM" }));
                 room.P2.send(JSON.stringify({ type: "CONFIRM" }));
-                return;
+                return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "Room joined", player: "P2", roomID: room.id }))];
             }
-        });
-        exports.Rooms.push({ id: idGen.next().value, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null });
-        return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2" }))];
+        }
+        id = idGen.next().value;
+        newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null };
+        exports.Rooms.push(newRoom);
+        return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2", player: "P1", roomID: id }))];
     });
 }); };
 exports.joinRoom = joinRoom;
 function waitingPlayers(room) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            while (!room.isP1Ready || !room.isP2Ready) {
-                console.log("Waiting for players");
-            }
-            return [2 /*return*/, true];
-        });
-    });
+    console.log("Waiting for players: P1: " + room.isP1Ready + " P2: " + room.isP2Ready);
+    return !(!room.isP1Ready || !room.isP2Ready);
 }
-var startConfirm = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
-    var room;
+var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
+    var room, player;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                room = exports.Rooms.find(function (room) { return (room.P1 === socket || room.P2 === socket); });
-                if (!room)
-                    return [2 /*return*/, socket.send(JSON.stringify({ type: "ERROR", message: "Room not found" }))];
-                if (room.P1 === socket)
-                    room.isP1Ready = true;
-                if (room.P2 === socket)
-                    room.isP2Ready = true;
-                return [4 /*yield*/, waitingPlayers(room)];
-            case 1:
-                _a.sent();
-                console.log("Starting game");
-                if (room.P1 === socket)
-                    room.game.GameLoop();
-                return [2 /*return*/, socket.send(JSON.stringify({ type: "GAME", message: "FINISH" }))];
+        room = exports.Rooms.find(function (room) { return (room.id === request.body.roomId); });
+        player = (request.body.side === "left") ? "P1" : "P2";
+        if (!room)
+            return [2 /*return*/, reply.send(JSON.stringify({ type: "ERROR", message: "Room not found" }))];
+        if (player === "P1") {
+            room.P1.send(JSON.stringify({ type: "ALERT", message: "You are ready, waiting for your opponent" }));
+            room.isP1Ready = true;
         }
+        else if (player === "P2") {
+            room.P2.send(JSON.stringify({ type: "ALERT", message: "You are ready, waiting for your opponent" }));
+            room.isP2Ready = true;
+        }
+        if (!waitingPlayers(room))
+            return [2 /*return*/, reply.send(JSON.stringify({ type: "ERROR", message: "Players not ready" }))];
+        console.log("Starting game");
+        room.P1.send(JSON.stringify({ type: "GAME", message: "Both players are ready, the game is starting." }));
+        room.P2.send(JSON.stringify({ type: "GAME", message: "Both players are ready, the game is starting." }));
+        if (player === "P1")
+            room.game.GameLoop();
+        return [2 /*return*/, reply.send(JSON.stringify({ type: "GAME", message: "FINISH" }))];
     });
 }); };
 exports.startConfirm = startConfirm;

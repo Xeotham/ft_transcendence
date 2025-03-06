@@ -2,19 +2,19 @@
 import { responseFormat } from "../../back/api/pong/controllers";
 import { Game } from "../../back/pong_app/server/pong_game";
 
-let roomNumber = 0;
-let game : Game | null = null;
+let		roomNumber = 0;
+let		game : Game | null = null;
+let		player : string | null = null;
+const	content = document.getElementById("content")!;
+let		socket: WebSocket | null = null;
 
 async function loadPage(page: string) {
-
-	const content = document.getElementById("content")!;
 	if (page === "no-room") {
 		noRoom(content)
 	}
-	if (page === "room-found") {
+	else if (page === "room-found") {
 		room_found(content)
 	}
-
 }
 
 function	room_found(content: HTMLElement) {
@@ -29,22 +29,41 @@ function	room_found(content: HTMLElement) {
 // canvas.height = Constants.HEIGHT;
 async function quitRoom() {
 	console.log("quit room");
+	if (socket)
+		socket.close();
+	socket = null;
 	loadPage("no-room");
 }
-
-const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
-
 
 function	noRoom(content: HTMLElement) {
 	content.innerHTML = `
 		<button id="join-game">Join the Game</button>
-		`
+	`
 	document.getElementById("join-game").addEventListener("click", joinRoom);
 }
-async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 
+function confirmGame() {
+	console.log("Trying to confirm");
+
+	content.innerHTML = `
+		<p>Game Found, Confirm?</p>
+		<button id="confirm-game">Confirm Game</button>
+	`
+	document.getElementById("confirm-game").addEventListener("click", () => {
+		fetch('http://localhost:3000/api/pong/startConfirm', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ key: "Up", roomId: roomNumber, side: (player === "P1")? "left":"right" })
+		})
+	});
+}
+
+async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 	loadPage("room-found");
-	const socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
+	if (!socket)
+		socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -54,79 +73,75 @@ async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 	socket.onopen = () => {
 		console.log("Connected to the server");
 
-	// fetch('http://localhost:3000/api/pong/finishGame')
-	// 	.then(response => response.json())
-	// 	.then(data => console.log(data))
-	// 	.catch(error => console.error('Error:', error));
+		// fetch('http://localhost:3000/api/pong/finishGame')
+		// 	.then(response => response.json())
+		// 	.then(data => console.log(data))
+		// 	.catch(error => console.error('Error:', error));
 
-	// fetch('http://localhost:3000/api/pong/movePaddle', {
-	// 	method: 'POST',
-	// 	headers: {
-	// 		'Content-Type': 'application/json'
-	// 	},
-	// 	body: JSON.stringify({ key: "Up", roomId: roomNumber, side: "left" })
-	// })
-}
-
-	socket.onclose = () => {
-		fetch('http://localhost:3000/api/pong/quitRoom').then();
+		// fetch('http://localhost:3000/api/pong/movePaddle', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	},
+		// 	body: JSON.stringify({ key: "Up", roomId: roomNumber, side: "left" })
+		// })
 	}
+
+	// socket.onclose = () => {
+	// 	fetch('http://localhost:3000/api/pong/quitRoom').then();
+	// }
 
 // Listen for messages
-socket.addEventListener("message", (event: MessageEvent) => {
+	socket.addEventListener("message", (event: MessageEvent) => {
 
-	// console.log("Message from server: ", event);
-	// console.log("Message from server: ", event.data);
+		// console.log("Message from server: ", event);
+		// console.log("Message from server: ", event.data);
 
-	let res : responseFormat = JSON.parse(event.data);
+		let res: responseFormat = JSON.parse(event.data);
 
-	// console.log(res);
+		// console.log(res);
 
-	if (!res)
-		return ;
-	if (res.type === "INFO")
-		console.log("%c[INFO]%c : " +  res.message, "color: Green", "color: reset");
-
-	else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
-		console.log("%c[" + res.type + "]%c : " +  res.message, "color: red", "color: reset");
-		alert(res.message);
-	}
-
-	else if (res.type === "CONFIRM") {
-		console.log("Trying to confirm");
-		fetch('http://localhost:3000/api/pong/startConfirm')
-			.then(response => response.json())
-			.then(data => console.log(data))
-			.catch(error => console.error('Error:', error));
-	}
-
-	else if (res.type === "GAME") {
-		// console.log(res.data);
-		game = res.data;
-		console.log(game);
-		// if (res.message === "FINISH")
-		// 	fetch();
-		drawGame();
-	}
-});
+		if (!res)
+			return;
+		if (res.type === 'INFO') {
+			roomNumber = res.roomID;
+			player = res.player;
+			console.log(`Joined room: ${roomNumber} as player: ${player}`);
+		} else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
+			console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
+			alert(res.message);
+		} else if (res.type === "CONFIRM") {
+			confirmGame();
+		} else if (res.type === "GAME") {
+			// console.log(res.data);
+			game = res.data;
+			console.log(res.message)
+			console.log(game);
+			// if (res.message === "FINISH")
+			// 	fetch();
+			drawGame();
+		}
+	});
+}
 
 loadPage("no-room");
 
-	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 
-	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
+const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 
 
-// function gameLoop() {
-// 	if (!game)
-// 		return;
-// 	while (!game.Over) {
-// 		drawGame();
-// 	}
-// }
+function gameLoop() {
+	if (!game)
+		return;
+	while (!game.Over) {
+		// socket.send(JSON.stringify({ key: "Up", roomId: roomNumber, side: (player === "P1")? "left":"right" }));
+		// drawGame();
+	}
+}
 
 function drawGame() {
 	if (!c || !game)

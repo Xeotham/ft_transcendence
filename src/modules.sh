@@ -16,3 +16,4 @@ npm install path;																																	# install node path extension
 npm install dotenv --save;																												# install dotenv to handle environement variables
 npm init -y;
 npm audit fix;																																		# automaticly fixes problems if any are encountered
+npm install @fastify/cors;																												# install cors

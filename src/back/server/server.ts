@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import userRoutes from '../api/user_management/routes';
 import pongRoutes from '../api/pong/routes';
+import fastifyCors from '@fastify/cors';
 import fastifyWebsocket from '@fastify/websocket';
 import { fastifyStatic } from "@fastify/static";
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
@@ -14,6 +15,12 @@ dotenv.config();
 
 const fastify = Fastify(/*{ logger: true }*/);
 fastify.register(fastifyWebsocket);
+
+// Register the CORS plugin
+fastify.register(fastifyCors, {
+	origin: `*`, // Allow all origins, or specify your frontend's origin
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+});
 
 // Register routes
 // TODO: Create the others API
