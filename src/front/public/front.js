@@ -41,6 +41,8 @@ var game = null;
 var player = null;
 var content = document.getElementById("content");
 var socket = null;
+// canvas.width = Constants.WIDTH;
+// canvas.height = Constants.HEIGHT;
 function loadPage(page) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -54,38 +56,24 @@ function loadPage(page) {
         });
     });
 }
+function noRoom(content) {
+    content.innerHTML = "\n\t\t<button id=\"join-game\">Join the Game</button>\n\t";
+    document.getElementById("join-game").addEventListener("click", joinRoom);
+}
 function room_found(content) {
     content.innerHTML = "\n\t\t<p>Room found!</p>\n\t\t<button id=\"quit-room\">Quit Room</button>\n\t";
     document.getElementById("quit-room").addEventListener("click", quitRoom);
 }
-// canvas.width = Constants.WIDTH;
-// canvas.height = Constants.HEIGHT;
 function quitRoom() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             console.log("quit room");
+            fetch('http://localhost:3000/api/pong/quitRoom').then();
             if (socket)
                 socket.close();
             socket = null;
             loadPage("no-room");
             return [2 /*return*/];
-        });
-    });
-}
-function noRoom(content) {
-    content.innerHTML = "\n\t\t<button id=\"join-game\">Join the Game</button>\n\t";
-    document.getElementById("join-game").addEventListener("click", joinRoom);
-}
-function confirmGame() {
-    console.log("Trying to confirm");
-    content.innerHTML = "\n\t\t<p>Game Found, Confirm?</p>\n\t\t<button id=\"confirm-game\">Confirm Game</button>\n\t";
-    document.getElementById("confirm-game").addEventListener("click", function () {
-        fetch('http://localhost:3000/api/pong/startConfirm', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ key: "Up", roomId: roomNumber, side: (player === "P1") ? "left" : "right" })
         });
     });
 }
@@ -101,67 +89,70 @@ function joinRoom(ev) {
             // Connection opened
             socket.onopen = function () {
                 console.log("Connected to the server");
-                // fetch('http://localhost:3000/api/pong/finishGame')
-                // 	.then(response => response.json())
-                // 	.then(data => console.log(data))
-                // 	.catch(error => console.error('Error:', error));
-                // fetch('http://localhost:3000/api/pong/movePaddle', {
-                // 	method: 'POST',
-                // 	headers: {
-                // 		'Content-Type': 'application/json'
-                // 	},
-                // 	body: JSON.stringify({ key: "Up", roomId: roomNumber, side: "left" })
-                // })
             };
-            // socket.onclose = () => {
-            // 	fetch('http://localhost:3000/api/pong/quitRoom').then();
-            // }
+            socket.onclose = function () {
+            };
             // Listen for messages
-            socket.addEventListener("message", function (event) {
-                // console.log("Message from server: ", event);
-                // console.log("Message from server: ", event.data);
-                var res = JSON.parse(event.data);
-                // console.log(res);
-                if (!res)
-                    return;
-                if (res.type === 'INFO') {
-                    roomNumber = res.roomID;
-                    player = res.player;
-                    console.log("Joined room: ".concat(roomNumber, " as player: ").concat(player));
-                }
-                else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
-                    console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
-                    alert(res.message);
-                }
-                else if (res.type === "CONFIRM") {
-                    confirmGame();
-                }
-                else if (res.type === "GAME") {
-                    // console.log(res.data);
-                    game = res.data;
-                    console.log(res.message);
-                    console.log(game);
-                    // if (res.message === "FINISH")
-                    // 	fetch();
-                    drawGame();
-                }
-            });
+            socket.addEventListener("message", messageHandler);
             return [2 /*return*/];
+        });
+    });
+}
+function messageHandler(event) {
+    var res = JSON.parse(event.data);
+    // console.log("Message from server: ", event.data);
+    // console.log(res);
+    if (!res)
+        return;
+    if (res.type === 'INFO') {
+        console.log("%c[INFO]%c : " + res.message, "color: green", "color: reset");
+    }
+    else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
+        console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
+        alert(res.message);
+    }
+    else if (res.type === "CONFIRM") {
+        confirmGame();
+    }
+    else if (res.type === "GAME") {
+        if (res.message === "PREP") {
+            roomNumber = res.roomID === null ? roomNumber : res.roomID;
+            player = res.player === null ? player : res.player;
+            console.log("Joined room: " + roomNumber + " as player: " + player);
+            return;
+        }
+        // console.log("Game data received");
+        game = res.data;
+        // console.log(res.message)
+        // console.log(game);
+        // if (res.message === "FINISH")
+        // 	fetch();
+        drawGame();
+    }
+}
+function confirmGame() {
+    content.innerHTML = "\n\t\t<p>Game Found, Confirm?</p>\n\t\t<button id=\"confirm-game\">Confirm Game</button>\n\t";
+    document.getElementById("confirm-game").addEventListener("click", function () {
+        fetch('http://localhost:3000/api/pong/startConfirm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ roomId: roomNumber, P: player })
         });
     });
 }
 loadPage("no-room");
 var canvas = document.getElementById("gameCanvas");
-// canvas.width = Constants.WIDTH;
-// canvas.height = Constants.HEIGHT;
 var c = canvas === null || canvas === void 0 ? void 0 : canvas.getContext("2d");
-// function gameLoop() {
-// 	if (!game)
-// 		return;
-// 	while (!game.Over) {
-// 		drawGame();
-// 	}
-// }
+function gameLoop() {
+    if (!game)
+        return;
+    while (!game.Over) {
+        // socket.send(JSON.stringify({ key: "Up", roomId: roomNumber, P: player }));
+        // drawGame();
+    }
+}
 function drawGame() {
     if (!c || !game)
         return;

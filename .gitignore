@@ -4,3 +4,4 @@ src/.venv
 *.env
 fastify-blog/
 *node_modules/
+*.js
