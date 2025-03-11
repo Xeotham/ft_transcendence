@@ -33,29 +33,48 @@ export class Game {
 
 	toJSON() {
 		return {
-			Score: this.Score,
+			// Score: this.Score,
 			Paddle1: this.Paddle1,
 			Paddle2: this.Paddle2,
 			Ball: this.Ball,
-			Over: this.Over,
+			// Over: this.Over,
 		};
 	}
 
 	async GameLoop() {
-		while (this.Score.player1 < 10 && this.Score.player2 < 10 && !this.Over) {
-			// console.log("Game loop");
-			this.MoveBall();
-			// console.log(this);
+		const updateInterval = 1000 / 60; // 60 times per second
+		const sendGameInfo = () => {
+			// console.log("Sending game info");
+			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
+			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
+		};
 
-			this.Players.player1.send(JSON.stringify({type: "GAME", data: this.toJSON()}));
-			this.Players.player2.send(JSON.stringify({type: "GAME", data: this.toJSON()}));
-			if (performance.now() - this.StartTime > 10000)
-				break;
-		}
-		console.log("Game over");
-		if (!this.Over)
-			this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
-		this.Over = true;
+		const gameLoopIteration = async () => {
+			if (this.Score.player1 < 10 && this.Score.player2 < 10 && !this.Over) {
+				this.MoveBall();
+				setTimeout(gameLoopIteration, 0); // Schedule the next iteration
+			} else {
+				clearInterval(intervalId);
+				console.log("Game over");
+				if (!this.Over) {
+					this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
+					this.Over = true;
+				}
+			}
+		};
+
+		const intervalId = setInterval(sendGameInfo, updateInterval);
+		gameLoopIteration(); // Start the game loop
+	}
+
+	isHittingPaddle(player: string | "P1" | "P2", coords: {x: number, y: number}) {
+		const paddle = player === "P1" ? this.Paddle1 : this.Paddle2;
+		if (coords.y + this.Ball.size < paddle.y ||
+			coords.y - this.Ball.size > paddle.y + paddle.y_size)
+			return false;
+		if (player === "P1")
+			return (coords.x - this.Ball.size <= paddle.x + paddle.x_size);
+		return (coords.x + this.Ball.size >=  paddle.x);
 	}
 
 	MoveBall() {
@@ -63,24 +82,50 @@ export class Game {
 		const delta = now - this.LastTime;
 		this.LastTime = now;
 		const speed = Constants.BALL_SPEED * delta / 1000;
+		const trajectory = {x: this.Ball.x + (speed * Math.cos(this.Ball.orientation)),
+							y: this.Ball.y + (speed * Math.sin(this.Ball.orientation))};
+
+		// console.log("Ball : [" + this.Ball.x + ", " + this.Ball.y + "]");
+
+		if (this.isHittingPaddle("P1", trajectory) || this.isHittingPaddle("P2", trajectory))
+			this.Ball.orientation = Math.PI - this.Ball.orientation
+		if (trajectory.x - this.Ball.size < 0 || trajectory.x + this.Ball.size >= Constants.WIDTH)
+			this.Ball.orientation = Math.PI - this.Ball.orientation;
+		if (trajectory.y - this.Ball.size < 0 || trajectory.y + this.Ball.size >= Constants.HEIGHT)
+			this.Ball.orientation = -this.Ball.orientation;
 
 		this.Ball.x += speed * Math.cos(this.Ball.orientation);
 		this.Ball.y += speed * Math.sin(this.Ball.orientation);
-		if (this.Ball.x - (this.Ball.size / 2) < 0 || this.Ball.x + (this.Ball.size / 2) >= Constants.WIDTH)
-			this.Ball.orientation = Math.PI - this.Ball.orientation;
-		if (this.Ball.y - (this.Ball.size / 2) < 0 || this.Ball.y + (this.Ball.size / 2) >= Constants.HEIGHT)
-			this.Ball.orientation = -this.Ball.orientation;
+
+		if (this.Ball.y < 0)
+			this.Ball.y = this.Ball.size;
+		if (this.Ball.y > Constants.HEIGHT)
+			this.Ball.y = Constants.HEIGHT - this.Ball.size;
+
+		if (this.Ball.x < 0) {
+			this.Ball.x = 0;
+			// this.Score.player2++;
+			// this.Ball.x = Constants.WIDTH / 2;
+			// this.Ball.y = Constants.HEIGHT / 2;
+		}
+		if (this.Ball.x >= Constants.WIDTH) {
+			this.Ball.x = Constants.WIDTH - this.Ball.size;
+			// this.Score.player2++;
+			// this.Ball.x = Constants.WIDTH / 2;
+			// this.Ball.y = Constants.HEIGHT / 2;
+		}
 	}
 
 	MovePaddle(res: PongRequestBody) {
-		console.log("Moving paddle");
+		let paddle = res.P === "P1" ? this.Paddle1 : this.Paddle2;
 
-		if (res.P === "P1")
-			this.Paddle1.y += (res.key === "Up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
-		if (res.P === "P2")
-			this.Paddle2.y += (res.key === "Up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
-		this.Players.player1.send(JSON.stringify({type: "GAME", data: this}));
-		this.Players.player2.send(JSON.stringify({type: "GAME", data: this}));
+		paddle.y += (res.key === "ArrowUp") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
+		if (paddle.y < 0)
+			paddle.y = 0;
+		if (paddle.y > Constants.HEIGHT - paddle.y_size)
+			paddle.y = Constants.HEIGHT - paddle.y_size;
+		this.Players.player1.send(JSON.stringify({type: "GAME", data: this.toJSON()}));
+		this.Players.player2.send(JSON.stringify({type: "GAME", data: this.toJSON()}));
 	}
 
 	Forfeit(player: string) {

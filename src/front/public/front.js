@@ -36,11 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var roomNumber = 0;
+var roomNumber = -1;
 var game = null;
 var player = null;
 var content = document.getElementById("content");
 var socket = null;
+var isButtonPressed = { up: false, down: false };
+var intervalIdUp = null;
+var intervalIdDown = null;
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 function loadPage(page) {
@@ -106,6 +109,8 @@ function messageHandler(event) {
         return;
     if (res.type === 'INFO') {
         console.log("%c[INFO]%c : " + res.message, "color: green", "color: reset");
+        if (res.data)
+            console.log("data: " + res.data);
     }
     else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
         console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
@@ -121,14 +126,100 @@ function messageHandler(event) {
             console.log("Joined room: " + roomNumber + " as player: " + player);
             return;
         }
-        // console.log("Game data received");
+        if (res.message === "START") {
+            document.addEventListener("keydown", keyHandler);
+            document.addEventListener("keyup", keyHandler);
+            return;
+        }
+        if (res.message === "FINISH") {
+            document.removeEventListener("keydown", keyHandler);
+            document.removeEventListener("keyup", keyHandler);
+            return;
+        }
         game = res.data;
-        // console.log(res.message)
-        // console.log(game);
-        // if (res.message === "FINISH")
-        // 	fetch();
         drawGame();
     }
+}
+function keyHandler(event) {
+    if (!game || roomNumber < 0 || !player || event.repeat)
+        return;
+    // console.log("event type:" + event.type + ", Key pressed: " + event.code);
+    function sendPaddleMovement(key) {
+        return __awaiter(this, void 0, void 0, function () {
+            var paddle;
+            return __generator(this, function (_a) {
+                paddle = player === "P1" ? game.Paddle1 : game.Paddle2;
+                // TODO : replace with Constants
+                if ((key === "ArrowUp" && paddle.y <= 0) || (key === "ArrowDown" && paddle.y >= 400 - 80))
+                    return [2 /*return*/];
+                fetch('http://localhost:3000/api/pong/movePaddle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ roomId: roomNumber, P: player, key: key })
+                });
+                return [2 /*return*/];
+            });
+        });
+    }
+    if (event.code === "ArrowUp") {
+        // console.log("isButtonPressed.up : " + isButtonPressed.up);
+        if (event.type === "keydown" && isButtonPressed.up === false) {
+            isButtonPressed.up = true;
+            // console.log("Before setInterval");
+            intervalIdUp = setInterval(sendPaddleMovement, 1000 / 60, "ArrowUp");
+        }
+        else if (event.type === "keyup" && isButtonPressed.up === true) {
+            isButtonPressed.up = false;
+            // console.log("Before clearInterval");
+            if (intervalIdUp)
+                clearInterval(intervalIdUp);
+            intervalIdUp = null;
+        }
+    }
+    if (event.code === "ArrowDown") {
+        // console.log("isButtonPressed.up : " + isButtonPressed.up);
+        if (event.type === "keydown" && isButtonPressed.down === false) {
+            isButtonPressed.down = true;
+            // console.log("Before setInterval");
+            intervalIdDown = setInterval(sendPaddleMovement, 1000 / 60, "ArrowDown");
+        }
+        else if (event.type === "keyup" && isButtonPressed.down === true) {
+            isButtonPressed.down = false;
+            // console.log("Before clearInterval");
+            if (intervalIdDown)
+                clearInterval(intervalIdDown);
+            intervalIdDown = null;
+        }
+    }
+    // if (event.code === "ArrowDown") {
+    // 	if (event.type === "keydown" && isButtonPressed.down === false) {
+    // 		isButtonPressed.down = true;
+    // 		intervalIdDown = setInterval(sendPaddleMovement, 1000 / 60,  "ArrowDown");
+    // 	}
+    // 	else if (event.type === "keydown" && isButtonPressed.down === true) {
+    // 		isButtonPressed.down = false;
+    // 		clearInterval(intervalIdDown);
+    // 		intervalIdDown = null;
+    // 	}
+    // }
+    /*
+        if(event.code === "ArrowUp" || event.code === "ArrowDown") {
+            if (event.code === "ArrowUp" && paddle.y <= 0)
+                return ;
+            // TODO : replace with Constants
+            if (event.code === "ArrowDown" && paddle.y >= 400 - 80)
+                return ;
+    
+            fetch('http://localhost:3000/api/pong/movePaddle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ roomId: roomNumber, P: player, key: event.code })
+            });
+        }*/
 }
 function confirmGame() {
     content.innerHTML = "\n\t\t<p>Game Found, Confirm?</p>\n\t\t<button id=\"confirm-game\">Confirm Game</button>\n\t";

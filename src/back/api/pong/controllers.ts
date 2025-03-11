@@ -83,29 +83,28 @@ export const joinRoom = async (socket: WebSocket, req: FastifyRequest) => {
 export const startConfirm = async (request: FastifyRequest<{ Body: PongRequestBody }>, reply: FastifyReply) => {
 	let		room = Rooms.find((room) => { return (room.id === request.body.roomId); });
 	const	player: string | "P1" | "P2" = request.body.P;
-	const	playerSocket: WebSocket | null = player !== null? (player === "P1" ? room.P1 : room.P2) : null;
+	// TODO: look at that again later
 
 	if (!room)
-		return playerSocket.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	if (player === "P1") {
-		room.P1.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }))
+		return;
+	const	playerSocket: WebSocket | null = player === "P1" ? room.P1 : room.P2;
+	if (player === "P1")
 		room.isP1Ready = true;
-	} else if (player === "P2") {
-		room.P2.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }))
+	else
 		room.isP2Ready = true;
-	}
+	playerSocket.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }))
 
 	// await waitingPlayers(room);
 	if (!room.isP1Ready || !room.isP2Ready)
 		return playerSocket.send(JSON.stringify({type: "INFO", message: "Players not ready"}));
 
-	console.log("Starting game");
 	room.P1.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
 	room.P2.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
+	room.P1.send(JSON.stringify({ type: "GAME", message: "START" }));
+	room.P2.send(JSON.stringify({ type: "GAME", message: "START" }));
+	console.log("Starting game");
 	console.log(player);
 	room.game.GameLoop();
-	console.log("Game started");
-	return reply.send(JSON.stringify({type: "GAME", message: "FINISH"}));
 }
 
 export const quitRoom = async (socket: WebSocket, req: FastifyRequest) => {
@@ -158,3 +157,4 @@ export const finishGame = async (request: FastifyRequest, reply: FastifyReply) =
 	return reply.send(JSON.stringify("Game Finished????"));
 
 };
+

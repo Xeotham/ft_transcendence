@@ -96,27 +96,26 @@ var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, 
     return __generator(this, function (_a) {
         room = exports.Rooms.find(function (room) { return (room.id === request.body.roomId); });
         player = request.body.P;
-        playerSocket = player !== null ? (player === "P1" ? room.P1 : room.P2) : null;
+        // TODO: look at that again later
         if (!room)
-            return [2 /*return*/, playerSocket.send(JSON.stringify({ type: "ERROR", message: "Room not found" }))];
-        if (player === "P1") {
-            room.P1.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }));
+            return [2 /*return*/];
+        playerSocket = player === "P1" ? room.P1 : room.P2;
+        if (player === "P1")
             room.isP1Ready = true;
-        }
-        else if (player === "P2") {
-            room.P2.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }));
+        else
             room.isP2Ready = true;
-        }
+        playerSocket.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }));
         // await waitingPlayers(room);
         if (!room.isP1Ready || !room.isP2Ready)
             return [2 /*return*/, playerSocket.send(JSON.stringify({ type: "INFO", message: "Players not ready" }))];
-        console.log("Starting game");
         room.P1.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
         room.P2.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
+        room.P1.send(JSON.stringify({ type: "GAME", message: "START" }));
+        room.P2.send(JSON.stringify({ type: "GAME", message: "START" }));
+        console.log("Starting game");
         console.log(player);
         room.game.GameLoop();
-        console.log("Game started");
-        return [2 /*return*/, reply.send(JSON.stringify({ type: "GAME", message: "FINISH" }))];
+        return [2 /*return*/];
     });
 }); };
 exports.startConfirm = startConfirm;
