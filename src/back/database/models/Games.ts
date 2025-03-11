@@ -1,21 +1,21 @@
 import db from '../db';
-import { createUserStats } from './UserStats'
+import { createUserStats } from './Stats'
 
-interface Games {
-    id?:           number;
-    player1:       number;
-    player2:       number;
-    scoreP1:       number;
-    scoreP2:       number;
-    winner:        number;
-    loser:         number;
-    created_at?:   string;
+interface Game {
+    id?:    number;
+    date:   string;
 }
 
-export const createRoom = (room: Games): void => {
+/*export const createRoom = (room: Games): void => {
     const { player1, player2 } = room;
     const stmt = db.prepare('INSERT INTO games (player1_id, player2_id, loser_id, winner_id, score_p1, score_p2) VALUES (?, ?, ?, ?, ?, ?)');
     stmt.run(player1, player2, 0, 0, 0, 0);
+};*/
+
+export const createGame = (game: Game): void => {
+    const { date } = game;
+    const stmt = db.prepare('INSERT INTO games (date) VALUES (?)');
+    stmt.run(date);
 };
 
 // export const getUserByUsername = (username: string): Users | undefined => {
