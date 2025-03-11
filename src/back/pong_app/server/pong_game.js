@@ -45,7 +45,7 @@ var Game = /** @class */ (function () {
         this.Score = { player1: 0, player2: 0 };
         this.Paddle1 = { x: Constants.PADDLE1_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
         this.Paddle2 = { x: Constants.PADDLE2_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
-        this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 45 };
+        this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0 };
         this.Over = false;
         this.Winner = null;
         this.StartTime = performance.now();
@@ -94,28 +94,41 @@ var Game = /** @class */ (function () {
             });
         });
     };
-    Game.prototype.isHittingPaddle = function (player, coords) {
+    Game.prototype.HitPaddle = function (player, paddle) {
+        var ratio = (this.Ball.y - paddle.y) / (paddle.y_size / 2) - 1; // -1 to 1
+        // console.log("ratio : " + ratio);
+        var angle = 45 * ratio;
+        if (player === "P2")
+            angle = 180 - angle;
+        this.Ball.orientation = angle * Math.PI / 180;
+        console.log("angle : " + angle);
+    };
+    Game.prototype.PaddleCollision = function (player) {
         var paddle = player === "P1" ? this.Paddle1 : this.Paddle2;
-        if (coords.y + this.Ball.size < paddle.y ||
-            coords.y - this.Ball.size > paddle.y + paddle.y_size)
-            return false;
-        if (player === "P1")
-            return (coords.x - this.Ball.size <= paddle.x + paddle.x_size);
-        return (coords.x + this.Ball.size >= paddle.x);
+        if (this.Ball.y + this.Ball.size < paddle.y ||
+            this.Ball.y - this.Ball.size > paddle.y + paddle.y_size)
+            return;
+        if (player === "P1" && this.Ball.x - this.Ball.size / 2 < paddle.x + paddle.x_size) {
+            this.Ball.x = paddle.x + paddle.x_size + this.Ball.size;
+            this.HitPaddle(player, paddle);
+            // this.Ball.orientation = Math.PI - this.Ball.orientation;
+        }
+        if (player === "P2" && this.Ball.x + this.Ball.size / 2 > paddle.x) {
+            this.Ball.x = paddle.x - this.Ball.size;
+            this.HitPaddle(player, paddle);
+            // this.Ball.orientation = Math.PI - this.Ball.orientation;
+        }
     };
     Game.prototype.MoveBall = function () {
         var now = performance.now();
         var delta = now - this.LastTime;
         this.LastTime = now;
         var speed = Constants.BALL_SPEED * delta / 1000;
-        var trajectory = { x: this.Ball.x + (speed * Math.cos(this.Ball.orientation)),
-            y: this.Ball.y + (speed * Math.sin(this.Ball.orientation)) };
-        // console.log("Ball : [" + this.Ball.x + ", " + this.Ball.y + "]");
-        if (this.isHittingPaddle("P1", trajectory) || this.isHittingPaddle("P2", trajectory))
-            this.Ball.orientation = Math.PI - this.Ball.orientation;
-        if (trajectory.x - this.Ball.size < 0 || trajectory.x + this.Ball.size >= Constants.WIDTH)
-            this.Ball.orientation = Math.PI - this.Ball.orientation;
-        if (trajectory.y - this.Ball.size < 0 || trajectory.y + this.Ball.size >= Constants.HEIGHT)
+        this.PaddleCollision("P1");
+        this.PaddleCollision("P2");
+        // if (this.Ball.x - this.Ball.size < 0 || this.Ball.x + this.Ball.size >= Constants.WIDTH)
+        // 	this.Ball.orientation = Math.PI - this.Ball.orientation;
+        if (this.Ball.y - this.Ball.size < 0 || this.Ball.y + this.Ball.size >= Constants.HEIGHT)
             this.Ball.orientation = -this.Ball.orientation;
         this.Ball.x += speed * Math.cos(this.Ball.orientation);
         this.Ball.y += speed * Math.sin(this.Ball.orientation);
@@ -123,17 +136,17 @@ var Game = /** @class */ (function () {
             this.Ball.y = this.Ball.size;
         if (this.Ball.y > Constants.HEIGHT)
             this.Ball.y = Constants.HEIGHT - this.Ball.size;
-        if (this.Ball.x < 0) {
-            this.Ball.x = 0;
-            // this.Score.player2++;
-            // this.Ball.x = Constants.WIDTH / 2;
-            // this.Ball.y = Constants.HEIGHT / 2;
+        if (this.Ball.x - this.Ball.size < 0) {
+            this.Score.player2++;
+            this.Ball.x = Constants.WIDTH / 2;
+            this.Ball.y = Constants.HEIGHT / 2;
+            this.Ball.orientation = Math.PI;
         }
-        if (this.Ball.x >= Constants.WIDTH) {
-            this.Ball.x = Constants.WIDTH - this.Ball.size;
-            // this.Score.player2++;
-            // this.Ball.x = Constants.WIDTH / 2;
-            // this.Ball.y = Constants.HEIGHT / 2;
+        if (this.Ball.x + this.Ball.size >= Constants.WIDTH) {
+            this.Score.player1++;
+            this.Ball.x = Constants.WIDTH / 2;
+            this.Ball.y = Constants.HEIGHT / 2;
+            this.Ball.orientation = 0;
         }
     };
     Game.prototype.MovePaddle = function (res) {

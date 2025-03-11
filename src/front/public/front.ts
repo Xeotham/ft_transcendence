@@ -10,6 +10,7 @@ let		socket: WebSocket | null = null;
 let		isButtonPressed = { up: false, down: false };
 let		intervalIdUp: NodeJS.Timeout | null = null;
 let		intervalIdDown: NodeJS.Timeout | null = null;
+
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 
@@ -160,40 +161,6 @@ function keyHandler(event: KeyboardEvent) {
 			intervalIdDown = null;
 		}
 	}
-	// if (event.code === "ArrowDown") {
-	// 	if (event.type === "keydown" && isButtonPressed.down === false) {
-	// 		isButtonPressed.down = true;
-	// 		intervalIdDown = setInterval(sendPaddleMovement, 1000 / 60,  "ArrowDown");
-	// 	}
-	// 	else if (event.type === "keydown" && isButtonPressed.down === true) {
-	// 		isButtonPressed.down = false;
-	// 		clearInterval(intervalIdDown);
-	// 		intervalIdDown = null;
-	// 	}
-	// }
-
-
-
-
-
-
-
-/*
-	if(event.code === "ArrowUp" || event.code === "ArrowDown") {
-		if (event.code === "ArrowUp" && paddle.y <= 0)
-			return ;
-		// TODO : replace with Constants
-		if (event.code === "ArrowDown" && paddle.y >= 400 - 80)
-			return ;
-
-		fetch('http://localhost:3000/api/pong/movePaddle', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ roomId: roomNumber, P: player, key: event.code })
-		});
-	}*/
 }
 
 function confirmGame() {
@@ -218,15 +185,6 @@ loadPage("no-room");
 const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 
 const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
-
-function gameLoop() {
-	if (!game)
-		return;
-	while (!game.Over) {
-		// socket.send(JSON.stringify({ key: "Up", roomId: roomNumber, P: player }));
-		// drawGame();
-	}
-}
 
 function drawGame() {
 	if (!c || !game)

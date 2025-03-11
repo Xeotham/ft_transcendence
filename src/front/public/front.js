@@ -193,33 +193,6 @@ function keyHandler(event) {
             intervalIdDown = null;
         }
     }
-    // if (event.code === "ArrowDown") {
-    // 	if (event.type === "keydown" && isButtonPressed.down === false) {
-    // 		isButtonPressed.down = true;
-    // 		intervalIdDown = setInterval(sendPaddleMovement, 1000 / 60,  "ArrowDown");
-    // 	}
-    // 	else if (event.type === "keydown" && isButtonPressed.down === true) {
-    // 		isButtonPressed.down = false;
-    // 		clearInterval(intervalIdDown);
-    // 		intervalIdDown = null;
-    // 	}
-    // }
-    /*
-        if(event.code === "ArrowUp" || event.code === "ArrowDown") {
-            if (event.code === "ArrowUp" && paddle.y <= 0)
-                return ;
-            // TODO : replace with Constants
-            if (event.code === "ArrowDown" && paddle.y >= 400 - 80)
-                return ;
-    
-            fetch('http://localhost:3000/api/pong/movePaddle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ roomId: roomNumber, P: player, key: event.code })
-            });
-        }*/
 }
 function confirmGame() {
     content.innerHTML = "\n\t\t<p>Game Found, Confirm?</p>\n\t\t<button id=\"confirm-game\">Confirm Game</button>\n\t";
@@ -236,14 +209,6 @@ function confirmGame() {
 loadPage("no-room");
 var canvas = document.getElementById("gameCanvas");
 var c = canvas === null || canvas === void 0 ? void 0 : canvas.getContext("2d");
-function gameLoop() {
-    if (!game)
-        return;
-    while (!game.Over) {
-        // socket.send(JSON.stringify({ key: "Up", roomId: roomNumber, P: player }));
-        // drawGame();
-    }
-}
 function drawGame() {
     if (!c || !game)
         return;
