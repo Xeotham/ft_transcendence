@@ -1,6 +1,6 @@
 import db from '../db';
 
-interface Contact 
+interface Contact
 {
     user1_id:			number;
     user2_id:			number;
@@ -15,7 +15,7 @@ interface FriendIdRow
     friend_id: number;
 }
 
-export const createContact = (contact: Contact): void => 
+export const createContact = (contact: Contact): void =>
 {
     const { user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 } = contact;
     const stmt = db.prepare('\
@@ -24,7 +24,7 @@ export const createContact = (contact: Contact): void =>
     stmt.run(user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2);
 };
 
-export const modifyContact = (user1_id:number, user2_id:number, friend_u1:boolean, friend_u2:boolean, block_u1:boolean, block_u2:boolean): void => 
+export const modifyContact = (user1_id:number, user2_id:number, friend_u1:boolean, friend_u2:boolean, block_u1:boolean, block_u2:boolean): void =>
 {
     const f1 = friend_u1 ? 1 : 0;
     const f2 = friend_u2 ? 1 : 0;
@@ -39,7 +39,7 @@ export const modifyContact = (user1_id:number, user2_id:number, friend_u1:boolea
 };
 
 
-export const getUserContactById = (id: number): number[] => 
+export const getUserContactById = (id: number): number[] =>
 {
 	const stmt1 = db.prepare('\
         SELECT c.user2_id as friend_id\
@@ -67,7 +67,7 @@ export const getUserContactById = (id: number): number[] =>
     return contactIds;
 };
 
-export const checkFriendshipStatus = (user1_id: number, user2_id: number): number => 
+export const checkFriendshipStatus = (user1_id: number, user2_id: number): number =>
 {
     let stmt = db.prepare('\
         SELECT c.user1_id, c.user2_id \
@@ -100,7 +100,7 @@ export const checkFriendshipStatus = (user1_id: number, user2_id: number): numbe
     return 0;
 };
 
-export const checkBlockStatus = (user1_id: number, user2_id: number): number => 
+export const checkBlockStatus = (user1_id: number, user2_id: number): number =>
 {
     let stmt = db.prepare('\
         SELECT c.user1_id, c.user2_id \
@@ -126,7 +126,7 @@ export const checkBlockStatus = (user1_id: number, user2_id: number): number =>
     return 0;
 };
 
-export const checkPosContact = (user1_id: number, user2_id: number): number => 
+export const checkPosContact = (user1_id: number, user2_id: number): number =>
 {
     let stmt = db.prepare('\
         SELECT c.user1_id, c.user2_id \
