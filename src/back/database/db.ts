@@ -1,82 +1,93 @@
-// import Database from 'better-sqlite3';
-// import  * as sqlite from "better-sqlite3";
-// import { config } from 'dotenv';
-// import { existsSync, mkdirSync } from 'node:fs';
-// import { join, dirname } from 'path';
-//
-// // Define the path to the database file
-// const dbPath = join(__dirname, 'transcendence.sqlite.db');
-//
-// // Ensure the directory exists
-// const dbDir = dirname(dbPath);
-//
-// // Log the database directory and file paths for debugging
-// console.log(`DB directory: ${dbDir}`);
-// console.log(`DB file path: ${dbPath}`);
-//
-// // Create the directory if it doesn't exist
-// if (!existsSync(dbDir)) {
-//   console.log(`Directory does not exist. Creating: ${dbDir}`);
-//   mkdirSync(dbDir, { recursive: true });
-//   console.log(`Directory created: ${dbDir}`);
-// } else {
-//   console.log(`Directory already exists: ${dbDir}`);
-// }
-//
-// config();
-//
-// let db: sqlite.Database | null = null;
-//
-// // Open the database
-// try {
-//   db = new Database(dbPath);
-//   console.log(`Database opened successfully: ${dbPath}`);
-//
-//   // Create tables (if they don't exist)
-//   db!.exec(`
-//     CREATE TABLE IF NOT EXISTS users (
-//                                        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-//                                        username    TEXT UNIQUE NOT NULL,
-//                                        password    TEXT NOT NULL,
-//                                        avatar      TEXT UNIQUE NOT NULL,
-//                                        connected   BOOLEAN NOT NULL,
-//                                        created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
-//     );
-//
-//     CREATE TABLE IF NOT EXISTS games (
-//                                        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-//                                        player1_id  INTEGER NOT NULL,
-//                                        player2_id  INTEGER NOT NULL,
-//                                        winner_id   INTEGER,
-//                                        loser_id    INTEGER,
-//                                        score_p1    INTEGER NOT NULL,
-//                                        score_p2    INTEGER NOT NULL,
-//                                        played_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
-//                                        FOREIGN KEY (player1_id)    REFERENCES users (id),
-//       FOREIGN KEY (player2_id)    REFERENCES users (id),
-//       FOREIGN KEY (winner_id)     REFERENCES users (id),
-//       FOREIGN KEY (loser_id)      REFERENCES users (id)
-//       );
-//
-//     CREATE TABLE IF NOT EXISTS friends (
-//                                          id        INTEGER PRIMARY KEY AUTOINCREMENT,
-//                                          user1_id  INTEGER NOT NULL,
-//                                          user2_id  INTEGER NOT NULL,
-//                                          FOREIGN KEY (user1_id)    REFERENCES users (id),
-//       FOREIGN KEY (user2_id)    REFERENCES users (id)
-//       );
-//
-//     CREATE TABLE IF NOT EXISTS user_stats (
-//                                             id          INTEGER PRIMARY KEY AUTOINCREMENT,
-//                                             user_id     INTEGER NOT NULL,
-//                                             pong_win    INTEGER NOT NULL,
-//                                             pong_lose   INTEGER NOT NULL,
-//                                             tetris_win  INTEGER NOT NULL,
-//                                             tetris_lose INTEGER NOT NULL,
-//                                             FOREIGN KEY (user_id)    REFERENCES users (id)
-//       );
-//   `);
-// } catch (error: any) {
-//   console.error(`Failed to open database: ${error.message}`);
-// }
-// export default db;
+// @ts-ignore
+import Database from 'better-sqlite3';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcendence.sqlite");
+
+// TODO: Create the right tables with the right references
+
+// Create tables (if they don't exist)
+// DROP TABLE IF EXISTS users;
+// DROP TABLE IF EXISTS user;
+// DROP TABLE IF EXISTS game;
+// DROP TABLE IF EXISTS stat;
+// DROP TABLE IF EXISTS games_users;
+// DROP TABLE IF EXISTS stats_users;
+db.exec(`
+
+  DROP TABLE IF EXISTS contact;
+
+  CREATE TABLE IF NOT EXISTS user 
+  (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    username    VARCHAR(150) UNIQUE NOT NULL,
+    password    VARCHAR(150) NOT NULL,
+    avatar      VARCHAR(150) DEFAULT null,
+    connected   BOOLEAN DEFAULT false,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS game
+  (
+      id		INTEGER PRIMARY KEY AUTOINCREMENT,
+      date 	DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS stat (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    pong_win    INTEGER DEFAULT 0,
+    pong_lose   INTEGER DEFAULT 0,
+    tetris_win  INTEGER DEFAULT 0,
+    tetris_lose INTEGER DEFAULT 0
+  );
+
+  CREATE TABLE IF NOT EXISTS contact
+  (
+      user1_id INTEGER NOT NULL,
+      user2_id INTEGER NOT NULL,
+      friend  BOOLEAN DEFAULT 0,
+      blocked BOOLEAN DEFAULT 0,
+      FOREIGN KEY (user1_id) REFERENCES user(id),
+      FOREIGN KEY (user2_id) REFERENCES user(id),
+      PRIMARY KEY (user1_id, user2_id),
+      UNIQUE (user1_id, user2_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS games_users 
+  (
+      user_id INTEGER NOT NULL,
+      game_id INTEGER NOT NULL,
+      score   INTEGER NOT NULL,
+      winner  BOOLEAN NOT NULL,
+      type    VARCHAR(50) NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES user(id),
+      FOREIGN KEY (game_id) REFERENCES game(id),
+      PRIMARY KEY (user_id, game_id),
+      UNIQUE (user_id, game_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS stats_users (
+    user_id INTEGER NOT NULL,
+    stat_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (stat_id) REFERENCES stat(id),
+    PRIMARY KEY (user_id, stat_id),
+    UNIQUE      (user_id, stat_id)
+  );
+
+  
+
+`);
+
+// CREATE TRIGGER update_win_pong_stat
+//   AFTER INSERT ON games_users
+//   WHEN winner = true & type = 'pong' 
+//   BEGIN
+//     UPDATE stat
+//     SET pong_win = pong_win + 1
+//     WHERE id = NEW.users_id;
+//   END;
+
+export default db;
