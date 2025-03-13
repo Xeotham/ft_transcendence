@@ -15,10 +15,11 @@ const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcenden
 // DROP TABLE IF EXISTS stat;
 // DROP TABLE IF EXISTS games_users;
 // DROP TABLE IF EXISTS stats_users;
+// DROP TABLE IF EXISTS contact;
+// DROP TABLE IF EXISTS message;
 db.exec(`
-
-  DROP TABLE IF EXISTS contact;
-
+  
+  
   CREATE TABLE IF NOT EXISTS user 
   (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,8 +32,8 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS game
   (
-      id		INTEGER PRIMARY KEY AUTOINCREMENT,
-      date 	DATETIME
+    id		INTEGER PRIMARY KEY AUTOINCREMENT,
+    date 	DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
   CREATE TABLE IF NOT EXISTS stat (
@@ -52,7 +53,19 @@ db.exec(`
       FOREIGN KEY (user1_id) REFERENCES user(id),
       FOREIGN KEY (user2_id) REFERENCES user(id),
       PRIMARY KEY (user1_id, user2_id),
-      UNIQUE (user1_id, user2_id)
+      UNIQUE (user1_id, user2_id),
+      UNIQUE (user2_id, user1_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS message
+  (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    recipient_id INTEGER NOT NULL,
+    content TEXT,
+    date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES user(id),
+    FOREIGN KEY (recipient_id) REFERENCES user(id)
   );
 
   CREATE TABLE IF NOT EXISTS games_users 
@@ -83,7 +96,7 @@ db.exec(`
 
 // CREATE TRIGGER update_win_pong_stat
 //   AFTER INSERT ON games_users
-//   WHEN winner = true & type = 'pong' 
+//   WHEN winner = true AND type = 'pong' 
 //   BEGIN
 //     UPDATE stat
 //     SET pong_win = pong_win + 1
