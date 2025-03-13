@@ -6,6 +6,7 @@ import fastifyWebsocket from '@fastify/websocket';
 import { fastifyStatic } from "@fastify/static";
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from 'ws';
+import formbody from "@fastify/formbody"
 // import path from 'path';
 import * as path from "path";
 import * as dotenv from "dotenv";
@@ -15,6 +16,8 @@ dotenv.config();
 
 const fastify = Fastify(/*{ logger: true }*/);
 fastify.register(fastifyWebsocket);
+
+fastify.register(formbody);
 
 // Register the CORS plugin
 fastify.register(fastifyCors, {
