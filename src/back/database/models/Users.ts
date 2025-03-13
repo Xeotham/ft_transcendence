@@ -11,6 +11,7 @@ interface Users {
     created_at?:    string;
 }
 
+
 export const createUser = (user: Users): void => {
     const { username, password, avatar, connected } = user;
     const stmt = db.prepare('INSERT INTO users (username, password, avatar, connected) VALUES (?, ?, ?, ?)');
