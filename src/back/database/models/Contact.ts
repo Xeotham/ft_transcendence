@@ -1,5 +1,4 @@
 import db from '../db';
-import { createUserStats } from './Stats'
 
 interface Contact {
     user1_id:			number;
@@ -10,16 +9,22 @@ interface Contact {
 
 export const createContact = (contact: Contact): void => {
     const { user1_id, user2_id, friend, blocked } = contact;
-    const stmt = db.prepare('INSERT INTO contact (user1_id, user2_id, friend, blocked) VALUES (?, ?, ?, ?)');
+    let stmt = db.prepare('\
+        INSERT INTO contact (user1_id, user2_id, friend, blocked) \
+        VALUES (?, ?, ?, ?)');
     stmt.run(user1_id, user2_id, friend, blocked);
+    stmt = db.prepare('\
+        INSERT INTO contact (user2_id, user1_id, friend, blocked) \
+        VALUES (?, ?, ?, ?)');
+    stmt.run(user2_id, user1_id, friend, blocked);
 };
 
-/*export const getUserContactById = (id: number): Contact | undefined => {
-	const stmt = db.prepare('SELECT * FROM user u JOIN contact c ON c.user1_id = u.id JOIN u ON c.user2_id = u.user_id WHERE user_id = ?');
-	return stmt.get(id) as Contact | undefined;
-};*/
-
-export const getUserContactById = (id: number): Contact | undefined => {
-	const stmt = db.prepare('SELECT * FROM user u JOIN contact c ON c.user1_id = u.id WHERE u.id = ?');
-	return stmt.get(id) as Contact | undefined;
+export const getUserContactById = (id: number): Contact[] | undefined => {
+	const stmt = db.prepare('\
+        SELECT u.username, c.user2_id \
+        FROM user u \
+        JOIN contact c \
+        ON c.user1_id = u.id \
+        WHERE u.id = ?');
+	return stmt.all(id) as Contact[] | undefined;
 };

@@ -10,6 +10,7 @@ npm install -D typescript;
 npm i fastify;																																		# install fastify
 npm i @fastify/websocket;																													# install websockets
 npm install @fastify/static;																											# install static Handler
+npm install @fastify/formbody;
 npm install better-sqlite3;																												# install better-sqlite3 for the DataBase
 npm i --save-dev @types/better-sqlite3;
 npm i @types/ws -D;																																# definitions for websockets for typescript

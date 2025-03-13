@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { registerUser, loginUser, getUserInfo, addFriend, getFriends } from './controllers';
+import { registerUser, loginUser, logoutUser, getUserInfo, addFriend, getFriends, addMessage, getMessage, blockContact, unblockContact } from './controllers';
 
 // TODO: Register a user
 // TODO: Login a user
@@ -10,11 +10,21 @@ import { registerUser, loginUser, getUserInfo, addFriend, getFriends } from './c
 // TODO: Block a user
 // TODO: (Maybe) delete a user
 
-export default async function userRoutes(fastify: FastifyInstance) {
+export async function userRoutes(fastify: FastifyInstance) {
     fastify.post('/register', registerUser);
     fastify.post('/login', loginUser);
+    fastify.post('/logout', logoutUser);
     fastify.get('/get_user', getUserInfo);
+}
+
+export async function messageRoutes(fastify: FastifyInstance) {
+    fastify.post('/add_message', addMessage);
+    fastify.get('/get_message', getMessage);
+}
+
+export async function contactRoutes(fastify: FastifyInstance) {
     fastify.post('/add_friend', addFriend);
     fastify.get('/get_friend', getFriends);
-
+    fastify.post('/block_contact', blockContact);
+    fastify.post('/unblock_contact', unblockContact);
 }

@@ -1,5 +1,4 @@
 import db from '../db';
-import { createUserStats } from './Stats'
 
 interface Game {
     id?:    number;
@@ -14,7 +13,10 @@ interface Game {
 
 export const createGame = (game: Game): void => {
     const { date } = game;
-    const stmt = db.prepare('INSERT INTO games (date) VALUES (?)');
+    const stmt = db.prepare('\
+        INSERT INTO games (date) \
+        VALUES (?)\
+        ');
     stmt.run(date);
 };
 
