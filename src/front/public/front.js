@@ -42,9 +42,8 @@ var player = null;
 var content = document.getElementById("content");
 var socket = null;
 var score = { player1: 0, player2: 0 };
-var isButtonPressed = { up: false, down: false };
-var intervalIdUp = null;
-var intervalIdDown = null;
+var isButtonPressed = { "ArrowUp": false, "ArrowDown": false };
+var intervals = { "ArrowUp": null, "ArrowDown": null };
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 function loadPage(page) {
@@ -61,25 +60,30 @@ function loadPage(page) {
     });
 }
 function noRoom(content) {
-    content.innerHTML = "\n\t\t<button id=\"join-game\">Join the Game</button>\n\t";
+    content.innerHTML = "\n\t\t<button id=\"join-game\">Join a Game</button>\n\t";
     document.getElementById("join-game").addEventListener("click", joinRoom);
+    if (c)
+        c.clearRect(0, 0, canvas.width, canvas.height);
 }
 function room_found(content) {
     content.innerHTML = "\n\t\t<p>Room found!</p>\n\t\t<button id=\"quit-room\">Quit Room</button>\n\t";
     document.getElementById("quit-room").addEventListener("click", quitRoom);
 }
 function quitRoom() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            console.log("quit room");
-            fetch('http://localhost:3000/api/pong/quitRoom').then();
-            if (socket)
-                socket.close();
-            socket = null;
-            loadPage("no-room");
-            return [2 /*return*/];
-        });
+    // console.log("quit room");
+    fetch('http://localhost:3000/api/pong/quitRoom', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ roomId: roomNumber, P: player })
     });
+    if (socket)
+        socket.close();
+    socket = null;
+    roomNumber = -1;
+    player = null;
+    loadPage("no-room");
 }
 function joinRoom(ev) {
     return __awaiter(this, void 0, void 0, function () {
@@ -96,6 +100,8 @@ function joinRoom(ev) {
             };
             socket.onclose = function () {
                 console.log("Connection closed");
+                if (roomNumber >= 0)
+                    quitRoom();
             };
             // Listen for messages
             socket.addEventListener("message", messageHandler);
@@ -107,43 +113,59 @@ function messageHandler(event) {
     var res = JSON.parse(event.data);
     if (!res)
         return;
-    if (res.type === 'INFO') {
-        console.log("%c[INFO]%c : " + res.message, "color: green", "color: reset");
-        if (res.data)
-            console.log("data: " + res.data);
-    }
-    else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
-        console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
-        if (res.type === "ALERT")
+    switch (res.type) {
+        case 'INFO':
+            console.log("%c[INFO]%c : " + res.message, "color: green", "color: reset");
+            if (res.data)
+                console.log("data: " + res.data);
+            break;
+        case "ALERT":
             alert(res.message);
+        // fallthrough
+        case "ERROR":
+        // fallthrough
+        case "WARNING":
+            console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
+            break;
+        case "CONFIRM":
+            confirmGame();
+            break;
+        case "GAME":
+            gameMessageHandler(res);
+            break;
+        case "LEAVE":
+            console.log("LEAVE");
+            quitRoom();
+            break;
+        default:
+            console.log("Unknown message type: " + res.type);
     }
-    else if (res.type === "CONFIRM") {
-        confirmGame();
-    }
-    else if (res.type === "GAME") {
-        if (res.message === "PREP") {
+}
+function gameMessageHandler(res) {
+    switch (res.message) {
+        case "PREP":
             roomNumber = res.roomID === null ? roomNumber : res.roomID;
             player = res.player === null ? player : res.player;
             console.log("Joined room: " + roomNumber + " as player: " + player);
-            return;
-        }
-        if (res.message === "START") {
+            break;
+        case "START":
+            document.getElementById("content").innerHTML = "";
             document.addEventListener("keydown", keyHandler);
             document.addEventListener("keyup", keyHandler);
-            return;
-        }
-        if (res.message === "FINISH") {
+            break;
+        case "FINISH":
+            res.data === player ? alert("You won!") : alert("You lost!");
             document.removeEventListener("keydown", keyHandler);
             document.removeEventListener("keyup", keyHandler);
-            return;
-        }
-        if (res.message === "SCORE") {
+            quitRoom();
+            break;
+        case "SCORE":
             score = res.data;
-            console.log("Score: " + score.player1 + " - " + score.player2);
-            return;
-        }
-        game = res.data;
-        drawGame();
+            console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
+            break;
+        default:
+            game = res.data;
+            drawGame();
     }
 }
 function keyHandler(event) {
@@ -169,35 +191,14 @@ function keyHandler(event) {
             });
         });
     }
-    if (event.code === "ArrowUp") {
-        // console.log("isButtonPressed.up : " + isButtonPressed.up);
-        if (event.type === "keydown" && isButtonPressed.up === false) {
-            isButtonPressed.up = true;
-            // console.log("Before setInterval");
-            intervalIdUp = setInterval(sendPaddleMovement, 1000 / 60, "ArrowUp");
-        }
-        else if (event.type === "keyup" && isButtonPressed.up === true) {
-            isButtonPressed.up = false;
-            // console.log("Before clearInterval");
-            if (intervalIdUp)
-                clearInterval(intervalIdUp);
-            intervalIdUp = null;
-        }
+    if (event.type === "keydown" && isButtonPressed[event.code] === false) {
+        isButtonPressed[event.code] = true;
+        intervals[event.code] = setInterval(sendPaddleMovement, 1000 / 60, event.code);
     }
-    if (event.code === "ArrowDown") {
-        // console.log("isButtonPressed.up : " + isButtonPressed.up);
-        if (event.type === "keydown" && isButtonPressed.down === false) {
-            isButtonPressed.down = true;
-            // console.log("Before setInterval");
-            intervalIdDown = setInterval(sendPaddleMovement, 1000 / 60, "ArrowDown");
-        }
-        else if (event.type === "keyup" && isButtonPressed.down === true) {
-            isButtonPressed.down = false;
-            // console.log("Before clearInterval");
-            if (intervalIdDown)
-                clearInterval(intervalIdDown);
-            intervalIdDown = null;
-        }
+    if (event.type === "keyup" && isButtonPressed[event.code] === true) {
+        isButtonPressed[event.code] = false;
+        clearInterval(intervals[event.code]);
+        intervals[event.code] = null;
     }
 }
 function confirmGame() {

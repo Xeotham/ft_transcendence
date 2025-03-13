@@ -3,20 +3,19 @@ import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from "ws";
 import { Game } from "../../pong_app/server/pong_game";
 import * as Constants from "../../pong_app/server/constants";
-import * as repl from "node:repl";
 
 // Interactions with the DataBase to create and get Users
 // import { createUser, getUserByUsername } from '../../database/models/Games';
 
 interface Room {
 	id:			number;
-	P1:	WebSocket | null;
-	P2:	WebSocket | null;
+	P1:			WebSocket | null;
+	P2:			WebSocket | null;
 	full:		boolean;
 	game:		Game | null;
 	isP1Ready:	boolean;
 	isP2Ready:	boolean;
-	// private:	boolean;
+	// private:	boolean; // TODO: Implement private rooms
 	// inviteCode:	string;
 }
 
@@ -75,11 +74,6 @@ export const joinRoom = async (socket: WebSocket, req: FastifyRequest) => {
 	return ;
 };
 
-// async function waitingPlayers(room: Room) {
-// 	console.log("Waiting for players: \nP1: " + room.isP1Ready + " P2: " + room.isP2Ready);
-// 	return !(!room.isP1Ready || !room.isP2Ready);
-// }
-
 export const startConfirm = async (request: FastifyRequest<{ Body: PongRequestBody }>, reply: FastifyReply) => {
 	let		room = Rooms.find((room) => { return (room.id === request.body.roomId); });
 	const	player: string | "P1" | "P2" = request.body.P;
@@ -94,7 +88,6 @@ export const startConfirm = async (request: FastifyRequest<{ Body: PongRequestBo
 		room.isP2Ready = true;
 	playerSocket.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }))
 
-	// await waitingPlayers(room);
 	if (!room.isP1Ready || !room.isP2Ready)
 		return playerSocket.send(JSON.stringify({type: "INFO", message: "Players not ready"}));
 
@@ -103,35 +96,37 @@ export const startConfirm = async (request: FastifyRequest<{ Body: PongRequestBo
 	room.P1.send(JSON.stringify({ type: "GAME", message: "START" }));
 	room.P2.send(JSON.stringify({ type: "GAME", message: "START" }));
 	console.log("Starting game");
-	console.log(player);
 	room.game.GameLoop();
 }
 
-export const quitRoom = async (socket: WebSocket, req: FastifyRequest) => {
-	console.log("Quitting room");
+export const quitRoom = async (request: FastifyRequest<{ Body: PongRequestBody }>, reply: FastifyReply) => {
+
+	console.log("Player : " + request.body.P + " is quitting room : " + request.body.roomId);
+
+	const room = Rooms.find((room) => { return room.id === request.body.roomId; });
+
+	if (!room)
+		return console.log("Room not found");
+
+	const player: string | "P1" | "P2" = request.body.P;
+	const playerSocket: WebSocket | null = player === "P1" ? room.P1 : room.P2;
+	const opponentSocket: WebSocket | null = player === "P1" ? room.P2 : room.P1;
+
+	if (!playerSocket)
+		return console.log("Player not found");
 
 	Rooms.forEach((room) => {
-		if (socket === room.P1 && room.P2 !== null) {
-			room.P1 = room.P2;
-			room.P2 = null;
-			room.full = false;
-			room.game.Forfeit("P1");
-			room.P1.send("Your opponent has left the room");
-			return socket.send("You have left the room");
-		}
-		else if (socket === room.P2) {
-			room.P2 = null;
-			room.full = false;
-			room.game.Forfeit("P2");
-			room.P1?.send("Your opponent has left the room");
-			return socket.send("You have left the room");
-		}
-		else if (socket === room.P1) {
-			Rooms.splice(Rooms.indexOf(room), 1);
-			return socket.send("You have left the room");
-		}
+		if (room.P1 !== playerSocket && room.P2 !== playerSocket)
+			return ;
+		if (room.game)
+			room.game.Forfeit(player);
+		playerSocket?.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
+		opponentSocket?.send(JSON.stringify({ type: "ALERT", message: "Your opponent has left the room" }));
+		if (!room.isP1Ready || !room.isP2Ready)
+			opponentSocket?.send(JSON.stringify({ type: "LEAVE" }));
+		console.log("Room : " + room.id + " has been deleted");
+		Rooms.splice(Rooms.indexOf(room), 1);
 	});
-	return socket.send("You are not in a room");
 };
 
 export const startGame = async (request: FastifyRequest<{ Body: PongRequestBody }>, reply: FastifyReply) => {
@@ -149,7 +144,6 @@ export const movePaddle = async (request: FastifyRequest<{ Body: PongRequestBody
 	if (!room || !room.game)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
 	room.game.MovePaddle(request.body);
-
 };
 
 export const finishGame = async (request: FastifyRequest, reply: FastifyReply) => {

@@ -42,47 +42,52 @@ export class Game {
 	}
 
 	SpawnBall(side: string | "P1" | "P2") {
+		this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
+		this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
 		this.Ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
 		this.Ball.x = Constants.WIDTH / 2;
 		this.Ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
+		// this.Ball.y = Constants.HEIGHT / 2; // TODO : Remove this line
+		// this.Ball.orientation = 0; // TODO : Remove this line
 		if (side === "P1")
 			this.Ball.orientation += Math.PI;
 		this.Ball.speed = Constants.BALL_SPEED;
 	}
 
 	async GameLoop() {
-		const updateInterval = 1000 / 60; // 60 times per second
+		const gameLoopIteration = async () => {
+			if (this.Score.player1 < 10 && this.Score.player2 < 10 && !this.Over) {
+				this.MoveBall();
+				setTimeout(gameLoopIteration, 0); // Schedule the next iteration
+				return ;
+			}
+			clearInterval(intervalId);
+			console.log("Game over");
+			this.FinishTime = performance.now();
+			if (!this.Over) // If the game didn't ended because of a forfeit
+				this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
+			this.Over = true;
+			const winner = this.Winner === this.Players.player1 ? "P1" : "P2";
+			this.Players.player1.send(JSON.stringify({ type: "GAME", data: winner, message: "FINISH" }));
+			this.Players.player2.send(JSON.stringify({ type: "GAME", data: winner, message: "FINISH" }));
+			console.log("The winner of the room " + this.Id + " is " + winner);
+			// TODO : Save game in database
+		};
 		const sendGameInfo = () => {
 			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
 			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
 		};
 
-		const gameLoopIteration = async () => {
-			if (this.Score.player1 < 10 && this.Score.player2 < 10 && !this.Over) {
-				this.MoveBall();
-				setTimeout(gameLoopIteration, 0); // Schedule the next iteration
-			} else {
-				clearInterval(intervalId);
-				console.log("Game over");
-				if (!this.Over) {
-					this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
-					this.Over = true;
-				}
-				this.FinishTime = performance.now();
-				this.Players.player1.send(JSON.stringify({ type: "GAME", message: "FINISH" }));
-				this.Players.player2.send(JSON.stringify({ type: "GAME", message: "FINISH" }));
-			}
-		};
-
+		const updateInterval = 1000 / 60; // 60 times per second
 		const intervalId = setInterval(sendGameInfo, updateInterval);
 		this.StartTime = performance.now();
-		this.LastTime = performance.now();
+		this.LastTime = this.StartTime;
 		gameLoopIteration(); // Start the game loop
 	}
 
 	HitPaddle(player: string | "P1" | "P2", paddle: { x: number, y: number, x_size: number, y_size: number }) {
-		let ratio = (this.Ball.y - paddle.y) / (paddle.y_size / 2) - 1; // -1 to 1
-		let angle = 45 * ratio;
+		let ratio = (this.Ball.y - paddle.y) / (paddle.y_size / 2) - 1; // -1 to 1, based on the distance from the center of the paddle
+		let angle = 45 * ratio; // -45 to 45 degrees
 		if (player === "P2")
 			angle = 180 - angle;
 		this.Ball.orientation = angle * Math.PI / 180;
@@ -113,8 +118,6 @@ export class Game {
 
 		this.PaddleCollision("P1");
 		this.PaddleCollision("P2");
-		// if (this.Ball.x - this.Ball.size < 0 || this.Ball.x + this.Ball.size >= Constants.WIDTH)
-		// 	this.Ball.orientation = Math.PI - this.Ball.orientation;
 		if (this.Ball.y - this.Ball.size < 0 || this.Ball.y + this.Ball.size >= Constants.HEIGHT) {
 			this.Ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
 			this.Ball.orientation = -this.Ball.orientation;
@@ -131,15 +134,10 @@ export class Game {
 		if (this.Ball.x - this.Ball.size < 0) {
 			this.Score.player2++;
 			this.SpawnBall("P1");
-			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
-			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
-
 		}
 		if (this.Ball.x + this.Ball.size >= Constants.WIDTH) {
 			this.Score.player1++;
 			this.SpawnBall("P2");
-			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
-			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
 		}
 	}
 
@@ -151,8 +149,6 @@ export class Game {
 			paddle.y = 0;
 		if (paddle.y > Constants.HEIGHT - paddle.y_size)
 			paddle.y = Constants.HEIGHT - paddle.y_size;
-		this.Players.player1.send(JSON.stringify({type: "GAME", data: this.toJSON()}));
-		this.Players.player2.send(JSON.stringify({type: "GAME", data: this.toJSON()}));
 	}
 
 	Forfeit(player: string) {

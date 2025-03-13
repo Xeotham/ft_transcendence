@@ -87,10 +87,6 @@ var joinRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.joinRoom = joinRoom;
-// async function waitingPlayers(room: Room) {
-// 	console.log("Waiting for players: \nP1: " + room.isP1Ready + " P2: " + room.isP2Ready);
-// 	return !(!room.isP1Ready || !room.isP2Ready);
-// }
 var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
     var room, player, playerSocket;
     return __generator(this, function (_a) {
@@ -105,7 +101,6 @@ var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, 
         else
             room.isP2Ready = true;
         playerSocket.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }));
-        // await waitingPlayers(room);
         if (!room.isP1Ready || !room.isP2Ready)
             return [2 /*return*/, playerSocket.send(JSON.stringify({ type: "INFO", message: "Players not ready" }))];
         room.P1.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
@@ -113,38 +108,36 @@ var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, 
         room.P1.send(JSON.stringify({ type: "GAME", message: "START" }));
         room.P2.send(JSON.stringify({ type: "GAME", message: "START" }));
         console.log("Starting game");
-        console.log(player);
         room.game.GameLoop();
         return [2 /*return*/];
     });
 }); };
 exports.startConfirm = startConfirm;
-var quitRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
+var quitRoom = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
+    var room, player, playerSocket, opponentSocket;
     return __generator(this, function (_a) {
-        console.log("Quitting room");
+        console.log("Player : " + request.body.P + " is quitting room : " + request.body.roomId);
+        room = exports.Rooms.find(function (room) { return room.id === request.body.roomId; });
+        if (!room)
+            return [2 /*return*/, console.log("Room not found")];
+        player = request.body.P;
+        playerSocket = player === "P1" ? room.P1 : room.P2;
+        opponentSocket = player === "P1" ? room.P2 : room.P1;
+        if (!playerSocket)
+            return [2 /*return*/, console.log("Player not found")];
         exports.Rooms.forEach(function (room) {
-            var _a;
-            if (socket === room.P1 && room.P2 !== null) {
-                room.P1 = room.P2;
-                room.P2 = null;
-                room.full = false;
-                room.game.Forfeit("P1");
-                room.P1.send("Your opponent has left the room");
-                return socket.send("You have left the room");
-            }
-            else if (socket === room.P2) {
-                room.P2 = null;
-                room.full = false;
-                room.game.Forfeit("P2");
-                (_a = room.P1) === null || _a === void 0 ? void 0 : _a.send("Your opponent has left the room");
-                return socket.send("You have left the room");
-            }
-            else if (socket === room.P1) {
-                exports.Rooms.splice(exports.Rooms.indexOf(room), 1);
-                return socket.send("You have left the room");
-            }
+            if (room.P1 !== playerSocket && room.P2 !== playerSocket)
+                return;
+            if (room.game)
+                room.game.Forfeit(player);
+            playerSocket === null || playerSocket === void 0 ? void 0 : playerSocket.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
+            opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "ALERT", message: "Your opponent has left the room" }));
+            if (!room.isP1Ready || !room.isP2Ready)
+                opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "LEAVE" }));
+            console.log("Room : " + room.id + " has been deleted");
+            exports.Rooms.splice(exports.Rooms.indexOf(room), 1);
         });
-        return [2 /*return*/, socket.send("You are not in a room")];
+        return [2 /*return*/];
     });
 }); };
 exports.quitRoom = quitRoom;

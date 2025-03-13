@@ -8,9 +8,8 @@ let		player : string | "P1" | "P2" | null = null;
 const	content = document.getElementById("content");
 let		socket: WebSocket | null = null;
 let		score = { player1: 0, player2: 0 };
-let		isButtonPressed = { up: false, down: false };
-let		intervalIdUp: NodeJS.Timeout | null = null;
-let		intervalIdDown: NodeJS.Timeout | null = null;
+let		isButtonPressed = { "ArrowUp": false, "ArrowDown": false };
+let		intervals: { "ArrowUp": NodeJS.Timeout | null, "ArrowDown": NodeJS.Timeout | null } = { "ArrowUp": null, "ArrowDown": null };
 
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
@@ -26,9 +25,11 @@ async function loadPage(page: string) {
 
 function	noRoom(content: HTMLElement) {
 	content.innerHTML = `
-		<button id="join-game">Join the Game</button>
+		<button id="join-game">Join a Game</button>
 	`
 	document.getElementById("join-game").addEventListener("click", joinRoom);
+	if (c)
+		c.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function	room_found(content: HTMLElement) {
@@ -39,12 +40,20 @@ function	room_found(content: HTMLElement) {
 	document.getElementById("quit-room").addEventListener("click", quitRoom)
 }
 
-async function quitRoom() {
-	console.log("quit room");
-	fetch('http://localhost:3000/api/pong/quitRoom').then();
+function quitRoom() {
+	// console.log("quit room");
+	fetch('http://localhost:3000/api/pong/quitRoom', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ roomId: roomNumber, P: player })
+	});
 	if (socket)
 		socket.close();
 	socket = null;
+	roomNumber = -1;
+	player = null;
 	loadPage("no-room");
 }
 
@@ -56,16 +65,15 @@ async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 	socket.addEventListener("error", (error) => {
 		console.error(error);
 	})
-
 	// Connection opened
 	socket.onopen = () => {
 		console.log("Connected to the server");
 	}
-
 	socket.onclose = () => {
 		console.log("Connection closed");
+		if (roomNumber >= 0)
+			quitRoom();
 	}
-
 	// Listen for messages
 	socket.addEventListener("message", messageHandler);
 }
@@ -75,43 +83,59 @@ function messageHandler(event: MessageEvent) {
 
 	if (!res)
 		return;
-	if (res.type === 'INFO') {
-		console.log("%c[INFO]%c : " + res.message, "color: green", "color: reset");
-		if (res.data)
-			console.log("data: " + res.data);
- 	}
-	else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
-		console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
-		if (res.type === "ALERT")
-		alert(res.message);
+	switch (res.type) {
+		case 'INFO':
+			console.log("%c[INFO]%c : " + res.message, "color: green", "color: reset");
+			if (res.data)
+				console.log("data: " + res.data);
+			break ;
+		case "ALERT":
+			alert(res.message);
+			// fallthrough
+		case "ERROR":
+			// fallthrough
+		case "WARNING":
+			console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
+			break ;
+		case "CONFIRM":
+			confirmGame();
+			break ;
+		case "GAME":
+			gameMessageHandler(res);
+			break ;
+		case "LEAVE":
+			quitRoom();
+			break ;
+		default:
+			console.log("Unknown message type: " + res.type);
 	}
-	else if (res.type === "CONFIRM") {
-		confirmGame();
-	}
-	else if (res.type === "GAME") {
-		if (res.message === "PREP") {
+}
+
+function gameMessageHandler(res: responseFormat) {
+	switch (res.message) {
+		case "PREP":
 			roomNumber = res.roomID === null ? roomNumber : res.roomID;
 			player = res.player === null ? player : res.player;
 			console.log("Joined room: " + roomNumber + " as player: " + player);
-			return ;
-		}
-		if (res.message === "START") {
+			break ;
+		case "START":
+			document.getElementById("content").innerHTML = "";
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
-			return ;
-		}
-		if (res.message === "FINISH")  {
+			break ;
+		case "FINISH":
+			res.data === player ? alert("You won!") : alert("You lost!");
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
-			return ;
-		}
-		if (res.message === "SCORE") {
+			quitRoom();
+			break ;
+		case "SCORE":
 			score = res.data;
-			console.log("Score: " + score.player1 + " - " + score.player2);
-			return ;
-		}
-		game = res.data;
-		drawGame();
+			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
+			break;
+		default:
+			game = res.data;
+			drawGame();
 	}
 }
 
@@ -122,10 +146,10 @@ function keyHandler(event: KeyboardEvent) {
 
 	async function sendPaddleMovement(key: string) {
 		const paddle = player === "P1" ? game.Paddle1 : game.Paddle2;
+
 		// TODO : replace with Constants
 		if ((key === "ArrowUp" &&  paddle.y <= 0) || (key === "ArrowDown" && paddle.y >= 400 - 80))
 			return;
-
 		fetch('http://localhost:3000/api/pong/movePaddle', {
 			method: 'POST',
 			headers: {
@@ -135,35 +159,14 @@ function keyHandler(event: KeyboardEvent) {
 		});
 	}
 
-	if (event.code === "ArrowUp") {
-		// console.log("isButtonPressed.up : " + isButtonPressed.up);
-		if (event.type === "keydown" && isButtonPressed.up === false) {
-			isButtonPressed.up = true;
-			// console.log("Before setInterval");
-			intervalIdUp = setInterval(sendPaddleMovement, 1000 / 60, "ArrowUp");
-		}
-		else if (event.type === "keyup" && isButtonPressed.up === true) {
-			isButtonPressed.up = false;
-			// console.log("Before clearInterval");
-			if (intervalIdUp)
-				clearInterval(intervalIdUp);
-			intervalIdUp = null;
-		}
+	if (event.type === "keydown" && isButtonPressed[event.code] === false) {
+		isButtonPressed[event.code] = true;
+		intervals[event.code] = setInterval(sendPaddleMovement, 1000 / 60, event.code);
 	}
-	if (event.code === "ArrowDown") {
-		// console.log("isButtonPressed.up : " + isButtonPressed.up);
-		if (event.type === "keydown" && isButtonPressed.down === false) {
-			isButtonPressed.down = true;
-			// console.log("Before setInterval");
-			intervalIdDown = setInterval(sendPaddleMovement, 1000 / 60, "ArrowDown");
-		}
-		else if (event.type === "keyup" && isButtonPressed.down === true) {
-			isButtonPressed.down = false;
-			// console.log("Before clearInterval");
-			if (intervalIdDown)
-				clearInterval(intervalIdDown);
-			intervalIdDown = null;
-		}
+	if (event.type === "keyup" && isButtonPressed[event.code] === true) {
+		isButtonPressed[event.code] = false;
+		clearInterval(intervals[event.code]);
+		intervals[event.code] = null;
 	}
 }
 

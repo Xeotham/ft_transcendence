@@ -4,7 +4,7 @@ import { joinRoom, quitRoom, startGame, movePaddle, finishGame, startConfirm } f
 export default async function pongRoutes(fastify: FastifyInstance) {
 
 	fastify.get('/joinRoom', {websocket: true}, joinRoom);
-	fastify.get('/quitRoom', {websocket: true}, quitRoom);
+	fastify.post('/quitRoom', quitRoom);
 	fastify.post('/startConfirm', startConfirm);
 	fastify.post('/startGame', startGame);
 	fastify.post('/movePaddle', movePaddle);
