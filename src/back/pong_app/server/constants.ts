@@ -4,6 +4,7 @@ export const PADDLE_WIDTH = 10;
 export const PADDLE_HEIGHT = 80;
 export const BALL_SIZE = 10;
 export const BALL_SPEED = 400;
+export const BALL_ACCELERATION_PER_BOUNCE_RATIO = 1.02;
 export const PADDLE_SPEED = 9;
 export const PADDLE_MARGIN = 10;
 export const PADDLE1_X = PADDLE_MARGIN;

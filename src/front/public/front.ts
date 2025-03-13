@@ -7,6 +7,7 @@ let		game : Game | null = null;
 let		player : string | "P1" | "P2" | null = null;
 const	content = document.getElementById("content");
 let		socket: WebSocket | null = null;
+let		score = { player1: 0, player2: 0 };
 let		isButtonPressed = { up: false, down: false };
 let		intervalIdUp: NodeJS.Timeout | null = null;
 let		intervalIdDown: NodeJS.Timeout | null = null;
@@ -62,7 +63,7 @@ async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 	}
 
 	socket.onclose = () => {
-
+		console.log("Connection closed");
 	}
 
 	// Listen for messages
@@ -71,9 +72,6 @@ async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
 
 function messageHandler(event: MessageEvent) {
 	let res: responseFormat = JSON.parse(event.data);
-
-	// console.log("Message from server: ", event.data);
-	// console.log(res);
 
 	if (!res)
 		return;
@@ -84,6 +82,7 @@ function messageHandler(event: MessageEvent) {
  	}
 	else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
 		console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
+		if (res.type === "ALERT")
 		alert(res.message);
 	}
 	else if (res.type === "CONFIRM") {
@@ -104,6 +103,11 @@ function messageHandler(event: MessageEvent) {
 		if (res.message === "FINISH")  {
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
+			return ;
+		}
+		if (res.message === "SCORE") {
+			score = res.data;
+			console.log("Score: " + score.player1 + " - " + score.player2);
 			return ;
 		}
 		game = res.data;

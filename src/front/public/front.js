@@ -41,6 +41,7 @@ var game = null;
 var player = null;
 var content = document.getElementById("content");
 var socket = null;
+var score = { player1: 0, player2: 0 };
 var isButtonPressed = { up: false, down: false };
 var intervalIdUp = null;
 var intervalIdDown = null;
@@ -94,6 +95,7 @@ function joinRoom(ev) {
                 console.log("Connected to the server");
             };
             socket.onclose = function () {
+                console.log("Connection closed");
             };
             // Listen for messages
             socket.addEventListener("message", messageHandler);
@@ -103,8 +105,6 @@ function joinRoom(ev) {
 }
 function messageHandler(event) {
     var res = JSON.parse(event.data);
-    // console.log("Message from server: ", event.data);
-    // console.log(res);
     if (!res)
         return;
     if (res.type === 'INFO') {
@@ -114,7 +114,8 @@ function messageHandler(event) {
     }
     else if (res.type === "ALERT" || res.type === "ERROR" || res.type === "WARNING") {
         console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
-        alert(res.message);
+        if (res.type === "ALERT")
+            alert(res.message);
     }
     else if (res.type === "CONFIRM") {
         confirmGame();
@@ -134,6 +135,11 @@ function messageHandler(event) {
         if (res.message === "FINISH") {
             document.removeEventListener("keydown", keyHandler);
             document.removeEventListener("keyup", keyHandler);
+            return;
+        }
+        if (res.message === "SCORE") {
+            score = res.data;
+            console.log("Score: " + score.player1 + " - " + score.player2);
             return;
         }
         game = res.data;

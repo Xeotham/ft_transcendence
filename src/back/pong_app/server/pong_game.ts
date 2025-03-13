@@ -9,11 +9,12 @@ export class Game {
 	Score:		{ player1: number, player2: number };
 	Paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	Paddle2:	{ x: number, y: number, x_size: number, y_size: number };
-	Ball:		{ x: number, y: number, size: number, orientation: number };
+	Ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
 	Over:		boolean;
 	Winner:		WebSocket | null;
 
-	private readonly StartTime:	number;
+	private StartTime:	number;
+	private FinishTime:	number;
 	private LastTime:	number;
 
 	constructor(id: number, player1: WebSocket, player2: WebSocket) {
@@ -22,29 +23,36 @@ export class Game {
 		this.Score = { player1: 0, player2: 0 };
 		this.Paddle1 = { x: Constants.PADDLE1_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
 		this.Paddle2 = { x: Constants.PADDLE2_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
-		this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0 };
+		this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0, speed: Constants.BALL_SPEED };
 		this.Over = false;
 		this.Winner = null;
 
 		this.StartTime = performance.now();
+		this.FinishTime = this.StartTime;
 		this.LastTime = this.StartTime;
 
 	}
 
 	toJSON() {
 		return {
-			// Score: this.Score,
 			Paddle1: this.Paddle1,
 			Paddle2: this.Paddle2,
 			Ball: this.Ball,
-			// Over: this.Over,
 		};
+	}
+
+	SpawnBall(side: string | "P1" | "P2") {
+		this.Ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
+		this.Ball.x = Constants.WIDTH / 2;
+		this.Ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
+		if (side === "P1")
+			this.Ball.orientation += Math.PI;
+		this.Ball.speed = Constants.BALL_SPEED;
 	}
 
 	async GameLoop() {
 		const updateInterval = 1000 / 60; // 60 times per second
 		const sendGameInfo = () => {
-			// console.log("Sending game info");
 			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
 			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
 		};
@@ -60,10 +68,15 @@ export class Game {
 					this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
 					this.Over = true;
 				}
+				this.FinishTime = performance.now();
+				this.Players.player1.send(JSON.stringify({ type: "GAME", message: "FINISH" }));
+				this.Players.player2.send(JSON.stringify({ type: "GAME", message: "FINISH" }));
 			}
 		};
 
 		const intervalId = setInterval(sendGameInfo, updateInterval);
+		this.StartTime = performance.now();
+		this.LastTime = performance.now();
 		gameLoopIteration(); // Start the game loop
 	}
 
@@ -73,6 +86,7 @@ export class Game {
 		if (player === "P2")
 			angle = 180 - angle;
 		this.Ball.orientation = angle * Math.PI / 180;
+		this.Ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
 	}
 
 	PaddleCollision(player: string | "P1" | "P2") {
@@ -95,14 +109,16 @@ export class Game {
 		const now = performance.now();
 		const delta = now - this.LastTime;
 		this.LastTime = now;
-		const speed = Constants.BALL_SPEED * delta / 1000;
+		const speed = this.Ball.speed * delta / 1000;
 
 		this.PaddleCollision("P1");
 		this.PaddleCollision("P2");
 		// if (this.Ball.x - this.Ball.size < 0 || this.Ball.x + this.Ball.size >= Constants.WIDTH)
 		// 	this.Ball.orientation = Math.PI - this.Ball.orientation;
-		if (this.Ball.y - this.Ball.size < 0 || this.Ball.y + this.Ball.size >= Constants.HEIGHT)
+		if (this.Ball.y - this.Ball.size < 0 || this.Ball.y + this.Ball.size >= Constants.HEIGHT) {
+			this.Ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
 			this.Ball.orientation = -this.Ball.orientation;
+		}
 
 		this.Ball.x += speed * Math.cos(this.Ball.orientation);
 		this.Ball.y += speed * Math.sin(this.Ball.orientation);
@@ -114,15 +130,16 @@ export class Game {
 
 		if (this.Ball.x - this.Ball.size < 0) {
 			this.Score.player2++;
-			this.Ball.x = Constants.WIDTH / 2;
-			this.Ball.y = Constants.HEIGHT / 2;
-			this.Ball.orientation = Math.PI;
+			this.SpawnBall("P1");
+			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
+			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
+
 		}
 		if (this.Ball.x + this.Ball.size >= Constants.WIDTH) {
 			this.Score.player1++;
-			this.Ball.x = Constants.WIDTH / 2;
-			this.Ball.y = Constants.HEIGHT / 2;
-			this.Ball.orientation = 0;
+			this.SpawnBall("P2");
+			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
+			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
 		}
 	}
 

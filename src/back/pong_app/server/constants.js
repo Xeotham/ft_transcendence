@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PADDLE_Y = exports.PADDLE2_X = exports.PADDLE1_X = exports.PADDLE_MARGIN = exports.PADDLE_SPEED = exports.BALL_SPEED = exports.BALL_SIZE = exports.PADDLE_HEIGHT = exports.PADDLE_WIDTH = exports.HEIGHT = exports.WIDTH = void 0;
+exports.PADDLE_Y = exports.PADDLE2_X = exports.PADDLE1_X = exports.PADDLE_MARGIN = exports.PADDLE_SPEED = exports.BALL_ACCELERATION_PER_BOUNCE_RATIO = exports.BALL_SPEED = exports.BALL_SIZE = exports.PADDLE_HEIGHT = exports.PADDLE_WIDTH = exports.HEIGHT = exports.WIDTH = void 0;
 exports.WIDTH = 800;
 exports.HEIGHT = 400;
 exports.PADDLE_WIDTH = 10;
 exports.PADDLE_HEIGHT = 80;
 exports.BALL_SIZE = 10;
 exports.BALL_SPEED = 400;
+exports.BALL_ACCELERATION_PER_BOUNCE_RATIO = 1.02;
 exports.PADDLE_SPEED = 9;
 exports.PADDLE_MARGIN = 10;
 exports.PADDLE1_X = exports.PADDLE_MARGIN;
