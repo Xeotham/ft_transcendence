@@ -11,6 +11,7 @@ let		score = { player1: 0, player2: 0 };
 let 	isSolo = false;
 let		isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "KeyX": false };
 let		intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
+let		queueInterval: NodeJS.Timeout | null = null;
 
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
@@ -44,6 +45,7 @@ function	room_found(content: HTMLElement) {
 
 async function	joinMatchmaking() {
 	loadPage("room-found");
+	isSolo = false;
 	if (!socket)
 		socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
 
@@ -64,7 +66,6 @@ async function	joinMatchmaking() {
 }
 
 async function	joinSolo() {
-	// loadPage("room-found");
 	isSolo = true;
 	if (!socket)
 		socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
@@ -129,10 +130,12 @@ function messageHandler(event: MessageEvent) {
 			break ;
 		case "LEAVE":
 			quitRoom();
-			if (res.message === "QUEUE_AGAIN") {
+			if (res.message === "QUEUE_AGAIN" || queueInterval) {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
 				joinMatchmaking();
 			}
+			clearInterval(queueInterval);
+			queueInterval = null;
 			break ;
 		case "GAME":
 			gameMessageHandler(res);
@@ -181,12 +184,14 @@ function keyHandler(event: KeyboardEvent) {
 
 	async function sendPaddleMovement(key: string, p: string) {
 		const paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
-		let direction = key === "ArrowUp" ? "up" : "down";
+		let direction = "";
+		if (key === "ArrowUp" || key === "ArrowDown")
+			direction = key === "ArrowUp" ? "up" : "down";
 		if (isSolo && (key === "KeyS" || key === "KeyX"))
 			direction = key === "KeyS" ? "up" : "down";
 
 		// TODO : replace with Constants
-		if ((direction === "up" &&  paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
+		if (direction === "" || (direction === "up" &&  paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
 			return;
 		fetch('http://localhost:3000/api/pong/movePaddle', {
 			method: 'POST',
@@ -219,17 +224,17 @@ function confirmGame() {
 	`;
 
 	let remainingTime = 10;
-	const timerInterval = setInterval(() => {
+	queueInterval = setInterval(() => {
 		remainingTime--;
 		if (document.getElementById("timer"))
 			document.getElementById("timer").innerText = `Time remaining: ${remainingTime}s`;
 		if (remainingTime <= 0) {
-			clearInterval(timerInterval);
+			clearInterval(queueInterval);
 			quitRoom("QUEUE_TIMEOUT");
 		}
 	}, 1000);
 	document.getElementById("confirm-game").addEventListener("click", () => {
-		clearInterval(timerInterval);
+		clearInterval(queueInterval);
 		document.getElementById("timer").innerText = "Confirmed! Awaiting opponent";
 		fetch('http://localhost:3000/api/pong/startConfirm', {
 			method: 'POST',

@@ -45,6 +45,7 @@ var score = { player1: 0, player2: 0 };
 var isSolo = false;
 var isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "KeyX": false };
 var intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
+var queueInterval = null;
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 function loadPage(page) {
@@ -74,6 +75,7 @@ function joinMatchmaking() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             loadPage("room-found");
+            isSolo = false;
             if (!socket)
                 socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
             socket.addEventListener("error", function (error) {
@@ -97,7 +99,6 @@ function joinMatchmaking() {
 function joinSolo() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            // loadPage("room-found");
             isSolo = true;
             if (!socket)
                 socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
@@ -162,10 +163,12 @@ function messageHandler(event) {
             break;
         case "LEAVE":
             quitRoom();
-            if (res.message === "QUEUE_AGAIN") {
+            if (res.message === "QUEUE_AGAIN" || queueInterval) {
                 console.log("The opponent took too long to confirm the game. Restarting the search");
                 joinMatchmaking();
             }
+            clearInterval(queueInterval);
+            queueInterval = null;
             break;
         case "GAME":
             gameMessageHandler(res);
@@ -214,11 +217,13 @@ function keyHandler(event) {
             var paddle, direction;
             return __generator(this, function (_a) {
                 paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
-                direction = key === "ArrowUp" ? "up" : "down";
+                direction = "";
+                if (key === "ArrowUp" || key === "ArrowDown")
+                    direction = key === "ArrowUp" ? "up" : "down";
                 if (isSolo && (key === "KeyS" || key === "KeyX"))
                     direction = key === "KeyS" ? "up" : "down";
                 // TODO : replace with Constants
-                if ((direction === "up" && paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
+                if (direction === "" || (direction === "up" && paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
                     return [2 /*return*/];
                 fetch('http://localhost:3000/api/pong/movePaddle', {
                     method: 'POST',
@@ -247,17 +252,17 @@ function keyHandler(event) {
 function confirmGame() {
     content.innerHTML = "\n    <p>Game Found, Confirm?</p>\n    <button id=\"confirm-game\">Confirm Game</button>\n    <p id=\"timer\">Time remaining: 10s</p>\n\t";
     var remainingTime = 10;
-    var timerInterval = setInterval(function () {
+    queueInterval = setInterval(function () {
         remainingTime--;
         if (document.getElementById("timer"))
             document.getElementById("timer").innerText = "Time remaining: ".concat(remainingTime, "s");
         if (remainingTime <= 0) {
-            clearInterval(timerInterval);
+            clearInterval(queueInterval);
             quitRoom("QUEUE_TIMEOUT");
         }
     }, 1000);
     document.getElementById("confirm-game").addEventListener("click", function () {
-        clearInterval(timerInterval);
+        clearInterval(queueInterval);
         document.getElementById("timer").innerText = "Confirmed! Awaiting opponent";
         fetch('http://localhost:3000/api/pong/startConfirm', {
             method: 'POST',
