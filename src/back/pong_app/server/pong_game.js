@@ -65,7 +65,8 @@ var Game = /** @class */ (function () {
         this.Ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
         this.Ball.x = Constants.WIDTH / 2;
         this.Ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-        this.Ball.orientation = 0; // TODO : Remove this line
+        // this.Ball.y = Constants.HEIGHT / 2; // TODO : Remove this line
+        // this.Ball.orientation = 0; // TODO : Remove this line
         if (side === "P1")
             this.Ball.orientation += Math.PI;
         this.Ball.speed = Constants.BALL_SPEED;

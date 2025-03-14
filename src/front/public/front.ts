@@ -173,10 +173,24 @@ function keyHandler(event: KeyboardEvent) {
 function confirmGame() {
 
 	content.innerHTML = `
-		<p>Game Found, Confirm?</p>
-		<button id="confirm-game">Confirm Game</button>
-	`
+    <p>Game Found, Confirm?</p>
+    <button id="confirm-game">Confirm Game</button>
+    <p id="timer">Time remaining: 10s</p>
+	`;
+
+	let remainingTime = 10;
+	const timerInterval = setInterval(() => {
+		remainingTime--;
+		if (document.getElementById("timer"))
+			document.getElementById("timer").innerText = `Time remaining: ${remainingTime}s`;
+		if (remainingTime <= 0) {
+			clearInterval(timerInterval);
+			quitRoom();
+		}
+	}, 1000);
 	document.getElementById("confirm-game").addEventListener("click", () => {
+		clearInterval(timerInterval);
+		document.getElementById("timer").innerText = "Confirmed! Awaiting opponent";
 		fetch('http://localhost:3000/api/pong/startConfirm', {
 			method: 'POST',
 			headers: {

@@ -134,7 +134,6 @@ function messageHandler(event) {
             gameMessageHandler(res);
             break;
         case "LEAVE":
-            console.log("LEAVE");
             quitRoom();
             break;
         default:
@@ -202,8 +201,20 @@ function keyHandler(event) {
     }
 }
 function confirmGame() {
-    content.innerHTML = "\n\t\t<p>Game Found, Confirm?</p>\n\t\t<button id=\"confirm-game\">Confirm Game</button>\n\t";
+    content.innerHTML = "\n    <p>Game Found, Confirm?</p>\n    <button id=\"confirm-game\">Confirm Game</button>\n    <p id=\"timer\">Time remaining: 10s</p>\n\t";
+    var remainingTime = 10;
+    var timerInterval = setInterval(function () {
+        remainingTime--;
+        if (document.getElementById("timer"))
+            document.getElementById("timer").innerText = "Time remaining: ".concat(remainingTime, "s");
+        if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            quitRoom();
+        }
+    }, 1000);
     document.getElementById("confirm-game").addEventListener("click", function () {
+        clearInterval(timerInterval);
+        document.getElementById("timer").innerText = "Confirmed! Awaiting opponent";
         fetch('http://localhost:3000/api/pong/startConfirm', {
             method: 'POST',
             headers: {
