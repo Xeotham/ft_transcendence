@@ -67,16 +67,20 @@ function noRoom(content) {
 }
 function room_found(content) {
     content.innerHTML = "\n\t\t<p>Room found!</p>\n\t\t<button id=\"quit-room\">Quit Room</button>\n\t";
-    document.getElementById("quit-room").addEventListener("click", quitRoom);
+    // document.getElementById("quit-room").addEventListener("click", quitRoom);
+    document.getElementById("quit-room").addEventListener("click", function (ev) { return quitRoom("Leaving room"); });
 }
-function quitRoom() {
+function quitRoom(msg) {
+    if (msg === void 0) { msg = "Leaving room"; }
     // console.log("quit room");
+    if (msg === "QUEUE_TIMEOUT")
+        console.log("You took too long to confirm the game. Back to the lobby");
     fetch('http://localhost:3000/api/pong/quitRoom', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ roomId: roomNumber, P: player })
+        body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
     });
     if (socket)
         socket.close();
@@ -85,7 +89,7 @@ function quitRoom() {
     player = null;
     loadPage("no-room");
 }
-function joinRoom(ev) {
+function joinRoom() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             loadPage("room-found");
@@ -135,6 +139,10 @@ function messageHandler(event) {
             break;
         case "LEAVE":
             quitRoom();
+            if (res.message === "QUEUE_AGAIN") {
+                console.log("The opponent took too long to confirm the game. Restarting the search");
+                joinRoom();
+            }
             break;
         default:
             console.log("Unknown message type: " + res.type);
@@ -209,7 +217,7 @@ function confirmGame() {
             document.getElementById("timer").innerText = "Time remaining: ".concat(remainingTime, "s");
         if (remainingTime <= 0) {
             clearInterval(timerInterval);
-            quitRoom();
+            quitRoom("QUEUE_TIMEOUT");
         }
     }, 1000);
     document.getElementById("confirm-game").addEventListener("click", function () {

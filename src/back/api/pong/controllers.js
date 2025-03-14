@@ -131,9 +131,9 @@ var quitRoom = function (request, reply) { return __awaiter(void 0, void 0, void
             if (room.game)
                 room.game.Forfeit(player);
             playerSocket === null || playerSocket === void 0 ? void 0 : playerSocket.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
-            opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "ALERT", message: "Your opponent has left the room" }));
+            opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
             if (!room.isP1Ready || !room.isP2Ready)
-                opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "LEAVE" }));
+                opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "LEAVE", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
             console.log("Room : " + room.id + " has been deleted");
             exports.Rooms.splice(exports.Rooms.indexOf(room), 1);
         });

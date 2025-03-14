@@ -20,6 +20,7 @@ interface Room {
 }
 
 export interface PongRequestBody {
+	message: string;
 	key:	string;
 	roomId:	number;
 	P:	string;
@@ -114,16 +115,15 @@ export const quitRoom = async (request: FastifyRequest<{ Body: PongRequestBody }
 
 	if (!playerSocket)
 		return console.log("Player not found");
-
 	Rooms.forEach((room) => {
 		if (room.P1 !== playerSocket && room.P2 !== playerSocket)
 			return ;
 		if (room.game)
 			room.game.Forfeit(player);
 		playerSocket?.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
-		opponentSocket?.send(JSON.stringify({ type: "ALERT", message: "Your opponent has left the room" }));
+		opponentSocket?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
 		if (!room.isP1Ready || !room.isP2Ready)
-			opponentSocket?.send(JSON.stringify({ type: "LEAVE" }));
+			opponentSocket?.send(JSON.stringify({ type: "LEAVE", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
 		console.log("Room : " + room.id + " has been deleted");
 		Rooms.splice(Rooms.indexOf(room), 1);
 	});

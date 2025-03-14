@@ -37,17 +37,20 @@ function	room_found(content: HTMLElement) {
 		<p>Room found!</p>
 		<button id="quit-room">Quit Room</button>
 	`
-	document.getElementById("quit-room").addEventListener("click", quitRoom)
+	// document.getElementById("quit-room").addEventListener("click", quitRoom);
+	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
 }
 
-function quitRoom() {
+function quitRoom(msg: string = "Leaving room") {
 	// console.log("quit room");
+	if (msg === "QUEUE_TIMEOUT")
+		console.log("You took too long to confirm the game. Back to the lobby");
 	fetch('http://localhost:3000/api/pong/quitRoom', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ roomId: roomNumber, P: player })
+		body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
 	});
 	if (socket)
 		socket.close();
@@ -57,7 +60,7 @@ function quitRoom() {
 	loadPage("no-room");
 }
 
-async function	joinRoom(this: HTMLElement, ev: MouseEvent): Promise<void> {
+async function	joinRoom(): Promise<void> {
 	loadPage("room-found");
 	if (!socket)
 		socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
@@ -105,6 +108,10 @@ function messageHandler(event: MessageEvent) {
 			break ;
 		case "LEAVE":
 			quitRoom();
+			if (res.message === "QUEUE_AGAIN") {
+				console.log("The opponent took too long to confirm the game. Restarting the search");
+				joinRoom();
+			}
 			break ;
 		default:
 			console.log("Unknown message type: " + res.type);
@@ -185,7 +192,7 @@ function confirmGame() {
 			document.getElementById("timer").innerText = `Time remaining: ${remainingTime}s`;
 		if (remainingTime <= 0) {
 			clearInterval(timerInterval);
-			quitRoom();
+			quitRoom("QUEUE_TIMEOUT");
 		}
 	}, 1000);
 	document.getElementById("confirm-game").addEventListener("click", () => {
