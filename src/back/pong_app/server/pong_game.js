@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
 var Constants = require("./constants");
 var Game = /** @class */ (function () {
-    function Game(id, player1, player2) {
+    function Game(id, player1, player2, isSolo) {
         this.Id = id;
         this.Players = { player1: player1, player2: player2 };
         this.Score = { player1: 0, player2: 0 };
@@ -48,6 +48,7 @@ var Game = /** @class */ (function () {
         this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0, speed: Constants.BALL_SPEED };
         this.Over = false;
         this.Winner = null;
+        this.isSolo = isSolo;
         this.StartTime = performance.now();
         this.FinishTime = this.StartTime;
         this.LastTime = this.StartTime;
@@ -59,9 +60,13 @@ var Game = /** @class */ (function () {
             Ball: this.Ball,
         };
     };
+    Game.prototype.sendData = function (data) {
+        this.Players.player1.send(JSON.stringify(data));
+        if (!this.isSolo)
+            this.Players.player2.send(JSON.stringify(data));
+    };
     Game.prototype.SpawnBall = function (side) {
-        this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
-        this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
+        this.sendData({ type: "GAME", data: this.Score, message: "SCORE" });
         this.Ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
         this.Ball.x = Constants.WIDTH / 2;
         this.Ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
@@ -73,7 +78,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.GameLoop = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var gameLoopIteration, sendGameInfo, updateInterval, intervalId;
+            var gameLoopIteration, updateInterval, intervalId;
             var _this = this;
             return __generator(this, function (_a) {
                 gameLoopIteration = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -84,25 +89,24 @@ var Game = /** @class */ (function () {
                             setTimeout(gameLoopIteration, 0); // Schedule the next iteration
                             return [2 /*return*/];
                         }
-                        clearInterval(intervalId);
                         console.log("Game over");
+                        clearInterval(intervalId);
                         this.FinishTime = performance.now();
                         if (!this.Over) // If the game didn't ended because of a forfeit
                             this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
                         this.Over = true;
                         winner = this.Winner === this.Players.player1 ? "P1" : "P2";
-                        this.Players.player1.send(JSON.stringify({ type: "GAME", data: winner, message: "FINISH" }));
-                        this.Players.player2.send(JSON.stringify({ type: "GAME", data: winner, message: "FINISH" }));
+                        if (this.isSolo)
+                            winner = this.Score.player1 >= 10 ? "P1" : "P2";
+                        this.sendData({ type: "GAME", data: winner, message: "FINISH" });
                         console.log("The winner of the room " + this.Id + " is " + winner);
                         return [2 /*return*/];
                     });
                 }); };
-                sendGameInfo = function () {
-                    _this.Players.player1.send(JSON.stringify({ type: "GAME", data: _this.toJSON() }));
-                    _this.Players.player2.send(JSON.stringify({ type: "GAME", data: _this.toJSON() }));
-                };
                 updateInterval = 1000 / 60;
-                intervalId = setInterval(sendGameInfo, updateInterval);
+                intervalId = setInterval(function () {
+                    return _this.sendData({ type: "GAME", data: _this.toJSON() });
+                }, updateInterval);
                 this.StartTime = performance.now();
                 this.LastTime = this.StartTime;
                 gameLoopIteration(); // Start the game loop
@@ -160,7 +164,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.MovePaddle = function (res) {
         var paddle = res.P === "P1" ? this.Paddle1 : this.Paddle2;
-        paddle.y += (res.key === "ArrowUp") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
+        paddle.y += (res.key === "up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
         if (paddle.y < 0)
             paddle.y = 0;
         if (paddle.y > Constants.HEIGHT - paddle.y_size)

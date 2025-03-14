@@ -12,12 +12,13 @@ export class Game {
 	Ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
 	Over:		boolean;
 	Winner:		WebSocket | null;
+	isSolo:		boolean;
 
 	private StartTime:	number;
 	private FinishTime:	number;
 	private LastTime:	number;
 
-	constructor(id: number, player1: WebSocket, player2: WebSocket) {
+	constructor(id: number, player1: WebSocket, player2: WebSocket, isSolo: boolean) {
 		this.Id = id;
 		this.Players = { player1, player2 };
 		this.Score = { player1: 0, player2: 0 };
@@ -26,6 +27,7 @@ export class Game {
 		this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0, speed: Constants.BALL_SPEED };
 		this.Over = false;
 		this.Winner = null;
+		this.isSolo = isSolo;
 
 		this.StartTime = performance.now();
 		this.FinishTime = this.StartTime;
@@ -41,9 +43,14 @@ export class Game {
 		};
 	}
 
+	sendData(data: any) {
+		this.Players.player1.send(JSON.stringify(data));
+		if (!this.isSolo)
+			this.Players.player2.send(JSON.stringify(data));
+	}
+
 	SpawnBall(side: string | "P1" | "P2") {
-		this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
-		this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.Score, message: "SCORE" }));
+		this.sendData({ type: "GAME", data: this.Score, message: "SCORE" });
 		this.Ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
 		this.Ball.x = Constants.WIDTH / 2;
 		this.Ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
@@ -61,25 +68,24 @@ export class Game {
 				setTimeout(gameLoopIteration, 0); // Schedule the next iteration
 				return ;
 			}
-			clearInterval(intervalId);
 			console.log("Game over");
+			clearInterval(intervalId);
 			this.FinishTime = performance.now();
 			if (!this.Over) // If the game didn't ended because of a forfeit
 				this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
 			this.Over = true;
-			const winner = this.Winner === this.Players.player1 ? "P1" : "P2";
-			this.Players.player1.send(JSON.stringify({ type: "GAME", data: winner, message: "FINISH" }));
-			this.Players.player2.send(JSON.stringify({ type: "GAME", data: winner, message: "FINISH" }));
+			let winner = this.Winner === this.Players.player1 ? "P1" : "P2";
+			if (this.isSolo)
+				winner = this.Score.player1 >= 10 ? "P1" : "P2";
+			this.sendData({ type: "GAME", data: winner, message: "FINISH" });
 			console.log("The winner of the room " + this.Id + " is " + winner);
 			// TODO : Save game in database
 		};
-		const sendGameInfo = () => {
-			this.Players.player1.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
-			this.Players.player2.send(JSON.stringify({ type: "GAME", data: this.toJSON() }));
-		};
 
 		const updateInterval = 1000 / 60; // 60 times per second
-		const intervalId = setInterval(sendGameInfo, updateInterval);
+		const intervalId = setInterval(() =>
+			this.sendData({ type: "GAME", data: this.toJSON() }),
+			updateInterval);
 		this.StartTime = performance.now();
 		this.LastTime = this.StartTime;
 		gameLoopIteration(); // Start the game loop
@@ -144,7 +150,7 @@ export class Game {
 	MovePaddle(res: PongRequestBody) {
 		let paddle = res.P === "P1" ? this.Paddle1 : this.Paddle2;
 
-		paddle.y += (res.key === "ArrowUp") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
+		paddle.y += (res.key === "up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
 		if (paddle.y < 0)
 			paddle.y = 0;
 		if (paddle.y > Constants.HEIGHT - paddle.y_size)

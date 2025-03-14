@@ -15,6 +15,7 @@ interface Room {
 	game:		Game | null;
 	isP1Ready:	boolean;
 	isP2Ready:	boolean;
+	isSolo:		boolean;
 	// private:	boolean; // TODO: Implement private rooms
 	// inviteCode:	string;
 }
@@ -45,7 +46,7 @@ function* idGenerator() {
 
 const idGen = idGenerator();
 
-export const joinRoom = async (socket: WebSocket, req: FastifyRequest) => {
+export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 	console.log("New Player looking to join room");
 
 	if (Rooms.find((room) => { return (room.P1 === socket || room.P2 === socket); }))
@@ -56,7 +57,7 @@ export const joinRoom = async (socket: WebSocket, req: FastifyRequest) => {
 		if (room.P1 && !room.P2) {
 			room.P2 = socket;
 			room.full = true;
-			room.game = new Game(room.id, room.P1, room.P2);
+			room.game = new Game(room.id, room.P1, room.P2, false);
 			room.P1.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
 			room.P2.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
 			room.P1.send(JSON.stringify({ type: "CONFIRM" }));
@@ -68,12 +69,23 @@ export const joinRoom = async (socket: WebSocket, req: FastifyRequest) => {
 
 	// If no available room is found, create a new one
 	const id = idGen.next().value;
-	const newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null };
+	const newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false };
 	Rooms.push(newRoom);
 	socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2"}));
 	socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomID: id }));
 	return ;
 };
+
+export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
+	console.log("New Player creating solo room");
+	const newRoom = { id: idGen.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true };
+	newRoom.game = new Game(newRoom.id, socket, socket, true);
+	Rooms.push(newRoom);
+	socket.send(JSON.stringify({ type: "INFO", message: "Solo room created, starting game" }));
+	socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomID: newRoom.id }));
+	socket.send(JSON.stringify({ type: "GAME", message: "START" }));
+	newRoom.game.GameLoop();
+}
 
 export const startConfirm = async (request: FastifyRequest<{ Body: PongRequestBody }>, reply: FastifyReply) => {
 	let		room = Rooms.find((room) => { return (room.id === request.body.roomId); });

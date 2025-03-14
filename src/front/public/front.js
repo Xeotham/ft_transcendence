@@ -42,8 +42,9 @@ var player = null;
 var content = document.getElementById("content");
 var socket = null;
 var score = { player1: 0, player2: 0 };
-var isButtonPressed = { "ArrowUp": false, "ArrowDown": false };
-var intervals = { "ArrowUp": null, "ArrowDown": null };
+var isSolo = false;
+var isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "KeyX": false };
+var intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 function loadPage(page) {
@@ -60,41 +61,21 @@ function loadPage(page) {
     });
 }
 function noRoom(content) {
-    content.innerHTML = "\n\t\t<button id=\"join-game\">Join a Game</button>\n\t";
-    document.getElementById("join-game").addEventListener("click", joinRoom);
-    if (c)
-        c.clearRect(0, 0, canvas.width, canvas.height);
+    content.innerHTML = "\n\t\t<button id=\"join-game\">Join a Game</button>\t\t\n\t\t<button id=\"join-solo-game\">Create a solo Game</button>\n\t";
+    document.getElementById("join-game").addEventListener("click", joinMatchmaking);
+    document.getElementById("join-solo-game").addEventListener("click", joinSolo);
+    c === null || c === void 0 ? void 0 : c.clearRect(0, 0, canvas.width, canvas.height);
 }
 function room_found(content) {
     content.innerHTML = "\n\t\t<p>Room found!</p>\n\t\t<button id=\"quit-room\">Quit Room</button>\n\t";
-    // document.getElementById("quit-room").addEventListener("click", quitRoom);
     document.getElementById("quit-room").addEventListener("click", function (ev) { return quitRoom("Leaving room"); });
 }
-function quitRoom(msg) {
-    if (msg === void 0) { msg = "Leaving room"; }
-    // console.log("quit room");
-    if (msg === "QUEUE_TIMEOUT")
-        console.log("You took too long to confirm the game. Back to the lobby");
-    fetch('http://localhost:3000/api/pong/quitRoom', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
-    });
-    if (socket)
-        socket.close();
-    socket = null;
-    roomNumber = -1;
-    player = null;
-    loadPage("no-room");
-}
-function joinRoom() {
+function joinMatchmaking() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             loadPage("room-found");
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
+                socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -112,6 +93,51 @@ function joinRoom() {
             return [2 /*return*/];
         });
     });
+}
+function joinSolo() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            // loadPage("room-found");
+            isSolo = true;
+            if (!socket)
+                socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
+            socket.addEventListener("error", function (error) {
+                console.error(error);
+            });
+            // Connection opened
+            socket.onopen = function () {
+                console.log("Connected to the server for solo game");
+            };
+            socket.onclose = function () {
+                console.log("Connection closed");
+                if (roomNumber >= 0)
+                    quitRoom();
+            };
+            // Listen for messages
+            socket.addEventListener("message", messageHandler);
+            return [2 /*return*/];
+        });
+    });
+}
+function quitRoom(msg) {
+    if (msg === void 0) { msg = "Leaving room"; }
+    if (isSolo)
+        msg = "Leaving room";
+    if (msg === "QUEUE_TIMEOUT")
+        console.log("You took too long to confirm the game. Back to the lobby");
+    fetch('http://localhost:3000/api/pong/quitRoom', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
+    });
+    if (socket)
+        socket.close();
+    socket = null;
+    roomNumber = -1;
+    player = null;
+    loadPage("no-room");
 }
 function messageHandler(event) {
     var res = JSON.parse(event.data);
@@ -134,15 +160,15 @@ function messageHandler(event) {
         case "CONFIRM":
             confirmGame();
             break;
-        case "GAME":
-            gameMessageHandler(res);
-            break;
         case "LEAVE":
             quitRoom();
             if (res.message === "QUEUE_AGAIN") {
                 console.log("The opponent took too long to confirm the game. Restarting the search");
-                joinRoom();
+                joinMatchmaking();
             }
+            break;
+        case "GAME":
+            gameMessageHandler(res);
             break;
         default:
             console.log("Unknown message type: " + res.type);
@@ -161,7 +187,10 @@ function gameMessageHandler(res) {
             document.addEventListener("keyup", keyHandler);
             break;
         case "FINISH":
-            res.data === player ? alert("You won!") : alert("You lost!");
+            if (isSolo)
+                alert(res.data + " won!");
+            else
+                res.data === player ? alert("You won!") : alert("You lost!");
             document.removeEventListener("keydown", keyHandler);
             document.removeEventListener("keyup", keyHandler);
             quitRoom();
@@ -169,6 +198,7 @@ function gameMessageHandler(res) {
         case "SCORE":
             score = res.data;
             console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
+            //  TODO : display score on screen
             break;
         default:
             game = res.data;
@@ -179,28 +209,34 @@ function keyHandler(event) {
     if (!game || roomNumber < 0 || !player || event.repeat)
         return;
     // console.log("event type:" + event.type + ", Key pressed: " + event.code);
-    function sendPaddleMovement(key) {
+    function sendPaddleMovement(key, p) {
         return __awaiter(this, void 0, void 0, function () {
-            var paddle;
+            var paddle, direction;
             return __generator(this, function (_a) {
-                paddle = player === "P1" ? game.Paddle1 : game.Paddle2;
+                paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
+                direction = key === "ArrowUp" ? "up" : "down";
+                if (isSolo && (key === "KeyS" || key === "KeyX"))
+                    direction = key === "KeyS" ? "up" : "down";
                 // TODO : replace with Constants
-                if ((key === "ArrowUp" && paddle.y <= 0) || (key === "ArrowDown" && paddle.y >= 400 - 80))
+                if ((direction === "up" && paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
                     return [2 /*return*/];
                 fetch('http://localhost:3000/api/pong/movePaddle', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roomId: roomNumber, P: player, key: key })
+                    body: JSON.stringify({ roomId: roomNumber, P: p, key: direction })
                 });
                 return [2 /*return*/];
             });
         });
     }
+    var p = player;
+    if (isSolo)
+        p = event.code === "KeyS" || event.code === "KeyX" ? "P1" : "P2";
     if (event.type === "keydown" && isButtonPressed[event.code] === false) {
         isButtonPressed[event.code] = true;
-        intervals[event.code] = setInterval(sendPaddleMovement, 1000 / 60, event.code);
+        intervals[event.code] = setInterval(sendPaddleMovement, 1000 / 60, event.code, p);
     }
     if (event.type === "keyup" && isButtonPressed[event.code] === true) {
         isButtonPressed[event.code] = false;

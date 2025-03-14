@@ -8,8 +8,9 @@ let		player : string | "P1" | "P2" | null = null;
 const	content = document.getElementById("content");
 let		socket: WebSocket | null = null;
 let		score = { player1: 0, player2: 0 };
-let		isButtonPressed = { "ArrowUp": false, "ArrowDown": false };
-let		intervals: { "ArrowUp": NodeJS.Timeout | null, "ArrowDown": NodeJS.Timeout | null } = { "ArrowUp": null, "ArrowDown": null };
+let 	isSolo = false;
+let		isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "KeyX": false };
+let		intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
 
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
@@ -25,11 +26,12 @@ async function loadPage(page: string) {
 
 function	noRoom(content: HTMLElement) {
 	content.innerHTML = `
-		<button id="join-game">Join a Game</button>
+		<button id="join-game">Join a Game</button>		
+		<button id="join-solo-game">Create a solo Game</button>
 	`
-	document.getElementById("join-game").addEventListener("click", joinRoom);
-	if (c)
-		c.clearRect(0, 0, canvas.width, canvas.height);
+	document.getElementById("join-game").addEventListener("click", joinMatchmaking);
+	document.getElementById("join-solo-game").addEventListener("click", joinSolo);
+	c?.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function	room_found(content: HTMLElement) {
@@ -37,33 +39,13 @@ function	room_found(content: HTMLElement) {
 		<p>Room found!</p>
 		<button id="quit-room">Quit Room</button>
 	`
-	// document.getElementById("quit-room").addEventListener("click", quitRoom);
 	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
 }
 
-function quitRoom(msg: string = "Leaving room") {
-	// console.log("quit room");
-	if (msg === "QUEUE_TIMEOUT")
-		console.log("You took too long to confirm the game. Back to the lobby");
-	fetch('http://localhost:3000/api/pong/quitRoom', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
-	});
-	if (socket)
-		socket.close();
-	socket = null;
-	roomNumber = -1;
-	player = null;
-	loadPage("no-room");
-}
-
-async function	joinRoom(): Promise<void> {
+async function	joinMatchmaking() {
 	loadPage("room-found");
 	if (!socket)
-		socket = new WebSocket("ws://localhost:3000/api/pong/joinRoom");
+		socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -79,6 +61,48 @@ async function	joinRoom(): Promise<void> {
 	}
 	// Listen for messages
 	socket.addEventListener("message", messageHandler);
+}
+
+async function	joinSolo() {
+	// loadPage("room-found");
+	isSolo = true;
+	if (!socket)
+		socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
+
+	socket.addEventListener("error", (error) => {
+		console.error(error);
+	})
+	// Connection opened
+	socket.onopen = () => {
+		console.log("Connected to the server for solo game");
+	}
+	socket.onclose = () => {
+		console.log("Connection closed");
+		if (roomNumber >= 0)
+			quitRoom();
+	}
+	// Listen for messages
+	socket.addEventListener("message", messageHandler);
+}
+
+function quitRoom(msg: string = "Leaving room") {
+	if (isSolo)
+		msg = "Leaving room";
+	if (msg === "QUEUE_TIMEOUT")
+		console.log("You took too long to confirm the game. Back to the lobby");
+	fetch('http://localhost:3000/api/pong/quitRoom', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
+	});
+	if (socket)
+		socket.close();
+	socket = null;
+	roomNumber = -1;
+	player = null;
+	loadPage("no-room");
 }
 
 function messageHandler(event: MessageEvent) {
@@ -103,15 +127,15 @@ function messageHandler(event: MessageEvent) {
 		case "CONFIRM":
 			confirmGame();
 			break ;
-		case "GAME":
-			gameMessageHandler(res);
-			break ;
 		case "LEAVE":
 			quitRoom();
 			if (res.message === "QUEUE_AGAIN") {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
-				joinRoom();
+				joinMatchmaking();
 			}
+			break ;
+		case "GAME":
+			gameMessageHandler(res);
 			break ;
 		default:
 			console.log("Unknown message type: " + res.type);
@@ -131,7 +155,10 @@ function gameMessageHandler(res: responseFormat) {
 			document.addEventListener("keyup", keyHandler);
 			break ;
 		case "FINISH":
-			res.data === player ? alert("You won!") : alert("You lost!");
+			if (isSolo)
+				alert(res.data + " won!");
+			else
+				res.data === player ? alert("You won!") : alert("You lost!");
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
 			quitRoom();
@@ -139,6 +166,7 @@ function gameMessageHandler(res: responseFormat) {
 		case "SCORE":
 			score = res.data;
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
+			//  TODO : display score on screen
 			break;
 		default:
 			game = res.data;
@@ -151,24 +179,29 @@ function keyHandler(event: KeyboardEvent) {
 		return ;
 	// console.log("event type:" + event.type + ", Key pressed: " + event.code);
 
-	async function sendPaddleMovement(key: string) {
-		const paddle = player === "P1" ? game.Paddle1 : game.Paddle2;
+	async function sendPaddleMovement(key: string, p: string) {
+		const paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
+		let direction = key === "ArrowUp" ? "up" : "down";
+		if (isSolo && (key === "KeyS" || key === "KeyX"))
+			direction = key === "KeyS" ? "up" : "down";
 
 		// TODO : replace with Constants
-		if ((key === "ArrowUp" &&  paddle.y <= 0) || (key === "ArrowDown" && paddle.y >= 400 - 80))
+		if ((direction === "up" &&  paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
 			return;
 		fetch('http://localhost:3000/api/pong/movePaddle', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({roomId: roomNumber, P: player, key: key})
+			body: JSON.stringify({roomId: roomNumber, P: p, key: direction})
 		});
 	}
-
+	let p = player;
+	if (isSolo)
+		p = event.code === "KeyS" || event.code === "KeyX" ? "P1" : "P2";
 	if (event.type === "keydown" && isButtonPressed[event.code] === false) {
 		isButtonPressed[event.code] = true;
-		intervals[event.code] = setInterval(sendPaddleMovement, 1000 / 60, event.code);
+		intervals[event.code] = setInterval(sendPaddleMovement, 1000 / 60, event.code, p);
 	}
 	if (event.type === "keyup" && isButtonPressed[event.code] === true) {
 		isButtonPressed[event.code] = false;

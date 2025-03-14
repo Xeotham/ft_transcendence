@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.finishGame = exports.movePaddle = exports.startGame = exports.quitRoom = exports.startConfirm = exports.joinRoom = exports.Rooms = void 0;
+exports.finishGame = exports.movePaddle = exports.startGame = exports.quitRoom = exports.startConfirm = exports.joinSolo = exports.joinMatchmaking = exports.Rooms = void 0;
 var pong_game_1 = require("../../pong_app/server/pong_game");
 exports.Rooms = [];
 function idGenerator() {
@@ -57,7 +57,7 @@ function idGenerator() {
     });
 }
 var idGen = idGenerator();
-var joinRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
+var joinMatchmaking = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
     var _i, Rooms_1, room, id, newRoom;
     return __generator(this, function (_a) {
         console.log("New Player looking to join room");
@@ -69,7 +69,7 @@ var joinRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0,
             if (room.P1 && !room.P2) {
                 room.P2 = socket;
                 room.full = true;
-                room.game = new pong_game_1.Game(room.id, room.P1, room.P2);
+                room.game = new pong_game_1.Game(room.id, room.P1, room.P2, false);
                 room.P1.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
                 room.P2.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
                 room.P1.send(JSON.stringify({ type: "CONFIRM" }));
@@ -79,14 +79,29 @@ var joinRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0,
             }
         }
         id = idGen.next().value;
-        newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null };
+        newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false };
         exports.Rooms.push(newRoom);
         socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2" }));
         socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomID: id }));
         return [2 /*return*/];
     });
 }); };
-exports.joinRoom = joinRoom;
+exports.joinMatchmaking = joinMatchmaking;
+var joinSolo = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
+    var newRoom;
+    return __generator(this, function (_a) {
+        console.log("New Player creating solo room");
+        newRoom = { id: idGen.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true };
+        newRoom.game = new pong_game_1.Game(newRoom.id, socket, socket, true);
+        exports.Rooms.push(newRoom);
+        socket.send(JSON.stringify({ type: "INFO", message: "Solo room created, starting game" }));
+        socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomID: newRoom.id }));
+        socket.send(JSON.stringify({ type: "GAME", message: "START" }));
+        newRoom.game.GameLoop();
+        return [2 /*return*/];
+    });
+}); };
+exports.joinSolo = joinSolo;
 var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
     var room, player, playerSocket;
     return __generator(this, function (_a) {
