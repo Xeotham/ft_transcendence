@@ -1,7 +1,7 @@
 import { Rooms } from "../../api/pong/controllers";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
-import { PongRequestBody } from "../../api/pong/controllers";
+import { requestBody } from "../../api/pong/controllers";
 
 export class Game {
 	Id:			number;
@@ -147,7 +147,7 @@ export class Game {
 		}
 	}
 
-	MovePaddle(res: PongRequestBody) {
+	MovePaddle(res: requestBody) {
 		let paddle = res.P === "P1" ? this.Paddle1 : this.Paddle2;
 
 		paddle.y += (res.key === "up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;

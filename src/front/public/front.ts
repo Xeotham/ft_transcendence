@@ -13,15 +13,23 @@ let		isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "K
 let		intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
 let		queueInterval: NodeJS.Timeout | null = null;
 
+let		matchType: string = "";
+let		isTournamentOwner: boolean = false;
+let		tournamentId: number = -1;
+let		tourPlacement: number = -1;
+
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 
 async function loadPage(page: string) {
-	if (page === "no-room") {
-		noRoom(content)
-	}
-	else if (page === "room-found") {
-		room_found(content)
+
+	switch (page) {
+		case "no-room":
+			noRoom(content);
+			break ;
+		case "room-found":
+			room_found(content);
+			break ;
 	}
 }
 
@@ -29,9 +37,13 @@ function	noRoom(content: HTMLElement) {
 	content.innerHTML = `
 		<button id="join-game">Join a Game</button>		
 		<button id="join-solo-game">Create a solo Game</button>
+		<button id="create-tournament">Create a tournament</button>
+		<button id="join-tournament">Join a tournament</button>
 	`
 	document.getElementById("join-game").addEventListener("click", joinMatchmaking);
 	document.getElementById("join-solo-game").addEventListener("click", joinSolo);
+	document.getElementById("create-tournament").addEventListener("click", createTournament);
+	document.getElementById("join-tournament").addEventListener("click", joinTournament);
 	c?.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -40,12 +52,15 @@ function	room_found(content: HTMLElement) {
 		<p>Room found!</p>
 		<button id="quit-room">Quit Room</button>
 	`
+	if (isTournamentOwner)
+		content.innerHTML += `<button id="start-tournament">Start Tournament</button>`;
 	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
 }
 
 async function	joinMatchmaking() {
 	loadPage("room-found");
 	isSolo = false;
+	matchType = "PONG";
 	if (!socket)
 		socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
 
@@ -67,6 +82,7 @@ async function	joinMatchmaking() {
 
 async function	joinSolo() {
 	isSolo = true;
+	matchType = "PONG";
 	if (!socket)
 		socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
 
@@ -86,6 +102,53 @@ async function	joinSolo() {
 	socket.addEventListener("message", messageHandler);
 }
 
+async function	createTournament() {
+	isSolo = false;
+	isTournamentOwner = true;
+	matchType = "TOURNAMENT";
+	loadPage("room-found");
+	if (!socket)
+		socket = new WebSocket("ws://localhost:3000/api/pong/createTournament");
+
+	socket.addEventListener("error", (error) => {
+		console.error(error);
+	})
+	// Connection opened
+	socket.onopen = () => {
+		console.log("Created a tournament");
+	}
+	socket.onclose = () => {
+		console.log("Connection closed");
+		if (tournamentId >= 0)
+			quitRoom();
+	}
+	// Listen for messages
+	socket.addEventListener("message", messageHandler);
+}
+
+async function	joinTournament() {
+	isSolo = false;
+	isTournamentOwner = false;
+	matchType = "TOURNAMENT";
+	if (!socket)
+		socket = new WebSocket("ws://localhost:3000/api/pong/joinTournament");
+
+	socket.addEventListener("error", (error) => {
+		console.error(error);
+	})
+	// Connection opened
+	socket.onopen = () => {
+		console.log("Trying to join a tournament");
+	}
+	socket.onclose = () => {
+		console.log("Connection closed");
+		if (tournamentId >= 0)
+			quitRoom();
+	}
+	// Listen for messages
+	socket.addEventListener("message", messageHandler);
+}
+
 function quitRoom(msg: string = "Leaving room") {
 	if (isSolo)
 		msg = "Leaving room";
@@ -96,13 +159,17 @@ function quitRoom(msg: string = "Leaving room") {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ message: msg, roomId: roomNumber, P: player })
+		body: JSON.stringify({ matchType: matchType, message: msg, tourId: tournamentId, roomId: roomNumber, P: player, tourPlacement: tourPlacement })
 	});
 	if (socket)
 		socket.close();
 	socket = null;
 	roomNumber = -1;
+	tournamentId = -1;
+	tourPlacement = -1;
+	isTournamentOwner = false;
 	player = null;
+	matchType = "";
 	loadPage("no-room");
 }
 
@@ -137,6 +204,9 @@ function messageHandler(event: MessageEvent) {
 			clearInterval(queueInterval);
 			queueInterval = null;
 			break ;
+		case "TOURNAMENT":
+			tournamentMessageHandler(res);
+			break ;
 		case "GAME":
 			gameMessageHandler(res);
 			break ;
@@ -145,10 +215,25 @@ function messageHandler(event: MessageEvent) {
 	}
 }
 
+function tournamentMessageHandler(res: responseFormat) {
+	switch (res.message) {
+		case "OWNER":
+			isTournamentOwner = true;
+			console.log("You are the owner of the tournament");
+			loadPage("room-found");
+			break ;
+		case "PREP":
+			tournamentId = res.tourId === null ? tournamentId : res.tourId;
+			tourPlacement = res.tourPlacement === null ? tourPlacement : res.tourPlacement;
+			console.log("Joined tournament: " + tournamentId + " as player: " + tourPlacement);
+			break ;
+	}
+}
+
 function gameMessageHandler(res: responseFormat) {
 	switch (res.message) {
 		case "PREP":
-			roomNumber = res.roomID === null ? roomNumber : res.roomID;
+			roomNumber = res.roomId === null ? roomNumber : res.roomId;
 			player = res.player === null ? player : res.player;
 			console.log("Joined room: " + roomNumber + " as player: " + player);
 			break ;
@@ -184,6 +269,8 @@ function keyHandler(event: KeyboardEvent) {
 
 	async function sendPaddleMovement(key: string, p: string) {
 		const paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
+		if (key !== "ArrowUp" && key !== "ArrowDown" && key !== "KeyS" && key !== "KeyX")
+			return ;
 		let direction = "";
 		if (key === "ArrowUp" || key === "ArrowDown")
 			direction = key === "ArrowUp" ? "up" : "down";
