@@ -1,10 +1,9 @@
-import { Rooms } from "../../api/pong/controllers";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
 import { requestBody } from "../../api/pong/controllers";
 
 export class Game {
-	Id:			number;
+	readonly Id:number;
 	Players:	{ player1: WebSocket, player2: WebSocket };
 	Score:		{ player1: number, player2: number };
 	Paddle1:	{ x: number, y: number, x_size: number, y_size: number };
@@ -32,7 +31,6 @@ export class Game {
 		this.StartTime = performance.now();
 		this.FinishTime = this.StartTime;
 		this.LastTime = this.StartTime;
-
 	}
 
 	toJSON() {

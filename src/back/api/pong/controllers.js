@@ -36,8 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.finishGame = exports.movePaddle = exports.startGame = exports.quitRoom = exports.startConfirm = exports.shuffleTree = exports.joinTournament = exports.createTournament = exports.joinSolo = exports.joinMatchmaking = exports.Tournaments = exports.Rooms = void 0;
+exports.movePaddle = exports.startTournament = exports.quitRoom = exports.startConfirm = exports.shuffleTree = exports.joinTournament = exports.createTournament = exports.joinSolo = exports.joinMatchmaking = exports.idGenRoom = exports.Tournaments = exports.Rooms = void 0;
+exports.idGenerator = idGenerator;
 var pong_game_1 = require("../../pong_app/server/pong_game");
+var tournament_1 = require("../../pong_app/server/tournament");
 exports.Rooms = [];
 exports.Tournaments = [];
 function idGenerator() {
@@ -57,33 +59,25 @@ function idGenerator() {
         }
     });
 }
-var idGenRoom = idGenerator();
+exports.idGenRoom = idGenerator();
 var idGenTour = idGenerator();
 function getRoomById(id) {
     if (exports.Rooms.find(function (room) { return room.id === id; }))
         return exports.Rooms.find(function (room) { return room.id === id; }); // Find the room in the list of rooms
     // Find the room in the list of rooms in the tournaments
-    var tour = exports.Tournaments.find(function (tour) {
-        return tour.rooms[tour.rooms.length - 1].find(function (room) {
-            return room.id === id;
-        });
+    exports.Tournaments.forEach(function (tour) {
+        if (tour.getRoomById(id) !== null)
+            return tour.getRoomById(id);
     });
-    if (!tour)
-        return undefined;
-    for (var _i = 0, _a = tour.rooms[tour.rooms.length - 1]; _i < _a.length; _i++) {
-        var room = _a[_i];
-        if (room.id === id)
-            return room;
-    }
 }
 function getTournamentById(id) {
-    return exports.Tournaments.find(function (tour) { return tour.id === id; });
+    return exports.Tournaments.find(function (tour) { return tour.getId() === id; });
 }
 function isPlayerInRoom(socket) {
     return exports.Rooms.find(function (room) { return room.P1 === socket || room.P2 === socket; }) !== undefined;
 }
 function isPlayerInTournament(socket) {
-    return exports.Tournaments.find(function (tour) { return tour.players.find(function (player) { return player === socket; }); }) !== undefined;
+    return exports.Tournaments.find(function (tour) { return tour.getPlayers().find(function (player) { return player === socket; }); }) !== undefined;
 }
 var joinMatchmaking = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
     var _i, Rooms_1, room, id, newRoom;
@@ -106,7 +100,7 @@ var joinMatchmaking = function (socket, req) { return __awaiter(void 0, void 0, 
                 return [2 /*return*/];
             }
         }
-        id = idGenRoom.next().value;
+        id = exports.idGenRoom.next().value;
         newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false };
         exports.Rooms.push(newRoom);
         socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2" }));
@@ -121,7 +115,7 @@ var joinSolo = function (socket, req) { return __awaiter(void 0, void 0, void 0,
         if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
             return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }))];
         console.log("New Player creating solo room");
-        newRoom = { id: idGenRoom.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true };
+        newRoom = { id: exports.idGenRoom.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true };
         newRoom.game = new pong_game_1.Game(newRoom.id, socket, socket, true);
         exports.Rooms.push(newRoom);
         socket.send(JSON.stringify({ type: "INFO", message: "Solo room created, starting game" }));
@@ -135,14 +129,14 @@ exports.joinSolo = joinSolo;
 var createTournament = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
     var newTour;
     return __generator(this, function (_a) {
-        console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
+        // console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
         if (isPlayerInTournament(socket) || isPlayerInRoom(socket))
             return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }))];
         console.log("New Player creating tournament");
-        newTour = { id: idGenTour.next().value, started: false, nbPlayers: 1, rooms: [], players: [socket] };
+        newTour = new tournament_1.Tournament(idGenTour.next().value, socket);
         exports.Tournaments.push(newTour);
         socket.send(JSON.stringify({ type: "INFO", message: "Tournament created, awaiting players" }));
-        socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: newTour.id, tourPlacement: 0 }));
+        socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: newTour.getId(), tourPlacement: 0 }));
         return [2 /*return*/];
     });
 }); };
@@ -156,68 +150,30 @@ var joinTournament = function (socket, req) { return __awaiter(void 0, void 0, v
         console.log("New Player looking to join tournament");
         for (_i = 0, Tournaments_1 = exports.Tournaments; _i < Tournaments_1.length; _i++) {
             tour = Tournaments_1[_i];
-            if (tour.started)
+            if (tour.hasStarted())
                 continue;
-            tour.nbPlayers++;
-            tour.players.push(socket);
+            tour.addPlayer(socket);
             socket.send(JSON.stringify({ type: "INFO", message: "You have joined the tournament" }));
-            socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: tour.id, tourPlacement: tour.nbPlayers - 1 }));
+            socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: tour.getId(), tourPlacement: tour.getPlayers().length - 1 }));
             return [2 /*return*/];
         }
         socket.send(JSON.stringify({ type: "ALERT", message: "No tournament found. Disconnecting" }));
-        socket.close();
+        socket.send(JSON.stringify({ type: "LEAVE" }));
         return [2 /*return*/];
     });
 }); };
 exports.joinTournament = joinTournament;
 var shuffleTree = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
+    var tour;
     return __generator(this, function (_a) {
-        shuffleTreeWithId(request.body.tourId);
+        tour = getTournamentById(request.body.tourId);
+        if (!tour)
+            return [2 /*return*/, console.log("Tournament not found")];
+        tour.shuffleTree();
         return [2 /*return*/];
     });
 }); };
 exports.shuffleTree = shuffleTree;
-function shuffleTreeWithId(id) {
-    var _a;
-    var _b, _c;
-    var tour = getTournamentById(id);
-    if (!tour)
-        return (_b = tour.players[0]) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({ type: "ERROR", message: "Tournament not found" }));
-    if (tour.started)
-        return (_c = tour.players[0]) === null || _c === void 0 ? void 0 : _c.send(JSON.stringify({ type: "ERROR", message: "Tournament already started, cannot shuffle right now" }));
-    // Create the tree structure
-    var roomNb = Math.ceil(tour.nbPlayers / 2);
-    var rooms = [];
-    tour.rooms = [];
-    while (roomNb > 1) {
-        for (var i = 0; i < roomNb; i++) {
-            var newRoom = { id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false };
-            rooms.push(newRoom);
-        }
-        tour.rooms.unshift(rooms);
-        rooms = [];
-        roomNb = Math.ceil(roomNb / 2);
-    }
-    tour.rooms.unshift([{ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false }]);
-    // Place the players in the rooms in a random order
-    var positions = [];
-    for (var i = 0; i < tour.players.length; ++i) {
-        positions.push(i);
-    }
-    for (var i = positions.length - 1; i > 0; --i) { // Fisher-Yates shuffle, to shuffle the player's positions
-        var j = Math.floor(Math.random() * (i + 1));
-        _a = [positions[j], positions[i]], positions[i] = _a[0], positions[j] = _a[1];
-    }
-    for (var i = 0; i < tour.players.length; i += 2) {
-        tour.players[i].send(JSON.stringify({ type: "INFO", message: "You are in position " + positions[i] }));
-        tour.rooms[tour.rooms.length - 1][Math.floor(i / 2)].P1 = tour.players[positions[i]];
-        if (i + 1 >= tour.players.length)
-            continue;
-        tour.players[i + 1].send(JSON.stringify({ type: "INFO", message: "You are in position " + positions[i + 1] }));
-        tour.rooms[tour.rooms.length - 1][Math.floor(i / 2)].P2 = tour.players[positions[i + 1]];
-    }
-    console.log("%cTournament shuffled%c. Tree : " + tour.rooms, "color: green", "color: reset");
-}
 var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
     var room, player, playerSocket;
     return __generator(this, function (_a) {
@@ -272,7 +228,7 @@ function quitPong(request) {
         playerSocket === null || playerSocket === void 0 ? void 0 : playerSocket.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
         opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
         if (!room.isP1Ready || !room.isP2Ready)
-            opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "LEAVE", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
+            opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "LEAVE", data: "PONG", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
         console.log("Room : " + room.id + " has been deleted");
         exports.Rooms.splice(exports.Rooms.indexOf(room), 1);
     });
@@ -283,32 +239,23 @@ function quitTournament(request) {
     if (!tour)
         return console.log("Tournament not found");
     // TODO : Look at that when game already started
-    tour.players.splice(request.body.tourPlacement, 1);
-    tour.nbPlayers--;
-    for (var _i = 0, _a = tour.players; _i < _a.length; _i++) {
-        var player = _a[_i];
-        player.send(JSON.stringify({ type: "INFO", message: "Player " + request.body.tourPlacement + " has left the tournament" }));
+    if (tour.removePlayer(request.body.tourPlacement)) {
+        console.log("Tournament : " + tour.getId() + " has been deleted");
+        exports.Tournaments.splice(exports.Tournaments.indexOf(this), 1);
     }
-    if (tour.nbPlayers <= 0) {
-        console.log("Tournament : " + tour.id + " has been deleted");
-        exports.Tournaments.splice(exports.Tournaments.indexOf(tour), 1);
-        return;
-    }
-    if (request.body.tourPlacement === 0)
-        tour.players[0].send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
 }
-var startGame = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
-    var room;
+var startTournament = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
+    var tour;
     return __generator(this, function (_a) {
         console.log("Starting game");
-        room = getRoomById(request.body.roomId);
-        if (!room || !room.game)
-            return [2 /*return*/, reply.send(JSON.stringify({ type: "ERROR", message: "Room not found" }))];
-        room.game.GameLoop();
+        tour = getTournamentById(request.body.tourId);
+        if (!tour)
+            return [2 /*return*/, console.log("Tournament not found")];
+        tour.startTournament();
         return [2 /*return*/];
     });
 }); };
-exports.startGame = startGame;
+exports.startTournament = startTournament;
 var movePaddle = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
     var room;
     return __generator(this, function (_a) {
@@ -320,10 +267,3 @@ var movePaddle = function (request, reply) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.movePaddle = movePaddle;
-var finishGame = function (request, reply) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        console.log("Game Finished");
-        return [2 /*return*/, reply.send(JSON.stringify("Game Finished????"))];
-    });
-}); };
-exports.finishGame = finishGame;

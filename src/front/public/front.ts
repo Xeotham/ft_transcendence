@@ -38,7 +38,7 @@ function	noRoom(content: HTMLElement) {
 		<button id="join-solo-game">Create a solo Game</button>
 		<button id="create-tournament">Create a tournament</button>
 		<button id="join-tournament">Join a tournament</button>
-	`
+	`;
 	document.getElementById("join-game").addEventListener("click", joinMatchmaking);
 	document.getElementById("join-solo-game").addEventListener("click", joinSolo);
 	document.getElementById("create-tournament").addEventListener("click", createTournament);
@@ -50,9 +50,22 @@ function	room_found(content: HTMLElement) {
 	content.innerHTML= `
 		<p>Room found!</p>
 		<button id="quit-room">Quit Room</button>
-	`
-	if (isTournamentOwner)
-		content.innerHTML += `<button id="start-tournament">Start Tournament</button>`;
+	`;
+	if (isTournamentOwner) {
+		content.innerHTML += `
+			<button id="start-tournament">Start Tournament</button>
+			<button id="shuffle-tree">Shuffle Tree</button>
+		`;
+		document.getElementById("start-tournament").addEventListener("click", () => {
+			fetch('http://localhost:3000/api/pong/startTournament', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ tourId: tournamentId })
+		}) });
+		document.getElementById("shuffle-tree").addEventListener("click", shuffleTree);
+	}
 	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
 }
 
@@ -198,7 +211,8 @@ function messageHandler(event: MessageEvent) {
 			quitRoom();
 			if (res.message === "QUEUE_AGAIN" || queueInterval) {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
-				joinMatchmaking();
+				if (res.data === "PONG")
+					joinMatchmaking();
 			}
 			clearInterval(queueInterval);
 			queueInterval = null;
@@ -222,10 +236,13 @@ function tournamentMessageHandler(res: responseFormat) {
 			loadPage("room-found");
 			break ;
 		case "PREP":
-			tournamentId = res.tourId === null ? tournamentId : res.tourId;
-			tourPlacement = res.tourPlacement === null ? tourPlacement : res.tourPlacement;
+			tournamentId = res.tourId;
+			tourPlacement = res.tourPlacement;
 			console.log("Joined tournament: " + tournamentId + " as player: " + tourPlacement);
 			loadPage("room-found");
+			break ;
+		case "LEAVE":
+			quitRoom();
 			break ;
 	}
 }
@@ -233,8 +250,8 @@ function tournamentMessageHandler(res: responseFormat) {
 function gameMessageHandler(res: responseFormat) {
 	switch (res.message) {
 		case "PREP":
-			roomNumber = res.roomId === null ? roomNumber : res.roomId;
-			player = res.player === null ? player : res.player;
+			roomNumber = res.roomId;
+			player = res.player;
 			console.log("Joined room: " + roomNumber + " as player: " + player);
 			break ;
 		case "START":
@@ -300,6 +317,16 @@ function keyHandler(event: KeyboardEvent) {
 		clearInterval(intervals[event.code]);
 		intervals[event.code] = null;
 	}
+}
+
+function shuffleTree() {
+	fetch('http://localhost:3000/api/pong/shuffleTree', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ tourId: tournamentId })
+	});
 }
 
 function confirmGame() {

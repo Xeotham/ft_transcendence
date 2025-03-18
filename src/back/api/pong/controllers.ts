@@ -2,12 +2,13 @@
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from "ws";
 import { Game } from "../../pong_app/server/pong_game";
+import { Tournament } from "../../pong_app/server/tournament";
 import * as Constants from "../../pong_app/server/constants";
 
 // Interactions with the DataBase to create and get Users
 // import { createUser, getUserByUsername } from '../../database/models/Games';
 
-interface Room {
+export interface Room {
 	id:			number;
 	P1:			WebSocket | null;
 	P2:			WebSocket | null;
@@ -18,14 +19,6 @@ interface Room {
 	isSolo:		boolean;
 	// private:	boolean; // TODO: Implement private rooms
 	// inviteCode:	string;
-}
-
-interface Tournament {
-	id:			number;
-	started:	boolean;
-	nbPlayers:	number;
-	rooms:		Room[][]; // tree structure
-	players:	WebSocket[];
 }
 
 export interface requestBody {
@@ -51,14 +44,14 @@ export interface responseFormat {
 export let	Rooms: Room[] = [];
 export let Tournaments: Tournament[] = [];
 
-function* idGenerator() {
+export function* idGenerator() {
 	let i = 0;
 	while (1)
 		yield i++;
 	return i;
 }
 
-const idGenRoom = idGenerator();
+export const idGenRoom = idGenerator();
 const idGenTour = idGenerator();
 
 function getRoomById(id: number): Room | undefined {
@@ -67,21 +60,14 @@ function getRoomById(id: number): Room | undefined {
 		return Rooms.find((room) => { return room.id === id; }); // Find the room in the list of rooms
 
 	// Find the room in the list of rooms in the tournaments
-	const tour = Tournaments.find((tour) => {
-		return tour.rooms[tour.rooms.length - 1].find((room) => {
-			return room.id === id;
-		})
+	Tournaments.forEach((tour) => {
+		if (tour.getRoomById(id) !== null)
+			return tour.getRoomById(id);
 	});
-	if (!tour)
-		return undefined;
-	for (const room of tour.rooms[tour.rooms.length - 1]) {
-		if (room.id === id)
-			return room;
-	}
 }
 
 function getTournamentById(id: number): Tournament | undefined {
-	return Tournaments.find((tour) => { return tour.id === id; });
+	return Tournaments.find((tour) => { return tour.getId() === id; });
 }
 
 function isPlayerInRoom(socket: WebSocket): boolean {
@@ -89,7 +75,7 @@ function isPlayerInRoom(socket: WebSocket): boolean {
 }
 
 function isPlayerInTournament(socket: WebSocket): boolean {
-	return Tournaments.find((tour) => { return tour.players.find((player) => { return player === socket }) }) !== undefined;
+	return Tournaments.find((tour) => { return tour.getPlayers().find((player) => { return player === socket }) }) !== undefined;
 }
 
 export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
@@ -139,17 +125,17 @@ export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
 
 export const createTournament = async (socket: WebSocket, req: FastifyRequest) => {
 
-	console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
+	// console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
 
 	if (isPlayerInTournament(socket) || isPlayerInRoom(socket))
 		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
 
 	console.log("New Player creating tournament");
-	const newTour = { id: idGenTour.next().value, started: false, nbPlayers: 1, rooms: [], players: [socket] };
+	const newTour = new Tournament(idGenTour.next().value, socket);
 	Tournaments.push(newTour);
 
 	socket.send(JSON.stringify({ type: "INFO", message: "Tournament created, awaiting players" }));
-	socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: newTour.id, tourPlacement: 0 }));
+	socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: newTour.getId(), tourPlacement: 0 }));
 }
 
 export const joinTournament = async (socket: WebSocket, req: FastifyRequest) => {
@@ -160,64 +146,22 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequest) => 
 
 	console.log("New Player looking to join tournament");
 	for (const tour of Tournaments) {
-		if (tour.started)
+		if (tour.hasStarted())
 			continue ;
-		tour.nbPlayers++;
-		tour.players.push(socket);
+		tour.addPlayer(socket);
 		socket.send(JSON.stringify({ type: "INFO", message: "You have joined the tournament" }));
-		socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: tour.id, tourPlacement: tour.nbPlayers - 1 }));
+		socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: tour.getId(), tourPlacement: tour.getPlayers().length - 1 }));
 		return ;
 	}
 	socket.send(JSON.stringify({ type: "ALERT", message: "No tournament found. Disconnecting" }));
-	socket.close();
-
+	socket.send(JSON.stringify({ type: "LEAVE" }));
 }
 
 export const shuffleTree = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
-	shuffleTreeWithId(request.body.tourId);
-}
-
-function shuffleTreeWithId(id: number) {
-	const tour = getTournamentById(id);
-
+	const tour = getTournamentById(request.body.tourId);
 	if (!tour)
-		return tour.players[0]?.send(JSON.stringify({ type: "ERROR", message: "Tournament not found" }));
-	if (tour.started)
-		return tour.players[0]?.send(JSON.stringify({ type: "ERROR", message: "Tournament already started, cannot shuffle right now" }));
-
-	// Create the tree structure
-	let roomNb = Math.ceil(tour.nbPlayers / 2);
-	let rooms: Room[] = [];
-	tour.rooms = [];
-	while (roomNb > 1) {
-		for (let i = 0; i < roomNb; i++) {
-			const newRoom = { id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false };
-			rooms.push(newRoom);
-		}
-		tour.rooms.unshift(rooms);
-		rooms = [];
-		roomNb = Math.ceil(roomNb / 2);
-	}
-	tour.rooms.unshift([{ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false }]);
-
-	// Place the players in the rooms in a random order
-	let positions: number[] = [];
-	for (let i = 0; i < tour.players.length; ++i) {
-		positions.push(i);
-	}
-	for (let i = positions.length - 1; i > 0; --i) { // Fisher-Yates shuffle, to shuffle the player's positions
-		const j = Math.floor(Math.random() * (i + 1));
-		[positions[i], positions[j]] = [positions[j], positions[i]];
-	}
-	for (let i = 0; i < tour.players.length; i += 2) {
-		tour.players[i].send(JSON.stringify({ type: "INFO", message: "You are in position " + positions[i] }));
-		tour.rooms[tour.rooms.length - 1][Math.floor(i / 2)].P1 = tour.players[positions[i]];
-		if (i + 1 >= tour.players.length)
-			continue ;
-		tour.players[i + 1].send(JSON.stringify({ type: "INFO", message: "You are in position " + positions[i + 1] }));
-		tour.rooms[tour.rooms.length - 1][Math.floor(i / 2)].P2 = tour.players[positions[i + 1]];
-	}
-	console.log("%cTournament shuffled%c. Tree : " + tour.rooms, "color: green", "color: reset");
+		return console.log("Tournament not found");
+	tour.shuffleTree();
 }
 
 export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
@@ -273,7 +217,7 @@ function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
 		playerSocket?.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
 		opponentSocket?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
 		if (!room.isP1Ready || !room.isP2Ready)
-			opponentSocket?.send(JSON.stringify({ type: "LEAVE", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
+			opponentSocket?.send(JSON.stringify({ type: "LEAVE", data: "PONG", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
 		console.log("Room : " + room.id + " has been deleted");
 		Rooms.splice(Rooms.indexOf(room), 1);
 	});
@@ -288,27 +232,20 @@ function quitTournament(request: FastifyRequest<{ Body: requestBody }>) {
 		return console.log("Tournament not found");
 
 	// TODO : Look at that when game already started
-	tour.players.splice(request.body.tourPlacement, 1);
-	tour.nbPlayers--;
-	for (const player of tour.players) {
-		player.send(JSON.stringify({ type: "INFO", message: "Player " + request.body.tourPlacement + " has left the tournament" }));
+	if (tour.removePlayer(request.body.tourPlacement)) {
+		console.log("Tournament : " + tour.getId() + " has been deleted");
+		Tournaments.splice(Tournaments.indexOf(this), 1);
 	}
-	if (tour.nbPlayers <= 0) {
-		console.log("Tournament : " + tour.id + " has been deleted");
-		Tournaments.splice(Tournaments.indexOf(tour), 1);
-		return ;
-	}
-	if (request.body.tourPlacement === 0)
-		tour.players[0].send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
 }
 
-export const startGame = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
+export const startTournament = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
 	console.log("Starting game");
-	let room = getRoomById(request.body.roomId);
+	const tour = getTournamentById(request.body.tourId);
 
-	if (!room || !room.game)
-		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	room.game.GameLoop();
+	if (!tour)
+		return console.log("Tournament not found");
+	tour.startTournament();
+
 };
 
 export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
