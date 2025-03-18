@@ -300,7 +300,6 @@ function quitTournament(request: FastifyRequest<{ Body: requestBody }>) {
 	}
 	if (request.body.tourPlacement === 0)
 		tour.players[0].send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
-
 }
 
 export const startGame = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
@@ -319,10 +318,3 @@ export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>,
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
 	room.game.MovePaddle(request.body);
 };
-
-export const finishGame = async (request: FastifyRequest, reply: FastifyReply) => {
-	console.log("Game Finished");
-	return reply.send(JSON.stringify("Game Finished????"));
-
-};
-

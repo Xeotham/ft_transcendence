@@ -22,7 +22,6 @@ let		tourPlacement: number = -1;
 // canvas.height = Constants.HEIGHT;
 
 async function loadPage(page: string) {
-
 	switch (page) {
 		case "no-room":
 			noRoom(content);
@@ -226,6 +225,7 @@ function tournamentMessageHandler(res: responseFormat) {
 			tournamentId = res.tourId === null ? tournamentId : res.tourId;
 			tourPlacement = res.tourPlacement === null ? tourPlacement : res.tourPlacement;
 			console.log("Joined tournament: " + tournamentId + " as player: " + tourPlacement);
+			loadPage("room-found");
 			break ;
 	}
 }

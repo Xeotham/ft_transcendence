@@ -125,7 +125,6 @@ function joinSolo() {
                 console.log("Connection closed");
                 if (roomNumber >= 0)
                     quitRoom();
-                reattachEventListeners();
             };
             // Listen for messages
             socket.addEventListener("message", messageHandler);
@@ -179,19 +178,12 @@ function joinTournament() {
                 console.log("Connection closed");
                 if (tournamentId >= 0)
                     quitRoom();
-                reattachEventListeners();
             };
             // Listen for messages
             socket.addEventListener("message", messageHandler);
             return [2 /*return*/];
         });
     });
-}
-function reattachEventListeners() {
-    document.getElementById("join-game").addEventListener("click", joinMatchmaking);
-    document.getElementById("join-solo-game").addEventListener("click", joinSolo);
-    document.getElementById("create-tournament").addEventListener("click", createTournament);
-    document.getElementById("join-tournament").addEventListener("click", joinTournament);
 }
 function quitRoom(msg) {
     if (msg === void 0) { msg = "Leaving room"; }
@@ -268,6 +260,7 @@ function tournamentMessageHandler(res) {
             tournamentId = res.tourId === null ? tournamentId : res.tourId;
             tourPlacement = res.tourPlacement === null ? tourPlacement : res.tourPlacement;
             console.log("Joined tournament: " + tournamentId + " as player: " + tourPlacement);
+            loadPage("room-found");
             break;
     }
 }
