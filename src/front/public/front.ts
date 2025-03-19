@@ -4,7 +4,7 @@ import { Game } from "../../back/pong_app/server/pong_game";
 
 let		roomNumber = -1;
 let		game : Game | null = null;
-let		player : string | "P1" | "P2" | null = null;
+let		player : string | "P1" | "P2" | "SPEC" | null = null;
 const	content = document.getElementById("content");
 let		socket: WebSocket | null = null;
 let		score = { player1: 0, player2: 0 };
@@ -17,6 +17,7 @@ let		matchType: string = "";
 let		isTournamentOwner: boolean = false;
 let		tournamentId: number = -1;
 let		tourPlacement: number = -1;
+let		specPlacement: number = -1;
 
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
@@ -38,11 +39,13 @@ function	noRoom(content: HTMLElement) {
 		<button id="join-solo-game">Create a solo Game</button>
 		<button id="create-tournament">Create a tournament</button>
 		<button id="join-tournament">Join a tournament</button>
+		<button id="spectate">spectate</button>
 	`;
 	document.getElementById("join-game").addEventListener("click", joinMatchmaking);
 	document.getElementById("join-solo-game").addEventListener("click", joinSolo);
 	document.getElementById("create-tournament").addEventListener("click", createTournament);
 	document.getElementById("join-tournament").addEventListener("click", joinTournament);
+	document.getElementById("spectate").addEventListener("click", joinSpectate);
 	c?.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -67,6 +70,30 @@ function	room_found(content: HTMLElement) {
 		document.getElementById("shuffle-tree").addEventListener("click", shuffleTree);
 	}
 	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
+}
+
+async function	joinSpectate() {
+	loadPage("room-found");
+	isSolo = false;
+	matchType = "PONG";
+	player = "SPEC";
+	if (!socket)
+		socket = new WebSocket("ws://localhost:3000/api/pong/addSpectatorToRoom?id=0"); // TODO : add room id
+
+	socket.addEventListener("error", (error) => {
+		console.error(error);
+	})
+	// Connection opened
+	socket.onopen = () => {
+		console.log("Connected to the server");
+	}
+	socket.onclose = () => {
+		console.log("Connection closed");
+		if (roomNumber >= 0)
+			quitRoom();
+	}
+	// Listen for messages
+	socket.addEventListener("message", messageHandler);
 }
 
 async function	joinMatchmaking() {
@@ -171,7 +198,7 @@ function quitRoom(msg: string = "Leaving room") {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ matchType: matchType, message: msg, tourId: tournamentId, roomId: roomNumber, P: player, tourPlacement: tourPlacement })
+		body: JSON.stringify({ matchType: matchType, message: msg, tourId: tournamentId, roomId: roomNumber, P: player, tourPlacement: tourPlacement, specPlacement: specPlacement })
 	});
 	if (socket)
 		socket.close();
@@ -260,6 +287,8 @@ function gameMessageHandler(res: responseFormat) {
 			document.addEventListener("keyup", keyHandler);
 			break ;
 		case "FINISH":
+			if (player === "SPEC")
+				return ;
 			if (isSolo)
 				alert(res.data + " won!");
 			else
@@ -285,7 +314,7 @@ function keyHandler(event: KeyboardEvent) {
 	// console.log("event type:" + event.type + ", Key pressed: " + event.code);
 
 	async function sendPaddleMovement(key: string, p: string) {
-		const paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
+		const paddle = p === "P1" ? game.paddle1 : game.paddle2;
 		if (key !== "ArrowUp" && key !== "ArrowDown" && key !== "KeyS" && key !== "KeyX")
 			return ;
 		let direction = "";
@@ -374,10 +403,10 @@ function drawGame() {
 	// Draw ball
 	c.fillStyle = "white";
 	c.beginPath();
-	c.arc(game.Ball.x, game.Ball.y, game.Ball.size, 0, Math.PI * 2);
+	c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
 	c.fill();
 
 	// Draw paddles
-	c.fillRect(game.Paddle1.x, game.Paddle1.y, game.Paddle1.x_size, game.Paddle1.y_size); // Left Paddle
-	c.fillRect(game.Paddle2.x, game.Paddle2.y, game.Paddle2.x_size, game.Paddle2.y_size); // Right Paddle
+	c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
+	c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
 }

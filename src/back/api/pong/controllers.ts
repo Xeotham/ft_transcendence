@@ -3,7 +3,6 @@ import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from "ws";
 import { Game } from "../../pong_app/server/pong_game";
 import { Tournament } from "../../pong_app/server/tournament";
-import * as Constants from "../../pong_app/server/constants";
 
 // Interactions with the DataBase to create and get Users
 // import { createUser, getUserByUsername } from '../../database/models/Games';
@@ -17,6 +16,7 @@ export interface Room {
 	isP1Ready:	boolean;
 	isP2Ready:	boolean;
 	isSolo:		boolean;
+	spectators:	WebSocket[];
 	// private:	boolean; // TODO: Implement private rooms
 	// inviteCode:	string;
 }
@@ -29,6 +29,7 @@ export interface requestBody {
 	roomId:			number;
 	P:				string;
 	tourPlacement:	number;
+	specPlacement:	number;
 }
 
 export interface responseFormat {
@@ -89,7 +90,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 		if (room.P1 && !room.P2) {
 			room.P2 = socket;
 			room.full = true;
-			room.game = new Game(room.id, room.P1, room.P2, false);
+			room.game = new Game(room.id, room.P1, room.P2, false, room.spectators);
 			room.P1.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
 			room.P2.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
 			room.P1.send(JSON.stringify({ type: "CONFIRM" }));
@@ -101,7 +102,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 
 	// If no available room is found, create a new one
 	const id = idGenRoom.next().value;
-	const newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false };
+	const newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] };
 	Rooms.push(newRoom);
 	socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2"}));
 	socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomId: id }));
@@ -114,7 +115,7 @@ export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
 		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
 
 	console.log("New Player creating solo room");
-	const newRoom = { id: idGenRoom.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true };
+	const newRoom = { id: idGenRoom.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true, spectators: [] };
 	newRoom.game = new Game(newRoom.id, socket, socket, true);
 	Rooms.push(newRoom);
 	socket.send(JSON.stringify({ type: "INFO", message: "Solo room created, starting game" }));
@@ -186,7 +187,7 @@ export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }
 	room.P1.send(JSON.stringify({ type: "GAME", message: "START" }));
 	room.P2.send(JSON.stringify({ type: "GAME", message: "START" }));
 	console.log("Starting game");
-	room.game.GameLoop();
+	room.game.gameLoop();
 }
 
 export const quitRoom = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
@@ -209,18 +210,27 @@ function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
 
 	if (!playerSocket)
 		return console.log("Player not found");
-	Rooms.forEach((room) => {
-		if (room.P1 !== playerSocket && room.P2 !== playerSocket)
+	// Rooms.forEach((room) => {
+	// 	if (room.P1 !== playerSocket && room.P2 !== playerSocket)
+	// 		return ;
+	if (player === "SPEC") {
+		const socket = room.spectators.at(request.body.specPlacement);
+		if (!socket)
 			return ;
+		room.spectators.splice(room.spectators.indexOf(socket), 1);
+		socket.send(JSON.stringify({ type: "INFO", message: "You stopped spectating the room" }));
+		socket.send(JSON.stringify({ type: "LEAVE", data: "PONG" }));
+		return ;
+	}
 		if (room.game)
-			room.game.Forfeit(player);
+			room.game.forfeit(player);
 		playerSocket?.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
 		opponentSocket?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
 		if (!room.isP1Ready || !room.isP2Ready)
 			opponentSocket?.send(JSON.stringify({ type: "LEAVE", data: "PONG", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
 		console.log("Room : " + room.id + " has been deleted");
 		Rooms.splice(Rooms.indexOf(room), 1);
-	});
+	// });
 }
 
 function quitTournament(request: FastifyRequest<{ Body: requestBody }>) {
@@ -245,7 +255,6 @@ export const startTournament = async (request: FastifyRequest<{ Body: requestBod
 	if (!tour)
 		return console.log("Tournament not found");
 	tour.startTournament();
-
 };
 
 export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
@@ -253,5 +262,16 @@ export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>,
 
 	if (!room || !room.game)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	room.game.MovePaddle(request.body);
+	room.game.movePaddle(request.body);
 };
+
+export const    addSpectatorToRoom = async (socket: WebSocket, req: FastifyRequest<{ Querystring: { id: number } }>) => {
+	const	id = Number(req.query.id);
+	const	room = getRoomById(id);
+	if (!room || room.isSolo) {
+		socket.send(JSON.stringify({type: "INFO", message: "You cannot spectate this room"}));
+		socket.send(JSON.stringify({type: "LEAVE", data: "PONG"}));
+	}
+	room.spectators.push(socket);
+	room.game?.addSpectator(socket);
+}

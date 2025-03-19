@@ -50,6 +50,7 @@ var matchType = "";
 var isTournamentOwner = false;
 var tournamentId = -1;
 var tourPlacement = -1;
+var specPlacement = -1;
 // canvas.width = Constants.WIDTH;
 // canvas.height = Constants.HEIGHT;
 function loadPage(page) {
@@ -68,11 +69,12 @@ function loadPage(page) {
     });
 }
 function noRoom(content) {
-    content.innerHTML = "\n\t\t<button id=\"join-game\">Join a Game</button>\t\t\n\t\t<button id=\"join-solo-game\">Create a solo Game</button>\n\t\t<button id=\"create-tournament\">Create a tournament</button>\n\t\t<button id=\"join-tournament\">Join a tournament</button>\n\t";
+    content.innerHTML = "\n\t\t<button id=\"join-game\">Join a Game</button>\t\t\n\t\t<button id=\"join-solo-game\">Create a solo Game</button>\n\t\t<button id=\"create-tournament\">Create a tournament</button>\n\t\t<button id=\"join-tournament\">Join a tournament</button>\n\t\t<button id=\"spectate\">spectate</button>\n\t";
     document.getElementById("join-game").addEventListener("click", joinMatchmaking);
     document.getElementById("join-solo-game").addEventListener("click", joinSolo);
     document.getElementById("create-tournament").addEventListener("click", createTournament);
     document.getElementById("join-tournament").addEventListener("click", joinTournament);
+    document.getElementById("spectate").addEventListener("click", joinSpectate);
     c === null || c === void 0 ? void 0 : c.clearRect(0, 0, canvas.width, canvas.height);
 }
 function room_found(content) {
@@ -91,6 +93,33 @@ function room_found(content) {
         document.getElementById("shuffle-tree").addEventListener("click", shuffleTree);
     }
     document.getElementById("quit-room").addEventListener("click", function (ev) { return quitRoom("Leaving room"); });
+}
+function joinSpectate() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            loadPage("room-found");
+            isSolo = false;
+            matchType = "PONG";
+            player = "SPEC";
+            if (!socket)
+                socket = new WebSocket("ws://localhost:3000/api/pong/addSpectatorToRoom?id=0"); // TODO : add room id
+            socket.addEventListener("error", function (error) {
+                console.error(error);
+            });
+            // Connection opened
+            socket.onopen = function () {
+                console.log("Connected to the server");
+            };
+            socket.onclose = function () {
+                console.log("Connection closed");
+                if (roomNumber >= 0)
+                    quitRoom();
+            };
+            // Listen for messages
+            socket.addEventListener("message", messageHandler);
+            return [2 /*return*/];
+        });
+    });
 }
 function joinMatchmaking() {
     return __awaiter(this, void 0, void 0, function () {
@@ -207,7 +236,7 @@ function quitRoom(msg) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ matchType: matchType, message: msg, tourId: tournamentId, roomId: roomNumber, P: player, tourPlacement: tourPlacement })
+        body: JSON.stringify({ matchType: matchType, message: msg, tourId: tournamentId, roomId: roomNumber, P: player, tourPlacement: tourPlacement, specPlacement: specPlacement })
     });
     if (socket)
         socket.close();
@@ -292,6 +321,8 @@ function gameMessageHandler(res) {
             document.addEventListener("keyup", keyHandler);
             break;
         case "FINISH":
+            if (player === "SPEC")
+                return;
             if (isSolo)
                 alert(res.data + " won!");
             else
@@ -318,7 +349,7 @@ function keyHandler(event) {
         return __awaiter(this, void 0, void 0, function () {
             var paddle, direction;
             return __generator(this, function (_a) {
-                paddle = p === "P1" ? game.Paddle1 : game.Paddle2;
+                paddle = p === "P1" ? game.paddle1 : game.paddle2;
                 if (key !== "ArrowUp" && key !== "ArrowDown" && key !== "KeyS" && key !== "KeyX")
                     return [2 /*return*/];
                 direction = "";
@@ -396,9 +427,9 @@ function drawGame() {
     // Draw ball
     c.fillStyle = "white";
     c.beginPath();
-    c.arc(game.Ball.x, game.Ball.y, game.Ball.size, 0, Math.PI * 2);
+    c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
     c.fill();
     // Draw paddles
-    c.fillRect(game.Paddle1.x, game.Paddle1.y, game.Paddle1.x_size, game.Paddle1.y_size); // Left Paddle
-    c.fillRect(game.Paddle2.x, game.Paddle2.y, game.Paddle2.x_size, game.Paddle2.y_size); // Right Paddle
+    c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
+    c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
 }

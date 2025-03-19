@@ -39,143 +39,161 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
 var Constants = require("./constants");
 var Game = /** @class */ (function () {
-    function Game(id, player1, player2, isSolo) {
-        this.Id = id;
-        this.Players = { player1: player1, player2: player2 };
-        this.Score = { player1: 0, player2: 0 };
-        this.Paddle1 = { x: Constants.PADDLE1_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
-        this.Paddle2 = { x: Constants.PADDLE2_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
-        this.Ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0, speed: Constants.BALL_SPEED };
-        this.Over = false;
-        this.Winner = null;
+    function Game(id, player1, player2, isSolo, spectators) {
+        if (spectators === void 0) { spectators = []; }
+        this.id = id;
+        this.players = { player1: player1, player2: player2 };
+        this.score = { player1: 0, player2: 0 };
+        this.paddle1 = { x: Constants.PADDLE1_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
+        this.paddle2 = { x: Constants.PADDLE2_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
+        this.ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0, speed: Constants.BALL_SPEED };
+        this.over = false;
+        this.winner = null;
         this.isSolo = isSolo;
-        this.StartTime = performance.now();
-        this.FinishTime = this.StartTime;
-        this.LastTime = this.StartTime;
+        this.spectators = spectators;
+        this.startTime = performance.now();
+        this.finishTime = this.startTime;
+        this.lastTime = this.startTime;
     }
     Game.prototype.toJSON = function () {
         return {
-            Paddle1: this.Paddle1,
-            Paddle2: this.Paddle2,
-            Ball: this.Ball,
+            paddle1: this.paddle1,
+            paddle2: this.paddle2,
+            ball: this.ball,
         };
     };
+    Game.prototype.isOver = function () {
+        return this.over;
+    };
+    Game.prototype.addSpectator = function (spectator) {
+        this.spectators.push(spectator);
+    };
     Game.prototype.sendData = function (data) {
-        this.Players.player1.send(JSON.stringify(data));
+        this.players.player1.send(JSON.stringify(data));
         if (!this.isSolo)
-            this.Players.player2.send(JSON.stringify(data));
+            this.players.player2.send(JSON.stringify(data));
+        for (var _i = 0, _a = this.spectators; _i < _a.length; _i++) {
+            var spectator = _a[_i];
+            spectator.send(JSON.stringify(data));
+        }
     };
-    Game.prototype.SpawnBall = function (side) {
-        this.sendData({ type: "GAME", data: this.Score, message: "SCORE" });
-        this.Ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
-        this.Ball.x = Constants.WIDTH / 2;
-        this.Ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-        // this.Ball.y = Constants.HEIGHT / 2; // TODO : Remove this line
-        // this.Ball.orientation = 0; // TODO : Remove this line
+    Game.prototype.spawnBall = function (side) {
+        this.sendData({ type: "GAME", data: this.score, message: "SCORE" });
+        this.ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
+        this.ball.x = Constants.WIDTH / 2;
+        this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
+        // this.ball.y = Constants.HEIGHT / 2; // TODO : Remove this line
+        // this.ball.orientation = 0; // TODO : Remove this line
         if (side === "P1")
-            this.Ball.orientation += Math.PI;
-        this.Ball.speed = Constants.BALL_SPEED;
+            this.ball.orientation += Math.PI;
+        this.ball.speed = Constants.BALL_SPEED;
     };
-    Game.prototype.GameLoop = function () {
+    Game.prototype.gameLoop = function () {
         return __awaiter(this, void 0, void 0, function () {
             var gameLoopIteration, updateInterval, intervalId;
             var _this = this;
             return __generator(this, function (_a) {
-                gameLoopIteration = function () { return __awaiter(_this, void 0, void 0, function () {
-                    var winner;
-                    return __generator(this, function (_a) {
-                        if (this.Score.player1 < 10 && this.Score.player2 < 10 && !this.Over) {
-                            this.MoveBall();
-                            setTimeout(gameLoopIteration, 0); // Schedule the next iteration
-                            return [2 /*return*/];
-                        }
-                        console.log("Game over");
-                        clearInterval(intervalId);
-                        this.FinishTime = performance.now();
-                        if (!this.Over) // If the game didn't ended because of a forfeit
-                            this.Winner = (this.Score.player1 >= 10) ? this.Players.player1 : this.Players.player2;
-                        this.Over = true;
-                        winner = this.Winner === this.Players.player1 ? "P1" : "P2";
-                        if (this.isSolo)
-                            winner = this.Score.player1 >= 10 ? "P1" : "P2";
-                        this.sendData({ type: "GAME", data: winner, message: "FINISH" });
-                        console.log("The winner of the room " + this.Id + " is " + winner);
+                switch (_a.label) {
+                    case 0:
+                        gameLoopIteration = function () { return __awaiter(_this, void 0, void 0, function () {
+                            var winner;
+                            return __generator(this, function (_a) {
+                                if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
+                                    this.MoveBall();
+                                    setTimeout(gameLoopIteration, 0); // Schedule the next iteration
+                                    return [2 /*return*/];
+                                }
+                                console.log("Game over");
+                                clearInterval(intervalId);
+                                this.finishTime = performance.now();
+                                if (!this.over) // If the game didn't ended because of a forfeit
+                                    this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
+                                this.over = true;
+                                winner = this.winner === this.players.player1 ? "P1" : "P2";
+                                if (this.isSolo)
+                                    winner = this.score.player1 >= 10 ? "P1" : "P2";
+                                this.sendData({ type: "GAME", data: winner, message: "FINISH" });
+                                console.log("The winner of the room " + this.id + " is " + winner);
+                                return [2 /*return*/];
+                            });
+                        }); };
+                        updateInterval = 1000 / 60;
+                        intervalId = setInterval(function () {
+                            return _this.sendData({ type: "GAME", data: _this.toJSON() });
+                        }, updateInterval);
+                        this.startTime = performance.now();
+                        this.lastTime = this.startTime;
+                        return [4 /*yield*/, gameLoopIteration()];
+                    case 1:
+                        _a.sent(); // Start the game loop
+                        console.log("Want to see when that is called");
                         return [2 /*return*/];
-                    });
-                }); };
-                updateInterval = 1000 / 60;
-                intervalId = setInterval(function () {
-                    return _this.sendData({ type: "GAME", data: _this.toJSON() });
-                }, updateInterval);
-                this.StartTime = performance.now();
-                this.LastTime = this.StartTime;
-                gameLoopIteration(); // Start the game loop
-                return [2 /*return*/];
+                }
             });
         });
     };
-    Game.prototype.HitPaddle = function (player, paddle) {
-        var ratio = (this.Ball.y - paddle.y) / (paddle.y_size / 2) - 1; // -1 to 1, based on the distance from the center of the paddle
+    Game.prototype.hitPaddle = function (player, paddle) {
+        var ratio = (this.ball.y - paddle.y) / (paddle.y_size / 2) - 1; // -1 to 1, based on the distance from the center of the paddle
         var angle = 45 * ratio; // -45 to 45 degrees
         if (player === "P2")
             angle = 180 - angle;
-        this.Ball.orientation = angle * Math.PI / 180;
-        this.Ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
+        this.ball.orientation = angle * Math.PI / 180;
+        this.ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
     };
-    Game.prototype.PaddleCollision = function (player) {
-        var paddle = player === "P1" ? this.Paddle1 : this.Paddle2;
-        if (this.Ball.y + this.Ball.size < paddle.y ||
-            this.Ball.y - this.Ball.size > paddle.y + paddle.y_size)
+    Game.prototype.paddleCollision = function (player) {
+        var paddle = player === "P1" ? this.paddle1 : this.paddle2;
+        if (this.ball.y + this.ball.size < paddle.y ||
+            this.ball.y - this.ball.size > paddle.y + paddle.y_size)
             return;
-        if (player === "P1" && this.Ball.x - this.Ball.size / 2 < paddle.x + paddle.x_size) {
-            this.Ball.x = paddle.x + paddle.x_size + this.Ball.size;
-            this.HitPaddle(player, paddle);
+        if (player === "P1" && this.ball.x - this.ball.size / 2 < paddle.x + paddle.x_size) {
+            this.ball.x = paddle.x + paddle.x_size + this.ball.size;
+            this.hitPaddle(player, paddle);
         }
-        if (player === "P2" && this.Ball.x + this.Ball.size / 2 > paddle.x) {
-            this.Ball.x = paddle.x - this.Ball.size;
-            this.HitPaddle(player, paddle);
+        if (player === "P2" && this.ball.x + this.ball.size / 2 > paddle.x) {
+            this.ball.x = paddle.x - this.ball.size;
+            this.hitPaddle(player, paddle);
         }
     };
     Game.prototype.MoveBall = function () {
         var now = performance.now();
-        var delta = now - this.LastTime;
-        this.LastTime = now;
-        var speed = this.Ball.speed * delta / 1000;
-        this.PaddleCollision("P1");
-        this.PaddleCollision("P2");
-        if (this.Ball.y - this.Ball.size < 0 || this.Ball.y + this.Ball.size >= Constants.HEIGHT) {
-            this.Ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
-            this.Ball.orientation = -this.Ball.orientation;
+        var delta = now - this.lastTime;
+        this.lastTime = now;
+        var speed = this.ball.speed * delta / 1000;
+        this.paddleCollision("P1");
+        this.paddleCollision("P2");
+        if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= Constants.HEIGHT) {
+            this.ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
+            this.ball.orientation = -this.ball.orientation;
         }
-        this.Ball.x += speed * Math.cos(this.Ball.orientation);
-        this.Ball.y += speed * Math.sin(this.Ball.orientation);
-        if (this.Ball.y < 0)
-            this.Ball.y = this.Ball.size;
-        if (this.Ball.y > Constants.HEIGHT)
-            this.Ball.y = Constants.HEIGHT - this.Ball.size;
-        if (this.Ball.x - this.Ball.size < 0) {
-            this.Score.player2++;
-            this.SpawnBall("P1");
+        this.ball.x += speed * Math.cos(this.ball.orientation);
+        this.ball.y += speed * Math.sin(this.ball.orientation);
+        if (this.ball.y < 0)
+            this.ball.y = this.ball.size;
+        if (this.ball.y > Constants.HEIGHT)
+            this.ball.y = Constants.HEIGHT - this.ball.size;
+        if (this.ball.x - this.ball.size < 0) {
+            this.score.player2++;
+            this.spawnBall("P1");
         }
-        if (this.Ball.x + this.Ball.size >= Constants.WIDTH) {
-            this.Score.player1++;
-            this.SpawnBall("P2");
+        if (this.ball.x + this.ball.size >= Constants.WIDTH) {
+            this.score.player1++;
+            this.spawnBall("P2");
         }
     };
-    Game.prototype.MovePaddle = function (res) {
-        var paddle = res.P === "P1" ? this.Paddle1 : this.Paddle2;
+    Game.prototype.movePaddle = function (res) {
+        var paddle = res.P === "P1" ? this.paddle1 : this.paddle2;
         paddle.y += (res.key === "up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
         if (paddle.y < 0)
             paddle.y = 0;
         if (paddle.y > Constants.HEIGHT - paddle.y_size)
             paddle.y = Constants.HEIGHT - paddle.y_size;
     };
-    Game.prototype.Forfeit = function (player) {
-        this.Over = true;
+    Game.prototype.forfeit = function (player) {
+        this.over = true;
         if (player === "P1")
-            this.Winner = this.Players.player2;
+            this.winner = this.players.player2;
         else
-            this.Winner = this.Players.player1;
+            this.winner = this.players.player1;
     };
     return Game;
 }());
