@@ -38,8 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addSpectatorToRoom = exports.movePaddle = exports.startTournament = exports.quitRoom = exports.startConfirm = exports.shuffleTree = exports.joinTournament = exports.createTournament = exports.joinSolo = exports.joinMatchmaking = exports.idGenRoom = exports.Tournaments = exports.Rooms = void 0;
 exports.idGenerator = idGenerator;
-var pong_game_1 = require("../../pong_app/server/pong_game");
 var tournament_1 = require("../../pong_app/server/tournament");
+var Room_1 = require("../../pong_app/server/Room");
 exports.Rooms = [];
 exports.Tournaments = [];
 function idGenerator() {
@@ -62,8 +62,8 @@ function idGenerator() {
 exports.idGenRoom = idGenerator();
 var idGenTour = idGenerator();
 function getRoomById(id) {
-    if (exports.Rooms.find(function (room) { return room.id === id; }))
-        return exports.Rooms.find(function (room) { return room.id === id; }); // Find the room in the list of rooms
+    if (exports.Rooms.find(function (room) { return room.getId() === id; }))
+        return exports.Rooms.find(function (room) { return room.getId() === id; }); // Find the room in the list of rooms
     // Find the room in the list of rooms in the tournaments
     exports.Tournaments.forEach(function (tour) {
         if (tour.getRoomById(id) !== null)
@@ -74,13 +74,13 @@ function getTournamentById(id) {
     return exports.Tournaments.find(function (tour) { return tour.getId() === id; });
 }
 function isPlayerInRoom(socket) {
-    return exports.Rooms.find(function (room) { return room.P1 === socket || room.P2 === socket; }) !== undefined;
+    return exports.Rooms.find(function (room) { return room.getP1() === socket || room.getP2() === socket; }) !== undefined;
 }
 function isPlayerInTournament(socket) {
     return exports.Tournaments.find(function (tour) { return tour.getPlayers().find(function (player) { return player === socket; }); }) !== undefined;
 }
 var joinMatchmaking = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, Rooms_1, room, id, newRoom;
+    var _i, Rooms_1, room, newRoom;
     return __generator(this, function (_a) {
         if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
             return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }))];
@@ -88,23 +88,14 @@ var joinMatchmaking = function (socket, req) { return __awaiter(void 0, void 0, 
         // Check existing rooms for an available spot
         for (_i = 0, Rooms_1 = exports.Rooms; _i < Rooms_1.length; _i++) {
             room = Rooms_1[_i];
-            if (room.P1 && !room.P2) {
-                room.P2 = socket;
-                room.full = true;
-                room.game = new pong_game_1.Game(room.id, room.P1, room.P2, false, room.spectators);
-                room.P1.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
-                room.P2.send(JSON.stringify({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" }));
-                room.P1.send(JSON.stringify({ type: "CONFIRM" }));
-                room.P2.send(JSON.stringify({ type: "CONFIRM" }));
-                socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P2", roomId: room.id }));
-                return [2 /*return*/];
+            if (!room.isFull()) {
+                room.addPlayer(socket);
+                break;
             }
         }
-        id = exports.idGenRoom.next().value;
-        newRoom = { id: id, P1: socket, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] };
+        newRoom = new Room_1.Room(exports.idGenRoom.next().value);
+        newRoom.addPlayer(socket);
         exports.Rooms.push(newRoom);
-        socket.send(JSON.stringify({ type: "INFO", message: "Room created, awaiting player 2" }));
-        socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomId: id }));
         return [2 /*return*/];
     });
 }); };
@@ -115,13 +106,10 @@ var joinSolo = function (socket, req) { return __awaiter(void 0, void 0, void 0,
         if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
             return [2 /*return*/, socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }))];
         console.log("New Player creating solo room");
-        newRoom = { id: exports.idGenRoom.next().value, P1: socket, P2: socket, isP1Ready: true, isP2Ready: true, full: true, game: null, isSolo: true, spectators: [] };
-        newRoom.game = new pong_game_1.Game(newRoom.id, socket, socket, true);
+        newRoom = new Room_1.Room(exports.idGenRoom.next().value, true);
         exports.Rooms.push(newRoom);
-        socket.send(JSON.stringify({ type: "INFO", message: "Solo room created, starting game" }));
-        socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: "P1", roomId: newRoom.id }));
-        socket.send(JSON.stringify({ type: "GAME", message: "START" }));
-        newRoom.game.GameLoop();
+        newRoom.soloSetup(socket);
+        newRoom.startGame();
         return [2 /*return*/];
     });
 }); };
@@ -182,20 +170,15 @@ var startConfirm = function (request, reply) { return __awaiter(void 0, void 0, 
         // TODO: look at that again later
         if (!room)
             return [2 /*return*/];
-        playerSocket = player === "P1" ? room.P1 : room.P2;
+        playerSocket = player === "P1" ? room.getP1() : room.getP2();
         if (player === "P1")
-            room.isP1Ready = true;
+            room.setP1Ready(true);
         else
-            room.isP2Ready = true;
+            room.setP2Ready(true);
         playerSocket.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }));
-        if (!room.isP1Ready || !room.isP2Ready)
+        if (!room.getP1Ready() || !room.getP2Ready())
             return [2 /*return*/, playerSocket.send(JSON.stringify({ type: "INFO", message: "Players not ready" }))];
-        room.P1.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
-        room.P2.send(JSON.stringify({ type: "INFO", message: "Both players are ready, the game is starting." }));
-        room.P1.send(JSON.stringify({ type: "GAME", message: "START" }));
-        room.P2.send(JSON.stringify({ type: "GAME", message: "START" }));
-        console.log("Starting game");
-        room.game.gameLoop();
+        room.startGame();
         return [2 /*return*/];
     });
 }); };
@@ -216,31 +199,20 @@ function quitPong(request) {
         return console.log("Room not found");
     console.log("Player : " + request.body.P + " is quitting room : " + request.body.roomId);
     var player = request.body.P;
-    var playerSocket = player === "P1" ? room.P1 : room.P2;
-    var opponentSocket = player === "P1" ? room.P2 : room.P1;
+    var playerSocket = player === "P1" ? room.getP1() : room.getP2();
+    var opponentSocket = player === "P1" ? room.getP2() : room.getP1();
     if (!playerSocket)
         return console.log("Player not found");
-    // Rooms.forEach((room) => {
-    // 	if (room.P1 !== playerSocket && room.P2 !== playerSocket)
-    // 		return ;
-    if (player === "SPEC") {
-        var socket = room.spectators.at(request.body.specPlacement);
-        if (!socket)
-            return;
-        room.spectators.splice(room.spectators.indexOf(socket), 1);
-        socket.send(JSON.stringify({ type: "INFO", message: "You stopped spectating the room" }));
-        socket.send(JSON.stringify({ type: "LEAVE", data: "PONG" }));
-        return;
-    }
-    if (room.game)
-        room.game.forfeit(player);
+    if (player === "SPEC")
+        return room.removeSpectator(request.body.specPlacement);
+    if (room.hasStarted())
+        room.getGame().forfeit(player);
     playerSocket === null || playerSocket === void 0 ? void 0 : playerSocket.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
     opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
-    if (!room.isP1Ready || !room.isP2Ready)
+    if (!room.hasStarted())
         opponentSocket === null || opponentSocket === void 0 ? void 0 : opponentSocket.send(JSON.stringify({ type: "LEAVE", data: "PONG", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "QUIT" }));
-    console.log("Room : " + room.id + " has been deleted");
+    console.log("Room : " + room.getId() + " has been deleted");
     exports.Rooms.splice(exports.Rooms.indexOf(room), 1);
-    // });
 }
 function quitTournament(request) {
     console.log("Player : " + request.body.tourPlacement + " is quitting tournament : " + request.body.tourId);
@@ -269,25 +241,23 @@ var movePaddle = function (request, reply) { return __awaiter(void 0, void 0, vo
     var room;
     return __generator(this, function (_a) {
         room = getRoomById(request.body.roomId);
-        if (!room || !room.game)
+        if (!room || !room.getGame())
             return [2 /*return*/, reply.send(JSON.stringify({ type: "ERROR", message: "Room not found" }))];
-        room.game.movePaddle(request.body);
+        room.getGame().movePaddle(request.body);
         return [2 /*return*/];
     });
 }); };
 exports.movePaddle = movePaddle;
 var addSpectatorToRoom = function (socket, req) { return __awaiter(void 0, void 0, void 0, function () {
     var id, room;
-    var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, function (_a) {
         id = Number(req.query.id);
         room = getRoomById(id);
-        if (!room || room.isSolo) {
+        if (!room || room.getIsSolo()) {
             socket.send(JSON.stringify({ type: "INFO", message: "You cannot spectate this room" }));
             socket.send(JSON.stringify({ type: "LEAVE", data: "PONG" }));
         }
-        room.spectators.push(socket);
-        (_a = room.game) === null || _a === void 0 ? void 0 : _a.addSpectator(socket);
+        room.addSpectator(socket);
         return [2 /*return*/];
     });
 }); };

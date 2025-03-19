@@ -90,12 +90,15 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.gameLoop = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var gameLoopIteration, updateInterval, intervalId;
             var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        gameLoopIteration = function () { return __awaiter(_this, void 0, void 0, function () {
+                return [2 /*return*/, new Promise(function (resolve) {
+                        _this.startTime = performance.now();
+                        _this.lastTime = _this.startTime;
+                        var intervalId = setInterval(function () {
+                            _this.sendData({ type: "GAME", data: _this.toJSON() });
+                        }, 1000 / 60); // 60 times per second
+                        var gameLoopIteration = function () { return __awaiter(_this, void 0, void 0, function () {
                             var winner;
                             return __generator(this, function (_a) {
                                 if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
@@ -103,10 +106,9 @@ var Game = /** @class */ (function () {
                                     setTimeout(gameLoopIteration, 0); // Schedule the next iteration
                                     return [2 /*return*/];
                                 }
-                                console.log("Game over");
                                 clearInterval(intervalId);
                                 this.finishTime = performance.now();
-                                if (!this.over) // If the game didn't ended because of a forfeit
+                                if (!this.over) // If the game didn't end because of a forfeit
                                     this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
                                 this.over = true;
                                 winner = this.winner === this.players.player1 ? "P1" : "P2";
@@ -114,21 +116,12 @@ var Game = /** @class */ (function () {
                                     winner = this.score.player1 >= 10 ? "P1" : "P2";
                                 this.sendData({ type: "GAME", data: winner, message: "FINISH" });
                                 console.log("The winner of the room " + this.id + " is " + winner);
+                                resolve();
                                 return [2 /*return*/];
                             });
                         }); };
-                        updateInterval = 1000 / 60;
-                        intervalId = setInterval(function () {
-                            return _this.sendData({ type: "GAME", data: _this.toJSON() });
-                        }, updateInterval);
-                        this.startTime = performance.now();
-                        this.lastTime = this.startTime;
-                        return [4 /*yield*/, gameLoopIteration()];
-                    case 1:
-                        _a.sent(); // Start the game loop
-                        console.log("Want to see when that is called");
-                        return [2 /*return*/];
-                }
+                        gameLoopIteration(); // Start the game loop
+                    })];
             });
         });
     };

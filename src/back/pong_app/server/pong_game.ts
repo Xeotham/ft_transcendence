@@ -72,33 +72,35 @@ export class Game {
 	}
 
 	async gameLoop() {
-		const gameLoopIteration = async () => {
-			if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
-				this.MoveBall();
-				setTimeout(gameLoopIteration, 0); // Schedule the next iteration
-				return ;
-			}
-			console.log("Game over");
-			clearInterval(intervalId);
-			this.finishTime = performance.now();
-			if (!this.over) // If the game didn't ended because of a forfeit
-				this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
-			this.over = true;
-			let winner = this.winner === this.players.player1 ? "P1" : "P2";
-			if (this.isSolo)
-				winner = this.score.player1 >= 10 ? "P1" : "P2";
-			this.sendData({ type: "GAME", data: winner, message: "FINISH" });
-			console.log("The winner of the room " + this.id + " is " + winner);
-			// TODO : Save game in database
-		};
+		return new Promise<void>((resolve) => {
 
-		const updateInterval = 1000 / 60; // 60 times per second
-		const intervalId = setInterval(() =>
-			this.sendData({ type: "GAME", data: this.toJSON() }),
-			updateInterval);
-		this.startTime = performance.now();
-		this.lastTime = this.startTime;
-		await gameLoopIteration(); // Start the game loop
+			this.startTime = performance.now();
+			this.lastTime = this.startTime;
+			const intervalId = setInterval(() => {
+				this.sendData({ type: "GAME", data: this.toJSON() });
+			}, 1000 / 60); // 60 times per second
+
+			const gameLoopIteration = async () => {
+				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
+					this.MoveBall();
+					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
+					return
+				}
+				clearInterval(intervalId);
+				this.finishTime = performance.now();
+				if (!this.over) // If the game didn't end because of a forfeit
+					this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
+				this.over = true;
+				let winner = this.winner === this.players.player1 ? "P1" : "P2";
+				if (this.isSolo)
+					winner = this.score.player1 >= 10 ? "P1" : "P2";
+				this.sendData({ type: "GAME", data: winner, message: "FINISH" });
+				console.log("The winner of the room " + this.id + " is " + winner);
+				resolve();
+			};
+
+			gameLoopIteration(); // Start the game loop
+		});
 	}
 
 	private hitPaddle(player: string | "P1" | "P2", paddle: { x: number, y: number, x_size: number, y_size: number }) {

@@ -1,8 +1,9 @@
-import {Room, idGenRoom, Tournaments} from "../../api/pong/controllers";
+import { idGenRoom, Tournaments} from "../../api/pong/controllers";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
 import { requestBody } from "../../api/pong/controllers";
 import { Game } from "./pong_game";
+import { Room } from "./Room";
 
 export class Tournament {
 	private readonly id:	number;
@@ -46,7 +47,7 @@ export class Tournament {
 	getRoomById(id: number) {
 		for (let i = 0; i < this.rooms.length; i++) {
 			for (let j = 0; j < this.rooms[i].length; j++) {
-				if (this.rooms[i][j].id === id)
+				if (this.rooms[i][j].getId() === id)
 					return this.rooms[i][j];
 			}
 		}
@@ -94,12 +95,12 @@ export class Tournament {
 		}
 		for (let i = 0; i < this.players.length; i += 2) {
 			this.players[i].send(JSON.stringify({ type: "INFO", message: "You are in position " + positions[i] }));
-			this.rooms[0][Math.floor(i / 2)].P1 = this.players[positions[i]];
+			this.rooms[0][Math.floor(i / 2)].setP1(this.players[positions[i]]);
 			if (i + 1 >= this.players.length)
 				continue ;
 			this.players[i + 1].send(JSON.stringify({ type: "INFO", message: "You are in position " + positions[i + 1] }));
-			this.rooms[0][Math.floor(i / 2)].P2 = this.players[positions[i + 1]];
-			this.rooms[0][Math.floor(i / 2)].full = true;
+			this.rooms[0][Math.floor(i / 2)].setP2(this.players[positions[i + 1]]);
+			this.rooms[0][Math.floor(i / 2)].setFull(true);
 		}
 		console.log("\x1b[38;5;82mTournament shuffled\x1b[0m");
 		this.needShuffle = false;
@@ -114,7 +115,6 @@ export class Tournament {
 		let roomNb = this.nbRoomsTop;
 		let	roundCount = 0;
 		let rooms: Room[] = [];
-		// console.log("nbOfPlayers : " + this.);
 		while (roomNb > 1) {
 			rooms = [];
 			if (roundCount < this.rooms.length && this.rooms[roundCount].length === roomNb) {
@@ -124,7 +124,8 @@ export class Tournament {
 			}
 			const alreadyIn = roundCount < this.rooms.length ? this.rooms[roundCount].length : 0;
 			for (let i = alreadyIn; i < roomNb; i++) {
-				rooms.push({ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] });
+				rooms.push(new Room(idGenRoom.next().value));
+				// rooms.push({ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] });
 			}
 			if (alreadyIn > roomNb)
 				this.rooms[roundCount] = this.rooms[roundCount].slice(0, roomNb);
@@ -140,7 +141,8 @@ export class Tournament {
 		if (this.rooms.length > roundCount + 1)
 			this.rooms.splice(roundCount); // Remove even the last round (Added right after)
 		if (roundCount === 0 || this.rooms[this.rooms.length - 1].length !== 1)
-			this.rooms.push([{ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] }]);
+			this.rooms.push([new Room(idGenRoom.next().value)]);
+			// this.rooms.push([{ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] }]);
 	}
 
 	printTree() {
@@ -148,7 +150,7 @@ export class Tournament {
 		for (let i = 0; i < this.rooms.length; ++i) {
 			process.stdout.write("Round " + i + " : ");
 			for (let j = 0; j < this.rooms[i].length; ++j) {
-				process.stdout.write("" + this.rooms[i][j].id);
+				process.stdout.write("" + this.rooms[i][j].getId);
 				if (j < this.rooms[i].length - 1)
 					process.stdout.write(" - ");
 			}
@@ -161,20 +163,24 @@ export class Tournament {
 			this.shuffleTree();
 		this.started = true;
 
-		// for (let j = 0; j < this.nbRoomsTop; ++j) {
-		// 	this.rooms[0][j].game = new Game(this.rooms[0][j].id, this.rooms[0][j].P1, this.rooms[0][j].P2, this.rooms[0][j].isSolo, this.rooms[0][j].spectators);
-		// 	this.rooms[0][j].game.gameLoop().then(this.TourTurn.bind(this));
-		// }
+		for (let j = 0; j < this.nbRoomsTop; ++j) {
+
+			// this.rooms[0][j].game = new Game(this.rooms[0][j].id, this.rooms[0][j].P1, this.rooms[0][j].P2, this.rooms[0][j].isSolo, this.rooms[0][j].spectators);
+			// this.rooms[0][j].game.gameLoop().then(this.TourTurn.bind(this));
+		}
 	}
 
 	private async TourTurn() {
-		let nbRooms = this.nbRoomsTop;
+		// let nbRooms = this.nbRoomsTop;
 
-		for (let i = 0; i < this.rooms.length; ++i) {
-			for (let j = 0; j < nbRooms; ++j) {
-
-			}
-			nbRooms = Math.ceil(nbRooms / 2);
-		}
+		console.log("A game as ended, trying to start the next one");
+		// for (let i = 0; i < this.rooms.length; ++i) {
+		// 	for (let j = 0; j < nbRooms; ++j) {
+		// 		if (this.rooms[i][j].game.isOver()) {
+		//
+		// 		}
+		// 	}
+		// 	nbRooms = Math.ceil(nbRooms / 2);
+		// }
 	}
 }
