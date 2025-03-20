@@ -72,10 +72,9 @@ function noRoom(content) {
     content.innerHTML = "\n\t\t<button id=\"join-game\">Join a Game</button>\t\t\n\t\t<button id=\"join-solo-game\">Create a solo Game</button>\n\t\t<button id=\"create-tournament\">Create a tournament</button>\n\t\t<button id=\"join-tournament\">Join a tournament</button>\n\t\t<button id=\"spectate\">spectate</button>\n\t";
     document.getElementById("join-game").addEventListener("click", joinMatchmaking);
     document.getElementById("join-solo-game").addEventListener("click", joinSolo);
-    document.getElementById("create-tournament").addEventListener("click", createTournament);
-    document.getElementById("join-tournament").addEventListener("click", joinTournament);
-    document.getElementById("spectate").addEventListener("click", joinSpectate);
-    c === null || c === void 0 ? void 0 : c.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById("create-tournament").addEventListener("click", getTournamentName);
+    document.getElementById("join-tournament").addEventListener("click", listTournaments);
+    document.getElementById("spectate").addEventListener("click", listRooms);
 }
 function room_found(content) {
     content.innerHTML = "\n\t\t<p>Room found!</p>\n\t\t<button id=\"quit-room\">Quit Room</button>\n\t";
@@ -94,7 +93,82 @@ function room_found(content) {
     }
     document.getElementById("quit-room").addEventListener("click", function (ev) { return quitRoom("Leaving room"); });
 }
-function joinSpectate() {
+function getRoomInfo(event) {
+    return __awaiter(this, void 0, void 0, function () {
+        var roomId;
+        return __generator(this, function (_a) {
+            roomId = event.target.getAttribute('id');
+            content.innerHTML = "\n\t\t<button id=\"roomLst\">Return to Tournament List</button>\n\t";
+            fetch("http://localhost:3000/api/pong/get_room_info?id=".concat(roomId), {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+                .then(function (data) {
+                // const started = data.started;
+                content.innerHTML += "\n\t\t\t<h1>Room Info:</h1>\n\t\t\t<h2>Room Number: ".concat(roomId, "</h2>\n\t\t\t<button id=\"spectate\">Spectate Room</button>\n\t\t\t");
+                // content.innerHTML += data.started === true?
+                // 	`<p>The tournament as already started.</p>`:
+                // 	`<p>The tournament hasn't started yet </p>
+                // <p>Do you want to join ?</p>
+                // <button id="joinTournament">Join the tournament</button>`
+                // document.getElementById('tournamentLst').addEventListener("click", listTournaments);
+                // if (!started) {
+                // 	document.getElementById('joinTournament').addEventListener("click", () => {
+                // 		joinTournament(Number(tournamentId))
+                // 	});
+                // }
+                document.getElementById('roomLst').addEventListener("click", listTournaments);
+                document.getElementById('spectate').addEventListener("click", function () {
+                    joinSpectate(Number(roomId));
+                });
+            });
+            return [2 /*return*/];
+        });
+    });
+}
+function listRooms() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            fetch("http://localhost:3000/api/pong/get_rooms", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+                .then(function (data) {
+                var listHTML = '<ul>';
+                data.forEach(function (room) {
+                    listHTML += "\n\t\t  <li>\n\t\t\t<button class=\"room-button\" id=\"".concat(room.id, "\">\n\t\t\t  Room ID: ").concat(room.id, ", full: ").concat(room.full, ", solo: ").concat(room.solo, "\n\t\t\t</button>\n\t\t  </li>\n\t\t");
+                });
+                listHTML += '</ul>';
+                content.innerHTML = listHTML;
+                // Add event listeners to the buttons
+                document.querySelectorAll('.room-button').forEach(function (button) {
+                    button.addEventListener('click', getRoomInfo);
+                });
+            })
+                .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+            return [2 /*return*/];
+        });
+    });
+}
+function joinSpectate(roomId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             loadPage("room-found");
@@ -102,7 +176,7 @@ function joinSpectate() {
             matchType = "PONG";
             player = "SPEC";
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/addSpectatorToRoom?id=0"); // TODO : add room id
+                socket = new WebSocket("ws://localhost:3000/api/pong/addSpectatorToRoom?id=".concat(roomId)); // TODO : add room id
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -172,7 +246,19 @@ function joinSolo() {
         });
     });
 }
-function createTournament() {
+function getTournamentName() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            content.innerHTML = "\n\t\t<p>Enter the name of the tournament</p>\n\t\t<form>\n\t\t\t<input type=\"text\" id=\"tournamentName\" placeholder=\"Tournament Name\">\n\t\t\t<button id=\"submitTournamentName\">Submit</button>\n\t\t</form>\n\t";
+            document.getElementById("submitTournamentName").addEventListener("click", function () {
+                var name = document.getElementById("tournamentName").value;
+                createTournament(name);
+            });
+            return [2 /*return*/];
+        });
+    });
+}
+function createTournament(name) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             isSolo = false;
@@ -180,7 +266,7 @@ function createTournament() {
             matchType = "TOURNAMENT";
             loadPage("room-found");
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/createTournament");
+                socket = new WebSocket("ws://localhost:3000/api/pong/createTournament?name=".concat(name));
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -199,14 +285,77 @@ function createTournament() {
         });
     });
 }
-function joinTournament() {
+function getTournamentInfo(event) {
+    var tournamentId = event.target.getAttribute('id');
+    content.innerHTML = "\n\t\t<button id=\"tournamentLst\">Return to Tournament List</button>\n\t";
+    fetch("http://localhost:3000/api/pong/get_tournament_info?id=".concat(tournamentId), {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(function (response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+        .then(function (data) {
+        var started = data.started;
+        content.innerHTML += "\n\t\t\t<h1>Tournament Info:</h1>\n\t\t\t<h2>Tournament Number: ".concat(tournamentId, "</h2>\n\t\t");
+        content.innerHTML += data.started === true ?
+            "<p>The tournament as already started.</p>" :
+            "<p>The tournament hasn't started yet </p>\n\t\t\t<p>Do you want to join ?</p>\n\t\t\t<button id=\"joinTournament\">Join the tournament</button>";
+        document.getElementById('tournamentLst').addEventListener("click", listTournaments);
+        if (!started) {
+            document.getElementById('joinTournament').addEventListener("click", function () {
+                joinTournament(Number(tournamentId));
+            });
+        }
+    });
+}
+function listTournaments() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            fetch("http://localhost:3000/api/pong/get_tournaments", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+                .then(function (data) {
+                var listHTML = '<ul>';
+                data.forEach(function (tournament) {
+                    listHTML += "\n\t\t  <li>\n\t\t\t<button class=\"tournament-button\" id=\"".concat(tournament.id, "\">\n\t\t\t  Tournament ID: ").concat(tournament.id, ", Started: ").concat(tournament.started, "\n\t\t\t</button>\n\t\t  </li>\n\t\t");
+                });
+                listHTML += '</ul>';
+                content.innerHTML = listHTML;
+                // Add event listeners to the buttons
+                document.querySelectorAll('.tournament-button').forEach(function (button) {
+                    button.addEventListener('click', getTournamentInfo);
+                });
+            })
+                .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+            return [2 /*return*/];
+        });
+    });
+}
+function joinTournament(tournamentId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             isSolo = false;
             isTournamentOwner = false;
             matchType = "TOURNAMENT";
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/joinTournament");
+                socket = new WebSocket("ws://localhost:3000/api/pong/joinTournament?id=".concat(tournamentId));
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -269,7 +418,7 @@ function messageHandler(event) {
             break;
         case "CONFIRM":
             confirmGame();
-            break;
+            return;
         case "LEAVE":
             quitRoom();
             if (res.message === "QUEUE_AGAIN" || queueInterval) {
@@ -316,7 +465,7 @@ function gameMessageHandler(res) {
             console.log("Joined room: " + roomNumber + " as player: " + player);
             break;
         case "START":
-            document.getElementById("content").innerHTML = "";
+            content.innerHTML = "\n\t\t\t\t<canvas id=\"gameCanvas\" width=\"800\" height=\"400\"></canvas>\n\t\t\t";
             document.addEventListener("keydown", keyHandler);
             document.addEventListener("keyup", keyHandler);
             break;
@@ -418,9 +567,9 @@ function confirmGame() {
     });
 }
 loadPage("no-room");
-var canvas = document.getElementById("gameCanvas");
-var c = canvas === null || canvas === void 0 ? void 0 : canvas.getContext("2d");
 function drawGame() {
+    var canvas = document.getElementById("gameCanvas");
+    var c = canvas === null || canvas === void 0 ? void 0 : canvas.getContext("2d");
     if (!c || !game)
         return;
     c.clearRect(0, 0, canvas.width, canvas.height);

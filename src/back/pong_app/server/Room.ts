@@ -99,12 +99,13 @@ export class Room {
 		const player: string | "P1" | "P2" = this.P1 ? "P2" : "P1";
 		this.P1 ? this.P2 = socket : this.P1 = socket;
 		this.full = !!this.P1 && !!this.P2;
-		this.sendData({ type: "INFO", message: "Room found, ready to start, awaiting confirmation" });
+		this.sendData({ type: "INFO", message: "Room found" });
 		socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: player, roomId: this.id }));
 
 		if (!this.full)
 			return ;
 		this.game = new Game(this.id, this.P1, this.P2, false, this.spectators);
+		this.sendData({type: "INFO", message: "Room is full, ready to start, awaiting confirmation"});
 		this.sendData({ type : "CONFIRM" });
 	}
 

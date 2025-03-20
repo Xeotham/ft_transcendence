@@ -1,5 +1,5 @@
 // import * as Constants from "../../back/pong_app/server/constants";
-import { responseFormat } from "../../back/api/pong/controllers";
+import { responseFormat } from "../../back/api/pong/utils";
 import { Game } from "../../back/pong_app/server/pong_game";
 
 let		roomNumber = -1;
@@ -43,10 +43,9 @@ function	noRoom(content: HTMLElement) {
 	`;
 	document.getElementById("join-game").addEventListener("click", joinMatchmaking);
 	document.getElementById("join-solo-game").addEventListener("click", joinSolo);
-	document.getElementById("create-tournament").addEventListener("click", createTournament);
-	document.getElementById("join-tournament").addEventListener("click", joinTournament);
-	document.getElementById("spectate").addEventListener("click", joinSpectate);
-	c?.clearRect(0, 0, canvas.width, canvas.height);
+	document.getElementById("create-tournament").addEventListener("click", getTournamentName);
+	document.getElementById("join-tournament").addEventListener("click", listTournaments);
+	document.getElementById("spectate").addEventListener("click", listRooms);
 }
 
 function	room_found(content: HTMLElement) {
@@ -72,13 +71,93 @@ function	room_found(content: HTMLElement) {
 	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
 }
 
-async function	joinSpectate() {
+async function getRoomInfo(event) {
+	const	roomId = (event.target as HTMLButtonElement).getAttribute('id');
+	content.innerHTML = `
+		<button id="roomLst">Return to Tournament List</button>
+	`;
+
+	fetch(`http://localhost:3000/api/pong/get_room_info?id=${roomId}`, {
+		method: "GET",
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok ' + response.statusText);
+			}
+			return response.json();
+		})
+		.then(data => {
+			// const started = data.started;
+			content.innerHTML += `
+			<h1>Room Info:</h1>
+			<h2>Room Number: ${roomId}</h2>
+			<button id="spectate">Spectate Room</button>
+			`
+			// content.innerHTML += data.started === true?
+			// 	`<p>The tournament as already started.</p>`:
+			// 	`<p>The tournament hasn't started yet </p>
+			// <p>Do you want to join ?</p>
+			// <button id="joinTournament">Join the tournament</button>`
+			// document.getElementById('tournamentLst').addEventListener("click", listTournaments);
+			// if (!started) {
+			// 	document.getElementById('joinTournament').addEventListener("click", () => {
+			// 		joinTournament(Number(tournamentId))
+			// 	});
+			// }
+			document.getElementById('roomLst').addEventListener("click", listTournaments);
+			document.getElementById('spectate').addEventListener("click", () => {
+				joinSpectate(Number(roomId))
+			});
+		});
+}
+
+async function listRooms() {
+	fetch("http://localhost:3000/api/pong/get_rooms", {
+		method: "GET",
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok ' + response.statusText);
+			}
+			return response.json();
+		})
+		.then(data => {
+			let listHTML = '<ul>';
+			data.forEach(room => {
+				listHTML += `
+		  <li>
+			<button class="room-button" id="${room.id}">
+			  Room ID: ${room.id}, full: ${room.full}, solo: ${room.solo}
+			</button>
+		  </li>
+		`;
+			});
+			listHTML += '</ul>';
+			content.innerHTML = listHTML;
+
+			// Add event listeners to the buttons
+			document.querySelectorAll('.room-button').forEach(button => {
+				button.addEventListener('click', getRoomInfo);
+			});
+		})
+		.catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+		});
+}
+
+async function	joinSpectate(roomId: Number) {
 	loadPage("room-found");
 	isSolo = false;
 	matchType = "PONG";
 	player = "SPEC";
 	if (!socket)
-		socket = new WebSocket("ws://localhost:3000/api/pong/addSpectatorToRoom?id=0"); // TODO : add room id
+		socket = new WebSocket(`ws://localhost:3000/api/pong/addSpectatorToRoom?id=${roomId}`); // TODO : add room id
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -141,13 +220,27 @@ async function	joinSolo() {
 	socket.addEventListener("message", messageHandler);
 }
 
-async function	createTournament() {
+async function	getTournamentName() {
+	content.innerHTML = `
+		<p>Enter the name of the tournament</p>
+		<form>
+			<input type="text" id="tournamentName" placeholder="Tournament Name">
+			<button id="submitTournamentName">Submit</button>
+		</form>
+	`
+	document.getElementById("submitTournamentName").addEventListener("click", () => {
+		const name = (document.getElementById("tournamentName") as HTMLInputElement).value;
+		createTournament(name);
+	});
+}
+
+async function	createTournament(name: string) {
 	isSolo = false;
 	isTournamentOwner = true;
 	matchType = "TOURNAMENT";
 	loadPage("room-found");
 	if (!socket)
-		socket = new WebSocket("ws://localhost:3000/api/pong/createTournament");
+		socket = new WebSocket(`ws://localhost:3000/api/pong/createTournament?name=${name}`);
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -165,12 +258,88 @@ async function	createTournament() {
 	socket.addEventListener("message", messageHandler);
 }
 
-async function	joinTournament() {
+function getTournamentInfo(event){
+	const	tournamentId = (event.target as HTMLButtonElement).getAttribute('id');
+	content.innerHTML = `
+		<button id="tournamentLst">Return to Tournament List</button>
+	`;
+
+	fetch(`http://localhost:3000/api/pong/get_tournament_info?id=${tournamentId}`, {
+		method: "GET",
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok ' + response.statusText);
+		}
+		return response.json();
+	})
+	.then(data => {
+		const started = data.started;
+		content.innerHTML += `
+			<h1>Tournament Info:</h1>
+			<h2>Tournament Number: ${tournamentId}</h2>
+		`
+		content.innerHTML += data.started === true?
+			`<p>The tournament as already started.</p>`:
+			`<p>The tournament hasn't started yet </p>
+			<p>Do you want to join ?</p>
+			<button id="joinTournament">Join the tournament</button>`
+		document.getElementById('tournamentLst').addEventListener("click", listTournaments);
+		if (!started) {
+			document.getElementById('joinTournament').addEventListener("click", () => {
+				joinTournament(Number(tournamentId))
+			});
+		}
+	});
+}
+
+async function	listTournaments() {
+	fetch("http://localhost:3000/api/pong/get_tournaments", {
+		method: "GET",
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok ' + response.statusText);
+			}
+			return response.json();
+		})
+		.then(data => {
+			let listHTML = '<ul>';
+			data.forEach(tournament => {
+				listHTML += `
+		  <li>
+			<button class="tournament-button" id="${tournament.id}">
+			  Tournament ID: ${tournament.id}, Started: ${tournament.started}
+			</button>
+		  </li>
+		`;
+			});
+			listHTML += '</ul>';
+			content.innerHTML = listHTML;
+
+			// Add event listeners to the buttons
+			document.querySelectorAll('.tournament-button').forEach(button => {
+				button.addEventListener('click', getTournamentInfo);
+			});
+		})
+		.catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+		});
+}
+
+async function	joinTournament(tournamentId: number) {
 	isSolo = false;
 	isTournamentOwner = false;
 	matchType = "TOURNAMENT";
+
 	if (!socket)
-		socket = new WebSocket("ws://localhost:3000/api/pong/joinTournament");
+		socket = new WebSocket(`ws://localhost:3000/api/pong/joinTournament?id=${tournamentId}`);
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -233,7 +402,7 @@ function messageHandler(event: MessageEvent) {
 			break ;
 		case "CONFIRM":
 			confirmGame();
-			break ;
+			return ;
 		case "LEAVE":
 			quitRoom();
 			if (res.message === "QUEUE_AGAIN" || queueInterval) {
@@ -282,7 +451,9 @@ function gameMessageHandler(res: responseFormat) {
 			console.log("Joined room: " + roomNumber + " as player: " + player);
 			break ;
 		case "START":
-			document.getElementById("content").innerHTML = "";
+			content.innerHTML = `
+				<canvas id="gameCanvas" width="800" height="400"></canvas>
+			`;
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
 			break ;
@@ -391,11 +562,10 @@ function confirmGame() {
 
 loadPage("no-room");
 
-const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
-
-const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
-
 function drawGame() {
+	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
+
 	if (!c || !game)
 		return;
 	c.clearRect(0, 0, canvas.width, canvas.height);

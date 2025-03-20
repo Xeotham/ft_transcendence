@@ -1,9 +1,11 @@
-import { idGenRoom, Tournaments} from "../../api/pong/controllers";
+import { Tournaments } from "../../api/pong/tournament-controllers";
+import	{ idGenerator, requestBody } from "../../api/pong/utils";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
-import { requestBody } from "../../api/pong/controllers";
 import { Game } from "./pong_game";
 import { Room } from "./Room";
+
+const	idGenRoom = idGenerator();
 
 export class Tournament {
 	private readonly id:	number;

@@ -1,6 +1,6 @@
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
-import { requestBody } from "../../api/pong/controllers";
+import { requestBody } from "../../api/pong/utils";
 
 export class Game {
 	readonly id:number;

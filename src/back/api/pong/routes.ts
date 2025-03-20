@@ -1,8 +1,7 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
-import {
-	joinMatchmaking, joinSolo, quitRoom, startTournament, movePaddle, startConfirm, createTournament,
-	joinTournament, shuffleTree, addSpectatorToRoom
-} from "./controllers";
+import	{ FastifyInstance, FastifyRequest } from "fastify";
+import	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } from "./game-controllers";
+import	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } from "./tournament-controllers";
+import	{ addSpectatorToRoom } from "./spectator-controllers";
 
 export default async function pongRoutes(fastify: FastifyInstance) {
 
@@ -16,5 +15,8 @@ export default async function pongRoutes(fastify: FastifyInstance) {
 	fastify.post('/startConfirm', startConfirm);
 	fastify.post('/startTournament', startTournament);
 	fastify.post('/movePaddle', movePaddle);
+	fastify.get("/get_tournaments", getTournaments);
+	fastify.get("/get_tournament_info", getTournamentInfo);
+	fastify.get("/get_rooms", getRooms);
+	fastify.get("/get_room_info", getRoomInfo);
 }
-
