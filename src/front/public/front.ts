@@ -2,6 +2,8 @@
 import { responseFormat } from "../../back/api/pong/utils";
 import { Game } from "../../back/pong_app/server/pong_game";
 
+const	address = "10.12.6.3";
+
 let		roomNumber = -1;
 let		game : Game | null = null;
 let		player : string | "P1" | "P2" | "SPEC" | null = null;
@@ -59,13 +61,13 @@ function	room_found(content: HTMLElement) {
 			<button id="shuffle-tree">Shuffle Tree</button>
 		`;
 		document.getElementById("start-tournament").addEventListener("click", () => {
-			fetch('http://localhost:3000/api/pong/startTournament', {
+			fetch(`http://${address}:3000/api/pong/startTournament`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({ tourId: tournamentId })
-		}) });
+			}) });
 		document.getElementById("shuffle-tree").addEventListener("click", shuffleTree);
 	}
 	document.getElementById("quit-room").addEventListener("click", (ev) => quitRoom("Leaving room"));
@@ -77,7 +79,7 @@ async function getRoomInfo(event) {
 		<button id="roomLst">Return to Tournament List</button>
 	`;
 
-	fetch(`http://localhost:3000/api/pong/get_room_info?id=${roomId}`, {
+	fetch(`http://${address}:3000/api/pong/get_room_info?id=${roomId}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -115,7 +117,7 @@ async function getRoomInfo(event) {
 }
 
 async function listRooms() {
-	fetch("http://localhost:3000/api/pong/get_rooms", {
+	fetch(`http://${address}:3000/api/pong/get_rooms`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -157,7 +159,7 @@ async function	joinSpectate(roomId: Number) {
 	matchType = "PONG";
 	player = "SPEC";
 	if (!socket)
-		socket = new WebSocket(`ws://localhost:3000/api/pong/addSpectatorToRoom?id=${roomId}`); // TODO : add room id
+		socket = new WebSocket(`ws://${address}:3000/api/pong/addSpectatorToRoom?id=${roomId}`); // TODO : add room id
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -180,7 +182,7 @@ async function	joinMatchmaking() {
 	isSolo = false;
 	matchType = "PONG";
 	if (!socket)
-		socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
+		socket = new WebSocket(`ws://${address}:3000/api/pong/joinMatchmaking`);
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -202,7 +204,7 @@ async function	joinSolo() {
 	isSolo = true;
 	matchType = "PONG";
 	if (!socket)
-		socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
+		socket = new WebSocket(`ws://${address}:3000/api/pong/joinSolo`);
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -210,12 +212,13 @@ async function	joinSolo() {
 	// Connection opened
 	socket.onopen = () => {
 		console.log("Connected to the server for solo game");
-	}
+	};
+
 	socket.onclose = () => {
 		console.log("Connection closed");
 		if (roomNumber >= 0)
 			quitRoom();
-	}
+	};
 	// Listen for messages
 	socket.addEventListener("message", messageHandler);
 }
@@ -240,7 +243,7 @@ async function	createTournament(name: string) {
 	matchType = "TOURNAMENT";
 	loadPage("room-found");
 	if (!socket)
-		socket = new WebSocket(`ws://localhost:3000/api/pong/createTournament?name=${name}`);
+		socket = new WebSocket(`ws://${address}:3000/api/pong/createTournament?name=${name}`);
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -264,40 +267,40 @@ function getTournamentInfo(event){
 		<button id="tournamentLst">Return to Tournament List</button>
 	`;
 
-	fetch(`http://localhost:3000/api/pong/get_tournament_info?id=${tournamentId}`, {
+	fetch(`http://${address}:3000/api/pong/get_tournament_info?id=${tournamentId}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
 		}
 	})
-	.then(response => {
-		if (!response.ok) {
-			throw new Error('Network response was not ok ' + response.statusText);
-		}
-		return response.json();
-	})
-	.then(data => {
-		const started = data.started;
-		content.innerHTML += `
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok ' + response.statusText);
+			}
+			return response.json();
+		})
+		.then(data => {
+			const started = data.started;
+			content.innerHTML += `
 			<h1>Tournament Info:</h1>
 			<h2>Tournament Number: ${tournamentId}</h2>
 		`
-		content.innerHTML += data.started === true?
-			`<p>The tournament as already started.</p>`:
-			`<p>The tournament hasn't started yet </p>
+			content.innerHTML += data.started === true?
+				`<p>The tournament as already started.</p>`:
+				`<p>The tournament hasn't started yet </p>
 			<p>Do you want to join ?</p>
 			<button id="joinTournament">Join the tournament</button>`
-		document.getElementById('tournamentLst').addEventListener("click", listTournaments);
-		if (!started) {
-			document.getElementById('joinTournament').addEventListener("click", () => {
-				joinTournament(Number(tournamentId))
-			});
-		}
-	});
+			document.getElementById('tournamentLst').addEventListener("click", listTournaments);
+			if (!started) {
+				document.getElementById('joinTournament').addEventListener("click", () => {
+					joinTournament(Number(tournamentId))
+				});
+			}
+		});
 }
 
 async function	listTournaments() {
-	fetch("http://localhost:3000/api/pong/get_tournaments", {
+	fetch(`http://${address}:3000/api/pong/get_tournaments`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -339,7 +342,7 @@ async function	joinTournament(tournamentId: number) {
 	matchType = "TOURNAMENT";
 
 	if (!socket)
-		socket = new WebSocket(`ws://localhost:3000/api/pong/joinTournament?id=${tournamentId}`);
+		socket = new WebSocket(`ws://${address}:3000/api/pong/joinTournament?id=${tournamentId}`);
 
 	socket.addEventListener("error", (error) => {
 		console.error(error);
@@ -362,7 +365,7 @@ function quitRoom(msg: string = "Leaving room") {
 		msg = "Leaving room";
 	if (msg === "QUEUE_TIMEOUT")
 		console.log("You took too long to confirm the game. Back to the lobby");
-	fetch('http://localhost:3000/api/pong/quitRoom', {
+	fetch(`http://${address}:3000/api/pong/quitRoom`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -394,9 +397,9 @@ function messageHandler(event: MessageEvent) {
 			break ;
 		case "ALERT":
 			alert(res.message);
-			// fallthrough
+		// fallthrough
 		case "ERROR":
-			// fallthrough
+		// fallthrough
 		case "WARNING":
 			console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
 			break ;
@@ -473,6 +476,12 @@ function gameMessageHandler(res: responseFormat) {
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
 			//  TODO : display score on screen
 			break;
+		case "SPEC":
+			console.log("Starting Spectator mode");
+			content.innerHTML = `
+				<canvas id="gameCanvas" width="800" height="400"></canvas>
+			`;
+			break;
 		default:
 			game = res.data;
 			drawGame();
@@ -497,7 +506,7 @@ function keyHandler(event: KeyboardEvent) {
 		// TODO : replace with Constants
 		if (direction === "" || (direction === "up" &&  paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
 			return;
-		fetch('http://localhost:3000/api/pong/movePaddle', {
+		fetch(`http://${address}:3000/api/pong/movePaddle`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -520,7 +529,7 @@ function keyHandler(event: KeyboardEvent) {
 }
 
 function shuffleTree() {
-	fetch('http://localhost:3000/api/pong/shuffleTree', {
+	fetch(`http://${address}:3000/api/pong/shuffleTree`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -550,7 +559,7 @@ function confirmGame() {
 	document.getElementById("confirm-game").addEventListener("click", () => {
 		clearInterval(queueInterval);
 		document.getElementById("timer").innerText = "Confirmed! Awaiting opponent";
-		fetch('http://localhost:3000/api/pong/startConfirm', {
+		fetch(`http://${address}:3000/api/pong/startConfirm`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

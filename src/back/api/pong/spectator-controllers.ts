@@ -1,7 +1,7 @@
 import { Tournament } from "../../pong_app/server/tournament";
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from "ws";
-import { getRoomById } from "./game-controllers";
+import { getRoomById } from "./utils";
 
 export const    addSpectatorToRoom = async (socket: WebSocket, req: FastifyRequest<{ Querystring: { id: number } }>) => {
 	const	id = Number(req.query.id);
@@ -11,4 +11,5 @@ export const    addSpectatorToRoom = async (socket: WebSocket, req: FastifyReque
 		socket.send(JSON.stringify({type: "LEAVE", data: "PONG"}));
 	}
 	room.addSpectator(socket);
+	socket.send(JSON.stringify({type: "GAME", message: "SPEC"}));
 }

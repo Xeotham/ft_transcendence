@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var address = "10.12.6.3";
 var roomNumber = -1;
 var game = null;
 var player = null;
@@ -81,7 +82,7 @@ function room_found(content) {
     if (isTournamentOwner) {
         content.innerHTML += "\n\t\t\t<button id=\"start-tournament\">Start Tournament</button>\n\t\t\t<button id=\"shuffle-tree\">Shuffle Tree</button>\n\t\t";
         document.getElementById("start-tournament").addEventListener("click", function () {
-            fetch('http://localhost:3000/api/pong/startTournament', {
+            fetch("http://".concat(address, ":3000/api/pong/startTournament"), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -99,7 +100,7 @@ function getRoomInfo(event) {
         return __generator(this, function (_a) {
             roomId = event.target.getAttribute('id');
             content.innerHTML = "\n\t\t<button id=\"roomLst\">Return to Tournament List</button>\n\t";
-            fetch("http://localhost:3000/api/pong/get_room_info?id=".concat(roomId), {
+            fetch("http://".concat(address, ":3000/api/pong/get_room_info?id=").concat(roomId), {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json'
@@ -137,7 +138,7 @@ function getRoomInfo(event) {
 function listRooms() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            fetch("http://localhost:3000/api/pong/get_rooms", {
+            fetch("http://".concat(address, ":3000/api/pong/get_rooms"), {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json'
@@ -176,7 +177,7 @@ function joinSpectate(roomId) {
             matchType = "PONG";
             player = "SPEC";
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/addSpectatorToRoom?id=".concat(roomId)); // TODO : add room id
+                socket = new WebSocket("ws://".concat(address, ":3000/api/pong/addSpectatorToRoom?id=").concat(roomId)); // TODO : add room id
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -202,7 +203,7 @@ function joinMatchmaking() {
             isSolo = false;
             matchType = "PONG";
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/joinMatchmaking");
+                socket = new WebSocket("ws://".concat(address, ":3000/api/pong/joinMatchmaking"));
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -227,7 +228,7 @@ function joinSolo() {
             isSolo = true;
             matchType = "PONG";
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/joinSolo");
+                socket = new WebSocket("ws://".concat(address, ":3000/api/pong/joinSolo"));
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -266,7 +267,7 @@ function createTournament(name) {
             matchType = "TOURNAMENT";
             loadPage("room-found");
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/createTournament?name=".concat(name));
+                socket = new WebSocket("ws://".concat(address, ":3000/api/pong/createTournament?name=").concat(name));
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -288,7 +289,7 @@ function createTournament(name) {
 function getTournamentInfo(event) {
     var tournamentId = event.target.getAttribute('id');
     content.innerHTML = "\n\t\t<button id=\"tournamentLst\">Return to Tournament List</button>\n\t";
-    fetch("http://localhost:3000/api/pong/get_tournament_info?id=".concat(tournamentId), {
+    fetch("http://".concat(address, ":3000/api/pong/get_tournament_info?id=").concat(tournamentId), {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
@@ -317,7 +318,7 @@ function getTournamentInfo(event) {
 function listTournaments() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            fetch("http://localhost:3000/api/pong/get_tournaments", {
+            fetch("http://".concat(address, ":3000/api/pong/get_tournaments"), {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json'
@@ -355,7 +356,7 @@ function joinTournament(tournamentId) {
             isTournamentOwner = false;
             matchType = "TOURNAMENT";
             if (!socket)
-                socket = new WebSocket("ws://localhost:3000/api/pong/joinTournament?id=".concat(tournamentId));
+                socket = new WebSocket("ws://".concat(address, ":3000/api/pong/joinTournament?id=").concat(tournamentId));
             socket.addEventListener("error", function (error) {
                 console.error(error);
             });
@@ -380,7 +381,7 @@ function quitRoom(msg) {
         msg = "Leaving room";
     if (msg === "QUEUE_TIMEOUT")
         console.log("You took too long to confirm the game. Back to the lobby");
-    fetch('http://localhost:3000/api/pong/quitRoom', {
+    fetch("http://".concat(address, ":3000/api/pong/quitRoom"), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -485,6 +486,10 @@ function gameMessageHandler(res) {
             console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
             //  TODO : display score on screen
             break;
+        case "SPEC":
+            console.log("Starting Spectator mode");
+            content.innerHTML = "\n\t\t\t\t<canvas id=\"gameCanvas\" width=\"800\" height=\"400\"></canvas>\n\t\t\t";
+            break;
         default:
             game = res.data;
             drawGame();
@@ -509,7 +514,7 @@ function keyHandler(event) {
                 // TODO : replace with Constants
                 if (direction === "" || (direction === "up" && paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
                     return [2 /*return*/];
-                fetch('http://localhost:3000/api/pong/movePaddle', {
+                fetch("http://".concat(address, ":3000/api/pong/movePaddle"), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -534,7 +539,7 @@ function keyHandler(event) {
     }
 }
 function shuffleTree() {
-    fetch('http://localhost:3000/api/pong/shuffleTree', {
+    fetch("http://".concat(address, ":3000/api/pong/shuffleTree"), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -557,7 +562,7 @@ function confirmGame() {
     document.getElementById("confirm-game").addEventListener("click", function () {
         clearInterval(queueInterval);
         document.getElementById("timer").innerText = "Confirmed! Awaiting opponent";
-        fetch('http://localhost:3000/api/pong/startConfirm', {
+        fetch("http://".concat(address, ":3000/api/pong/startConfirm"), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

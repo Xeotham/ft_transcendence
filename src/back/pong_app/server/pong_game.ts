@@ -51,12 +51,13 @@ export class Game {
 		this.spectators.push(spectator);
 	}
 
-	private sendData(data: any) {
+	private sendData(data: any, toSpectators: boolean = true) {
 		this.players.player1.send(JSON.stringify(data));
 		if (!this.isSolo)
 			this.players.player2.send(JSON.stringify(data));
-		for (let spectator of this.spectators)
-			spectator.send(JSON.stringify(data));
+		if (toSpectators)
+			for (let spectator of this.spectators)
+				spectator.send(JSON.stringify(data));
 	}
 
 	private spawnBall(side: string | "P1" | "P2") {

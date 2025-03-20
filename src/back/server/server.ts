@@ -41,7 +41,7 @@ fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
 });
 
 // Start the server
-fastify.listen({ port: parseInt(process.env.PORT!) }, (err: Error | null, address: string) => {
+fastify.listen({ port: parseInt(process.env.PORT!), host: "0.0.0.0" }, (err: Error | null, address: string) => {
 	if (err) {
 		fastify.log.error(err);
 		process.exit(1);

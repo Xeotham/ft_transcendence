@@ -1,5 +1,6 @@
 import { WebSocket } from "ws";
 import { Game } from "./pong_game";
+import {getTournamentById} from "../../api/pong/utils";
 
 export class Room {
 	private readonly id:	number;
@@ -12,10 +13,12 @@ export class Room {
 	private isSolo:			boolean;
 	private spectators:		WebSocket[];
 	private	started:		boolean;
+	private isInTournament:	boolean;
+	private tourId:			number;
 	// private:	boolean; // TODO: Implement private rooms
 	// inviteCode:	string;
 
-	constructor(id:	number, isSolo: boolean = false) {
+	constructor(id:	number, isSolo: boolean = false, isInTournament: boolean = false, tourId: number = -1) {
 		this.id = id;
 		this.P1 = null;
 		this.P2 = null;
@@ -26,6 +29,8 @@ export class Room {
 		this.isSolo = isSolo;
 		this.spectators = [];
 		this.started = false;
+		this.isInTournament = false;
+		this.tourId = tourId;
 	}
 
 	getId() {
@@ -90,7 +95,7 @@ export class Room {
 			this.P2?.send(JSON.stringify(data));
 		if (toSpectators)
 			for (let spectator of this.spectators)
-				spectator.send(JSON.stringify(data));
+				spectator?.send(JSON.stringify(data));
 	}
 
 	addPlayer(socket: WebSocket) {
@@ -105,14 +110,15 @@ export class Room {
 		if (!this.full)
 			return ;
 		this.game = new Game(this.id, this.P1, this.P2, false, this.spectators);
-		this.sendData({type: "INFO", message: "Room is full, ready to start, awaiting confirmation"});
+		this.sendData({ type: "INFO", message: "Room is full, ready to start, awaiting confirmation" });
 		this.sendData({ type : "CONFIRM" });
 	}
 
-	soloSetup(socket) {
+	soloSetup(socket: WebSocket) {
 		this.P1 = socket;
 		this.P2 = socket;
 		this.full = true;
+		this.isSolo = true;
 		this.sendData({ type: "INFO", message: "Solo room created, starting game" });
 		this.sendData({ type: "GAME", message: "PREP", player: "P1", roomId: this.id });
 		this.game = new Game(this.id, this.P1, this.P2, true, this.spectators);
@@ -122,11 +128,16 @@ export class Room {
 		if (!this.full || this.started)
 			return ;
 		if (!this.game)
-			this.game = new Game(this.id, this.P1, this.P2, false, this.spectators);
+			this.game = new Game(this.id, this.P1, this.P2, this.isSolo, this.spectators);
 		this.started = true;
 		this.sendData({ type: "INFO", message: "The game is starting" });
 		this.sendData({ type: "GAME", message: "START" });
-		this.game.gameLoop();
+		if (!this.isInTournament)
+			this.game.gameLoop();
+		else
+			this.game.gameLoop().then(() => {
+				getTournamentById(this.tourId).nextRound(this.id)
+			});
 	}
 
 	addSpectator(socket: WebSocket) {
@@ -140,7 +151,7 @@ export class Room {
 			return ;
 		this.spectators.splice(this.spectators.indexOf(socket), 1);
 		socket.send(JSON.stringify({ type: "INFO", message: "You stopped spectating the room" }));
-		socket.send(JSON.stringify({ type: "LEAVE", data: "PONG" }));
+		socket.send(JSON.stringify({ type: "LEAVE" }));
 
 	}
 

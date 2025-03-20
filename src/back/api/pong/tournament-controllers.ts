@@ -47,13 +47,6 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequest<{ Qu
 	console.log(tournament);
 	if (!tournament.hasStarted()) {
 		tournament.addPlayer(socket);
-		socket.send(JSON.stringify({type: "INFO", message: "You have joined the tournament"}));
-		socket.send(JSON.stringify({
-			type: "TOURNAMENT",
-			message: "PREP",
-			tourId: tournament.getId(),
-			tourPlacement: tournament.getPlayers().length - 1
-		}));
 		return;
 	}
 	socket.send(JSON.stringify({ type: "ALERT", message: "No tournament found. Disconnecting" }));

@@ -68,14 +68,16 @@ var Game = /** @class */ (function () {
     Game.prototype.addSpectator = function (spectator) {
         this.spectators.push(spectator);
     };
-    Game.prototype.sendData = function (data) {
+    Game.prototype.sendData = function (data, toSpectators) {
+        if (toSpectators === void 0) { toSpectators = true; }
         this.players.player1.send(JSON.stringify(data));
         if (!this.isSolo)
             this.players.player2.send(JSON.stringify(data));
-        for (var _i = 0, _a = this.spectators; _i < _a.length; _i++) {
-            var spectator = _a[_i];
-            spectator.send(JSON.stringify(data));
-        }
+        if (toSpectators)
+            for (var _i = 0, _a = this.spectators; _i < _a.length; _i++) {
+                var spectator = _a[_i];
+                spectator.send(JSON.stringify(data));
+            }
     };
     Game.prototype.spawnBall = function (side) {
         this.sendData({ type: "GAME", data: this.score, message: "SCORE" });
