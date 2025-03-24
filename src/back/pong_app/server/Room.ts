@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import { Game } from "./pong_game";
-import {getTournamentById} from "../../api/pong/utils";
+import { getTournamentById, responseFormat } from "../utils";
 
 export class Room {
 	private readonly id:	number;
@@ -89,7 +89,11 @@ export class Room {
 		this.isP2Ready = bool;
 	}
 
-	sendData(data, toSpectators: boolean = false) {
+	isOver() {
+		return this.game ? this.getGame()!.isOver() : false;
+	}
+
+	sendData(data: responseFormat, toSpectators: boolean = false) {
 		this.P1?.send(JSON.stringify(data));
 		if (!this.isSolo)
 			this.P2?.send(JSON.stringify(data));
@@ -136,7 +140,7 @@ export class Room {
 			this.game.gameLoop();
 		else
 			this.game.gameLoop().then(() => {
-				getTournamentById(this.tourId).nextRound(this.id)
+				getTournamentById(this.tourId)?.nextRound(this.id)
 			});
 	}
 

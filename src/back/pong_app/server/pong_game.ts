@@ -1,10 +1,10 @@
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
-import { requestBody } from "../../api/pong/utils";
+import { requestBody } from "../utils";
 
 export class Game {
 	readonly id:number;
-	players:	{ player1: WebSocket, player2: WebSocket };
+	players:	{ player1: WebSocket | null, player2: WebSocket | null };
 	score:		{ player1: number, player2: number };
 	paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	paddle2:	{ x: number, y: number, x_size: number, y_size: number };
@@ -18,7 +18,7 @@ export class Game {
 	private finishTime:	number;
 	private lastTime:	number;
 
-	constructor(id: number, player1: WebSocket, player2: WebSocket, isSolo: boolean, spectators: WebSocket[] = []) {
+	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = []) {
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };
@@ -52,12 +52,12 @@ export class Game {
 	}
 
 	private sendData(data: any, toSpectators: boolean = true) {
-		this.players.player1.send(JSON.stringify(data));
+		this.players.player1?.send(JSON.stringify(data));
 		if (!this.isSolo)
-			this.players.player2.send(JSON.stringify(data));
+			this.players.player2?.send(JSON.stringify(data));
 		if (toSpectators)
 			for (let spectator of this.spectators)
-				spectator.send(JSON.stringify(data));
+				spectator?.send(JSON.stringify(data));
 	}
 
 	private spawnBall(side: string | "P1" | "P2") {
@@ -176,5 +176,9 @@ export class Game {
 			this.winner = this.players.player2;
 		else
 			this.winner = this.players.player1;
+	}
+
+	getWinner() : WebSocket | null {
+		return this.winner;
 	}
 }

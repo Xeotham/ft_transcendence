@@ -1,5 +1,5 @@
-import { Tournaments } from "../../api/pong/tournament-controllers";
-import	{ idGenerator, requestBody } from "../../api/pong/utils";
+import { Tournaments } from "../api/tournament-controllers";
+import	{ idGenerator, requestBody } from "../utils";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
 import { Game } from "./pong_game";
@@ -8,13 +8,15 @@ import { Room } from "./Room";
 const	idGenRoom = idGenerator();
 
 export class Tournament {
-	private readonly id:	number;
-	private started:		boolean;
-	private rooms:			Room[][]; // tree structure
-	private nbRoomsTop:		number;
-	private players:		WebSocket[];
-	private positions:		number[];
-	private needShuffle:	boolean;
+	private readonly id:		number;
+	private started:			boolean;
+	private rooms:				Room[][]; // tree structure
+	private nbRoomsTop:			number;
+	private players:			WebSocket[];
+	private positions:			number[];
+	private needShuffle:		boolean;
+	private round:				number;
+	private gameFinished:		number;
 
 	toJSON() {
 		return {
@@ -30,6 +32,8 @@ export class Tournament {
 		this.players = [player];
 		this.positions = [];
 		this.needShuffle = true;
+		this.round = 0;
+		this.gameFinished = 0;
 	}
 
 	getId() {
@@ -74,32 +78,38 @@ export class Tournament {
 	removePlayer(placementId: number) {
 		this.needShuffle = true;
 
+		if (!this.started) {
+			this.players.splice(placementId, 1);
+			this.sendToAll({ type: "INFO", message: "Player " + placementId + " has left the tournament" })
+			for (let i = placementId; i < this.players.length; ++i)
+				this.players[i].send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", data: "CHANGE_PLACEMENT", tourId: this.id, tourPlacement: i }));
+			if (this.players.length <= 0)
+				return true;
+			if (placementId === 0)
+				this.players[0].send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
+			return false;
+		}
 
 		// Find the room where the player is
-		const room: Room = this.rooms.flat().find((room) => {
+		const room: Room | undefined = this.rooms.flat().find((room) => {
 			return room.getP1() === this.players[placementId] || room.getP2() === this.players[placementId];
 		});
 
+		if (!room)
+			return false;
+
 		const player: string | "P1" | "P2" = this.players[placementId] === room.getP1() ? "P1" : "P2";
 
+		if (room.hasStarted() && !room.isOver())
+			room.getGame()?.forfeit(player);
 
-		// room.startGame();
-		// room.getGame().forfeit(player);
-		if (room.hasStarted())
-			room.getGame().forfeit(player);
-		// else
-		// 	room.
-
-		(player === "P1" ? room.getP2() : room.getP1())?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
+		// (player === "P1" ? room.getP2() : room.getP1())?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
 
 		this.players.splice(placementId, 1);
-		this.sendToAll({ type: "INFO", message: "Player " + placementId + " has left the tournament" })
-		if (this.players.length <= 0) {
-			return true;
-		}
-		if (placementId === 0)
-			this.players[0].send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
-		return false;
+		this.sendToAll({ type: "INFO", message: "Player " + placementId + " has left the tournament" });
+		console.log("Players left : " + this.players.length);
+		return this.players.length <= 0;
+
 	}
 
 	shuffleTree() {
@@ -183,24 +193,60 @@ export class Tournament {
 
 		for (let i = 0; i < this.positions.length; ++i) {
 			this.rooms[0][Math.floor(i / 2)].addPlayer(this.players[this.positions[i]]);
-			
 		}
-
+		if (this.players.length % 2 === 1) {
+			const room = this.rooms[0][this.nbRoomsTop - 1];
+			room.setFull(true);
+			room.startGame();
+			room.getGame()?.forfeit("P2");
+		}
 	}
 
-	async nextRound(roomId: number) {
-		// let nbRooms = this.nbRoomsTop;
+	nextRound(roomId: number) {
+		console.log("The game of room: " + roomId + " in tournament: " + this.id + " as ended");
+		++this.gameFinished;
 
-		console.log("A game as ended, trying to start the next one");
-		for (let i = 0; i < this.rooms.length; ++i) {
-			const winningRoom = this.rooms[i].find((room) => { return room.getId() === roomId });
+		if (this.gameFinished < this.rooms[this.round].length)
+			return;
+		this.gameFinished = 0;
 
-			// 	for (let j = 0; j < nbRooms; ++j) {
-		// 		if (this.rooms[i][j].game.isOver()) {
-		//
-		// 		}
-		// 	}
-		// 	nbRooms = Math.ceil(nbRooms / 2);
+		console.log("\x1b[31mAll games of round " + this.round + " have ended. Moving to next round\x1b[0m");
+		if (this.round === this.rooms.length - 1) {
+			console.log("Tournament ended");
+
+			const	winner = this.rooms[this.rooms.length - 1][0].getGame()?.getWinner()
+
+			this.sendToAll({type: "INFO", message: "Tournament ended"});
+			this.sendToAll({
+				type: "INFO", message: "The Grand winner is player number: " +
+					winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody"
+			});
+			console.log("\x1b[38;5;204mThe Grand winner is player number: " +
+				winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody");
+			// TODO : Change players to name
+			this.sendToAll({type: "LEAVE", data: "TOUR"});
+			return;
+		}
+
+		for (let i = 0; i < this.rooms[this.round].length; ++i) {
+			const	newPlayer = this.rooms[this.round][i].getGame()?.getWinner();
+			const	opponent = this.rooms[this.round][i - 1].getGame()?.getWinner()
+
+			if (newPlayer === undefined)
+				continue;
+
+			this.rooms[this.round + 1][Math.floor(i / 2)].addPlayer(newPlayer as WebSocket);
+			if (i % 2 === 1)
+				console.log("Player " + this.players.indexOf(opponent as WebSocket) +
+					" will face player " + this.players.indexOf(newPlayer as WebSocket));
+		}
+		// If only one player in the room, automatically win
+		++this.round;
+		const lastRoom = this.rooms[this.round][this.rooms[this.round].length - 1];
+		if (!lastRoom.getP2()) {
+			lastRoom.setFull(true);
+			lastRoom.startGame();
+			lastRoom.getGame()?.forfeit("P2");
 		}
 	}
 }

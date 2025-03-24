@@ -1,5 +1,5 @@
-import db from '../db';
-import { createUserStats } from './UserStats'
+const db = require('../db');
+const { createUserStats } = require('./UserStats');
 
 interface Games {
     id?:           number;

@@ -1,9 +1,12 @@
 // Fastify request and response to create the controllers for the API
-import { FastifyRequest, FastifyReply } from 'fastify';
+const { FastifyRequest, FastifyReply } = require('fastify');
 // Interactions with the DataBase to create and get Users
-import { createUser, getUserByUsername } from '../../database/models/Users';
+const { createUser, getUserByUsername } = require('../../database/models/Users');
 
-export const registerUser = async (request: FastifyRequest, reply: FastifyReply) => {
+type FastifyRequestType = typeof FastifyRequest;
+type FastifyReplyType = typeof FastifyReply;
+
+export const registerUser = async (request: FastifyRequestType, reply: FastifyReplyType) => {
     const { username, password, avatar, connected } = request.body as { username: string; password: string; avatar: string; connected: boolean };
 
     const existingUser = getUserByUsername(username);
@@ -15,7 +18,7 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     return reply.status(201).send({ message: 'User registered successfully' });
 };
 
-export const loginUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const loginUser = async (request: FastifyRequestType, reply: FastifyReplyType) => {
     const { username, password } = request.body as { username: string; password: string };
 
     const user = getUserByUsername(username);
@@ -26,7 +29,7 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
     return reply.send({ message: 'Login successful', user });
 };
 
-export const    getUserInfo = async (request: FastifyRequest, reply: FastifyReply) => {
+export const    getUserInfo = async (request: FastifyRequestType, reply: FastifyReplyType) => {
     const   { username } = request.body as { username: string };
 
     const   user = getUserByUsername(username);

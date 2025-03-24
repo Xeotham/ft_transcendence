@@ -1,4 +1,4 @@
-import db from '../db';
+const db = require('../db');
 
 interface UserStats {
 	id?:			number;
