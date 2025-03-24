@@ -1,6 +1,25 @@
-import * as Constants from "./constants"
-import { WebSocket } from "ws";
-import { requestBody } from "../utils";
+// import * as Constants from "./constants"
+// import { WebSocket } from "ws";
+// import { requestBody } from "../utils";
+
+// const = require('./constants');
+const {
+	PADDLE1_X,
+	PADDLE2_X,
+	PADDLE_Y,
+	PADDLE_WIDTH,
+	PADDLE_HEIGHT,
+	WIDTH,
+	HEIGHT,
+	BALL_SIZE,
+	BALL_SPEED,
+	BALL_ACCELERATION_PER_BOUNCE_RATIO,
+	PADDLE_SPEED
+} = require('./constants');
+const { WebSocket } = require('ws');
+const { requestBody } = require('../utils');
+
+type requestBodyType = typeof requestBody;
 
 export class Game {
 	readonly id:number;
@@ -22,9 +41,9 @@ export class Game {
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };
-		this.paddle1 = { x: Constants.PADDLE1_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
-		this.paddle2 = { x: Constants.PADDLE2_X, y: Constants.PADDLE_Y, x_size: Constants.PADDLE_WIDTH, y_size: Constants.PADDLE_HEIGHT };
-		this.ball = { x: Constants.WIDTH / 2, y: Constants.HEIGHT / 2, size: Constants.BALL_SIZE, orientation: 0, speed: Constants.BALL_SPEED };
+		this.paddle1 = { x: PADDLE1_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
+		this.paddle2 = { x: PADDLE2_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
+		this.ball = { x: WIDTH / 2, y: HEIGHT / 2, size: BALL_SIZE, orientation: 0, speed: BALL_SPEED };
 		this.over = false;
 		this.winner = null;
 		this.isSolo = isSolo;
@@ -62,14 +81,14 @@ export class Game {
 
 	private spawnBall(side: string | "P1" | "P2") {
 		this.sendData({ type: "GAME", data: this.score, message: "SCORE" });
-		this.ball.y = Math.random() * Constants.HEIGHT / 4 + Constants.HEIGHT * 3 / 8;
-		this.ball.x = Constants.WIDTH / 2;
+		this.ball.y = Math.random() * HEIGHT / 4 + HEIGHT * 3 / 8;
+		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-		// this.ball.y = Constants.HEIGHT / 2; // TODO : Remove this line
+		// this.ball.y = HEIGHT / 2; // TODO : Remove this line
 		// this.ball.orientation = 0; // TODO : Remove this line
 		if (side === "P1")
 			this.ball.orientation += Math.PI;
-		this.ball.speed = Constants.BALL_SPEED;
+		this.ball.speed = BALL_SPEED;
 	}
 
 	async gameLoop() {
@@ -110,7 +129,7 @@ export class Game {
 		if (player === "P2")
 			angle = 180 - angle;
 		this.ball.orientation = angle * Math.PI / 180;
-		this.ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
+		this.ball.speed *= BALL_ACCELERATION_PER_BOUNCE_RATIO;
 	}
 
 	private paddleCollision(player: string | "P1" | "P2") {
@@ -137,8 +156,8 @@ export class Game {
 
 		this.paddleCollision("P1");
 		this.paddleCollision("P2");
-		if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= Constants.HEIGHT) {
-			this.ball.speed *= Constants.BALL_ACCELERATION_PER_BOUNCE_RATIO;
+		if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= HEIGHT) {
+			this.ball.speed *= BALL_ACCELERATION_PER_BOUNCE_RATIO;
 			this.ball.orientation = -this.ball.orientation;
 		}
 
@@ -147,27 +166,27 @@ export class Game {
 
 		if (this.ball.y < 0)
 			this.ball.y = this.ball.size;
-		if (this.ball.y > Constants.HEIGHT)
-			this.ball.y = Constants.HEIGHT - this.ball.size;
+		if (this.ball.y > HEIGHT)
+			this.ball.y = HEIGHT - this.ball.size;
 
 		if (this.ball.x - this.ball.size < 0) {
 			this.score.player2++;
 			this.spawnBall("P1");
 		}
-		if (this.ball.x + this.ball.size >= Constants.WIDTH) {
+		if (this.ball.x + this.ball.size >= WIDTH) {
 			this.score.player1++;
 			this.spawnBall("P2");
 		}
 	}
 
-	movePaddle(res: requestBody) {
+	movePaddle(res: requestBodyType) {
 		let paddle = res.P === "P1" ? this.paddle1 : this.paddle2;
 
-		paddle.y += (res.key === "up") ? -Constants.PADDLE_SPEED : Constants.PADDLE_SPEED;
+		paddle.y += (res.key === "up") ? -PADDLE_SPEED : PADDLE_SPEED;
 		if (paddle.y < 0)
 			paddle.y = 0;
-		if (paddle.y > Constants.HEIGHT - paddle.y_size)
-			paddle.y = Constants.HEIGHT - paddle.y_size;
+		if (paddle.y > HEIGHT - paddle.y_size)
+			paddle.y = HEIGHT - paddle.y_size;
 	}
 
 	forfeit(player: string) {

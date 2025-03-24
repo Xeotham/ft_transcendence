@@ -1,22 +1,31 @@
-import Fastify from 'fastify';
-import pongRoutes from '../pong_app/api/routes';
-import userRoutes from '../api/user_management/routes';
-import fastifyCors from '@fastify/cors';
-import fastifyWebsocket from '@fastify/websocket';
-import { fastifyStatic } from "@fastify/static";
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+// import Fastify from 'fastify';
+// import pongRoutes from '../pong_app/api/routes';
+// import userRoutes from '../api/user_management/routes';
+// import fastifyCors from '@fastify/cors';
+// import fastifyWebsocket from '@fastify/websocket';
+// import { fastifyStatic } from "@fastify/static";
+// import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from 'ws';
-// import path from 'path';
-import * as path from "path";
-import { fileURLToPath } from 'url';
-import * as dotenv from "dotenv";
+// import * as path from "path";
+// import { fileURLToPath } from 'url';
+// import * as dotenv from "dotenv";
 // import tetrisRoutes from '../../api/tetris/routes';
 
-// ES Modules equivalent of __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const 	Fastify = require('fastify');
+const	{ FastifyRequest, FastifyReply } = require('fastify');
+const	{ pongRoutes } = require('../pong_app/api/routes');
+const	{ userRoutes } = require('../api/user_management/routes');
+const	{ fastifyCors } = require('@fastify/cors');
+const	{ fastifyWebsocket } = require('@fastify/websocket');
+const	{ fastifyStatic } = require('@fastify/static');
+const	{ join } = require('path');
+const	{ config } = require('dotenv');
 
-dotenv.config();
+
+type	FastifyRequestType = typeof FastifyRequest;
+type	FastifyReplyType = typeof FastifyReply;
+
+config();
 
 export const fastify = Fastify(/*{ logger: true }*/);
 fastify.register(fastifyWebsocket);
@@ -36,13 +45,13 @@ fastify.register(pongRoutes, { prefix: '/api/api' });
 
 // Register fastify-static to serve static files
 fastify.register(fastifyStatic, {
-	root: path.join(__dirname, '../../front/public'), // Path to the directory containing your static files
+	root: join(__dirname, '../../front/public'), // Path to the directory containing your static files
 	prefix: '/', // Serve files under the root URL
 	decorateReply: false,
 });
 
 // TODO: Make it the rout to the SPA
-fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.get('/', async (request: FastifyRequestType, reply: FastifyReplyType) => {
 	return reply.sendFile('index.html');
 });
 

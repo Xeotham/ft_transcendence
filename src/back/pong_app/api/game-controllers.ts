@@ -1,16 +1,22 @@
-// Fastify request and response to create the controllers for the API
-import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
-import { WebSocket } from "ws";
-import { Game } from "../server/pong_game";
-import { Tournament } from "../server/tournament";
-import { Room } from "../server/Room";
-import { Tournaments } from "./tournament-controllers";
-import { requestBody, RoomInfo, idGenerator, quitPong, quitTournament, getRoomById, isPlayerInTournament } from "../utils";
+// import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
+// import { WebSocket } from "ws";
+// import { Room } from "../server/Room";
+// import { requestBody, RoomInfo, idGenerator, quitPong, quitTournament, getRoomById, isPlayerInTournament } from "../utils";
 
-// Interactions with the DataBase to create and get Users
-// import { createUser, getUserByUsername } from '../../database/models/Games';
+const Fastify = require('fastify');
+const { WebSocket } = require("ws");
+const { Room } = require('../server/Room');
+const { FastifyRequest, FastifyReply } = require('fastify');
+const { requestBody, RoomInfo, idGenerator, quitPong, quitTournament, getRoomById, isPlayerInTournament } = require("../utils");
 
-export const	Rooms: Room[] = [];
+type FastifyRequestType = typeof FastifyRequest;
+type FastifyReplyType = typeof FastifyReply;
+type requestBodyType = typeof requestBody;
+type RoomType = typeof Room;
+type RoomInfoType = typeof RoomInfo;
+
+
+export const	Rooms: RoomType[] = [];
 
 const idGenRoom = idGenerator();
 
@@ -18,7 +24,7 @@ export function isPlayerInRoom(socket: WebSocket): boolean {
 	return Rooms.find((room) => { return room.getP1() === socket || room.getP2() === socket; }) !== undefined;
 }
 
-export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequestType) => {
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
 		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
@@ -39,7 +45,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 	return ;
 };
 
-export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
+export const joinSolo = async (socket: WebSocket, req: FastifyRequestType) => {
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
 		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
@@ -51,7 +57,7 @@ export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
 	newRoom.startGame();
 }
 
-export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
+export const startConfirm = async (request: FastifyRequestType, reply: FastifyReplyType) => {
 	let room = getRoomById(request.body.roomId);
 	const	player: string | "P1" | "P2" = request.body.P;
 	// TODO: look at that again later
@@ -71,7 +77,7 @@ export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }
 	room.startGame();
 }
 
-export const quitRoom = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
+export const quitRoom = async (request: FastifyRequestType, reply: FastifyReplyType) => {
 	if (request.body.matchType === "PONG")
 		quitPong(request);
 	else if (request.body.matchType === "TOURNAMENT")
@@ -79,7 +85,7 @@ export const quitRoom = async (request: FastifyRequest<{ Body: requestBody }>, r
 }
 
 
-export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
+export const movePaddle = async (request: FastifyRequestType, reply: FastifyReplyType) => {
 	let room = getRoomById(request.body.roomId);
 
 	if (!room || !room.getGame())
@@ -87,17 +93,17 @@ export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>,
 	room.getGame()?.movePaddle(request.body);
 };
 
-export const	getRooms = async (request: FastifyRequest, reply: FastifyReply) => {
-	const	RoomsLst: RoomInfo[] = [];
+export const	getRooms = async (request: FastifyRequestType, reply: FastifyReplyType) => {
+	const	RoomsLst: RoomInfoType[] = [];
 	Rooms.forEach((room) => {RoomsLst.push({ id: room.getId(), full: room.isFull(), isSolo: room.getIsSolo() });});
 	return reply.send(RoomsLst);
 }
 
-export const	getRoomInfo = async (request: FastifyRequest<{ Querystring: { id: number } }>, reply: FastifyReply) => {
+export const	getRoomInfo = async (request: FastifyRequestType, reply: FastifyReplyType) => {
 	const	id = Number(request.query.id);
-	const Room: Room | undefined = Rooms.find((room) => { return room.getId() === id});
+	const Room: RoomType | undefined = Rooms.find((room) => { return room.getId() === id});
 	if (!Room)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	const RoomInfo: RoomInfo = { id: Room.getId(), full: Room.isFull(), isSolo: Room.getIsSolo() };
+	const RoomInfo: RoomInfoType = { id: Room.getId(), full: Room.isFull(), isSolo: Room.getIsSolo() };
 	return reply.send(RoomInfo);
 }

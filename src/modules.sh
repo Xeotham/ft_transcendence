@@ -13,7 +13,10 @@ npm install @fastify/static;																											# install static Handler
 npm install better-sqlite3;																												# install better-sqlite3 for the DataBase
 npm i @types/ws -D;																																# definitions for websockets for typescript
 npm install path;																																	# install node path extension
-npm install dotenv --save;																												# install dotenv to handle environement variables
+npm install dotenv --save;																												# install dotenv to handle environment variables
 npm install @fastify/cors;																												# install cors
+npm i glob;
+npm i minimatch;
+npm i commonjs;
 npm init -y;
-npm audit fix;																																		# automaticly fixes problems if any are encountered
+npm audit fix;																																		# automatically fixes problems if any are encountered

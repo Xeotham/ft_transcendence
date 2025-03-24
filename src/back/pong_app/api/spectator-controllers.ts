@@ -1,9 +1,16 @@
-import { Tournament } from "../server/tournament";
-import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
-import { WebSocket } from "ws";
-import { getRoomById } from "../utils";
+// import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
+// import { WebSocket } from "ws";
+// import { getRoomById } from "../utils";
 
-export const    addSpectatorToRoom = async (socket: WebSocket, req: FastifyRequest<{ Querystring: { id: number } }>) => {
+const Fastify = require('fastify');
+const { FastifyRequest, FastifyReply } = require('fastify');
+const { WebSocket } = require("ws");
+const { getRoomById } = require("../utils");
+
+type FastifyRequestType = typeof FastifyRequest;
+type FastifyReplyType = typeof FastifyReply;
+
+export const    addSpectatorToRoom = async (socket: WebSocket, req: FastifyRequestType) => {
 	const	id = Number(req.query.id);
 	const	room = getRoomById(id);
 	if (!room || room.getIsSolo()) {
