@@ -40,65 +40,21 @@ export class Room {
 		this.tourId = tourId;
 	}
 
-	getId() {
-		return this.id;
-	}
-
-	getP1() {
-		return this.P1;
-	}
-
-	getP2() {
-		return this.P2;
-	}
-
-	setP1(socket: WebSocket) {
-		this.P1 = socket;
-	}
-
-	setP2(socket: WebSocket) {
-		this.P2 = socket;
-	}
-
-	isFull() {
-		return this.full;
-	}
-
-	setFull(bool: boolean) {
-		this.full = bool;
-	}
-
-	getIsSolo() {
-		return this.isSolo;
-	}
-
-	getGame() {
-		return this.game;
-	}
-
-	hasStarted() {
-		return this.started;
-	}
-
-	getP1Ready() {
-		return this.isP1Ready;
-	}
-
-	getP2Ready() {
-		return this.isP2Ready;
-	}
-
-	setP1Ready(bool: boolean) {
-		this.isP1Ready = bool;
-	}
-
-	setP2Ready(bool: boolean) {
-		this.isP2Ready = bool;
-	}
-
-	isOver() {
-		return this.game ? this.getGame()!.isOver() : false;
-	}
+	getId() { return this.id; }
+	getP1() { return this.P1; }
+	getP2() { return this.P2; }
+	isFull() { return this.full; }
+	getGame() { return this.game; }
+	getP1Ready() { return this.isP1Ready; }
+	getP2Ready() { return this.isP2Ready; }
+	getIsSolo() { return this.isSolo; }
+	hasStarted() { return this.started; }
+	isOver() { return this.game ? this.getGame()!.isOver() : false; }
+	setP1(socket: WebSocket) { this.P1 = socket; }
+	setP2(socket: WebSocket) { this.P2 = socket; }
+	setFull(bool: boolean) { this.full = bool; }
+	setP1Ready(bool: boolean) { this.isP1Ready = bool; }
+	setP2Ready(bool: boolean) { this.isP2Ready = bool; }
 
 	sendData(data: responseFormat, toSpectators: boolean = false) {
 		this.P1?.send(JSON.stringify(data));
@@ -142,12 +98,12 @@ export class Room {
 			this.game = new Game(this.id, this.P1, this.P2, this.isSolo, this.spectators);
 		this.started = true;
 		this.sendData({ type: "INFO", message: "The game is starting" });
-		this.sendData({ type: "GAME", message: "START" });
+		this.sendData({ type: "GAME", message: "START" }, true);
 		if (!this.isInTournament)
 			this.game.gameLoop();
 		else
 			this.game.gameLoop().then(() => {
-				getTournamentById(this.tourId)?.nextRound(this.id)
+				getTournamentById(this.tourId)?.nextRound(this.id);
 			});
 	}
 
@@ -163,7 +119,5 @@ export class Room {
 		this.spectators.splice(this.spectators.indexOf(socket), 1);
 		socket.send(JSON.stringify({ type: "INFO", message: "You stopped spectating the room" }));
 		socket.send(JSON.stringify({ type: "LEAVE" }));
-
 	}
-
 }

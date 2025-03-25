@@ -46,21 +46,10 @@ export class Tournament {
 		this.gameFinished = 0;
 	}
 
-	getId() {
-		return this.id;
-	}
-
-	hasStarted() {
-		return this.started;
-	}
-
-	getRooms() {
-		return this.rooms;
-	}
-
-	getPlayers() {
-		return this.players;
-	}
+	getId() { return this.id; }
+	hasStarted() { return this.started; }
+	getRooms() { return this.rooms; }
+	getPlayers() { return this.players; }
 
 	getRoomById(id: number) {
 		for (let i = 0; i < this.rooms.length; i++) {

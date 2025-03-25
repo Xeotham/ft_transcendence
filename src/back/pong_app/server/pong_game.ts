@@ -74,13 +74,8 @@ export class Game {
 		};
 	}
 
-	isOver()	{
-		return this.over;
-	}
-
-	addSpectator(spectator: WebSocket) {
-		this.spectators.push(spectator);
-	}
+	isOver()	{ return this.over; }
+	addSpectator(spectator: WebSocket) { this.spectators.push(spectator); }
 
 	private sendData(data: any, toSpectators: boolean = true) {
 		this.players.player1?.send(JSON.stringify(data));
@@ -109,7 +104,7 @@ export class Game {
 			this.startTime = performance.now();
 			this.lastTime = this.startTime;
 			const intervalId = setInterval(() => {
-				this.sendData({ type: "GAME", data: this.toJSON() });
+				this.sendData({ type: "GAME", data: this.toJSON() }, true);
 			}, 1000 / 60); // 60 times per second
 
 			const gameLoopIteration = async () => {
