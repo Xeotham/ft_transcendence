@@ -46,12 +46,9 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 };
 
 export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
-	console.log("In joinSolo");
-
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
 		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
 
-	socket.send(JSON.stringify({ type: "INFO", message: "Hello?" }));
 	console.log("New Player creating solo room");
 	const newRoom = new Room(idGenRoom.next().value, true);
 	Rooms.push(newRoom);
@@ -88,8 +85,6 @@ export const quitRoom = async (request: FastifyRequest<{ Body: requestBody }>, r
 
 
 export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
-	console.log("test");
-	console.log(request.body.roomId + " " + typeof request.body.roomId + " " + request.body.P);
 	let room = getRoomById(request.body.roomId);
 
 	if (!room || !room.getGame())
