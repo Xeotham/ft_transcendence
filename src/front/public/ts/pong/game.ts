@@ -1,6 +1,6 @@
 import  { Game, score, buttons, intervals, responseFormat, RoomInfo } from "../utils.js";
 import  { address, content } from "../front.js";
-import  { loadPongPage, drawGame } from "./pong.js";
+import  { loadPongHtml, drawGame, idlePage } from "./pong.js";
 
 export class PongRoom {
     private roomNumber: number;
@@ -164,7 +164,7 @@ const   quitRoom = (msg: string = "Leaving room") => {
     if (gameInfo?.getSocket())
         gameInfo.getSocket()?.close();
     gameInfo = null;
-    loadPongPage("idle");
+    idlePage();
 }
 
 
@@ -214,7 +214,10 @@ function gameMessageHandler(res: responseFormat) {
 
             return  gameInfo?.prepareGame(roomNumber, player);
         case "START":
-            return loadPongPage("board")
+            loadPongHtml("board")
+            document.addEventListener("keydown", keyHandler);
+            document.addEventListener("keyup", keyHandler);
+            return ;
         case "FINISH":
             if (gameInfo?.getPlayer() === "SPEC")
                 return ;
@@ -233,10 +236,7 @@ function gameMessageHandler(res: responseFormat) {
             return ;
         case "SPEC":
             console.log("Starting Spectator mode");
-            loadPongPage("board");
-            document.removeEventListener("keydown", keyHandler);
-            document.removeEventListener("keyup", keyHandler);
-            return ;
+            return loadPongHtml("board");
         default:
             gameInfo?.setGame(res.data);
             drawGame(res.data);
@@ -294,7 +294,7 @@ export const keyHandler = (event: KeyboardEvent) => {
 }
 
 const   confirmGame = () => {
-    loadPongPage("confirm")
+    loadPongHtml("confirm")
 
     let remainingTime = 10;
     gameInfo?.setQueueInterval(setInterval(() => {

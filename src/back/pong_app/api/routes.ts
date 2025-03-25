@@ -3,7 +3,6 @@ import	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms
 import	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } from "./tournament-controllers";
 import	{ addSpectatorToRoom } from "./spectator-controllers";
 
-
 // const	{ FastifyRequest, FastifyReply } = require('fastify');
 // const	FastifyInstance = require('fastify');
 // const	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } = require('./game-controllers');

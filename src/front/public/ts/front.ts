@@ -1,5 +1,5 @@
 // import	{ responseFormat, Game, RoomInfo, TournamentInfo } from "./utils";
-import	{ loadPongPage } from "./pong/pong.js";
+import	{ idlePage } from "./pong/pong.js";
 
 export const	address = "localhost";
 export const	content = document.getElementById("content");
@@ -20,7 +20,7 @@ export const	homePage = () => {
 		alert("Page under construction");
 	});
 	document.getElementById("pong")?.addEventListener("click", () => {
-		loadPongPage("idle");
+		idlePage();
 	});
 	document.getElementById("login")?.addEventListener("click", () => {
 		alert("Page under construction");

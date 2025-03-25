@@ -46,10 +46,12 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 };
 
 export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
+	console.log("In joinSolo");
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
 		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
 
+	socket.send(JSON.stringify({ type: "INFO", message: "Hello?" }));
 	console.log("New Player creating solo room");
 	const newRoom = new Room(idGenRoom.next().value, true);
 	Rooms.push(newRoom);

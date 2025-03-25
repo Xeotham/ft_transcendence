@@ -33,20 +33,37 @@ help:
 
 
 up:
-	@ clear
+	@# clear
 	@ echo "$(DARK_GREEN)Creating Mandatory!$(BASE_COLOR)"
 	@ echo "$(RED)Building project...$(BASE_COLOR)"
-	@ docker compose -f ./src/docker-compose.yml --progress quiet build
+# 	@ docker compose -f ./src/docker-compose.yml --progress quiet build
+	@ docker compose -f ./src/docker-compose.yml build
 	@ echo "$(DARK_GREEN)Build done !$(BASE_COLOR)"
 	@ echo "$(RED)Starting services...$(BASE_COLOR)"
-	@ docker compose -f ./src/docker-compose.yml --progress quiet up -d
+# 	@ docker compose -f ./src/docker-compose.yml --progress quiet up -d
+	@ docker compose -f ./src/docker-compose.yml up -d
 	@ echo "$(DARK_GREEN)Services started !$(BASE_COLOR)"
 
 down: rm_logs
-	@ clear
+	@# clear
 	@ echo "$(RED)Ending services...$(BASE_COLOR)"
 	@ docker compose -f ./src/docker-compose.yml --progress quiet down
 	@ echo "$(DARK_GREEN)Services ended !$(BASE_COLOR)"
+
+errors: up
+	@ echo "$(RED)Checking errors...$(BASE_COLOR)"
+	@ echo "$(ORANGE)Front:$(BASE_COLOR)"
+	@ docker logs front | grep -E -v "^[> ]|^$$" || true
+	@ echo "\n$(ORANGE)Back:$(BASE_COLOR)"
+	@ docker logs back | grep -E -v "^[>]|^$$" || true
+	@ if docker logs back | grep -q "Server listening at"; then \
+		echo "$(GREEN)No errors!$(BASE_COLOR)"; \
+#		make rm_logs --no-print-directory ; \
+		watch docker logs back; \
+	else \
+		echo "$(BLACK_ORANGE)Errors found!$(BASE_COLOR)"; \
+#		make down --no-print-directory ; \
+	fi
 
 logs:
 	@ echo "$(RED)Creating logs...$(BASE_COLOR)"
@@ -63,7 +80,13 @@ logs:
 
 rm_logs:
 	@ echo "$(RED)Deleting logs...$(BASE_COLOR)"
-	@ rm -f adminer.log ftp.log portainer.log redis.log static_page.log mariadb.log nginx.log wordpress.log
+	@ if docker image ls | grep -q back; then \
+		echo "" > $$(docker inspect --format='{{.LogPath}}' back); \
+	fi
+	@ if docker image ls | grep -q front; then \
+		echo "" > $$(docker inspect --format='{{.LogPath}}' front); \
+	fi
+#	@ rm -f adminer.log ftp.log portainer.log redis.log static_page.log mariadb.log nginx.log wordpress.log
 	@ echo "$(GREEN)Logs deleted!$(BASE_COLOR)"
 
 clean: down

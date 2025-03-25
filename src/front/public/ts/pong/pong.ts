@@ -2,10 +2,10 @@ import  { content, address, homePage } from "../front.js";
 import  { Game, RoomInfo } from "../utils.js";
 import  { keyHandler } from "./game.js";
 
-export const loadPongPage = (page: string) => {
+export const loadPongHtml = (page: string) => {
     switch (page) {
         case "idle":
-            return idlePage();
+            return idleHtml();
         case "match-found":
             return matchFound();
         case "tournament-found":
@@ -19,7 +19,7 @@ export const loadPongPage = (page: string) => {
     }
 }
 
-const   idlePage = () => {
+const   idleHtml = () => {
     if (!content)
         return ;
     content.innerHTML = `
@@ -31,6 +31,11 @@ const   idlePage = () => {
 <!--		<button id="join-tournament">Join a tournament</button>-->
 <!--		<button id="spectate">spectate</button>-->
 	`;
+}
+
+export const   idlePage = () => {
+    loadPongHtml("idle");
+
     document.getElementById("home")?.addEventListener("click", () => homePage());
     // document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
     // document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
@@ -105,14 +110,11 @@ const   drawBoard = () => {
     content.innerHTML = `
 				<canvas id="gameCanvas" width="800" height="400"></canvas>
 			`;
-    document.addEventListener("keydown", keyHandler);
-    document.addEventListener("keyup", keyHandler);
 }
 
 const   confirmPage = () => {
     if (!content)
         return ;
-
 
     content.innerHTML = `
     <p>Game Found, Confirm?</p>

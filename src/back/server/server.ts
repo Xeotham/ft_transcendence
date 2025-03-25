@@ -24,7 +24,7 @@ fastify.register(fastifyCors, {
 // Register routes
 // TODO: Create the others API
 // fastify.register(userRoutes, { prefix: '/api/user' });
-fastify.register(pongRoutes, { prefix: '/api/api' });
+fastify.register(pongRoutes, { prefix: '/api/pong' });
 // fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 
 
