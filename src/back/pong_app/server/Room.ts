@@ -1,20 +1,20 @@
-// import { WebSocket } from "ws";
-// import { Game } from "./pong_game";
-// import { getTournamentById, responseFormat } from "../utils";
+import { WebSocket } from "ws";
+import { Game } from "./pong_game";
+import { getTournamentById, responseFormat } from "../utils";
 
-const { WebSocket } = require('ws');
-const { Game } = require('./pong_game');
-const { getTournamentById, responseFormat } = require('../utils');
-
-type GameType = typeof Game;
-type responseFormatType = typeof responseFormat;
+// const { WebSocket } = require('ws');
+// const { Game } = require('./pong_game');
+// const { getTournamentById, responseFormat } = require('../utils');
+//
+// type GameType = typeof Game;
+// type responseFormatType = typeof responseFormat;
 
 export class Room {
 	private readonly id:	number;
 	private P1:				WebSocket | null;
 	private P2:				WebSocket | null;
 	private full:			boolean;
-	private game:			GameType | null;
+	private game:			Game | null;
 	private isP1Ready:		boolean;
 	private isP2Ready:		boolean;
 	private isSolo:			boolean;
@@ -100,7 +100,7 @@ export class Room {
 		return this.game ? this.getGame()!.isOver() : false;
 	}
 
-	sendData(data: responseFormatType, toSpectators: boolean = false) {
+	sendData(data: responseFormat, toSpectators: boolean = false) {
 		this.P1?.send(JSON.stringify(data));
 		if (!this.isSolo)
 			this.P2?.send(JSON.stringify(data));

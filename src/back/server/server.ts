@@ -1,29 +1,14 @@
-// import Fastify from 'fastify';
-// import pongRoutes from '../pong_app/api/routes';
+import Fastify from 'fastify';
+import pongRoutes from '../pong_app/api/routes';
 // import userRoutes from '../api/user_management/routes';
-// import fastifyCors from '@fastify/cors';
-// import fastifyWebsocket from '@fastify/websocket';
-// import { fastifyStatic } from "@fastify/static";
-// import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import fastifyCors from '@fastify/cors';
+import fastifyWebsocket from '@fastify/websocket';
+import { fastifyStatic } from "@fastify/static";
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from 'ws';
-// import * as path from "path";
-// import { fileURLToPath } from 'url';
-// import * as dotenv from "dotenv";
-// import tetrisRoutes from '../../api/tetris/routes';
+import { join } from "path";
+import { config } from "dotenv";
 
-const 	Fastify = require('fastify');
-const	{ FastifyRequest, FastifyReply } = require('fastify');
-const	{ pongRoutes } = require('../pong_app/api/routes');
-const	{ userRoutes } = require('../api/user_management/routes');
-const	{ fastifyCors } = require('@fastify/cors');
-const	{ fastifyWebsocket } = require('@fastify/websocket');
-const	{ fastifyStatic } = require('@fastify/static');
-const	{ join } = require('path');
-const	{ config } = require('dotenv');
-
-
-type	FastifyRequestType = typeof FastifyRequest;
-type	FastifyReplyType = typeof FastifyReply;
 
 config();
 
@@ -38,7 +23,7 @@ fastify.register(fastifyCors, {
 
 // Register routes
 // TODO: Create the others API
-fastify.register(userRoutes, { prefix: '/api/user' });
+// fastify.register(userRoutes, { prefix: '/api/user' });
 fastify.register(pongRoutes, { prefix: '/api/api' });
 // fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 
@@ -51,7 +36,7 @@ fastify.register(fastifyStatic, {
 });
 
 // TODO: Make it the rout to the SPA
-fastify.get('/', async (request: FastifyRequestType, reply: FastifyReplyType) => {
+fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile('index.html');
 });
 

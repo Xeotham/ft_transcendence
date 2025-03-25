@@ -3,7 +3,7 @@
 // import { Game } from "../../../back/pong_app/server/pong_game";
 import	{ responseFormat, Game, RoomInfo, TournamentInfo } from "./utils";
 
-const	address = "10.12.6.3";
+const	address = "localhost";
 
 interface intervals {
 	ArrowUp: NodeJS.Timeout | null;

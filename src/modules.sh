@@ -11,6 +11,7 @@ npm i fastify;																																		# install fastify
 npm i @fastify/websocket;																													# install websockets
 npm install @fastify/static;																											# install static Handler
 npm install better-sqlite3;																												# install better-sqlite3 for the DataBase
+npm i --save-dev @types/better-sqlite3;
 npm i @types/ws -D;																																# definitions for websockets for typescript
 npm install path;																																	# install node path extension
 npm install dotenv --save;																												# install dotenv to handle environment variables

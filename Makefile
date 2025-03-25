@@ -36,27 +36,29 @@ up:
 	@ clear
 	@ echo "$(DARK_GREEN)Creating Mandatory!$(BASE_COLOR)"
 	@ echo "$(RED)Building project...$(BASE_COLOR)"
-	@ docker compose -f ./srcs/docker-compose.yml --progress quiet build
+	@ docker compose -f ./src/docker-compose.yml --progress quiet build
 	@ echo "$(DARK_GREEN)Build done !$(BASE_COLOR)"
 	@ echo "$(RED)Starting services...$(BASE_COLOR)"
-	@ docker compose -f ./srcs/docker-compose.yml --progress quiet up -d
+	@ docker compose -f ./src/docker-compose.yml --progress quiet up -d
 	@ echo "$(DARK_GREEN)Services started !$(BASE_COLOR)"
 
 down: rm_logs
 	@ clear
 	@ echo "$(RED)Ending services...$(BASE_COLOR)"
-	@ docker compose -f ./srcs/docker-compose.yml --progress quiet down
+	@ docker compose -f ./src/docker-compose.yml --progress quiet down
 	@ echo "$(DARK_GREEN)Services ended !$(BASE_COLOR)"
 
 logs:
 	@ echo "$(RED)Creating logs...$(BASE_COLOR)"
-	@ docker logs mariadb > mariadb.log
-	@ docker logs nginx > nginx.log
-	@ docker logs wordpress > wordpress.log
-	@ docker logs adminer > adminer.log		
-	@ docker logs ftp > ftp.log
-	@ docker logs portainer 2> portainer.log
-	@ docker logs redis > redis.log 2>redis.log
+	@ echo "$(ORANGE)Front:$(BASE_COLOR)"
+	@ docker logs front
+	@ echo "$(ORANGE)Back:$(BASE_COLOR)"
+	@ docker logs back
+# 	@ docker logs wordpress > wordpress.log
+# 	@ docker logs adminer > adminer.log
+# 	@ docker logs ftp > ftp.log
+# 	@ docker logs portainer 2> portainer.log
+# 	@ docker logs redis > redis.log 2>redis.log
 	@ echo "$(DARK_GREEN)Logs created!$(BASE_COLOR)"
 
 rm_logs:
@@ -65,8 +67,8 @@ rm_logs:
 	@ echo "$(GREEN)Logs deleted!$(BASE_COLOR)"
 
 clean: down
-	@ echo "$(RED)Removing files in .data...$(BASE_COLOR)"
-	@ sudo rm -rf ~/.data/database/* ~/.data/web/* ~/.data/vsftpd/* ~/.data/log/vsftpd/*
+# 	@ echo "$(RED)Removing files in .data...$(BASE_COLOR)"
+# 	@ sudo rm -rf ~/.data/database/* ~/.data/web/* ~/.data/vsftpd/* ~/.data/log/vsftpd/*
 	@ echo "$(RED)Removing all docker image...$(BASE_COLOR)"
 	@ docker system prune -f >/dev/null
 	@ if [ -n "$$(docker ps -qa)" ]; then \

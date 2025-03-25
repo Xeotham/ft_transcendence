@@ -1,20 +1,20 @@
-// import	{ FastifyInstance, FastifyRequest } from "fastify";
-// import	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } from "./game-controllers";
-// import	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } from "./tournament-controllers";
-// import	{ addSpectatorToRoom } from "./spectator-controllers";
+import	{ FastifyInstance, FastifyRequest } from "fastify";
+import	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } from "./game-controllers";
+import	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } from "./tournament-controllers";
+import	{ addSpectatorToRoom } from "./spectator-controllers";
 
 
-const	{ FastifyRequest, FastifyReply } = require('fastify');
-const	FastifyInstance = require('fastify');
-const	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } = require('./game-controllers');
-const	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } = require('./tournament-controllers');
-const	{ addSpectatorToRoom } = require('./spectator-controllers');
+// const	{ FastifyRequest, FastifyReply } = require('fastify');
+// const	FastifyInstance = require('fastify');
+// const	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } = require('./game-controllers');
+// const	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } = require('./tournament-controllers');
+// const	{ addSpectatorToRoom } = require('./spectator-controllers');
+//
+// type	FastifyInstanceType = typeof FastifyInstance;
+// type	FastifyRequestType = typeof FastifyRequest;
 
-type	FastifyInstanceType = typeof FastifyInstance;
-type	FastifyRequestType = typeof FastifyRequest;
 
-
-export default async function pongRoutes(fastify: FastifyInstanceType) {
+export default async function pongRoutes(fastify: FastifyInstance) {
 
 	fastify.get('/joinMatchmaking', {websocket: true}, joinMatchmaking);
 	fastify.get('/joinSolo', {websocket: true}, joinSolo);

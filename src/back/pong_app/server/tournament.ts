@@ -1,18 +1,18 @@
-// import { Tournaments } from "../api/tournament-controllers";
-// import	{ idGenerator, requestBody } from "../utils";
-// import * as Constants from "./constants"
-// import { WebSocket } from "ws";
-// import { Game } from "./pong_game";
-// import { Room } from "./Room";
+import { Tournaments } from "../api/tournament-controllers";
+import	{ idGenerator, requestBody } from "../utils";
+import * as Constants from "./constants"
+import { WebSocket } from "ws";
+import { Game } from "./pong_game";
+import { Room } from "./Room";
 
-const { Tournaments } = require('../api/tournament-controllers');
-const { idGenerator, requestBody } = require('../utils');
-const Constants = require('./constants');
-const { WebSocket } = require('ws');
-const { Room } = require('./Room');
+// const { Tournaments } = require('../api/tournament-controllers');
+// const { idGenerator, requestBody } = require('../utils');
+// const Constants = require('./constants');
+// const { WebSocket } = require('ws');
+// const { Room } = require('./Room');
 
-type requestType = typeof requestBody;
-type RoomType = typeof Room;
+// type requestType = typeof requestBody;
+// type RoomType = typeof Room;
 
 
 const	idGenRoom = idGenerator();
@@ -20,7 +20,7 @@ const	idGenRoom = idGenerator();
 export class Tournament {
 	private readonly id:		number;
 	private started:			boolean;
-	private rooms:				RoomType[][]; // tree structure
+	private rooms:				Room[][]; // tree structure
 	private nbRoomsTop:			number;
 	private players:			WebSocket[];
 	private positions:			number[];
@@ -101,7 +101,7 @@ export class Tournament {
 		}
 
 		// Find the room where the player is
-		const room: RoomType | undefined = this.rooms.flat().find((room) => {
+		const room: Room | undefined = this.rooms.flat().find((room) => {
 			return room.getP1() === this.players[placementId] || room.getP2() === this.players[placementId];
 		});
 
@@ -152,7 +152,7 @@ export class Tournament {
 			return ;
 		let roomNb = this.nbRoomsTop;
 		let	roundCount = 0;
-		let rooms: RoomType[] = [];
+		let rooms: Room[] = [];
 		while (roomNb > 1) {
 			rooms = [];
 			if (roundCount < this.rooms.length && this.rooms[roundCount].length === roomNb) {

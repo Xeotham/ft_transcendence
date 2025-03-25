@@ -1,9 +1,4 @@
-// import * as Constants from "./constants"
-// import { WebSocket } from "ws";
-// import { requestBody } from "../utils";
-
-// const = require('./constants');
-const {
+import {
 	PADDLE1_X,
 	PADDLE2_X,
 	PADDLE_Y,
@@ -15,11 +10,28 @@ const {
 	BALL_SPEED,
 	BALL_ACCELERATION_PER_BOUNCE_RATIO,
 	PADDLE_SPEED
-} = require('./constants');
-const { WebSocket } = require('ws');
-const { requestBody } = require('../utils');
+} from "./constants"
+import { WebSocket } from "ws";
+import { requestBody } from "../utils";
 
-type requestBodyType = typeof requestBody;
+// const = require('./constants');
+// const {
+// 	PADDLE1_X,
+// 	PADDLE2_X,
+// 	PADDLE_Y,
+// 	PADDLE_WIDTH,
+// 	PADDLE_HEIGHT,
+// 	WIDTH,
+// 	HEIGHT,
+// 	BALL_SIZE,
+// 	BALL_SPEED,
+// 	BALL_ACCELERATION_PER_BOUNCE_RATIO,
+// 	PADDLE_SPEED
+// } = require('./constants');
+// const { WebSocket } = require('ws');
+// const { requestBody } = require('../utils');
+
+// type requestBodyType = typeof requestBody;
 
 export class Game {
 	readonly id:number;
@@ -179,7 +191,7 @@ export class Game {
 		}
 	}
 
-	movePaddle(res: requestBodyType) {
+	movePaddle(res: requestBody) {
 		let paddle = res.P === "P1" ? this.paddle1 : this.paddle2;
 
 		paddle.y += (res.key === "up") ? -PADDLE_SPEED : PADDLE_SPEED;

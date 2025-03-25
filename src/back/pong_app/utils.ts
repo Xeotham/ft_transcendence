@@ -1,21 +1,21 @@
-// import { Room } from "./server/Room";
-// import { Tournament } from "./server/tournament";
-// import { FastifyReply, FastifyRequest } from "fastify";
-// import { WebSocket } from "ws";
-// import { Tournaments } from "./api/tournament-controllers";
-// import { Rooms } from "./api/game-controllers";
+import { Room } from "./server/Room";
+import { Tournament } from "./server/tournament";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { WebSocket } from "ws";
+import { Tournaments } from "./api/tournament-controllers";
+import { Rooms } from "./api/game-controllers";
 
-const { Room } = require('./server/Room');
-const { Tournament } = require('./server/tournament');
-const { FastifyReply, FastifyRequest } = require('fastify');
-const { WebSocket } = require('ws');
-const { Tournaments } = require('./api/tournament-controllers');
-const { Rooms } = require('./api/game-controllers');
-
-type RoomType = typeof Room;
-type TournamentType = typeof Tournament;
-type FastifyRequestType = typeof FastifyRequest;
-type FastifyReplyType = typeof FastifyReply;
+// const { Room } = require('./server/Room');
+// const { Tournament } = require('./server/tournament');
+// const { FastifyReply, FastifyRequest } = require('fastify');
+// const { WebSocket } = require('ws');
+// const { Tournaments } = require('./api/tournament-controllers');
+// const { Rooms } = require('./api/game-controllers');
+//
+// type RoomType = typeof Room;
+// type TournamentType = typeof Tournament;
+// type FastifyRequestType = typeof FastifyRequest;
+// type FastifyReplyType = typeof FastifyReply;
 
 export interface requestBody {
 	matchType:		string;
@@ -46,6 +46,7 @@ export interface	RoomInfo {
 
 export interface	TournamentInfo {
 	id:			number;
+	name?:		string;
 	started:	boolean;
 }
 
@@ -56,7 +57,7 @@ export function* idGenerator() {
 	return i;
 }
 
-export function quitTournament(request: FastifyRequestType) {
+export function quitTournament(request: FastifyRequest<{ Body: requestBody }>) {
 
 	console.log("Player : " + request.body.tourPlacement + " is quitting tournament : " + request.body.tourId);
 
@@ -71,7 +72,7 @@ export function quitTournament(request: FastifyRequestType) {
 	}
 }
 
-export function quitPong(request: FastifyRequestType) {
+export function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
 
 	const room = getRoomById(request.body.roomId);
 	if (!room)
@@ -97,23 +98,23 @@ export function quitPong(request: FastifyRequestType) {
 }
 
 
-export function getRoomById(id: number): RoomType | undefined {
+export function getRoomById(id: number): Room | undefined {
 
-	if (Rooms.find((room: RoomType) => { return room.getId() === id; }))
-		return Rooms.find((room: RoomType) => { return room.getId() === id; }); // Find the room in the list of rooms
+	if (Rooms.find((room: Room) => { return room.getId() === id; }))
+		return Rooms.find((room: Room) => { return room.getId() === id; }); // Find the room in the list of rooms
 
 	// Find the room in the list of rooms in the tournaments
-	Tournaments.forEach((tour: TournamentType) => {
+	Tournaments.forEach((tour: Tournament) => {
 		if (tour.getRoomById(id) !== null)
 			return tour.getRoomById(id);
 	});
 }
 
 
-export function getTournamentById(id: number): TournamentType | undefined {
-	return Tournaments.find((tour: TournamentType) => { return tour.getId() === id; });
+export function getTournamentById(id: number): Tournament | undefined {
+	return Tournaments.find((tour: Tournament) => { return tour.getId() === id; });
 }
 
 export function isPlayerInTournament(socket: WebSocket): boolean {
-	return Tournaments.find((tour: TournamentType) => { return tour.getPlayers().find((player: WebSocket) => { return player === socket }) }) !== undefined;
+	return Tournaments.find((tour: Tournament) => { return tour.getPlayers().find((player: WebSocket) => { return player === socket }) }) !== undefined;
 }

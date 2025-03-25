@@ -1,28 +1,28 @@
-// import { Tournament } from "../server/tournament";
-// import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
-// import { WebSocket } from "ws";
-// import { isPlayerInRoom } from "./game-controllers";
-// import { idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament } from "../utils";
+import { Tournament } from "../server/tournament";
+import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
+import { WebSocket } from "ws";
+import { isPlayerInRoom } from "./game-controllers";
+import {idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament, RoomInfo} from "../utils";
 
-const { Tournament } = require('../server/tournament');
-const Fastify = require('fastify');
-const { FastifyRequest, FastifyReply } = require('fastify');
-const { WebSocket } = require("ws");
-const { isPlayerInRoom } = require("./game-controllers");
-const { idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament } = require("../utils");
+// const { Tournament } = require('../server/tournament');
+// const Fastify = require('fastify');
+// const { FastifyRequest, FastifyReply } = require('fastify');
+// const { WebSocket } = require("ws");
+// const { isPlayerInRoom } = require("./game-controllers");
+// const { idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament } = require("../utils");
+//
+// type TournamentType = typeof Tournament;
+// type TournamentInfoType = typeof TournamentInfo;
+// type FastifyRequestType = typeof FastifyRequest;
+// type FastifyReplyType = typeof FastifyReply;
+// type requestBodyType = typeof requestBody;
 
-type TournamentType = typeof Tournament;
-type TournamentInfoType = typeof TournamentInfo;
-type FastifyRequestType = typeof FastifyRequest;
-type FastifyReplyType = typeof FastifyReply;
-type requestBodyType = typeof requestBody;
 
-
-export const Tournaments: TournamentType[] = [];
+export const Tournaments: Tournament[] = [];
 
 const idGenTour = idGenerator();
 
-export const createTournament = async (socket: WebSocket, req: FastifyRequestType) => {
+export const createTournament = async (socket: WebSocket, req: FastifyRequest< { Querystring: TournamentInfo } >) => {
 
 	const	tournamentName = req.query.name;
 	// console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
@@ -40,9 +40,9 @@ export const createTournament = async (socket: WebSocket, req: FastifyRequestTyp
 	socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: newTour.getId(), tourPlacement: 0 }));
 }
 
-export const joinTournament = async (socket: WebSocket, req: FastifyRequestType) => {
+export const joinTournament = async (socket: WebSocket, req: FastifyRequest< { Querystring: TournamentInfo } >) => {
 	const	id: number = req.query.id === null ? -1 : Number(req.query.id);
-	let 	tournament: TournamentType | null = null;
+	let 	tournament: Tournament | null = null;
 
 	// Check if player is already in a room
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
@@ -57,7 +57,7 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequestType)
 		}
 	}
 	else if (Tournaments.find((tour) => { return tour.getId() === id; }) !== undefined)
-		tournament = Tournaments.find((tour) => { return tour.getId() === id; }) as TournamentType;
+		tournament = Tournaments.find((tour) => { return tour.getId() === id; }) as Tournament;
 	else
 		return socket.send(JSON.stringify({ type: "INFO", message: "Tournament not found" }));
 	console.log(tournament);
@@ -69,14 +69,14 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequestType)
 	socket.send(JSON.stringify({ type: "LEAVE" }));
 }
 
-export const shuffleTree = async (request: FastifyRequestType, reply: FastifyReplyType) => {
+export const shuffleTree = async (request: FastifyRequest< { Body: requestBody } >, reply: FastifyReply) => {
 	const tour = getTournamentById(request.body.tourId);
 	if (!tour)
 		return console.log("Tournament not found");
 	tour.shuffleTree();
 }
 
-export const startTournament = async (request: FastifyRequestType, reply: FastifyReplyType) => {
+export const startTournament = async (request: FastifyRequest< { Body: requestBody } >, reply: FastifyReply) => {
 	console.log("Starting game");
 	const tour = getTournamentById(request.body.tourId);
 
@@ -86,20 +86,20 @@ export const startTournament = async (request: FastifyRequestType, reply: Fastif
 };
 
 
-export const	getTournaments = async (request: FastifyRequestType, reply: FastifyReplyType) => {
-	const TournamentLst: TournamentInfoType[] = [];
+export const	getTournaments = async (request: FastifyRequest< { Body: requestBody } >, reply: FastifyReply) => {
+	const TournamentLst: TournamentInfo[] = [];
 	Tournaments.forEach((tournament) => {TournamentLst.push({ id: tournament.getId(), started: tournament.hasStarted() });})
 	return reply.send(TournamentLst);
 }
 
-export const	getTournamentInfo = async (request: FastifyRequestType, reply: FastifyReplyType) => {
+export const	getTournamentInfo = async (request: FastifyRequest< { Querystring: TournamentInfo } >, reply: FastifyReply) => {
 	const	id = Number(request.query.id);
 	if (Tournaments.find((tournament) => { return tournament.getId() === id}) === undefined)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Tournament not found"}));
-	const Tournament: TournamentType = Tournaments.find((tournament) => { return tournament.getId() === id}) as TournamentType;
+	const Tournament: Tournament = Tournaments.find((tournament) => { return tournament.getId() === id}) as Tournament;
 
 	if (!Tournament)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Tournament not found"}));
-	const TournamentInfo: TournamentInfoType = { id: Tournament.getId(), started: Tournament.hasStarted() };
+	const TournamentInfo: TournamentInfo = { id: Tournament.getId(), started: Tournament.hasStarted() };
 	return reply.send(TournamentInfo);
 }
