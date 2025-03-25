@@ -205,7 +205,7 @@ const   messageHandler = (event: MessageEvent)=> {
 }
 
 
-function gameMessageHandler(res: responseFormat) {
+const	gameMessageHandler = (res: responseFormat) => {
 	if (!content)
 		return ;
 
@@ -280,7 +280,10 @@ export const keyHandler = (event: KeyboardEvent) => {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({roomId: roomNumber, P: p, key: direction})
-		});
+		})
+			.then(response => response.json())
+			.then(data => console.log(data))
+			.catch(error => console.error('Error:', error));
 	}
 
 	let p = player;
@@ -319,6 +322,9 @@ const   confirmGame = () => {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ roomId: gameInfo?.getRoomNumber(), P: gameInfo?.getPlayer() })
-		});
+		})
+			.then(response => response.json())
+			.then(data => console.log(data))
+			.catch(error => console.error('Error:', error));
 	});
 }

@@ -2,6 +2,7 @@ import	{ FastifyInstance, FastifyRequest } from "fastify";
 import	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } from "./game-controllers";
 import	{ startTournament, createTournament, joinTournament, shuffleTree, getTournaments, getTournamentInfo } from "./tournament-controllers";
 import	{ addSpectatorToRoom } from "./spectator-controllers";
+import {requestBody} from "../utils";
 
 // const	{ FastifyRequest, FastifyReply } = require('fastify');
 // const	FastifyInstance = require('fastify');

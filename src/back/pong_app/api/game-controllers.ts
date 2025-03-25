@@ -88,6 +88,8 @@ export const quitRoom = async (request: FastifyRequest<{ Body: requestBody }>, r
 
 
 export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
+	console.log("test");
+	console.log(request.body.roomId + " " + typeof request.body.roomId + " " + request.body.P);
 	let room = getRoomById(request.body.roomId);
 
 	if (!room || !room.getGame())

@@ -33,19 +33,19 @@ help:
 
 
 up:
-	@# clear
+	@ clear
 	@ echo "$(DARK_GREEN)Creating Mandatory!$(BASE_COLOR)"
 	@ echo "$(RED)Building project...$(BASE_COLOR)"
-# 	@ docker compose -f ./src/docker-compose.yml --progress quiet build
-	@ docker compose -f ./src/docker-compose.yml build
+	@ docker compose -f ./src/docker-compose.yml --progress quiet build
+#	@ docker compose -f ./src/docker-compose.yml build
 	@ echo "$(DARK_GREEN)Build done !$(BASE_COLOR)"
 	@ echo "$(RED)Starting services...$(BASE_COLOR)"
-# 	@ docker compose -f ./src/docker-compose.yml --progress quiet up -d
-	@ docker compose -f ./src/docker-compose.yml up -d
+	@ docker compose -f ./src/docker-compose.yml --progress quiet up -d
+#	@ docker compose -f ./src/docker-compose.yml up -d
 	@ echo "$(DARK_GREEN)Services started !$(BASE_COLOR)"
 
 down: rm_logs
-	@# clear
+	@ clear
 	@ echo "$(RED)Ending services...$(BASE_COLOR)"
 	@ docker compose -f ./src/docker-compose.yml --progress quiet down
 	@ echo "$(DARK_GREEN)Services ended !$(BASE_COLOR)"

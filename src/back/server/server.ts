@@ -17,7 +17,7 @@ fastify.register(fastifyWebsocket);
 
 // Register the CORS plugin
 fastify.register(fastifyCors, {
-	origin: `*`, // Allow all origins, or specify your frontend's origin
+	origin: `http://localhost:5000`, // Allow all origins, or specify your frontend's origin
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
 

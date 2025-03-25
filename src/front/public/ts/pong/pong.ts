@@ -1,8 +1,8 @@
 import  { content, address, homePage } from "../front.js";
 import  { Game, RoomInfo } from "../utils.js";
-import  { keyHandler } from "./game.js";
+import  { keyHandler, joinSolo, joinMatchmaking } from "./game.js";
 
-export const loadPongHtml = (page: string) => {
+export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "room-list" | "board" | "confirm") => {
     switch (page) {
         case "idle":
             return idleHtml();
@@ -37,8 +37,8 @@ export const   idlePage = () => {
     loadPongHtml("idle");
 
     document.getElementById("home")?.addEventListener("click", () => homePage());
-    // document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
-    // document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
+    document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
+    document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
     // document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
     // document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
     // document.getElementById("spectate")?.addEventListener("click", listRooms);
