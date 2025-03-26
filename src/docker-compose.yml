@@ -5,8 +5,6 @@ services:
     container_name: back
     ports:
       - "3000:3000"
-    depends_on:
-      - front
 #    volumes:
 #      - transcendence:/app
     env_file: ".env"
@@ -20,7 +18,9 @@ services:
       context: front
     container_name: front
     ports:
-      - "5173:5173"
+      - "5000:5000"
+    depends_on:
+      - back
 #    volumes:
 #      - transcendence/front:/app
     networks:

@@ -28,10 +28,10 @@ export interface	TournamentInfo {
 // Game.ts
 
 export interface intervals {
-	ArrowUp: NodeJS.Timeout | null;
-	ArrowDown: NodeJS.Timeout | null;
-	KeyS: NodeJS.Timeout | null;
-	KeyX: NodeJS.Timeout | null;
+	ArrowUp: number | null;
+	ArrowDown: number | null;
+	KeyS: number | null;
+	KeyX: number | null;
 }
 
 export interface buttons {

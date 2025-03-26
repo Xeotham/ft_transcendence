@@ -13,8 +13,10 @@ RUN     npm install
 # Copy the rest of the application code
 COPY ./transcendence-front .
 
+RUN npm run build
+
 # Expose the port that BrowserSync will run on
-EXPOSE 5173
+EXPOSE 5000
 
 # Run BrowserSync
 CMD ["npm", "run", "dev"]

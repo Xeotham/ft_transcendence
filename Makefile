@@ -32,7 +32,7 @@ help:
 	@ echo "$(ORANGE)┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
 
 
-up: rm_logs
+up:
 	@ clear
 	@ echo "$(DARK_GREEN)Creating Mandatory!$(BASE_COLOR)"
 	@ echo "$(RED)Building project...$(BASE_COLOR)"

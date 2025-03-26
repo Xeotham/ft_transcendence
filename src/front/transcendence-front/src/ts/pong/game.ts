@@ -1,4 +1,4 @@
-import  { Game, score, buttons, intervals, responseFormat, RoomInfo } from "../utils.ts";
+import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
 import  { loadPongHtml, drawGame, idlePage } from "./pong.ts";
 
@@ -11,7 +11,7 @@ export class PongRoom {
 	private isSolo: boolean;
 	private isButtonPressed: buttons;
 	private intervals: intervals;
-	private queueInterval: NodeJS.Timeout | null;
+	private queueInterval: number | null;
 
 
 	constructor(socket: WebSocket, isSolo: boolean = false) {
@@ -32,7 +32,7 @@ export class PongRoom {
 	getSocket(): WebSocket | null { return this.socket; }
 	getScore(): score { return this.score; }
 	getIsSolo(): boolean { return this.isSolo; }
-	getQueueInterval(): NodeJS.Timeout | null { return this.queueInterval; }
+	getQueueInterval(): number | null { return this.queueInterval; }
 	getMatchType(): string { return "PONG"; }
 	getIsButtonPressed(idx: string): boolean | undefined {
 		switch (idx) {
@@ -48,7 +48,7 @@ export class PongRoom {
 				return undefined;
 		}
 	}
-	getIntervals(idx: string): NodeJS.Timeout | null | undefined {
+	getIntervals(idx: string): number | null | undefined {
 		switch (idx) {
 			case "ArrowUp":
 				return this.intervals.ArrowUp;
@@ -70,7 +70,7 @@ export class PongRoom {
 	setSocket(socket: WebSocket | null): void { this.socket = socket; }
 	setScore(score: score): void { this.score = score; }
 	setIsSolo(isSolo: boolean): void { this.isSolo = isSolo; }
-	setQueueInterval(queueInterval: NodeJS.Timeout | null): void { this.queueInterval = queueInterval; }
+	setQueueInterval(queueInterval: number | null): void { this.queueInterval = queueInterval; }
 	setButtonPressed(idx: string, value: boolean): void {
 		switch (idx) {
 			case "ArrowUp":
@@ -87,7 +87,7 @@ export class PongRoom {
 				return ;
 		}
 	}
-	setIntervals(idx: string, value: NodeJS.Timeout | null): void {
+	setIntervals(idx: string, value: number | null): void {
 		switch (idx) {
 			case "ArrowUp":
 				this.intervals.ArrowUp = value;
@@ -104,15 +104,15 @@ export class PongRoom {
 		}
 	}
 	clearIntervals() {
-		clearInterval(this.queueInterval as NodeJS.Timeout);
+		clearInterval(this.queueInterval as number);
 		this.queueInterval = null;
-		clearInterval(this.intervals["ArrowUp"] as NodeJS.Timeout);
+		clearInterval(this.intervals["ArrowUp"] as number);
 		this.intervals["ArrowUp"] = null;
-		clearInterval(this.intervals["ArrowDown"] as NodeJS.Timeout);
+		clearInterval(this.intervals["ArrowDown"] as number);
 		this.intervals["ArrowDown"] = null;
-		clearInterval(this.intervals["KeyS"] as NodeJS.Timeout);
+		clearInterval(this.intervals["KeyS"] as number);
 		this.intervals["KeyS"] = null;
-		clearInterval(this.intervals["KeyX"] as NodeJS.Timeout);
+		clearInterval(this.intervals["KeyX"] as number);
 		this.intervals["KeyX"] = null;
 	}
 
@@ -194,7 +194,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			return ;
 		case "ALERT":
 			alert(res.message);
-			//fallthrough
+			return console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
 		case "ERROR":
 			//fallthrough
 		case "WARNING":
@@ -208,7 +208,7 @@ const   messageHandler = (event: MessageEvent)=> {
 				if (res.data === "PONG")
 					joinMatchmaking();
 			}
-			clearInterval(gameInfo?.getQueueInterval() as NodeJS.Timeout);
+			clearInterval(gameInfo?.getQueueInterval() as number);
 			return gameInfo?.setQueueInterval(null);
 		case "GAME":
 			return gameMessageHandler(res);
@@ -307,7 +307,7 @@ export const keyHandler = (event: KeyboardEvent) => {
 	}
 	if (event.type === "keyup" && gameInfo?.getIsButtonPressed(event.code) === true) {
 		gameInfo.setButtonPressed(event.code, false);
-		clearInterval(gameInfo.getIntervals(event.code) as NodeJS.Timeout);
+		clearInterval(gameInfo.getIntervals(event.code) as number);
 		gameInfo.setIntervals(event.code, null);
 	}
 }
@@ -321,12 +321,12 @@ const   confirmGame = () => {
 		if (document.getElementById("timer"))
 			document.getElementById("timer")!.innerText = `Time remaining: ${remainingTime}s`;
 		if (remainingTime <= 0) {
-			clearInterval(gameInfo?.getQueueInterval() as NodeJS.Timeout);
+			clearInterval(gameInfo?.getQueueInterval() as number);
 			quitRoom("QUEUE_TIMEOUT");
 		}
 	}, 1000));
 	document.getElementById("confirm-game")?.addEventListener("click", () => {
-		clearInterval(gameInfo?.getQueueInterval() as NodeJS.Timeout);
+		clearInterval(gameInfo?.getQueueInterval() as number);
 		document.getElementById("timer")!.innerText = "Confirmed! Awaiting opponent";
 		fetch(`http://${address}:3000/api/pong/startConfirm`, {
 			method: 'POST',

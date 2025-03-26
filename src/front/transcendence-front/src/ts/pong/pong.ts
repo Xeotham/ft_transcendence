@@ -1,6 +1,6 @@
-import  { content, address, homePage } from "../main.ts";
-import  { Game, RoomInfo } from "../utils.ts";
-import  { keyHandler, joinSolo, joinMatchmaking } from "./game.ts";
+import  { content, homePage } from "../main.ts";
+import  { Game } from "../utils.ts";
+import  { joinSolo, joinMatchmaking } from "./game.ts";
 
 export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "room-list" | "board" | "confirm") => {
     switch (page) {
