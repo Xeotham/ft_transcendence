@@ -1,6 +1,7 @@
 import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
 import  { loadPongHtml, drawGame, idlePage, matchFound, gameInfo } from "./pong.ts";
+import  { tourMessageHandler } from "./tournament.ts";
 
 export class PongRoom {
 	private roomNumber: number;
@@ -215,6 +216,8 @@ export const   messageHandler = (event: MessageEvent)=> {
 			return gameInfo?.getRoom()?.setQueueInterval(null);
 		case "GAME":
 			return gameMessageHandler(res);
+		case "TOURNAMENT":
+			return tourMessageHandler(res);
 		default:
 			console.log("Unknown message type: " + res.type);
 	}

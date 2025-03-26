@@ -1,5 +1,5 @@
 import  { content, address } from "../main.ts";
-import  { specRoomInfoHtml, roomList, gameInfo, idlePage } from "./pong.ts";
+import  { specRoomInfoHtml, roomListHtml, gameInfo, idlePage } from "./pong.ts";
 import  { PongRoom, messageHandler } from "./game.ts";
 
 const getRoomInfo = async (event:  Event) => {
@@ -44,7 +44,7 @@ export const listRoomsSpectator = () => {
 			return response.json();
 		})
 		.then(data => {
-			roomList(data);
+			roomListHtml(data);
 			document.getElementById("back")?.addEventListener("click", idlePage);
 			// Add event listeners to the buttons
 			document.querySelectorAll('.room-button').forEach(button => {

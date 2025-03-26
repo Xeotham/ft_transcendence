@@ -1,41 +1,50 @@
 import  { content, homePage } from "../main.ts";
-import  { Game, RoomInfo } from "../utils.ts";
+import  { Game, RoomInfo, TournamentInfo } from "../utils.ts";
 import  { joinSolo, joinMatchmaking, quitRoom, PongRoom } from "./game.ts";
 import  { listRoomsSpectator } from "./spectate.ts";
+import  { Tournament, getTournamentName, listTournaments } from "./tournament.ts";
 
 class   gameInformation {
 	private room: PongRoom | null;
+	private tournament: Tournament | null;
 	private matchType: "PONG" | "TOURNAMENT" | null;
 
 	constructor () {
 		this.room = null;
+		this.tournament = null;
 		this.matchType = null;
 	}
 
 	getRoom() { return this.room; }
 	getMatchType() { return this.matchType; }
+	getTournament() { return this.tournament; }
 
-	setRoom(room: PongRoom) { this.room = room; this.matchType = "PONG"; }
+	setRoom(room: PongRoom, classic: boolean = true) {
+		this.room = room;
+		if (classic)
+			this.matchType = "PONG";
+	}
+	setTournament(tournament: Tournament) { this.tournament = tournament; this.matchType = "TOURNAMENT"; }
 	resetRoom() { this.room = null; this.matchType = null; }
 }
 
 export const   gameInfo: gameInformation = new gameInformation();
 
 
-export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "room-list" | "board" | "confirm") => {
+export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name") => {
 	switch (page) {
 		case "idle":
 			return idleHtml();
 		case "match-found":
 			return matchFoundHtml();
 		case "tournament-found":
-			return ;
-		case "room-list":
-			return ; // TODO: function to fetch room list roomList();
+			return tournamentFoundHtml();
 		case "board":
 			return drawBoard();
 		case "confirm":
 			return confirmPage();
+		case "tournament-name":
+			return tournamentNameHtml();
 	}
 }
 
@@ -47,8 +56,8 @@ const   idleHtml = () => {
         <button id="home">Home Page</button>
 		<button id="join-game">Join a Game</button>		
 		<button id="join-solo-game">Create a solo Game</button>
-<!--		<button id="create-tournament">Create a tournament</button>-->
-<!--		<button id="join-tournament">Join a tournament</button>-->
+		<button id="create-tournament">Create a tournament</button>
+		<button id="join-tournament">Join a tournament</button>
 		<button id="spectate">Spectate a room</button>
 	`;
 }
@@ -59,8 +68,8 @@ export const   idlePage = () => {
 	document.getElementById("home")?.addEventListener("click", () => homePage());
 	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
 	document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
-	// document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
-	// document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
+	document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
+	document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
 	document.getElementById("spectate")?.addEventListener("click", listRoomsSpectator);
 }
 
@@ -85,14 +94,30 @@ export const   specRoomInfoHtml = (roomId: number) => {
 		return ;
 
 	content.innerHTML = `
-			<button id="roomLst">Return to Tournament List</button>
+			<button id="roomLst">Return to Room List</button>
 			<h1>Room Info:</h1>
 			<h2>Room Number: ${roomId}</h2>
 			<button id="spectate">Spectate Room</button>
 			`
 }
 
-export const roomList = (rooms: RoomInfo[]) => {
+export const   tourInfoHtml = (tourId: number, started: boolean) => {
+	if (!content)
+		return ;
+
+	content.innerHTML = `
+			<button id="roomLst">Return to Tournament List</button>
+			<h1>Tournament Info:</h1>
+			<h2>Tournament Number: ${tourId}</h2>
+		`
+	content.innerHTML += started?
+		`<p>The tournament as already started.</p>`:
+		`<p>The tournament hasn't started yet </p>
+			<p>Do you want to join ?</p>
+			<button id="joinTournament">Join the tournament</button>`
+}
+
+export const roomListHtml = (rooms: RoomInfo[]) => {
 	if (!content)
 		return ;
 
@@ -113,53 +138,58 @@ export const roomList = (rooms: RoomInfo[]) => {
 	content.innerHTML = listHTML;
 }
 
-// const   tournamentFound = (tournament: any /* TODO: tournament info*/) => {
-//     if (!content)
-//         return ;
-//
-//     content.innerHTML= `
-// 		<p>Tournament found!</p>
-// 		<button id="quit-room">Quit Tournament</button>
-// 	`;
-//     if (isTournamentOwner) {
-//         content.innerHTML += `
-// 			<button id="start-tournament">Start Tournament</button>
-// 			<button id="shuffle-tree">Shuffle Tree</button>
-// 		`;
-//         document.getElementById("start-tournament")?.addEventListener("click", () => {
-//             fetch(`http://${address}:3000/api/pong/startTournament`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify({ tourId: tournamentId })
-//             }) });
-//         document.getElementById("shuffle-tree")?.addEventListener("click", shuffleTree);
-//     }
-//     document.getElementById("quit-room")?.addEventListener("click", (ev) => quitRoom("Leaving room"));
-// }
+export const tournamentListHtml = (tournaments: TournamentInfo[]) => {
+	if (!content)
+		return ;
 
-// const   roomList = (rooms: any) => {
-//     if (!content)
-//         return ;
-//         let listHTML = '<ul>';
-//         rooms.forEach((room: RoomInfo) => {
-//             listHTML += `
-// 		    <li>
-// 			    <button class="room-button" id="${room.id}">
-// 			        Room ID: ${room.id}, full: ${room.full}, solo: ${room.isSolo}
-// 			    </button>
-//             </li>
-// 		    `;
-//             });
-//         listHTML += '</ul>';
-//         content.innerHTML = listHTML;
-//
-//         // Add event listeners to the buttons
-//         document.querySelectorAll('.room-button').forEach(button => {
-//             button.addEventListener('click', getRoomInfo);
-//         });
-// }
+	let listHTML = `
+		<button id="back">Back</button>
+		<ul>`;
+	tournaments.forEach((tournament: TournamentInfo) => {
+		listHTML += `
+		  <li>
+			<button class="tournament-button" id="${tournament.id}">
+			  Tournament ID: ${tournament.id}, Started: ${tournament.started}
+			</button>
+		  </li>
+		`;
+	});
+	listHTML += '</ul>';
+	content.innerHTML = listHTML;
+}
+
+const   tournamentNameHtml = () => {
+	if (!content)
+        return ;
+
+    content.innerHTML = `
+		<p>Enter the name of the tournament</p>
+		<form>
+			<input type="text" id="tournamentName" placeholder="Tournament Name">
+			<button id="submitTournamentName">Submit</button>
+		</form>
+	`
+}
+
+const   tournamentFoundHtml = () => {
+    if (!content)
+        return ;
+	if (!gameInfo.getTournament())
+		return ;
+
+    content.innerHTML= `
+		<p>Tournament found!</p>
+		<button id="quit-room">Quit Tournament</button>
+	`;
+    if (gameInfo.getTournament()?.getIsOwner()) {
+        content.innerHTML += `
+			<button id="start-tournament">Start Tournament</button>
+			<button id="shuffle-tree">Shuffle Tree</button>
+		`;
+
+    }
+}
+
 
 const   drawBoard = () => {
 	if (!content)
@@ -174,6 +204,8 @@ const   drawBoard = () => {
 const   confirmPage = () => {
 	if (!content)
 		return ;
+
+	// TODO: Add quit button
 
 	content.innerHTML = `
     <p>Game Found, Confirm?</p>
