@@ -103,6 +103,18 @@ export class PongRoom {
 				return ;
 		}
 	}
+	clearIntervals() {
+		clearInterval(this.queueInterval as NodeJS.Timeout);
+		this.queueInterval = null;
+		clearInterval(this.intervals["ArrowUp"] as NodeJS.Timeout);
+		this.intervals["ArrowUp"] = null;
+		clearInterval(this.intervals["ArrowDown"] as NodeJS.Timeout);
+		this.intervals["ArrowDown"] = null;
+		clearInterval(this.intervals["KeyS"] as NodeJS.Timeout);
+		this.intervals["KeyS"] = null;
+		clearInterval(this.intervals["KeyX"] as NodeJS.Timeout);
+		this.intervals["KeyX"] = null;
+	}
 
 	// Methods
 	initSocket() {
@@ -161,6 +173,7 @@ const   quitRoom = (msg: string = "Leaving room") => {
 		},
 		body: JSON.stringify({ matchType: matchType, message: msg, tourId: -1, roomId: roomId, P: player, tourPlacement: -1, specPlacement: -1 })
 	});
+	gameInfo?.clearIntervals();
 	if (gameInfo?.getSocket())
 		gameInfo.getSocket()?.close();
 	gameInfo = null;
@@ -203,7 +216,6 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("Unknown message type: " + res.type);
 	}
 }
-
 
 const	gameMessageHandler = (res: responseFormat) => {
 	if (!content)
@@ -281,9 +293,9 @@ export const keyHandler = (event: KeyboardEvent) => {
 			},
 			body: JSON.stringify({roomId: roomNumber, P: p, key: direction})
 		})
-			.then(response => response.json())
-			.then(data => console.log(data))
-			.catch(error => console.error('Error:', error));
+			// .then(response => response.json())
+			// .then(data => console.log(data))
+			// .catch(error => console.error('Error:', error));
 	}
 
 	let p = player;
@@ -323,8 +335,8 @@ const   confirmGame = () => {
 			},
 			body: JSON.stringify({ roomId: gameInfo?.getRoomNumber(), P: gameInfo?.getPlayer() })
 		})
-			.then(response => response.json())
-			.then(data => console.log(data))
-			.catch(error => console.error('Error:', error));
+			// .then(response => response.json())
+			// .then(data => console.log(data))
+			// .catch(error => console.error('Error:', error));
 	});
 }
