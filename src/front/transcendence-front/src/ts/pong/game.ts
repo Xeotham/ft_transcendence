@@ -1,6 +1,6 @@
 import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
-import  { loadPongHtml, drawGame, idlePage } from "./pong.ts";
+import  { loadPongHtml, drawGame, idlePage, matchFound, gameInfo } from "./pong.ts";
 
 export class PongRoom {
 	private roomNumber: number;
@@ -12,6 +12,7 @@ export class PongRoom {
 	private isButtonPressed: buttons;
 	private intervals: intervals;
 	private queueInterval: number | null;
+	private specPlacement: number;
 
 
 	constructor(socket: WebSocket, isSolo: boolean = false) {
@@ -24,6 +25,7 @@ export class PongRoom {
 		this.isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "KeyX": false };
 		this.intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
 		this.queueInterval = null;
+		this.specPlacement = -1;
 	}
 	// Getters
 	getRoomNumber(): number { return this.roomNumber; }
@@ -34,6 +36,7 @@ export class PongRoom {
 	getIsSolo(): boolean { return this.isSolo; }
 	getQueueInterval(): number | null { return this.queueInterval; }
 	getMatchType(): string { return "PONG"; }
+	getSpecPlacement(): number { return this.specPlacement; }
 	getIsButtonPressed(idx: string): boolean | undefined {
 		switch (idx) {
 			case "ArrowUp":
@@ -71,6 +74,7 @@ export class PongRoom {
 	setScore(score: score): void { this.score = score; }
 	setIsSolo(isSolo: boolean): void { this.isSolo = isSolo; }
 	setQueueInterval(queueInterval: number | null): void { this.queueInterval = queueInterval; }
+	setSpecPlacement(specPlacement: number): void { this.specPlacement = specPlacement; }
 	setButtonPressed(idx: string, value: boolean): void {
 		switch (idx) {
 			case "ArrowUp":
@@ -141,28 +145,27 @@ export class PongRoom {
 	}
 }
 
-let gameInfo: PongRoom | null = null;
-
 export const   joinMatchmaking = async () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinMatchmaking`);
 
-	gameInfo = new PongRoom(socket);
-	gameInfo.initSocket();
+	gameInfo.setRoom(new PongRoom(socket));
+	gameInfo.getRoom()?.initSocket();
+	matchFound();
 }
 
 export const   joinSolo = async () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinSolo`);
 
-	gameInfo = new PongRoom(socket, true);
-	gameInfo.initSocket();
+	gameInfo.setRoom(new PongRoom(socket, true));
+	gameInfo.getRoom()?.initSocket();
 }
 
-const   quitRoom = (msg: string = "Leaving room") => {
+export const   quitRoom = (msg: string = "Leaving room") => {
 	const   matchType = gameInfo?.getMatchType();
-	const   roomId = gameInfo?.getRoomNumber();
-	const   player = gameInfo?.getPlayer();
+	const   roomId = gameInfo.getRoom()?.getRoomNumber();
+	const   player = gameInfo.getRoom()?.getPlayer();
 
-	if (gameInfo?.getIsSolo())
+	if (gameInfo.getRoom()?.getIsSolo())
 		msg = "Leaving room";
 	if (msg === "QUEUE_TIMEOUT")
 		console.log("You took too long to confirm the game. Back to the lobby");
@@ -173,15 +176,15 @@ const   quitRoom = (msg: string = "Leaving room") => {
 		},
 		body: JSON.stringify({ matchType: matchType, message: msg, tourId: -1, roomId: roomId, P: player, tourPlacement: -1, specPlacement: -1 })
 	});
-	gameInfo?.clearIntervals();
-	if (gameInfo?.getSocket())
-		gameInfo.getSocket()?.close();
-	gameInfo = null;
+	gameInfo.getRoom()?.clearIntervals();
+	if (gameInfo?.getRoom()?.getSocket())
+		gameInfo?.getRoom()?.getSocket()?.close();
+	gameInfo.resetRoom();
 	idlePage();
 }
 
 
-const   messageHandler = (event: MessageEvent)=> {
+export const   messageHandler = (event: MessageEvent)=> {
 	let res: responseFormat = JSON.parse(event.data);
 
 	if (!res)
@@ -203,13 +206,13 @@ const   messageHandler = (event: MessageEvent)=> {
 			return confirmGame();
 		case "LEAVE":
 			quitRoom();
-			if (res.message === "QUEUE_AGAIN" || gameInfo?.getQueueInterval()) {
+			if (res.message === "QUEUE_AGAIN" || gameInfo?.getRoom()?.getQueueInterval()) {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
 				if (res.data === "PONG")
 					joinMatchmaking();
 			}
-			clearInterval(gameInfo?.getQueueInterval() as number);
-			return gameInfo?.setQueueInterval(null);
+			clearInterval(gameInfo?.getRoom()?.getQueueInterval() as number);
+			return gameInfo?.getRoom()?.setQueueInterval(null);
 		case "GAME":
 			return gameMessageHandler(res);
 		default:
@@ -226,45 +229,47 @@ const	gameMessageHandler = (res: responseFormat) => {
 			const   roomNumber: number = typeof res.roomId === "number" ? res.roomId : -1;
 			const   player: string | null = res.player;
 
-			return  gameInfo?.prepareGame(roomNumber, player);
+			return  gameInfo?.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
 			loadPongHtml("board");
-			if (gameInfo?.getPlayer() === "SPEC")
+			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
+			document.getElementById("quit")?.addEventListener("click", () => quitRoom());
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
 			return ;
 		case "FINISH":
-			if (gameInfo?.getPlayer() === "SPEC")
-				return ;
-			if (gameInfo?.getIsSolo())
+			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
+				return quitRoom();
+			if (gameInfo?.getRoom()?.getIsSolo())
 				alert(res.data + " won!");
 			else
-				res.data === gameInfo?.getPlayer() ? alert("You won!") : alert("You lost!");
+				res.data === gameInfo?.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
 			return quitRoom();
 		case "SCORE":
 			const   score: score = res.data;
-			gameInfo?.setScore(score);
+			gameInfo?.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
 			//  TODO : display score on screen
 			return ;
 		case "SPEC":
 			console.log("Starting Spectator mode");
-			return loadPongHtml("board");
+			loadPongHtml("board");
+			return document.getElementById("quit")?.addEventListener("click", () => quitRoom());
 		default:
-			gameInfo?.setGame(res.data);
+			gameInfo?.getRoom()?.setGame(res.data);
 			drawGame(res.data);
 	}
 }
 
 
 export const keyHandler = (event: KeyboardEvent) => {
-	const   game = gameInfo?.getGame();
-	const   roomNumber = gameInfo?.getRoomNumber() as number;
-	const   player = gameInfo?.getPlayer();
-	const   isSolo = gameInfo?.getIsSolo();
+	const   game = gameInfo?.getRoom()?.getGame();
+	const   roomNumber = gameInfo?.getRoom()?.getRoomNumber() as number;
+	const   player = gameInfo?.getRoom()?.getPlayer();
+	const   isSolo = gameInfo?.getRoom()?.getIsSolo();
 
 	if (!game || roomNumber < 0 || !player || event.repeat)
 		return ;
@@ -301,14 +306,14 @@ export const keyHandler = (event: KeyboardEvent) => {
 	let p = player;
 	if (isSolo)
 		p = event.code === "KeyS" || event.code === "KeyX" ? "P1" : "P2";
-	if (event.type === "keydown" && gameInfo?.getIsButtonPressed(event.code) === false) {
-		gameInfo.setButtonPressed(event.code, true);
-		gameInfo.setIntervals(event.code, setInterval(sendPaddleMovement, 1000 / 60, event.code, p));
+	if (event.type === "keydown" && gameInfo?.getRoom()?.getIsButtonPressed(event.code) === false) {
+		gameInfo.getRoom()?.setButtonPressed(event.code, true);
+		gameInfo.getRoom()?.setIntervals(event.code, setInterval(sendPaddleMovement, 1000 / 60, event.code, p));
 	}
-	if (event.type === "keyup" && gameInfo?.getIsButtonPressed(event.code) === true) {
-		gameInfo.setButtonPressed(event.code, false);
-		clearInterval(gameInfo.getIntervals(event.code) as number);
-		gameInfo.setIntervals(event.code, null);
+	if (event.type === "keyup" && gameInfo.getRoom()?.getIsButtonPressed(event.code) === true) {
+		gameInfo.getRoom()?.setButtonPressed(event.code, false);
+		clearInterval(gameInfo.getRoom()?.getIntervals(event.code) as number);
+		gameInfo.getRoom()?.setIntervals(event.code, null);
 	}
 }
 
@@ -316,24 +321,24 @@ const   confirmGame = () => {
 	loadPongHtml("confirm")
 
 	let remainingTime = 10;
-	gameInfo?.setQueueInterval(setInterval(() => {
+	gameInfo.getRoom()?.setQueueInterval(setInterval(() => {
 		remainingTime--;
 		if (document.getElementById("timer"))
 			document.getElementById("timer")!.innerText = `Time remaining: ${remainingTime}s`;
 		if (remainingTime <= 0) {
-			clearInterval(gameInfo?.getQueueInterval() as number);
+			clearInterval(gameInfo.getRoom()?.getQueueInterval() as number);
 			quitRoom("QUEUE_TIMEOUT");
 		}
 	}, 1000));
 	document.getElementById("confirm-game")?.addEventListener("click", () => {
-		clearInterval(gameInfo?.getQueueInterval() as number);
+		clearInterval(gameInfo.getRoom()?.getQueueInterval() as number);
 		document.getElementById("timer")!.innerText = "Confirmed! Awaiting opponent";
 		fetch(`http://${address}:3000/api/pong/startConfirm`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ roomId: gameInfo?.getRoomNumber(), P: gameInfo?.getPlayer() })
+			body: JSON.stringify({ roomId: gameInfo.getRoom()?.getRoomNumber(), P: gameInfo.getRoom()?.getPlayer() })
 		})
 			// .then(response => response.json())
 			// .then(data => console.log(data))

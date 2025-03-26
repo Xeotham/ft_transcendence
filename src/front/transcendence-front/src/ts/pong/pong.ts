@@ -1,58 +1,116 @@
 import  { content, homePage } from "../main.ts";
-import  { Game } from "../utils.ts";
-import  { joinSolo, joinMatchmaking } from "./game.ts";
+import  { Game, RoomInfo } from "../utils.ts";
+import  { joinSolo, joinMatchmaking, quitRoom, PongRoom } from "./game.ts";
+import  { listRoomsSpectator } from "./spectate.ts";
+
+class   gameInformation {
+	private room: PongRoom | null;
+	private matchType: "PONG" | "TOURNAMENT" | null;
+
+	constructor () {
+		this.room = null;
+		this.matchType = null;
+	}
+
+	getRoom() { return this.room; }
+	getMatchType() { return this.matchType; }
+
+	setRoom(room: PongRoom) { this.room = room; this.matchType = "PONG"; }
+	resetRoom() { this.room = null; this.matchType = null; }
+}
+
+export const   gameInfo: gameInformation = new gameInformation();
+
 
 export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "room-list" | "board" | "confirm") => {
-    switch (page) {
-        case "idle":
-            return idleHtml();
-        case "match-found":
-            return matchFound();
-        case "tournament-found":
-            return ;
-        case "room-list":
-            return ; // TODO: function to fetch room list roomList();
-        case "board":
-            return drawBoard();
-        case "confirm":
-            return confirmPage();
-    }
+	switch (page) {
+		case "idle":
+			return idleHtml();
+		case "match-found":
+			return matchFoundHtml();
+		case "tournament-found":
+			return ;
+		case "room-list":
+			return ; // TODO: function to fetch room list roomList();
+		case "board":
+			return drawBoard();
+		case "confirm":
+			return confirmPage();
+	}
 }
 
 const   idleHtml = () => {
-    if (!content)
-        return ;
-    content.innerHTML = `
-        <h1>Want to play some pong ?</h1>
-        <button id="home">Naaah i'd better go back home</button>
+	if (!content)
+		return ;
+	content.innerHTML = `
+        <h1>Pong</h1>
+        <button id="home">Home Page</button>
 		<button id="join-game">Join a Game</button>		
 		<button id="join-solo-game">Create a solo Game</button>
 <!--		<button id="create-tournament">Create a tournament</button>-->
 <!--		<button id="join-tournament">Join a tournament</button>-->
-<!--		<button id="spectate">spectate</button>-->
+		<button id="spectate">Spectate a room</button>
 	`;
 }
 
 export const   idlePage = () => {
-    loadPongHtml("idle");
+	loadPongHtml("idle");
 
-    document.getElementById("home")?.addEventListener("click", () => homePage());
-    document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
-    document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
-    // document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
-    // document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
-    // document.getElementById("spectate")?.addEventListener("click", listRooms);
+	document.getElementById("home")?.addEventListener("click", () => homePage());
+	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
+	document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
+	// document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
+	// document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
+	document.getElementById("spectate")?.addEventListener("click", listRoomsSpectator);
 }
 
-const   matchFound = () => {
-    if (!content)
-        return ;
+const   matchFoundHtml = () => {
+	if (!content)
+		return ;
 
-    content.innerHTML= `
+	content.innerHTML= `
 		<p>Room found!</p>
 		<button id="quit-room">Quit Room</button>
 	`;
-    // document.getElementById("quit-room")?.addEventListener("click", (ev) => quitRoom("Leaving room"));
+}
+
+export const   matchFound = () => {
+	loadPongHtml("match-found");
+
+	document.getElementById("quit-room")?.addEventListener("click", () => quitRoom("Leaving room"));
+}
+
+export const   specRoomInfoHtml = (roomId: number) => {
+	if (!content)
+		return ;
+
+	content.innerHTML = `
+			<button id="roomLst">Return to Tournament List</button>
+			<h1>Room Info:</h1>
+			<h2>Room Number: ${roomId}</h2>
+			<button id="spectate">Spectate Room</button>
+			`
+}
+
+export const roomList = (rooms: RoomInfo[]) => {
+	if (!content)
+		return ;
+
+	let listHTML = `
+		<button id="back">Back</button>
+		<ul>`;
+
+	rooms.forEach((room: RoomInfo) => {
+		listHTML += `
+		  		<li>
+					<button class="room-button" id="${room.id}">
+						Room ID: ${room.id}, full: ${room.full}, solo: ${room.isSolo}
+					</button>
+		  		</li>
+			`;
+	});
+	listHTML += '</ul>';
+	content.innerHTML = listHTML;
 }
 
 // const   tournamentFound = (tournament: any /* TODO: tournament info*/) => {
@@ -104,19 +162,20 @@ const   matchFound = () => {
 // }
 
 const   drawBoard = () => {
-    if (!content)
-        return
+	if (!content)
+		return
 
-    content.innerHTML = `
+	content.innerHTML = `
+                <button id="quit">Quit</button>
 				<canvas id="gameCanvas" width="800" height="400"></canvas>
 			`;
 }
 
 const   confirmPage = () => {
-    if (!content)
-        return ;
+	if (!content)
+		return ;
 
-    content.innerHTML = `
+	content.innerHTML = `
     <p>Game Found, Confirm?</p>
     <button id="confirm-game">Confirm Game</button>
     <p id="timer">Time remaining: 10s</p>
@@ -124,20 +183,20 @@ const   confirmPage = () => {
 }
 
 export function drawGame(game: Game) {
-    const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
-    const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
+	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 
-    if (!c || !game)
-        return;
-    c.clearRect(0, 0, canvas.width, canvas.height);
+	if (!c || !game)
+		return;
+	c.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw ball
-    c.fillStyle = "white";
-    c.beginPath();
-    c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
-    c.fill();
+	// Draw ball
+	c.fillStyle = "white";
+	c.beginPath();
+	c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
+	c.fill();
 
-    // Draw paddles
-    c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
-    c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
+	// Draw paddles
+	c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
+	c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
 }

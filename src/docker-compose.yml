@@ -21,8 +21,8 @@ services:
       - "5000:5000"
     depends_on:
       - back
-#    volumes:
-#      - transcendence/front:/app
+    volumes:
+      - ./front/transcendence-front:/app
     networks:
       transcendence:
     restart: always
