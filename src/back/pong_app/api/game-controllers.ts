@@ -83,7 +83,6 @@ export const quitRoom = async (request: FastifyRequest<{ Body: requestBody }>, r
 		quitTournament(request);
 }
 
-
 export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
 	let room = getRoomById(request.body.roomId);
 

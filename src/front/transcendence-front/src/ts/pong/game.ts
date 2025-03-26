@@ -132,8 +132,7 @@ export class PongRoom {
 		};
 		this.socket.onclose = () => {
 			console.log("Connection closed");
-			if (this.roomNumber >= 0)
-				quitRoom();
+			quitRoom(gameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
 		};
 		this.socket.addEventListener("message", messageHandler);
 	}
@@ -160,13 +159,13 @@ export const   joinSolo = async () => {
 	gameInfo.getRoom()?.initSocket();
 }
 
-export const   quitRoom = (msg: string = "Leaving room") => {
-	const   matchType = gameInfo?.getMatchType();
+export const   quitRoom = (msg: string = "LEAVE") => {
+	const   matchType = gameInfo.getMatchType();
 	const   roomId = gameInfo.getRoom()?.getRoomNumber();
 	const   player = gameInfo.getRoom()?.getPlayer();
 
 	if (gameInfo.getRoom()?.getIsSolo())
-		msg = "Leaving room";
+		msg = "LEAVE";
 	if (msg === "QUEUE_TIMEOUT")
 		console.log("You took too long to confirm the game. Back to the lobby");
 	fetch(`http://${address}:3000/api/pong/quitRoom`, {
@@ -174,11 +173,15 @@ export const   quitRoom = (msg: string = "Leaving room") => {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ matchType: matchType, message: msg, tourId: -1, roomId: roomId, P: player, tourPlacement: -1, specPlacement: -1 })
+		body: JSON.stringify({ matchType: matchType, message: msg, tourId: -1, roomId: roomId, P: player, tourPlacement: -1, specPlacement: gameInfo.getRoom()?.getSpecPlacement() })
 	});
 	gameInfo.getRoom()?.clearIntervals();
-	if (gameInfo?.getRoom()?.getSocket())
-		gameInfo?.getRoom()?.getSocket()?.close();
+	const socket = gameInfo.getRoom()?.getSocket();
+	if (socket) {
+		socket.onclose = null; // Remove any existing onclose handler
+		socket.close();
+	}
+	gameInfo.getRoom()?.getSocket()?.close();
 	gameInfo.resetRoom();
 	idlePage();
 }
@@ -206,13 +209,12 @@ export const   messageHandler = (event: MessageEvent)=> {
 			return confirmGame();
 		case "LEAVE":
 			quitRoom();
-			if (res.message === "QUEUE_AGAIN" || gameInfo?.getRoom()?.getQueueInterval()) {
+			if (res.message === "QUEUE_AGAIN") {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
 				if (res.data === "PONG")
 					joinMatchmaking();
 			}
-			clearInterval(gameInfo?.getRoom()?.getQueueInterval() as number);
-			return gameInfo?.getRoom()?.setQueueInterval(null);
+			return ;
 		case "GAME":
 			return gameMessageHandler(res);
 		default:
@@ -229,51 +231,52 @@ const	gameMessageHandler = (res: responseFormat) => {
 			const   roomNumber: number = typeof res.roomId === "number" ? res.roomId : -1;
 			const   player: string | null = res.player;
 
-			return  gameInfo?.getRoom()?.prepareGame(roomNumber, player);
+			return  gameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
 			loadPongHtml("board");
-			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
+			if (gameInfo.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.getElementById("quit")?.addEventListener("click", () => quitRoom());
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
 			return ;
 		case "FINISH":
-			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
+			if (gameInfo.getRoom()?.getPlayer() === "SPEC")
 				return quitRoom();
-			if (gameInfo?.getRoom()?.getIsSolo())
+			if (gameInfo.getRoom()?.getIsSolo())
 				alert(res.data + " won!");
 			else
-				res.data === gameInfo?.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
+				res.data === gameInfo.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
 			return quitRoom();
 		case "SCORE":
 			const   score: score = res.data;
-			gameInfo?.getRoom()?.setScore(score);
+			gameInfo.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
 			//  TODO : display score on screen
 			return ;
 		case "SPEC":
-			console.log("Starting Spectator mode");
+			if (res.data >= 0)
+				gameInfo.getRoom()?.setSpecPlacement(res.data);
+			gameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
+			console.log("Starting Spectator mode at placement: " + gameInfo.getRoom()?.getSpecPlacement());
 			loadPongHtml("board");
 			return document.getElementById("quit")?.addEventListener("click", () => quitRoom());
 		default:
-			gameInfo?.getRoom()?.setGame(res.data);
+			gameInfo.getRoom()?.setGame(res.data);
 			drawGame(res.data);
 	}
 }
 
-
 export const keyHandler = (event: KeyboardEvent) => {
-	const   game = gameInfo?.getRoom()?.getGame();
-	const   roomNumber = gameInfo?.getRoom()?.getRoomNumber() as number;
-	const   player = gameInfo?.getRoom()?.getPlayer();
-	const   isSolo = gameInfo?.getRoom()?.getIsSolo();
+	const   game = gameInfo.getRoom()?.getGame();
+	const   roomNumber = gameInfo.getRoom()?.getRoomNumber() as number;
+	const   player = gameInfo.getRoom()?.getPlayer();
+	const   isSolo = gameInfo.getRoom()?.getIsSolo();
 
 	if (!game || roomNumber < 0 || !player || event.repeat)
 		return ;
-	// console.log("event type:" + event.type + ", Key pressed: " + event.code);
 
 	async function sendPaddleMovement(key: string, p: string) {
 		if (!game)
@@ -298,15 +301,12 @@ export const keyHandler = (event: KeyboardEvent) => {
 			},
 			body: JSON.stringify({roomId: roomNumber, P: p, key: direction})
 		})
-			// .then(response => response.json())
-			// .then(data => console.log(data))
-			// .catch(error => console.error('Error:', error));
 	}
 
 	let p = player;
 	if (isSolo)
 		p = event.code === "KeyS" || event.code === "KeyX" ? "P1" : "P2";
-	if (event.type === "keydown" && gameInfo?.getRoom()?.getIsButtonPressed(event.code) === false) {
+	if (event.type === "keydown" && gameInfo.getRoom()?.getIsButtonPressed(event.code) === false) {
 		gameInfo.getRoom()?.setButtonPressed(event.code, true);
 		gameInfo.getRoom()?.setIntervals(event.code, setInterval(sendPaddleMovement, 1000 / 60, event.code, p));
 	}
@@ -340,8 +340,5 @@ const   confirmGame = () => {
 			},
 			body: JSON.stringify({ roomId: gameInfo.getRoom()?.getRoomNumber(), P: gameInfo.getRoom()?.getPlayer() })
 		})
-			// .then(response => response.json())
-			// .then(data => console.log(data))
-			// .catch(error => console.error('Error:', error));
 	});
 }

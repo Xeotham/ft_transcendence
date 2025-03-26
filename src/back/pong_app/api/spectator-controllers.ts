@@ -11,12 +11,10 @@ import {getRoomById, RoomInfo} from "../utils";
 // type FastifyReplyType = typeof FastifyReply;
 
 export const    addSpectatorToRoom = async (socket: WebSocket, req: FastifyRequest< { Querystring: RoomInfo } >) => {
-	const	id = Number(req.query.id);
-	const	room = getRoomById(id);
+	const	room = getRoomById(Number(req.query.id));
 	if (!room || room.getIsSolo()) {
 		socket.send(JSON.stringify({type: "INFO", message: "You cannot spectate this room"}));
 		socket.send(JSON.stringify({type: "LEAVE", data: "PONG"}));
 	}
 	room?.addSpectator(socket);
-	socket.send(JSON.stringify({type: "GAME", message: "SPEC"}));
 }

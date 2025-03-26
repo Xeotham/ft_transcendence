@@ -8,30 +8,11 @@ import {
 	HEIGHT,
 	BALL_SIZE,
 	BALL_SPEED,
-	BALL_ACCELERATION_PER_BOUNCE_RATIO,
+	BALL_ACCELERATION_PER_BOUNCE,
 	PADDLE_SPEED
 } from "./constants"
 import { WebSocket } from "ws";
-import { requestBody } from "../utils";
-
-// const = require('./constants');
-// const {
-// 	PADDLE1_X,
-// 	PADDLE2_X,
-// 	PADDLE_Y,
-// 	PADDLE_WIDTH,
-// 	PADDLE_HEIGHT,
-// 	WIDTH,
-// 	HEIGHT,
-// 	BALL_SIZE,
-// 	BALL_SPEED,
-// 	BALL_ACCELERATION_PER_BOUNCE_RATIO,
-// 	PADDLE_SPEED
-// } = require('./constants');
-// const { WebSocket } = require('ws');
-// const { requestBody } = require('../utils');
-
-// type requestBodyType = typeof requestBody;
+import {requestBody, delay, getRoomById} from "../utils";
 
 export class Game {
 	readonly id:number;
@@ -86,9 +67,9 @@ export class Game {
 				spectator?.send(JSON.stringify(data));
 	}
 
-	private spawnBall(side: string | "P1" | "P2") {
+	private async spawnBall(side: string | "P1" | "P2") {
 		this.sendData({ type: "GAME", data: this.score, message: "SCORE" });
-		this.ball.y = Math.random() * HEIGHT / 4 + HEIGHT * 3 / 8;
+		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
 		// this.ball.y = HEIGHT / 2; // TODO : Remove this line
@@ -96,6 +77,11 @@ export class Game {
 		if (side === "P1")
 			this.ball.orientation += Math.PI;
 		this.ball.speed = BALL_SPEED;
+		this.paddle1.y = PADDLE_Y;
+		this.paddle2.y = PADDLE_Y;
+		if (this.score.player1 < 10 && this.score.player2 < 10)
+			await delay(1250);
+		this.lastTime = performance.now();
 	}
 
 	async gameLoop() {
@@ -109,7 +95,7 @@ export class Game {
 
 			const gameLoopIteration = async () => {
 				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
-					this.MoveBall();
+					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
 					return
 				}
@@ -121,8 +107,9 @@ export class Game {
 				let winner = this.winner === this.players.player1 ? "P1" : "P2";
 				if (this.isSolo)
 					winner = this.score.player1 >= 10 ? "P1" : "P2";
-				this.sendData({ type: "GAME", data: winner, message: "FINISH" });
+				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
+				getRoomById(this.id)?.removeAllSpectators();
 				resolve();
 			};
 
@@ -136,7 +123,7 @@ export class Game {
 		if (player === "P2")
 			angle = 180 - angle;
 		this.ball.orientation = angle * Math.PI / 180;
-		this.ball.speed *= BALL_ACCELERATION_PER_BOUNCE_RATIO;
+		this.ball.speed += BALL_ACCELERATION_PER_BOUNCE;
 	}
 
 	private paddleCollision(player: string | "P1" | "P2") {
@@ -155,7 +142,7 @@ export class Game {
 		}
 	}
 
-	private MoveBall() {
+	private async MoveBall() {
 		const now = performance.now();
 		const delta = now - this.lastTime;
 		this.lastTime = now;
@@ -164,7 +151,7 @@ export class Game {
 		this.paddleCollision("P1");
 		this.paddleCollision("P2");
 		if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= HEIGHT) {
-			this.ball.speed *= BALL_ACCELERATION_PER_BOUNCE_RATIO;
+			this.ball.speed += BALL_ACCELERATION_PER_BOUNCE;
 			this.ball.orientation = -this.ball.orientation;
 		}
 
@@ -178,11 +165,11 @@ export class Game {
 
 		if (this.ball.x - this.ball.size < 0) {
 			this.score.player2++;
-			this.spawnBall("P1");
+			await this.spawnBall("P1");
 		}
 		if (this.ball.x + this.ball.size >= WIDTH) {
 			this.score.player1++;
-			this.spawnBall("P2");
+			await this.spawnBall("P2");
 		}
 	}
 
