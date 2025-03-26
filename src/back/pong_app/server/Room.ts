@@ -109,15 +109,27 @@ export class Room {
 
 	addSpectator(socket: WebSocket) {
 		this.spectators.push(socket);
-		this.game?.addSpectator(socket);
+		// this.game?.addSpectator(socket);
+		console.log("Spectator added to room " + this.id + " at placement " + (this.spectators.length - 1));
+		socket.send(JSON.stringify({ type: "GAME", message: "SPEC", data: (this.spectators.length - 1), roomId: this.id }));
 	}
 
-	removeSpectator(index: number) {
+	removeSpectator(index: number, sendPlacementChange: boolean = true) {
+		console.log("Removing spectator from room " + this.id + " at placement " + index);
 		const socket = this.spectators.at(index);
 		if (!socket)
 			return ;
-		this.spectators.splice(this.spectators.indexOf(socket), 1);
 		socket.send(JSON.stringify({ type: "INFO", message: "You stopped spectating the room" }));
 		socket.send(JSON.stringify({ type: "LEAVE" }));
+
+		this.spectators.splice(this.spectators.indexOf(socket), 1);
+		if (sendPlacementChange)
+			for (let i = 0; i < this.spectators.length; ++i)
+				this.spectators[i].send(JSON.stringify({ type: "GAME", message: "SPEC", data: i }));
+	}
+
+	removeAllSpectators() {
+		for (let i = this.spectators.length; i > 0; --i)
+			this.removeSpectator(i - 1, false);
 	}
 }

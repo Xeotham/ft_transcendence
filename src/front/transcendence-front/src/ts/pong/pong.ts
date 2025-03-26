@@ -28,7 +28,7 @@ class   gameInformation {
 	resetRoom() { this.room = null; this.matchType = null; }
 }
 
-export const   gameInfo: gameInformation = new gameInformation();
+export const	gameInfo: gameInformation = new gameInformation();
 
 
 export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name") => {
@@ -86,7 +86,7 @@ const   matchFoundHtml = () => {
 export const   matchFound = () => {
 	loadPongHtml("match-found");
 
-	document.getElementById("quit-room")?.addEventListener("click", () => quitRoom("Leaving room"));
+	document.getElementById("quit-room")?.addEventListener("click", () => quitRoom("LEAVE"));
 }
 
 export const   specRoomInfoHtml = (roomId: number) => {
