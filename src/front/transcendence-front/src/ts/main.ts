@@ -1,5 +1,5 @@
 // import	{ responseFormat, Game, RoomInfo, TournamentInfo } from "./utils";
-import	{ idlePage } from "./pong/pong.js";
+import	{ idlePage } from "./pong/pong.ts";
 
 export const	address = "localhost";
 export const	content = document.getElementById("content");

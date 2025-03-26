@@ -5,16 +5,16 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY    package*.json ./
+COPY    transcendence-front/package*.json ./
 
 # Install dependencies
 RUN     npm install
 
 # Copy the rest of the application code
-COPY . .
+COPY ./transcendence-front .
 
 # Expose the port that BrowserSync will run on
-EXPOSE 5000
+EXPOSE 5173
 
 # Run BrowserSync
-CMD ["npm", "run", "browsersync"]
+CMD ["npm", "run", "dev"]

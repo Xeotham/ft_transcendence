@@ -1,6 +1,6 @@
-import  { Game, score, buttons, intervals, responseFormat, RoomInfo } from "../utils.js";
-import  { address, content } from "../front.js";
-import  { loadPongHtml, drawGame, idlePage } from "./pong.js";
+import  { Game, score, buttons, intervals, responseFormat, RoomInfo } from "../utils.ts";
+import  { address, content } from "../main.ts";
+import  { loadPongHtml, drawGame, idlePage } from "./pong.ts";
 
 export class PongRoom {
 	private roomNumber: number;

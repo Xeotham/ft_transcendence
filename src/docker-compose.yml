@@ -5,6 +5,10 @@ services:
     container_name: back
     ports:
       - "3000:3000"
+    depends_on:
+      - front
+#    volumes:
+#      - transcendence:/app
     env_file: ".env"
     networks:
       transcendence:
@@ -16,13 +20,29 @@ services:
       context: front
     container_name: front
     ports:
-      - "5000:5000"
-    depends_on:
-      - back
+      - "5173:5173"
+#    volumes:
+#      - transcendence/front:/app
     networks:
       transcendence:
     restart: always
     init: true
+
+volumes:
+  back:
+    driver: local
+    driver_opts:
+      type: none
+      device: .data/back
+      o: bind
+  front:
+    driver: local
+    driver_opts:
+      type: none
+      device: .data/front
+      o: bind
+
+
 
 networks:
   transcendence:
