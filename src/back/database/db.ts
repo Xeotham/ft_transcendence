@@ -19,7 +19,6 @@ const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcenden
 // DROP TABLE IF EXISTS message;
 db.exec(`
   
-  
   CREATE TABLE IF NOT EXISTS user 
   (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,13 +47,14 @@ db.exec(`
   (
       user1_id INTEGER NOT NULL,
       user2_id INTEGER NOT NULL,
-      friend  BOOLEAN DEFAULT 0,
-      blocked BOOLEAN DEFAULT 0,
+      friend_u1 BOOLEAN DEFAULT 0,
+      friend_u2 BOOLEAN DEFAULT 0,
+      block_u1 BOOLEAN DEFAULT 0,
+      block_u1 BOOLEAN DEFAULT 0,
       FOREIGN KEY (user1_id) REFERENCES user(id),
       FOREIGN KEY (user2_id) REFERENCES user(id),
       PRIMARY KEY (user1_id, user2_id),
-      UNIQUE (user1_id, user2_id),
-      UNIQUE (user2_id, user1_id)
+      UNIQUE (user1_id, user2_id)
   );
 
   CREATE TABLE IF NOT EXISTS message

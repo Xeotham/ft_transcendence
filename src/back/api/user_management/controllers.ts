@@ -1,8 +1,8 @@
 // Fastify request and response to create the controllers for the API
 import { FastifyRequest, FastifyReply } from 'fastify';
 // Interactions with the DataBase to create and get Users
-import { createUser, getUserByUsername, logUser, loUser } from '../../database/models/Users';
-import { createContact, getUserContactById } from '../../database/models/Contact';
+import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById } from '../../database/models/Users';
+import { createContact, modifyContact, getUserContactById, checkFriendshipStatus, checkBlockStatus, checkPosContact } from '../../database/models/Contact';
 import { request } from 'http';
 import { getMessageById, saveMessage } from '../../database/models/Message';
 
@@ -30,43 +30,62 @@ interface Message {
     date:           string;
 }
 
+
+/*----------------------------------------------------------------------------*/
 export const registerUser = async (request: FastifyRequest, reply: FastifyReply) => {
     const { username, password, avatar, connected } = request.body as { username: string; password: string; avatar: string; connected: boolean };
+
+    if(!username || !password || !avatar )
+        return reply.status(400).send({ message: 'Username, password and avatar can\'t be empty' });
 
     const existingUser = getUserByUsername(username);
     if (existingUser) {
         return reply.status(400).send({ message: 'Username already exists' });
     }
-    createUser({ username, password, avatar, connected });
-    return reply.status(201).send({ message: 'User registered successfully' });
+    const id = createUser({ username, password, avatar, connected });
+
+    // const user = getUserById(id);
+    
+    return reply.status(201).send({ message: 'User registered successfully', id });
+};
+
+export const updateUser = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id, username, password, avatar, connected } = request.body as { id: number, username: string; password: string; avatar: string; connected: boolean };
+
+    const user = getUserById(id);
+    if (!user) {
+        return reply.status(400).send({ message: 'User doesn\'t exist' });
+    }
+    updateUserById({ id, username, password, avatar, connected });
+    return reply.status(201).send({ message: 'User updated successfully' });
 };
 
 export const loginUser = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { username, password, avatar, connected} = request.body as { username: string; password: string; avatar: string; connected: boolean };
+    const { id, username, password, avatar, connected} = request.body as { id: number, username: string; password: string; avatar: string; connected: boolean };
 
-    let user = getUserByUsername(username);
+    let user = getUserById(id);
     if (!user || user.password !== password) {
         return reply.status(401).send({ message: 'Invalid username or password' });
     }
 
-    logUser({ username, password, avatar, connected });
+    logUserById({id, username, password, avatar, connected });
 
-    user = getUserByUsername(username);
+    user = getUserById(id);
 
     return reply.send({ message: 'Login successful', user });
 };
 
 export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { username, password, avatar, connected} = request.body as { username: string; password: string; avatar: string; connected: boolean };
+    const { id, username, password, avatar, connected} = request.body as { id: number, username: string; password: string; avatar: string; connected: boolean };
 
-    let user = getUserByUsername(username);
+    let user = getUserById(id);
     if (!user || user.password !== password) {
         return reply.status(401).send({ message: 'Invalid username or password' });
     }
 
-    loUser({ username, password, avatar, connected });
+    logOutUserById({ id, username, password, avatar, connected });
 
-    user = getUserByUsername(username);
+    user = getUserById(id);
 
     return reply.send({ message: 'Logout successful', user });
 };
@@ -82,6 +101,8 @@ export const    getUserInfo = async (request: FastifyRequest, reply: FastifyRepl
     
     return reply.status(201).send({ message: 'Login successful', user });
 }
+
+/*----------------------------------------------------------------------------*/
 
 export const    getFriends = async (request: FastifyRequest, reply: FastifyReply) => {
 
@@ -112,17 +133,139 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
     {
         const   user1_id = id;
         const   user2_id = user.id;
-        const   friend = 1;
-        const   blocked = 0;
-        createContact({ user1_id, user2_id, friend, blocked })
+        let   friend_u1 = 1;
+        let   friend_u2 = 0;
+        let   block_u1 = 0;
+        let   block_u2 = 0;
 
-        return  reply.status(201).send({ message: '' });
+        if (checkBlockStatus(user1_id, user2_id) > 0)
+            return  reply.status(301).send({ message: 'Contact is blocked' });
+
+        let pos;
+        const status = checkFriendshipStatus( user1_id, user2_id );
+        switch (status)
+        {
+            case 0:
+                createContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+                return  reply.status(201).send({ message: 'Friend request sended' });
+
+            case 1:
+                return  reply.status(301).send({ message: 'Friend request already sended' });
+
+            case 2:
+                pos = checkPosContact(user1_id, user2_id);
+                friend_u2 = 1;
+                if (pos == 1)
+                    modifyContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+                else if (pos == 2)
+                    modifyContact({ user2_id, user1_id, friend_u2, friend_u1, block_u1, block_u2 });
+                return  reply.status(201).send({ message: 'Friend request accepted' });
+
+            case 3:
+                return  reply.status(301).send({ message: 'Friend already added' });
+
+            case 4:
+                pos = checkPosContact(user1_id, user2_id);
+                if (pos == 1)
+                    modifyContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+                else if (pos == 2)
+                    modifyContact({ user2_id, user1_id, friend_u2, friend_u1, block_u1, block_u2 });
+                return  reply.status(201).send({ message: 'Friend request sended' });
+
+        }
     }
 }
 
-/*export const    addMessage = async (equest: FastifyRequest, reply: FastifyReply) => {
-    const   { sender_id, recipient_id, content, date } = request.body as { sender_id: number, recipient_id: number, content:string, date:string };
-}*/
+export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) => {
+    const   { username, id } = request.body as { username: string, id: number };
+
+    const   user = getUserByUsername(username) as Users;
+
+    if (!user) {
+        return reply.status(401).send({ message: 'Invalid username' });
+    }
+
+    if (user.id)
+    {
+        const   user1_id = id;
+        const   user2_id = user.id;
+        const   friend = 0;
+        const   blocked = 0;
+        const   blocker_id = 0;
+        let     friendship_status;
+    
+        const status = checkFriendshipStatus( user1_id, user2_id );
+        switch (status)
+        {
+            case 0:
+                return  reply.status(301).send({ message: 'User is not a contact' });
+
+            case 1:
+                friendship_status = 'none';
+                modifyContact({ user1_id, user2_id, friend, blocked, blocker_id, friendship_status });
+                return  reply.status(201).send({ message: 'Friend deleted' });
+            case 1:
+                friendship_status = 'none';
+                modifyContact({ user1_id, user2_id, friend, blocked, blocker_id, friendship_status });
+                return  reply.status(201).send({ message: 'Friend deleted' });
+
+        }
+    }
+}
+
+export const    blockContact = async (request: FastifyRequest, reply: FastifyReply) => {
+    const   { username, id } = request.body as { username: string, id: number };
+
+    const   user = getUserByUsername(username) as Users;
+
+    if (!user) {
+        return reply.status(401).send({ message: 'Invalid username' });
+    }
+
+    if (user.id)
+    {
+        const   user1_id = id;
+        const   user2_id = user.id;
+        const   friend = 0;
+        const   blocked = 1;
+        const   exist = getUserContactById(user1_id);
+        
+        // if (exist)
+        //     modifyContact({ user1_id, user2_id, friend, blocked });
+        // else
+        //     createContact({ user1_id, user2_id, friend, blocked });
+
+        return  reply.status(201).send({ message: 'Contact  blocked' });
+    }
+}
+
+export const    unblockContact = async (request: FastifyRequest, reply: FastifyReply) => {
+    const   { username, id } = request.body as { username: string, id: number };
+
+    const   user = getUserByUsername(username) as Users;
+
+    if (!user) {
+        return reply.status(401).send({ message: 'Invalid username' });
+    }
+
+    if (user.id)
+    {
+        const   user1_id = id;
+        const   user2_id = user.id;
+        const   friend = 0;
+        const   blocked = 0;
+        const   exist = getUserContactById(user1_id);
+        
+        // if (exist)
+        //     modifyContact({ user1_id, user2_id, friend, blocked });
+        // else
+        //     createContact({ user1_id, user2_id, friend, blocked });
+        
+            return  reply.status(201).send({ message: 'Contact unblocked' });
+    }
+}
+
+/*----------------------------------------------------------------------------*/
 
 export const    addMessage = async (request: FastifyRequest, reply: FastifyReply) => {
     const   { id, username, content, date } = request.body as { id: number, username: string, content:string, date:string };

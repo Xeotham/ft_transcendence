@@ -10,19 +10,13 @@ import { registerUser, loginUser, logoutUser, getUserInfo, addFriend, getFriends
 // TODO: Block a user
 // TODO: (Maybe) delete a user
 
-export async function userRoutes(fastify: FastifyInstance) {
+export default async function userRoutes(fastify: FastifyInstance) {
     fastify.post('/register', registerUser);
     fastify.post('/login', loginUser);
     fastify.post('/logout', logoutUser);
     fastify.get('/get_user', getUserInfo);
-}
-
-export async function messageRoutes(fastify: FastifyInstance) {
     fastify.post('/add_message', addMessage);
     fastify.get('/get_message', getMessage);
-}
-
-export async function contactRoutes(fastify: FastifyInstance) {
     fastify.post('/add_friend', addFriend);
     fastify.get('/get_friend', getFriends);
     fastify.post('/block_contact', blockContact);
