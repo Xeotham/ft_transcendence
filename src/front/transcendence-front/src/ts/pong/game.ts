@@ -1,7 +1,10 @@
 import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
-import  { loadPongHtml, drawGame, idlePage, matchFound, gameInfo } from "./pong.ts";
+import  { loadPongHtml, drawGame, gameInfo } from "./pong.ts";
 import  { tourMessageHandler } from "./tournament.ts";
+// @ts-ignore
+import  page from "page";
+
 
 export class PongRoom {
 	private roomNumber: number;
@@ -151,7 +154,7 @@ export const   joinMatchmaking = async () => {
 
 	gameInfo.setRoom(new PongRoom(socket));
 	gameInfo.getRoom()?.initSocket();
-	matchFound();
+	page.show("/pong/match-found");
 }
 
 export const   joinSolo = async () => {
@@ -181,7 +184,7 @@ export const   quitRoom = (msg: string = "Leaving room") => {
 	if (gameInfo?.getRoom()?.getSocket())
 		gameInfo?.getRoom()?.getSocket()?.close();
 	gameInfo.resetRoom();
-	idlePage();
+	page.show("/pong");
 }
 
 
@@ -234,7 +237,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  gameInfo?.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
-			loadPongHtml("board");
+			page.show("/pong/game");
 			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.getElementById("quit")?.addEventListener("click", () => quitRoom());
@@ -259,7 +262,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 			return ;
 		case "SPEC":
 			console.log("Starting Spectator mode");
-			loadPongHtml("board");
+			page.show("/pong/game");
 			return document.getElementById("quit")?.addEventListener("click", () => quitRoom());
 		default:
 			gameInfo?.getRoom()?.setGame(res.data);

@@ -5,3 +5,4 @@ src/.venv
 fastify-blog/
 *node_modules/
 *.js
+!src/front/transcendence-front/vite.config.js

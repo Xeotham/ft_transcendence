@@ -1,8 +1,7 @@
-import  { content, homePage } from "../main.ts";
+import  { content } from "../main.ts";
 import  { Game, RoomInfo, TournamentInfo } from "../utils.ts";
-import  { joinSolo, joinMatchmaking, quitRoom, PongRoom } from "./game.ts";
-import  { listRoomsSpectator } from "./spectate.ts";
-import  { Tournament, getTournamentName, listTournaments } from "./tournament.ts";
+import  { PongRoom } from "./game.ts";
+import  { Tournament } from "./tournament.ts";
 
 class   gameInformation {
 	private room: PongRoom | null;
@@ -53,24 +52,15 @@ const   idleHtml = () => {
 		return ;
 	content.innerHTML = `
         <h1>Pong</h1>
-        <button id="home">Home Page</button>
-		<button id="join-game">Join a Game</button>		
-		<button id="join-solo-game">Create a solo Game</button>
-		<button id="create-tournament">Create a tournament</button>
-		<button id="join-tournament">Join a tournament</button>
-		<button id="spectate">Spectate a room</button>
-	`;
-}
-
-export const   idlePage = () => {
-	loadPongHtml("idle");
-
-	document.getElementById("home")?.addEventListener("click", () => homePage());
-	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
-	document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
-	document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
-	document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
-	document.getElementById("spectate")?.addEventListener("click", listRoomsSpectator);
+        <nav>
+	        <a href="/">Home Page</a>
+			<a href="/pong/join-game">Join a Game</a>
+			<a href="/pong/solo-game">Create a solo Game</a>
+			<a href="/pong/create-tournament">Create a tournament</a>
+			<a href="/pong/list/tournaments">Join a tournament</a>
+			<a href="/pong/list/rooms-spectator">Spectate a room</a>
+		</nav>	
+`;
 }
 
 const   matchFoundHtml = () => {
@@ -79,14 +69,8 @@ const   matchFoundHtml = () => {
 
 	content.innerHTML= `
 		<p>Room found!</p>
-		<button id="quit-room">Quit Room</button>
+		<a href="/pong/quit-room">Quit Room</a>
 	`;
-}
-
-export const   matchFound = () => {
-	loadPongHtml("match-found");
-
-	document.getElementById("quit-room")?.addEventListener("click", () => quitRoom("Leaving room"));
 }
 
 export const   specRoomInfoHtml = (roomId: number) => {
@@ -94,7 +78,7 @@ export const   specRoomInfoHtml = (roomId: number) => {
 		return ;
 
 	content.innerHTML = `
-			<button id="roomLst">Return to Room List</button>
+			<a href="pong/list/rooms-spectator">Return to Room List</a>
 			<h1>Room Info:</h1>
 			<h2>Room Number: ${roomId}</h2>
 			<button id="spectate">Spectate Room</button>
@@ -106,7 +90,7 @@ export const   tourInfoHtml = (tourId: number, started: boolean) => {
 		return ;
 
 	content.innerHTML = `
-			<button id="roomLst">Return to Tournament List</button>
+			<a href="/pong/list/tournaments">Return to Tournament List</a>
 			<h1>Tournament Info:</h1>
 			<h2>Tournament Number: ${tourId}</h2>
 		`
@@ -122,7 +106,7 @@ export const roomListHtml = (rooms: RoomInfo[]) => {
 		return ;
 
 	let listHTML = `
-		<button id="back">Back</button>
+		<a href="/pong">Back</a>
 		<ul>`;
 
 	rooms.forEach((room: RoomInfo) => {
@@ -143,7 +127,7 @@ export const tournamentListHtml = (tournaments: TournamentInfo[]) => {
 		return ;
 
 	let listHTML = `
-		<button id="back">Back</button>
+		<a href="/pong">Back</a>
 		<ul>`;
 	tournaments.forEach((tournament: TournamentInfo) => {
 		listHTML += `
@@ -163,6 +147,7 @@ const   tournamentNameHtml = () => {
         return ;
 
     content.innerHTML = `
+		<a href="/pong">Back</a>
 		<p>Enter the name of the tournament</p>
 		<form>
 			<input type="text" id="tournamentName" placeholder="Tournament Name">
@@ -179,7 +164,7 @@ const   tournamentFoundHtml = () => {
 
     content.innerHTML= `
 		<p>Tournament found!</p>
-		<button id="quit-room">Quit Tournament</button>
+		<a href="/pong/quit-room">Quit Tournament</a>
 	`;
     if (gameInfo.getTournament()?.getIsOwner()) {
         content.innerHTML += `
@@ -196,7 +181,7 @@ const   drawBoard = () => {
 		return
 
 	content.innerHTML = `
-                <button id="quit">Quit</button>
+                <a href="/pong/quit-room">Quit</a>
 				<canvas id="gameCanvas" width="800" height="400"></canvas>
 			`;
 }
