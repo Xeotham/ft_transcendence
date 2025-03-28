@@ -1,7 +1,7 @@
 import {responseFormat } from "../utils";
 import { address, content } from "../main.ts";
 import { loadPongHtml, gameInfo, tournamentListHtml, idlePage, tourInfoHtml } from "./pong.ts";
-import { quitRoom, messageHandler } from "./game.ts";
+import {quit, messageHandler, joinMatchmaking, PongRoom} from "./game.ts";
 
 export class   Tournament {
 	private tournamentId: number;
@@ -44,7 +44,7 @@ export class   Tournament {
 		};
 		this.socket.onclose = () => {
 			console.log("Connection closed");
-			quitRoom();
+			quit();
 		};
 		this.socket.addEventListener("message", messageHandler);
 	}
@@ -61,6 +61,7 @@ export const   tourMessageHandler = (res: responseFormat) => {
 		case "OWNER":
 			gameInfo.getTournament()?.setOwner(true);
 			console.log("You are the owner of the tournament");
+			tournamentFound();
 			// loadPage("room-found");
 			return ;
 		case "PREP":
@@ -70,8 +71,12 @@ export const   tourMessageHandler = (res: responseFormat) => {
 			gameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement);
 			// loadPage("room-found");
 			return ;
+		case "CREATE":
+			console.log("Creating a pong room");
+			gameInfo.setRoom(new PongRoom(gameInfo?.getTournament()?.getSocket()!), false);
+			return ;
 		case "LEAVE":
-			quitRoom();
+			quit();
 			return ;
 	}
 }
@@ -186,5 +191,5 @@ const   tournamentFound = () => {
 		document.getElementById("start-tournament")?.addEventListener("click", startTournament);
 		document.getElementById("shuffle-tree")?.addEventListener("click", shuffleTree);
 	}
-	document.getElementById("quit-room")?.addEventListener("click", () => quitRoom("Leaving room"));
+	document.getElementById("quit-room")?.addEventListener("click", () => quit("Leaving room"));
 }

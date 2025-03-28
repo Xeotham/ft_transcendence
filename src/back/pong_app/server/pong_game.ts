@@ -31,6 +31,7 @@ export class Game {
 	private lastTime:	number;
 
 	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = []) {
+		// console.log("Game constructor id : " + id);
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };
@@ -72,15 +73,16 @@ export class Game {
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-		// this.ball.y = HEIGHT / 2; // TODO : Remove this line
-		// this.ball.orientation = 0; // TODO : Remove this line
+		this.ball.y = HEIGHT / 2; // TODO : Remove this line
+		this.ball.orientation = 0; // TODO : Remove this line
 		if (side === "P1")
 			this.ball.orientation += Math.PI;
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
 		if (this.score.player1 < 10 && this.score.player2 < 10)
-			await delay(1250);
+			// await delay(1250);
+			await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
 	}
 
@@ -184,11 +186,15 @@ export class Game {
 	}
 
 	forfeit(player: string) {
-		this.over = true;
+		if (this.over)
+			return ;
 		if (player === "P1")
 			this.winner = this.players.player2;
 		else
 			this.winner = this.players.player1;
+		// let winner = this.winner === this.players.player1 ? "P1" : "P2";
+		// console.log("Winner set to:", winner);
+		this.over = true;
 	}
 
 	getWinner() : WebSocket | null {

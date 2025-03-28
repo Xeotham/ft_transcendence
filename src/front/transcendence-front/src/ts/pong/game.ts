@@ -133,7 +133,7 @@ export class PongRoom {
 		};
 		this.socket.onclose = () => {
 			console.log("Connection closed");
-			quitRoom(gameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
+			quit(gameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
 		};
 		this.socket.addEventListener("message", messageHandler);
 	}
@@ -160,10 +160,24 @@ export const   joinSolo = async () => {
 	gameInfo.getRoom()?.initSocket();
 }
 
-export const   quitRoom = (msg: string = "LEAVE") => {
-	const   matchType = gameInfo.getMatchType();
+export const   quit = (msg: string = "LEAVE", force: string = "") => {
+	const   matchType = force !== "" ? force : gameInfo.getMatchType();
+
+	console.log("Quiting room of type: " + matchType);
+	if (!matchType)
+		return ;
+	quitRoom(matchType, msg);
+	if (matchType === "TOURNAMENT")
+		quitTournament(matchType,msg);
+
+	// if (force === "")
+	idlePage(); // TODO : Change Idle to spectator list of tournaments round room
+}
+
+const   quitRoom = (matchType: string, msg: string = "LEAVE") => {
 	const   roomId = gameInfo.getRoom()?.getRoomNumber();
 	const   player = gameInfo.getRoom()?.getPlayer();
+	const   specPlacement = gameInfo.getRoom()?.getSpecPlacement();
 
 	if (gameInfo.getRoom()?.getIsSolo())
 		msg = "LEAVE";
@@ -174,19 +188,36 @@ export const   quitRoom = (msg: string = "LEAVE") => {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ matchType: matchType, message: msg, tourId: -1, roomId: roomId, P: player, tourPlacement: -1, specPlacement: gameInfo.getRoom()?.getSpecPlacement() })
+		body: JSON.stringify({ matchType: "PONG", message: msg, roomId: roomId, P: player, specPlacement: specPlacement })
 	});
 	gameInfo.getRoom()?.clearIntervals();
 	const socket = gameInfo.getRoom()?.getSocket();
-	if (socket) {
+	if (socket && gameInfo.getMatchType() === "PONG") {
+		console.log("Connection closed");
 		socket.onclose = null; // Remove any existing onclose handler
 		socket.close();
 	}
-	gameInfo.getRoom()?.getSocket()?.close();
 	gameInfo.resetRoom();
-	idlePage();
 }
 
+const quitTournament = (matchType: string, msg: string = "LEAVE") => {
+	const socket = gameInfo.getTournament()?.getSocket();
+	const tournamentId = gameInfo.getTournament()?.getId();
+	const tourPlacement = gameInfo.getTournament()?.getPlacement();
+
+	fetch(`http://${address}:3000/api/pong/quitRoom`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ matchType: "TOURNAMENT", message: msg, tourId: tournamentId, tourPlacement: tourPlacement })
+	});
+	if (socket) {
+		console.log("Connection closed");
+		socket.onclose = null; // Remove any existing onclose handler
+		socket.close();
+	}
+}
 
 export const   messageHandler = (event: MessageEvent)=> {
 	let res: responseFormat = JSON.parse(event.data);
@@ -209,7 +240,7 @@ export const   messageHandler = (event: MessageEvent)=> {
 		case "CONFIRM":
 			return confirmGame();
 		case "LEAVE":
-			quitRoom();
+			quit("LEAVE", res.data ? res.data : gameInfo.getMatchType());
 			if (res.message === "QUEUE_AGAIN") {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
 				if (res.data === "PONG")
@@ -239,25 +270,28 @@ const	gameMessageHandler = (res: responseFormat) => {
 			loadPongHtml("board");
 			if (gameInfo.getRoom()?.getPlayer() === "SPEC")
 				return ;
-			document.getElementById("quit")?.addEventListener("click", () => quitRoom());
+			document.getElementById("quit")?.addEventListener("click", () => quit());
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
 			return ;
 		case "FINISH":
 			if (gameInfo.getRoom()?.getPlayer() === "SPEC")
-				return quitRoom();
+				return quit("LEAVE", "PONG");
 			if (gameInfo.getRoom()?.getIsSolo())
 				alert(res.data + " won!");
-			else
-				res.data === gameInfo.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
+			else {
+				if (gameInfo.getMatchType() === "TOURNAMENT")
+					res.data === gameInfo.getRoom()?.getPlayer() ? console.log("You won!") : console.log("You lost!");
+				else
+					res.data === gameInfo.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
+			}
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
-			return quitRoom();
+			return quit("LEAVE", "PONG");
 		case "SCORE":
 			const   score: score = res.data;
 			gameInfo.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
-			//  TODO : display score on screen
 			return ;
 		case "SPEC":
 			if (res.data >= 0)
@@ -265,7 +299,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 			gameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
 			console.log("Starting Spectator mode at placement: " + gameInfo.getRoom()?.getSpecPlacement());
 			loadPongHtml("board");
-			return document.getElementById("quit")?.addEventListener("click", () => quitRoom());
+			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		default:
 			gameInfo.getRoom()?.setGame(res.data);
 			drawGame(res.data);
@@ -324,13 +358,14 @@ const   confirmGame = () => {
 	loadPongHtml("confirm")
 
 	let remainingTime = 10;
+	// console.log("Room? : " + gameInfo.getRoom());
 	gameInfo.getRoom()?.setQueueInterval(setInterval(() => {
 		remainingTime--;
 		if (document.getElementById("timer"))
 			document.getElementById("timer")!.innerText = `Time remaining: ${remainingTime}s`;
 		if (remainingTime <= 0) {
 			clearInterval(gameInfo.getRoom()?.getQueueInterval() as number);
-			quitRoom("QUEUE_TIMEOUT");
+			quit("QUEUE_TIMEOUT");
 		}
 	}, 1000));
 	document.getElementById("confirm-game")?.addEventListener("click", () => {

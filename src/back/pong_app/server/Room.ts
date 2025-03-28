@@ -36,7 +36,7 @@ export class Room {
 		this.isSolo = isSolo;
 		this.spectators = [];
 		this.started = false;
-		this.isInTournament = false;
+		this.isInTournament = isInTournament;
 		this.tourId = tourId;
 	}
 
@@ -50,6 +50,8 @@ export class Room {
 	getIsSolo() { return this.isSolo; }
 	hasStarted() { return this.started; }
 	isOver() { return this.game ? this.getGame()!.isOver() : false; }
+	getIsInTournament() { return this.isInTournament; }
+
 	setP1(socket: WebSocket) { this.P1 = socket; }
 	setP2(socket: WebSocket) { this.P2 = socket; }
 	setFull(bool: boolean) { this.full = bool; }
@@ -71,7 +73,7 @@ export class Room {
 		const player: string | "P1" | "P2" = this.P1 ? "P2" : "P1";
 		this.P1 ? this.P2 = socket : this.P1 = socket;
 		this.full = !!this.P1 && !!this.P2;
-		this.sendData({ type: "INFO", message: "Room found" });
+		socket.send(JSON.stringify({ type: "INFO", message: "Room found" }));
 		socket.send(JSON.stringify({ type: "GAME", message: "PREP", player: player, roomId: this.id }));
 
 		if (!this.full)
@@ -99,6 +101,7 @@ export class Room {
 		this.started = true;
 		this.sendData({ type: "INFO", message: "The game is starting" });
 		this.sendData({ type: "GAME", message: "START" }, true);
+		// console.log("Starting game " + this.id + " is In tournament : " + this.isInTournament);
 		if (!this.isInTournament)
 			this.game.gameLoop();
 		else
@@ -129,7 +132,7 @@ export class Room {
 	}
 
 	removeAllSpectators() {
-		for (let i = this.spectators.length; i > 0; --i)
-			this.removeSpectator(i - 1, false);
+		for (let i = this.spectators.length - 1; i >= 0; --i)
+			this.removeSpectator(i, false);
 	}
 }

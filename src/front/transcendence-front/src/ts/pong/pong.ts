@@ -1,6 +1,6 @@
 import  { content, homePage } from "../main.ts";
 import  { Game, RoomInfo, TournamentInfo } from "../utils.ts";
-import  { joinSolo, joinMatchmaking, quitRoom, PongRoom } from "./game.ts";
+import  { joinSolo, joinMatchmaking, quit, PongRoom } from "./game.ts";
 import  { listRoomsSpectator } from "./spectate.ts";
 import  { Tournament, getTournamentName, listTournaments } from "./tournament.ts";
 
@@ -26,6 +26,7 @@ class   gameInformation {
 	}
 	setTournament(tournament: Tournament) { this.tournament = tournament; this.matchType = "TOURNAMENT"; }
 	resetRoom() { this.room = null; this.matchType = null; }
+	resetTournament() { this.resetRoom(); this.tournament = null; this.matchType = null; }
 }
 
 export const	gameInfo: gameInformation = new gameInformation();
@@ -86,7 +87,7 @@ const   matchFoundHtml = () => {
 export const   matchFound = () => {
 	loadPongHtml("match-found");
 
-	document.getElementById("quit-room")?.addEventListener("click", () => quitRoom("LEAVE"));
+	document.getElementById("quit-room")?.addEventListener("click", () => quit("LEAVE"));
 }
 
 export const   specRoomInfoHtml = (roomId: number) => {

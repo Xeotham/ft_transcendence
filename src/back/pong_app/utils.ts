@@ -87,12 +87,14 @@ export function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
 		return console.log("Player not found");
 	if (player === "SPEC")
 		return room.removeSpectator(request.body.specPlacement);
-	if (room.hasStarted())
+	if (room.hasStarted() && !room.isOver())
 		room.getGame()?.forfeit(player);
 	playerSocket?.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
 	opponentSocket?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
 	if (!room.hasStarted())
 		opponentSocket?.send(JSON.stringify({ type: "LEAVE", data: "PONG", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "LEAVE" }));
+	if (room.getIsInTournament())
+		return ;
 	console.log("Room : " + room.getId() + " has been deleted");
 	Rooms.splice(Rooms.indexOf(room), 1);
 }
@@ -104,10 +106,11 @@ export function getRoomById(id: number): Room | undefined {
 		return Rooms.find((room: Room) => { return room.getId() === id; }); // Find the room in the list of rooms
 
 	// Find the room in the list of rooms in the tournaments
-	Tournaments.forEach((tour: Tournament) => {
-		if (tour.getRoomById(id) !== null)
+	for(const tour of Tournaments) {
+		if (tour.getRoomById(id) !== undefined)
 			return tour.getRoomById(id);
-	});
+	}
+	console.log("Room with id " + id + " not found");
 }
 
 

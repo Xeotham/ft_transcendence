@@ -58,7 +58,7 @@ export class Tournament {
 					return this.rooms[i][j];
 			}
 		}
-		return null;
+		return undefined;
 	}
 
 	sendToAll(data: any) {
@@ -112,8 +112,6 @@ export class Tournament {
 	}
 
 	shuffleTree() {
-		console.log("Shuffling tournament : " + this.id);
-
 		if (this.started)
 			return this.players[0]?.send(JSON.stringify({ type: "ERROR", message: "Tournament already started, cannot shuffle right now" }));
 
@@ -150,10 +148,8 @@ export class Tournament {
 				continue ;
 			}
 			const alreadyIn = roundCount < this.rooms.length ? this.rooms[roundCount].length : 0;
-			for (let i = alreadyIn; i < roomNb; i++) {
+			for (let i = alreadyIn; i < roomNb; i++)
 				rooms.push(new Room(idGenRoom.next().value, false, true, this.id));
-				// rooms.push({ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] });
-			}
 			if (alreadyIn > roomNb)
 				this.rooms[roundCount] = this.rooms[roundCount].slice(0, roomNb);
 			else if (alreadyIn > 0)
@@ -169,20 +165,23 @@ export class Tournament {
 			this.rooms.splice(roundCount); // Remove even the last round (Added right after)
 		if (roundCount === 0 || this.rooms[this.rooms.length - 1].length !== 1)
 			this.rooms.push([new Room(idGenRoom.next().value, false, true, this.id)]);
-			// this.rooms.push([{ id: idGenRoom.next().value, P1: null, P2: null, isP1Ready: false, isP2Ready: false, full: false, game: null, isSolo: false, spectators: [] }]);
 	}
 
 	printTree() {
-		console.log("Tree : ");
+		console.log("Tree of Tournament " + this.id + " : ");
 		for (let i = 0; i < this.rooms.length; ++i) {
-			process.stdout.write("Round " + i + " : ");
+			process.stdout.write("\tRound " + i + " : ");
 			for (let j = 0; j < this.rooms[i].length; ++j) {
-				process.stdout.write("" + this.rooms[i][j].getId);
+				process.stdout.write("" + this.rooms[i][j].getId());
 				if (j < this.rooms[i].length - 1)
 					process.stdout.write(" - ");
 			}
 			console.log("");
 		}
+		process.stdout.write("Positions : ");
+		for (let i = 0; i < this.positions.length; ++i)
+			process.stdout.write(i + " - ");
+		console.log("");
 	}
 
 	async startTournament() {
@@ -191,6 +190,8 @@ export class Tournament {
 		this.started = true;
 
 		for (let i = 0; i < this.positions.length; ++i) {
+			this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in room " + this.rooms[0][Math.floor(i / 2)].getId() }));
+			this.players[this.positions[i]].send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: this.rooms[0][Math.floor(i / 2)].getId() }));
 			this.rooms[0][Math.floor(i / 2)].addPlayer(this.players[this.positions[i]]);
 		}
 		if (this.players.length % 2 === 1) {
@@ -198,6 +199,8 @@ export class Tournament {
 			room.setFull(true);
 			room.startGame();
 			room.getGame()?.forfeit("P2");
+			// console.log("Solo winner index 1:" + room.getGame()?.getWinner());
+			// console.log("Solo winner index 2:" + this.rooms[0][this.nbRoomsTop - 1].getGame()?.getWinner());
 		}
 	}
 
@@ -210,34 +213,39 @@ export class Tournament {
 		this.gameFinished = 0;
 
 		console.log("\x1b[31mAll games of round " + this.round + " have ended. Moving to next round\x1b[0m");
-		if (this.round === this.rooms.length - 1) {
+		if (this.round + 1 === this.rooms.length) {
 			console.log("Tournament ended");
 
 			const	winner = this.rooms[this.rooms.length - 1][0].getGame()?.getWinner()
 
+			console.log("\x1b[38;5;204mThe Grand winner is player number: " +
+				(winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody") + "\x1b[0m");
 			this.sendToAll({type: "INFO", message: "Tournament ended"});
 			this.sendToAll({
 				type: "INFO", message: "The Grand winner is player number: " +
-					winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody"
+					(winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody")
 			});
-			console.log("\x1b[38;5;204mThe Grand winner is player number: " +
-				winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody");
 			// TODO : Change players to name
-			this.sendToAll({type: "LEAVE", data: "TOUR"});
+			this.sendToAll({type: "LEAVE", data: "TOURNAMENT"});
 			return;
 		}
 
 		for (let i = 0; i < this.rooms[this.round].length; ++i) {
-			const	newPlayer = this.rooms[this.round][i].getGame()?.getWinner();
-			const	opponent = this.rooms[this.round][i - 1].getGame()?.getWinner()
+			const	winner = this.rooms[this.round][i].getGame()?.getWinner();
+			const	winnerIndex = this.players.indexOf(winner as WebSocket);
 
-			if (newPlayer === undefined)
-				continue;
-
-			this.rooms[this.round + 1][Math.floor(i / 2)].addPlayer(newPlayer as WebSocket);
-			if (i % 2 === 1)
-				console.log("Player " + this.players.indexOf(opponent as WebSocket) +
-					" will face player " + this.players.indexOf(newPlayer as WebSocket));
+			if (!winner) {
+				console.log("No winner found for room " + this.rooms[this.round][i].getId());
+				continue ;
+			}
+			console.log("Winner of room " + this.rooms[this.round][i].getId() + " is player number: " + winnerIndex);
+			winner.send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: this.rooms[this.round + 1][Math.floor(i / 2)].getId() }));
+			this.rooms[this.round + 1][Math.floor(i / 2)].addPlayer(winner as WebSocket);
+			if (i % 2 === 1) {
+				const room = this.rooms[this.round + 1][Math.floor(i / 2)];
+				console.log("Player " + this.players.indexOf(room.getP1() as WebSocket) +
+					" will face player " + this.players.indexOf(room.getP2() as WebSocket));
+			}
 		}
 		// If only one player in the room, automatically win
 		++this.round;

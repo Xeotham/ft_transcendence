@@ -60,6 +60,8 @@ export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }
 	let room = getRoomById(request.body.roomId);
 	const	player: string | "P1" | "P2" = request.body.P;
 	// TODO: look at that again later
+	console.log("startConfirm : " + player + " in room : " + request.body.roomId);
+	// console.log("room : " + room);
 
 	if (!room)
 		return;

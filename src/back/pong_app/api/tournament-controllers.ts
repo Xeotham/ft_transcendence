@@ -60,7 +60,6 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequest< { Q
 		tournament = Tournaments.find((tour) => { return tour.getId() === id; }) as Tournament;
 	else
 		return socket.send(JSON.stringify({ type: "INFO", message: "Tournament not found" }));
-	console.log(tournament);
 	if (!tournament?.hasStarted()) {
 		tournament?.addPlayer(socket);
 		return;
@@ -77,7 +76,7 @@ export const shuffleTree = async (request: FastifyRequest< { Body: requestBody }
 }
 
 export const startTournament = async (request: FastifyRequest< { Body: requestBody } >, reply: FastifyReply) => {
-	console.log("Starting game");
+	console.log("\x1b[38;5;82mStarting Tournament\x1b[0m");
 	const tour = getTournamentById(request.body.tourId);
 
 	if (!tour)
