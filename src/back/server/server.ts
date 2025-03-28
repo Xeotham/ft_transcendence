@@ -42,7 +42,7 @@ fastify.register(pongRoutes, { prefix: '/api/pong' });
 // });
 
 // Start the server
-fastify.listen({ port: parseInt(process.env.PORT!), host: "0.0.0.0" }, (err: Error | null, address: string) => {
+fastify.listen({ port: parseInt(process.env.BACK_PORT!), host: "0.0.0.0" }, (err: Error | null, address: string) => {
 	if (err) {
 		fastify.log.error(err);
 		process.exit(1);

@@ -48,4 +48,3 @@ page('*', () => {
 
 // Start the router
 page();
-// page.show('/'); // Show the initial route

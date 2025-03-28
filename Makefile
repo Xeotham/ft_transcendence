@@ -34,7 +34,10 @@ help:
 
 up:
 	@ clear
-	@ echo "$(DARK_GREEN)Creating Mandatory!$(BASE_COLOR)"
+	@ echo "$(RED)Replacing IP addr in .env...$(BASE_COLOR)"
+	@ echo "IP Address: $(shell hostname -I | head -n 1 | awk '{print $$1}')"
+	@ sed -i -E "s/(ADDR=\")[0-9]{1,3}(\.[0-9]{1,3}){3}(\")/\1$(shell hostname -I | head -n 1 | awk '{print $$1}')\3/g" ./src/.env
+	@ echo "$(DARK_GREEN)IP addr replaced!$(BASE_COLOR)"
 	@ echo "$(RED)Building project...$(BASE_COLOR)"
 	@# docker compose -f ./src/docker-compose.yml --progress quiet build
 	@ docker compose -f ./src/docker-compose.yml build

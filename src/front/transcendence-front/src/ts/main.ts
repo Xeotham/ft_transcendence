@@ -1,7 +1,12 @@
 // @ts-ignore
 import  page from 'page';
+import { config } from "dotenv";
 
-export const	address = "localhost";
+config();
+
+
+// @ts-ignore
+export const	address = "DUMMY_ADDRESS";
 export const	content = document.getElementById("content");
 
 export const	homePage = () => {

@@ -1,5 +1,5 @@
 import  { content } from "../main.ts";
-import  { Game, RoomInfo, TournamentInfo } from "../utils.ts";
+import  { Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg } from "../utils.ts";
 import  { PongRoom } from "./game.ts";
 import  { Tournament } from "./tournament.ts";
 
@@ -30,7 +30,7 @@ class   gameInformation {
 export const   gameInfo: gameInformation = new gameInformation();
 
 
-export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name") => {
+export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
 		case "idle":
 			return idleHtml();
@@ -44,6 +44,16 @@ export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" |
 			return confirmPage();
 		case "tournament-name":
 			return tournamentNameHtml();
+		case "spec-room-info":
+			return specRoomInfoHtml(arg?.roomId!);
+		case "tour-info":
+			return tourInfoHtml(arg?.tourId!, arg?.started!);
+		case "list-rooms":
+			return roomListHtml(arg?.roomLst!);
+		case "list-tournaments":
+			return tournamentListHtml(arg?.tourLst!);
+		case "draw-game":
+			return drawGame(arg?.game!);
 	}
 }
 
@@ -73,7 +83,7 @@ const   matchFoundHtml = () => {
 	`;
 }
 
-export const   specRoomInfoHtml = (roomId: number) => {
+const   specRoomInfoHtml = (roomId: number) => {
 	if (!content)
 		return ;
 
@@ -85,7 +95,7 @@ export const   specRoomInfoHtml = (roomId: number) => {
 			`
 }
 
-export const   tourInfoHtml = (tourId: number, started: boolean) => {
+const   tourInfoHtml = (tourId: number, started: boolean) => {
 	if (!content)
 		return ;
 
@@ -101,7 +111,7 @@ export const   tourInfoHtml = (tourId: number, started: boolean) => {
 			<button id="joinTournament">Join the tournament</button>`
 }
 
-export const roomListHtml = (rooms: RoomInfo[]) => {
+const roomListHtml = (rooms: RoomInfo[]) => {
 	if (!content)
 		return ;
 
@@ -122,7 +132,7 @@ export const roomListHtml = (rooms: RoomInfo[]) => {
 	content.innerHTML = listHTML;
 }
 
-export const tournamentListHtml = (tournaments: TournamentInfo[]) => {
+const tournamentListHtml = (tournaments: TournamentInfo[]) => {
 	if (!content)
 		return ;
 
@@ -182,6 +192,8 @@ const   drawBoard = () => {
 
 	content.innerHTML = `
                 <a href="/pong/quit-room">Quit</a>
+                <h1>Pong Game</h1>
+                <p id="score" >Player 1: 0 | Player 2: 0</p>
 				<canvas id="gameCanvas" width="800" height="400"></canvas>
 			`;
 }
@@ -199,7 +211,7 @@ const   confirmPage = () => {
 	`;
 }
 
-export function drawGame(game: Game) {
+function drawGame(game: Game) {
 	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 

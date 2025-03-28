@@ -1,6 +1,6 @@
 import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
-import  { loadPongHtml, drawGame, gameInfo } from "./pong.ts";
+import  { loadPongHtml, gameInfo } from "./pong.ts";
 import  { tourMessageHandler } from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
@@ -258,6 +258,8 @@ const	gameMessageHandler = (res: responseFormat) => {
 			const   score: score = res.data;
 			gameInfo?.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
+			if (document.getElementById("score"))
+				document.getElementById("score")!.innerText = `Player 1: ${score.player1} | Player 2: ${score.player2}`;
 			//  TODO : display score on screen
 			return ;
 		case "SPEC":
@@ -266,7 +268,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 			return document.getElementById("quit")?.addEventListener("click", () => quitRoom());
 		default:
 			gameInfo?.getRoom()?.setGame(res.data);
-			drawGame(res.data);
+			loadPongHtml("draw-game", { game: res.data });
 	}
 }
 

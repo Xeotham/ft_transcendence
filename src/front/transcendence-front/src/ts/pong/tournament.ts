@@ -1,6 +1,6 @@
 import {responseFormat } from "../utils";
 import { address, content } from "../main.ts";
-import { loadPongHtml, gameInfo, tournamentListHtml, tourInfoHtml } from "./pong.ts";
+import { loadPongHtml, gameInfo } from "./pong.ts";
 import { quitRoom, messageHandler } from "./game.ts";
 
 export class   Tournament {
@@ -107,7 +107,7 @@ export const    listTournaments = () => {
             return response.json();
         })
         .then(data => {
-			tournamentListHtml(data)
+			loadPongHtml("list-tournaments", { tourLst: data })
 	        // Add event listeners to the buttons
             document.querySelectorAll('.tournament-button').forEach(button => {
                 button.addEventListener('click', getTournamentInfo);
@@ -140,7 +140,7 @@ const getTournamentInfo = (event: Event) => {
         .then(data => {
             const started = data.started;
 
-			tourInfoHtml(Number(tournamentId), started);
+			loadPongHtml("tour-info", { tourId: Number(tournamentId), started: started });
             document.getElementById('tournamentLst')?.addEventListener("click", listTournaments);
             if (!started) {
                 document.getElementById('joinTournament')?.addEventListener("click", () => {
