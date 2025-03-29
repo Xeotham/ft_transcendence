@@ -73,16 +73,16 @@ export class Game {
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-		this.ball.y = HEIGHT / 2; // TODO : Remove this line
-		this.ball.orientation = 0; // TODO : Remove this line
+		// this.ball.y = HEIGHT / 2; // TODO : Remove this line
+		// this.ball.orientation = 0; // TODO : Remove this line
 		if (side === "P1")
 			this.ball.orientation += Math.PI;
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
 		if (this.score.player1 < 10 && this.score.player2 < 10)
-			// await delay(1250);
-			await delay(0); // TODO : Remove this line
+			await delay(1250);
+			// await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
 	}
 
