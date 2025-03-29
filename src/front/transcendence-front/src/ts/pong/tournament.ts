@@ -49,10 +49,13 @@ export class   Tournament {
 		this.socket.addEventListener("message", messageHandler);
 	}
 
-	prepTournament(tourId: number, placement: number) {
+	prepTournament(tourId: number, placement: number, isChange: boolean = false) {
 		this.tournamentId = tourId;
 		this.tourPlacement = placement;
-		console.log("Joined tournament: " + tourId + " as player: " + placement);
+		if (isChange)
+			console.log("Changed placement in tournament: " + tourId + ". You now are player: " + placement);
+		else
+			console.log("Joined tournament: " + tourId + " as player: " + placement);
 	}
 }
 
@@ -68,11 +71,11 @@ export const   tourMessageHandler = (res: responseFormat) => {
 			const tournamentId = typeof res.tourId === "number" ? res.tourId : -1;
 			const tourPlacement = typeof res.tourPlacement === "number" ? res.tourPlacement : -1;
 
-			gameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement);
+			gameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
 			// loadPage("room-found");
 			return ;
 		case "CREATE":
-			console.log("Creating a pong room");
+			// console.log("Creating a pong room for a tournament instance");
 			gameInfo.setRoom(new PongRoom(gameInfo?.getTournament()?.getSocket()!), false);
 			return ;
 		case "LEAVE":

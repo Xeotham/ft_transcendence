@@ -84,6 +84,13 @@ export const startTournament = async (request: FastifyRequest< { Body: requestBo
 	tour.startTournament();
 };
 
+export const deleteTournament = (id: number) => {
+	const tour = getTournamentById(id);
+	if (!tour)
+		return console.log("Tournament not found");
+	console.log("Tournament : " + tour.getId() + " has been deleted");
+	Tournaments.splice(Tournaments.indexOf(tour), 1);
+}
 
 export const	getTournaments = async (request: FastifyRequest< { Body: requestBody } >, reply: FastifyReply) => {
 	const TournamentLst: TournamentInfo[] = [];

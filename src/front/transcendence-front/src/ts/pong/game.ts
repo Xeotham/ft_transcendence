@@ -170,16 +170,19 @@ export const   quit = (msg: string = "LEAVE", force: string = "") => {
 	if (matchType === "TOURNAMENT")
 		quitTournament(matchType,msg);
 
-	// if (force === "")
-	idlePage(); // TODO : Change Idle to spectator list of tournaments round room
+	if (matchType === "TOURNAMENT" || (matchType === "PONG" && gameInfo.getMatchType() !== "TOURNAMENT"))
+		idlePage(); // TODO : Change Idle to spectator list of tournaments round room
 }
 
 const   quitRoom = (matchType: string, msg: string = "LEAVE") => {
+	if (!gameInfo.getRoom())
+		return;
+
 	const   roomId = gameInfo.getRoom()?.getRoomNumber();
 	const   player = gameInfo.getRoom()?.getPlayer();
 	const   specPlacement = gameInfo.getRoom()?.getSpecPlacement();
 
-	if (gameInfo.getRoom()?.getIsSolo())
+	if (gameInfo.getRoom()?.getIsSolo() || gameInfo.getMatchType() === "TOURNAMENT")
 		msg = "LEAVE";
 	if (msg === "QUEUE_TIMEOUT")
 		console.log("You took too long to confirm the game. Back to the lobby");

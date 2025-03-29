@@ -78,7 +78,7 @@ export class Room {
 
 		if (!this.full)
 			return ;
-		this.game = new Game(this.id, this.P1, this.P2, false, this.spectators);
+		// this.game = new Game(this.id, this.P1, this.P2, false, this.spectators);
 		this.sendData({ type: "INFO", message: "Room is full, ready to start, awaiting confirmation" });
 		this.sendData({ type : "CONFIRM" });
 	}

@@ -2,7 +2,7 @@ import { Room } from "./server/Room";
 import { Tournament } from "./server/tournament";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { WebSocket } from "ws";
-import { Tournaments } from "./api/tournament-controllers";
+import { Tournaments, deleteTournament } from "./api/tournament-controllers";
 import { Rooms } from "./api/game-controllers";
 
 // const { Room } = require('./server/Room');
@@ -66,10 +66,7 @@ export function quitTournament(request: FastifyRequest<{ Body: requestBody }>) {
 		return console.log("Tournament not found");
 
 	// TODO : Look at that when game already started
-	if (tour.removePlayer(request.body.tourPlacement)) {
-		console.log("Tournament : " + tour.getId() + " has been deleted");
-		Tournaments.splice(Tournaments.indexOf(tour), 1);
-	}
+	tour.removePlayer(request.body.tourPlacement)
 }
 
 export function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
@@ -91,7 +88,7 @@ export function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
 		room.getGame()?.forfeit(player);
 	playerSocket?.send(JSON.stringify({ type: "INFO", message: "You have left the room" }));
 	opponentSocket?.send(JSON.stringify({ type: "WARNING", message: "Your opponent has left the room" }));
-	if (!room.hasStarted())
+	if (!room.hasStarted() && !room.getIsInTournament())
 		opponentSocket?.send(JSON.stringify({ type: "LEAVE", data: "PONG", message: request.body.message === "QUEUE_TIMEOUT" ? "QUEUE_AGAIN" : "LEAVE" }));
 	if (room.getIsInTournament())
 		return ;
