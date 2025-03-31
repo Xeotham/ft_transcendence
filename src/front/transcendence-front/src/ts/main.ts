@@ -1,9 +1,5 @@
 // @ts-ignore
 import  page from 'page';
-import { config } from "dotenv";
-
-config();
-
 
 // @ts-ignore
 export const	address = "DUMMY_ADDRESS";

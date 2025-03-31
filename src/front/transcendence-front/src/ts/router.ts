@@ -4,7 +4,7 @@ import  page from 'page';
 // Define your routes
 import { loadPongHtml } from "./pong/pong.ts";
 import { homePage } from "./main.ts";
-import { joinMatchmaking, joinSolo, quitRoom } from "./pong/game.ts";
+import { joinMatchmaking, joinSolo, quit } from "./pong/game.ts";
 import { getTournamentName, listTournaments } from "./pong/tournament.ts";
 import { listRoomsSpectator } from "./pong/spectate.ts";
 
@@ -35,7 +35,7 @@ page("/pong/solo-game", () => {
 page("/pong/create-tournament", getTournamentName);
 page("/pong/list/tournaments", listTournaments);
 page("/pong/list/rooms-spectator", listRoomsSpectator);
-page("/pong/quit-room", () => quitRoom("Leaving room"));
+page("/pong/quit-room", () => quit("LEAVE"));
 page("/pong/game", () => loadPongHtml("board"));
 page("/pong/match-found", () => loadPongHtml("match-found"));
 
