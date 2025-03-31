@@ -110,7 +110,6 @@ export class Tournament {
 		}
 
 		this.players.splice(placementId, 1);
-		console.log("Players left : " + this.players.length);
 		if (this.players.length <= 0)
 			deleteTournament(this.id);
 	}
@@ -128,9 +127,12 @@ export class Tournament {
 		for (let i = this.positions.length - 1; i > 0; --i) { // Fisher-Yates shuffle, to shuffle the player's positions
 			const j = Math.floor(Math.random() * (i + 1));
 			[this.positions[i], this.positions[j]] = [this.positions[j], this.positions[i]];
+			// const temp = this.positions[i];
+			// this.positions[i] = this.positions[j];
+			// this.positions[j] = temp;
 		}
-		for (let i = 0; i < this.players.length; ++i)
-			this.players[i].send(JSON.stringify({ type: "INFO", message: "You are in position " + this.positions[i] }));
+		for (let i = 0; i < this.positions.length; ++i)
+			this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in position " + i }));
 		console.log("\x1b[38;5;82mTournament shuffled\x1b[0m");
 		this.needShuffle = false;
 		this.printTree();
@@ -184,7 +186,7 @@ export class Tournament {
 		}
 		process.stdout.write("Positions : ");
 		for (let i = 0; i < this.positions.length; ++i)
-			process.stdout.write(i + " - ");
+			process.stdout.write(this.positions[i] + " - ");
 		console.log("");
 	}
 
@@ -193,10 +195,12 @@ export class Tournament {
 			this.shuffleTree();
 		this.started = true;
 
+
 		for (let i = 0; i < this.positions.length; ++i) {
-			// this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in room " + this.rooms[0][Math.floor(i / 2)].getId() }));
-			this.players[this.positions[i]].send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: this.rooms[0][Math.floor(i / 2)].getId() }));
-			this.rooms[0][Math.floor(i / 2)].addPlayer(this.players[this.positions[i]]);
+			const room = this.rooms[0][Math.floor(i / 2)];
+			this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in room " + room.getId() }));
+			this.players[this.positions[i]].send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: room.getId() }));
+			room.addPlayer(this.players[this.positions[i]]);
 		}
 		if (this.players.length % 2 === 1) {
 			const room = this.rooms[0][this.nbRoomsTop - 1];

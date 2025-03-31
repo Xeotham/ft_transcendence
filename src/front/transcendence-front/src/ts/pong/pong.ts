@@ -25,7 +25,10 @@ class   gameInformation {
 			this.matchType = "PONG";
 	}
 	setTournament(tournament: Tournament) { this.tournament = tournament; this.matchType = "TOURNAMENT"; }
-	resetRoom() { this.room = null; this.matchType = null; }
+	resetRoom() {
+		this.room = null;
+		this.matchType = this.matchType === "TOURNAMENT" ? "TOURNAMENT" : null;
+	}
 	resetTournament() { this.resetRoom(); this.tournament = null; this.matchType = null; }
 }
 

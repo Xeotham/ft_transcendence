@@ -220,6 +220,7 @@ const quitTournament = (matchType: string, msg: string = "LEAVE") => {
 		socket.onclose = null; // Remove any existing onclose handler
 		socket.close();
 	}
+	gameInfo.resetTournament();
 }
 
 export const   messageHandler = (event: MessageEvent)=> {

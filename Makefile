@@ -50,21 +50,6 @@ down: rm_logs
 	@ docker compose -f ./src/docker-compose.yml --progress quiet down
 	@ echo "$(DARK_GREEN)Services ended !$(BASE_COLOR)"
 
-errors: up
-	@ echo "$(RED)Checking errors...$(BASE_COLOR)"
-	@ echo "$(ORANGE)Front:$(BASE_COLOR)"
-	@ docker logs front | grep -E -v "^[> ]|^$$" || true
-	@ echo "\n$(ORANGE)Back:$(BASE_COLOR)"
-	@ docker logs back | grep -E -v "^[>]|^$$" || true
-	@ if docker logs back | grep -q "Server listening at"; then \
-		echo "$(GREEN)No errors!$(BASE_COLOR)"; \
-#		make rm_logs --no-print-directory ; \
-		watch docker logs back; \
-	else \
-		echo "$(BLACK_ORANGE)Errors found!$(BASE_COLOR)"; \
-#		make down --no-print-directory ; \
-	fi
-
 logs:
 	@ echo "$(RED)Creating logs...$(BASE_COLOR)"
 	@ echo "$(ORANGE)Front:$(BASE_COLOR)"
