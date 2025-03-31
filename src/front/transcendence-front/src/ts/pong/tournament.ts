@@ -1,7 +1,7 @@
 import {responseFormat } from "../utils";
 import { address, content } from "../main.ts";
-import { loadPongHtml, gameInfo, tournamentListHtml, idlePage, tourInfoHtml } from "./pong.ts";
-import {quit, messageHandler, joinMatchmaking, PongRoom} from "./game.ts";
+import { loadPongHtml, gameInfo } from "./pong.ts";
+import {quit, messageHandler, PongRoom} from "./game.ts";
 
 export class   Tournament {
 	private tournamentId: number;
@@ -94,7 +94,7 @@ export const   getTournamentName = async () => {
 }
 
 const   createTournament = async (name: string) => {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createTournament?name=${tournamentName}`);
+	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createTournament?name=${name}`);
 
 	gameInfo.setTournament(new Tournament(socket, name, true));
 	gameInfo.getTournament()?.initSocket()
@@ -115,8 +115,7 @@ export const    listTournaments = () => {
             return response.json();
         })
         .then(data => {
-			tournamentListHtml(data)
-	        document.getElementById("back")?.addEventListener("click", idlePage);
+			loadPongHtml("list-tournaments", { tourLst: data })
 	        // Add event listeners to the buttons
             document.querySelectorAll('.tournament-button').forEach(button => {
                 button.addEventListener('click', getTournamentInfo);
@@ -149,7 +148,7 @@ const getTournamentInfo = (event: Event) => {
         .then(data => {
             const started = data.started;
 
-			tourInfoHtml(Number(tournamentId), started);
+			loadPongHtml("tour-info", { tourId: Number(tournamentId), started: started });
             document.getElementById('tournamentLst')?.addEventListener("click", listTournaments);
             if (!started) {
                 document.getElementById('joinTournament')?.addEventListener("click", () => {

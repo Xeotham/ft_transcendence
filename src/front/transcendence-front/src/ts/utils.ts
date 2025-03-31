@@ -45,3 +45,14 @@ export interface score {
 	player1: number;
 	player2: number;
 }
+
+export interface    loadHtmlArg {
+	roomId?:        number;
+	started?:       boolean;
+	tourId?:        number;
+	roomLst?:       RoomInfo[];
+	tourLst?:       TournamentInfo[];
+	game?:          Game;
+}
+
+export type loadPongHtmlType = "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name" | "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game";

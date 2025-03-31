@@ -1,8 +1,7 @@
-import  { content, homePage } from "../main.ts";
-import  { Game, RoomInfo, TournamentInfo } from "../utils.ts";
-import  { joinSolo, joinMatchmaking, quit, PongRoom } from "./game.ts";
-import  { listRoomsSpectator } from "./spectate.ts";
-import  { Tournament, getTournamentName, listTournaments } from "./tournament.ts";
+import  { content } from "../main.ts";
+import  { Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg } from "../utils.ts";
+import  { PongRoom } from "./game.ts";
+import  { Tournament } from "./tournament.ts";
 
 class   gameInformation {
 	private room: PongRoom | null;
@@ -35,7 +34,7 @@ class   gameInformation {
 export const	gameInfo: gameInformation = new gameInformation();
 
 
-export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name") => {
+export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
 		case "idle":
 			return idleHtml();
@@ -49,6 +48,16 @@ export const loadPongHtml = (page: "idle" | "match-found" | "tournament-found" |
 			return confirmPage();
 		case "tournament-name":
 			return tournamentNameHtml();
+		case "spec-room-info":
+			return specRoomInfoHtml(arg?.roomId!);
+		case "tour-info":
+			return tourInfoHtml(arg?.tourId!, arg?.started!);
+		case "list-rooms":
+			return roomListHtml(arg?.roomLst!);
+		case "list-tournaments":
+			return tournamentListHtml(arg?.tourLst!);
+		case "draw-game":
+			return drawGame(arg?.game!);
 	}
 }
 
@@ -57,24 +66,15 @@ const   idleHtml = () => {
 		return ;
 	content.innerHTML = `
         <h1>Pong</h1>
-        <button id="home">Home Page</button>
-		<button id="join-game">Join a Game</button>		
-		<button id="join-solo-game">Create a solo Game</button>
-		<button id="create-tournament">Create a tournament</button>
-		<button id="join-tournament">Join a tournament</button>
-		<button id="spectate">Spectate a room</button>
-	`;
-}
-
-export const   idlePage = () => {
-	loadPongHtml("idle");
-
-	document.getElementById("home")?.addEventListener("click", () => homePage());
-	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
-	document.getElementById("join-solo-game")?.addEventListener("click", joinSolo);
-	document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
-	document.getElementById("join-tournament")?.addEventListener("click", listTournaments);
-	document.getElementById("spectate")?.addEventListener("click", listRoomsSpectator);
+        <nav>
+	        <a href="/">Home Page</a>
+			<a href="/pong/join-game">Join a Game</a>
+			<a href="/pong/solo-game">Create a solo Game</a>
+			<a href="/pong/create-tournament">Create a tournament</a>
+			<a href="/pong/list/tournaments">Join a tournament</a>
+			<a href="/pong/list/rooms-spectator">Spectate a room</a>
+		</nav>	
+`;
 }
 
 const   matchFoundHtml = () => {
@@ -83,34 +83,28 @@ const   matchFoundHtml = () => {
 
 	content.innerHTML= `
 		<p>Room found!</p>
-		<button id="quit-room">Quit Room</button>
+		<a href="/pong/quit-room">Quit Room</a>
 	`;
 }
 
-export const   matchFound = () => {
-	loadPongHtml("match-found");
-
-	document.getElementById("quit-room")?.addEventListener("click", () => quit("LEAVE"));
-}
-
-export const   specRoomInfoHtml = (roomId: number) => {
+const   specRoomInfoHtml = (roomId: number) => {
 	if (!content)
 		return ;
 
 	content.innerHTML = `
-			<button id="roomLst">Return to Room List</button>
+			<a href="pong/list/rooms-spectator">Return to Room List</a>
 			<h1>Room Info:</h1>
 			<h2>Room Number: ${roomId}</h2>
 			<button id="spectate">Spectate Room</button>
 			`
 }
 
-export const   tourInfoHtml = (tourId: number, started: boolean) => {
+const   tourInfoHtml = (tourId: number, started: boolean) => {
 	if (!content)
 		return ;
 
 	content.innerHTML = `
-			<button id="roomLst">Return to Tournament List</button>
+			<a href="/pong/list/tournaments">Return to Tournament List</a>
 			<h1>Tournament Info:</h1>
 			<h2>Tournament Number: ${tourId}</h2>
 		`
@@ -121,12 +115,12 @@ export const   tourInfoHtml = (tourId: number, started: boolean) => {
 			<button id="joinTournament">Join the tournament</button>`
 }
 
-export const roomListHtml = (rooms: RoomInfo[]) => {
+const roomListHtml = (rooms: RoomInfo[]) => {
 	if (!content)
 		return ;
 
 	let listHTML = `
-		<button id="back">Back</button>
+		<a href="/pong">Back</a>
 		<ul>`;
 
 	rooms.forEach((room: RoomInfo) => {
@@ -142,12 +136,12 @@ export const roomListHtml = (rooms: RoomInfo[]) => {
 	content.innerHTML = listHTML;
 }
 
-export const tournamentListHtml = (tournaments: TournamentInfo[]) => {
+const tournamentListHtml = (tournaments: TournamentInfo[]) => {
 	if (!content)
 		return ;
 
 	let listHTML = `
-		<button id="back">Back</button>
+		<a href="/pong">Back</a>
 		<ul>`;
 	tournaments.forEach((tournament: TournamentInfo) => {
 		listHTML += `
@@ -167,6 +161,7 @@ const   tournamentNameHtml = () => {
         return ;
 
     content.innerHTML = `
+		<a href="/pong">Back</a>
 		<p>Enter the name of the tournament</p>
 		<form>
 			<input type="text" id="tournamentName" placeholder="Tournament Name">
@@ -183,7 +178,7 @@ const   tournamentFoundHtml = () => {
 
     content.innerHTML= `
 		<p>Tournament found!</p>
-		<button id="quit-room">Quit Tournament</button>
+		<a href="/pong/quit-room">Quit Tournament</a>
 	`;
     if (gameInfo.getTournament()?.getIsOwner()) {
         content.innerHTML += `
@@ -200,7 +195,9 @@ const   drawBoard = () => {
 		return
 
 	content.innerHTML = `
-                <button id="quit">Quit</button>
+                <a href="/pong/quit-room">Quit</a>
+                <h1>Pong Game</h1>
+                <p id="score" >Score: 0 | 0</p>
 				<canvas id="gameCanvas" width="800" height="400"></canvas>
 			`;
 }
@@ -218,7 +215,7 @@ const   confirmPage = () => {
 	`;
 }
 
-export function drawGame(game: Game) {
+function drawGame(game: Game) {
 	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 

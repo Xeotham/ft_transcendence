@@ -30,19 +30,19 @@ fastify.register(pongRoutes, { prefix: '/api/pong' });
 
 
 // Register fastify-static to serve static files
-fastify.register(fastifyStatic, {
-	root: join(__dirname, '../../front/public'), // Path to the directory containing your static files
-	prefix: '/', // Serve files under the root URL
-	decorateReply: false,
-});
+// fastify.register(fastifyStatic, {
+// 	root: join(__dirname, '../../front/public'), // Path to the directory containing your static files
+// 	prefix: '/', // Serve files under the root URL
+// 	decorateReply: false,
+// });
 
 // TODO: Make it the rout to the SPA
-fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-	return reply.sendFile('index.html');
-});
+// fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+// 	return reply.sendFile('index.html');
+// });
 
 // Start the server
-fastify.listen({ port: parseInt(process.env.PORT!), host: "0.0.0.0" }, (err: Error | null, address: string) => {
+fastify.listen({ port: parseInt(process.env.BACK_PORT!), host: "0.0.0.0" }, (err: Error | null, address: string) => {
 	if (err) {
 		fastify.log.error(err);
 		process.exit(1);

@@ -16,13 +16,17 @@ services:
   front:
     build:
       context: front
+      args:
+        - ADDR=${ADDR}
+        - FRONT_PORT=${FRONT_PORT}
     container_name: front
     ports:
       - "5000:5000"
+    env_file: ".env"
     depends_on:
       - back
-    volumes:
-      - ./front/transcendence-front:/app
+#    volumes:
+#      - ./front/transcendence-front:/app
     networks:
       transcendence:
     restart: always

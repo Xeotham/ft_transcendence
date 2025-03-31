@@ -1,7 +1,10 @@
 import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
-import  { loadPongHtml, drawGame, idlePage, matchFound, gameInfo } from "./pong.ts";
+import  { loadPongHtml, gameInfo } from "./pong.ts";
 import  { tourMessageHandler } from "./tournament.ts";
+// @ts-ignore
+import  page from "page";
+
 
 export class PongRoom {
 	private roomNumber: number;
@@ -150,7 +153,7 @@ export const   joinMatchmaking = async () => {
 
 	gameInfo.setRoom(new PongRoom(socket));
 	gameInfo.getRoom()?.initSocket();
-	matchFound();
+	page.show("/pong/match-found");
 }
 
 export const   joinSolo = async () => {
@@ -166,15 +169,15 @@ export const   quit = (msg: string = "LEAVE", force: string = "") => {
 	console.log("Quiting room of type: " + matchType);
 	if (!matchType)
 		return ;
-	quitRoom(matchType, msg);
+	quitRoom(msg);
 	if (matchType === "TOURNAMENT")
-		quitTournament(matchType,msg);
+		quitTournament(msg);
 
 	if (matchType === "TOURNAMENT" || (matchType === "PONG" && gameInfo.getMatchType() !== "TOURNAMENT"))
-		idlePage(); // TODO : Change Idle to spectator list of tournaments round room
+		loadPongHtml("idle") // idlePage(); // TODO : Change Idle to spectator list of tournaments round room
 }
 
-const   quitRoom = (matchType: string, msg: string = "LEAVE") => {
+const   quitRoom = (msg: string = "LEAVE") => {
 	if (!gameInfo.getRoom())
 		return;
 
@@ -201,9 +204,10 @@ const   quitRoom = (matchType: string, msg: string = "LEAVE") => {
 		socket.close();
 	}
 	gameInfo.resetRoom();
+	page.show("/pong");
 }
 
-const quitTournament = (matchType: string, msg: string = "LEAVE") => {
+const quitTournament = (msg: string = "LEAVE") => {
 	const socket = gameInfo.getTournament()?.getSocket();
 	const tournamentId = gameInfo.getTournament()?.getId();
 	const tourPlacement = gameInfo.getTournament()?.getPlacement();
@@ -271,8 +275,8 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  gameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
-			loadPongHtml("board");
-			if (gameInfo.getRoom()?.getPlayer() === "SPEC")
+			page.show("/pong/game");
+			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.getElementById("quit")?.addEventListener("click", () => quit());
 			document.addEventListener("keydown", keyHandler);
@@ -296,17 +300,20 @@ const	gameMessageHandler = (res: responseFormat) => {
 			const   score: score = res.data;
 			gameInfo.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
+			if (document.getElementById("score"))
+				document.getElementById("score")!.innerText = `Player 1: ${score.player1} | Player 2: ${score.player2}`;
+			//  TODO : display score on screen
 			return ;
 		case "SPEC":
 			if (res.data >= 0)
 				gameInfo.getRoom()?.setSpecPlacement(res.data);
 			gameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
 			console.log("Starting Spectator mode at placement: " + gameInfo.getRoom()?.getSpecPlacement());
-			loadPongHtml("board");
+			page.show("/pong/game");
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		default:
-			gameInfo.getRoom()?.setGame(res.data);
-			drawGame(res.data);
+			gameInfo?.getRoom()?.setGame(res.data);
+			loadPongHtml("draw-game", { game: res.data });
 	}
 }
 
