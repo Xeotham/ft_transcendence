@@ -7,7 +7,7 @@ services:
       - "3000:3000"
 #    volumes:
 #      - transcendence:/app
-    env_file: ".env"
+    env_file: "../../transcendence_peerso/src/.env"
     networks:
       transcendence:
     restart: always
@@ -22,7 +22,7 @@ services:
     container_name: front
     ports:
       - "5000:5000"
-    env_file: ".env"
+    env_file: "../../transcendence_peerso/src/.env"
     depends_on:
       - back
 #    volumes:
