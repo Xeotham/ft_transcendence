@@ -114,6 +114,7 @@ export class Room {
 		// this.game?.addSpectator(socket);
 		console.log("Spectator added to room " + this.id + " at placement " + (this.spectators.length - 1));
 		socket.send(JSON.stringify({ type: "GAME", message: "SPEC", data: (this.spectators.length - 1), roomId: this.id }));
+		this.game?.sendScore();
 	}
 
 	removeSpectator(index: number, sendPlacementChange: boolean = true) {

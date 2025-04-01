@@ -26,8 +26,10 @@ export function isPlayerInRoom(socket: WebSocket): boolean {
 
 export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 
-	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
-		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
+	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
 
 	console.log("New Player looking to join room");
 	// Check existing rooms for an available spot
@@ -46,8 +48,10 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 };
 
 export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
-	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
-		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
+	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
 
 	console.log("New Player creating solo room");
 	const newRoom = new Room(idGenRoom.next().value, true);

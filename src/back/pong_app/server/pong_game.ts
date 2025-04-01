@@ -68,8 +68,12 @@ export class Game {
 				spectator?.send(JSON.stringify(data));
 	}
 
+	sendScore() {
+		this.sendData({ type: "GAME", data: this.score, message: "SCORE" }, true);
+	}
+
 	private async spawnBall(side: string | "P1" | "P2") {
-		this.sendData({ type: "GAME", data: this.score, message: "SCORE" });
+		this.sendScore();
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
@@ -152,10 +156,8 @@ export class Game {
 
 		this.paddleCollision("P1");
 		this.paddleCollision("P2");
-		if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= HEIGHT) {
-			this.ball.speed += BALL_ACCELERATION_PER_BOUNCE;
+		if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= HEIGHT)
 			this.ball.orientation = -this.ball.orientation;
-		}
 
 		this.ball.x += speed * Math.cos(this.ball.orientation);
 		this.ball.y += speed * Math.sin(this.ball.orientation);

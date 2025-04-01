@@ -29,8 +29,10 @@ export const createTournament = async (socket: WebSocket, req: FastifyRequest< {
 
 	console.log(tournamentName);
 
-	if (isPlayerInTournament(socket) || isPlayerInRoom(socket))
-		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
+	if (isPlayerInTournament(socket) || isPlayerInRoom(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
 
 	console.log("New Player creating tournament");
 	const newTour = new Tournament(idGenTour.next().value, socket);
@@ -45,8 +47,10 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequest< { Q
 	let 	tournament: Tournament | null = null;
 
 	// Check if player is already in a room
-	if (isPlayerInRoom(socket) || isPlayerInTournament(socket))
-		return socket.send(JSON.stringify({ type: "INFO", message: "You are already in a room" }));
+	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
 
 	console.log("New Player looking to join tournament");
 	if (id === -1) {

@@ -110,7 +110,6 @@ export function getRoomById(id: number): Room | undefined {
 	console.log("Room with id " + id + " not found");
 }
 
-
 export function getTournamentById(id: number): Tournament | undefined {
 	return Tournaments.find((tour: Tournament) => { return tour.getId() === id; });
 }
