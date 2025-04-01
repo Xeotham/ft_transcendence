@@ -1,17 +1,14 @@
-import  { content, address } from "../main.ts";
+import  { address } from "../main.ts";
 import  { gameInfo, loadPongHtml } from "./pong.ts";
 import  { PongRoom, messageHandler } from "./game.ts";
 
 // @ts-ignore
 import  page from "page";
+import { RoomInfo } from "../utils.ts";
 
-const getRoomInfo = async (event:  Event) => {
-	if (!content)
-		return ;
+export const getRoomInfo = (id: number) => {
 
-	const	roomId = (event.target as HTMLButtonElement).getAttribute('id');
-
-	fetch(`http://${address}:3000/api/pong/get_room_info?id=${roomId}`, {
+	fetch(`http://${address}:3000/api/pong/get_room_info?id=${id}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -23,12 +20,21 @@ const getRoomInfo = async (event:  Event) => {
 			}
 			return response.json();
 		})
-		.then(() => {
-			loadPongHtml("spec-room-info", { roomId: Number(roomId) });
+		.then((data: RoomInfo) => {
+			const   full = data.full;
+			const   isSolo = data.isSolo;
+
+			if (full === undefined || isSolo === undefined)
+				throw new Error("Room does not exist");
+			loadPongHtml("spec-room-info", { roomId: id });
 
 			document.getElementById('spectate')?.addEventListener("click", () => {
-				joinSpectate(Number(roomId))
+				joinSpectate(id);
 			});
+		})
+		.catch(error => {
+			alert(error);
+			page.show("/pong/list/rooms-spectator");
 		});
 }
 
@@ -47,18 +53,14 @@ export const listRoomsSpectator = () => {
 		})
 		.then(data => {
 			loadPongHtml("list-rooms", { roomLst: data });
-			document.getElementById("back")?.addEventListener("click", () => page.show("/pong"));
 			// Add event listeners to the buttons
-			document.querySelectorAll('.room-button').forEach(button => {
-				button.addEventListener('click', getRoomInfo);
-			});
 		})
 		.catch(error => {
 			console.error('There was a problem with the fetch operation:', error);
 		});
 }
 
-async function	joinSpectate(roomId: Number) {
+export async function	joinSpectate(roomId: Number) {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/addSpectatorToRoom?id=${roomId}`);
 
 	gameInfo.setRoom(new PongRoom(socket));

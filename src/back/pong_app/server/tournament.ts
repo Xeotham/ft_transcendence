@@ -26,6 +26,7 @@ export class Tournament {
 	private needShuffle:		boolean;
 	private round:				number;
 	private gameFinished:		number;
+	private name:               string;
 
 	toJSON() {
 		return {
@@ -33,7 +34,7 @@ export class Tournament {
 		};
 	}
 
-	constructor(id: number, player: WebSocket) {
+	constructor(id: number, player: WebSocket, name: string) {
 		this.id = id;
 		this.started = false;
 		this.rooms = [];
@@ -43,12 +44,15 @@ export class Tournament {
 		this.needShuffle = true;
 		this.round = 0;
 		this.gameFinished = 0;
+		this.name = name;
 	}
 
 	getId() { return this.id; }
 	hasStarted() { return this.started; }
 	getRooms() { return this.rooms; }
 	getPlayers() { return this.players; }
+	getName() { return this.name; }
+	getRound() { return this.round; }
 
 	getRoomById(id: number) {
 		for (let i = 0; i < this.rooms.length; i++) {
@@ -235,7 +239,7 @@ export class Tournament {
 			});
 			// TODO : Change players to name
 			// TODO : Special screen for the end of the tournament
-			this.sendToAll({type: "LEAVE", data: "TOURNAMENT"});
+			this.sendToAll({type: "LEAVE", data: "TOURNAMENT", winner: (winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody")});
 			deleteTournament(this.id);
 			return;
 		}

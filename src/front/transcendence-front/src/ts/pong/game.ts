@@ -1,7 +1,7 @@
 import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
 import  { address, content } from "../main.ts";
 import  { loadPongHtml, gameInfo } from "./pong.ts";
-import  { tourMessageHandler } from "./tournament.ts";
+import {specTournament, tourMessageHandler} from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
 
@@ -163,7 +163,7 @@ export const   joinSolo = async () => {
 	gameInfo.getRoom()?.initSocket();
 }
 
-export const   quit = (msg: string = "LEAVE", force: string = "") => {
+export const   quit = (msg: string = "LEAVE", force: string = "", winner: number | null = null) => {
 	const   matchType = force !== "" ? force : gameInfo.getMatchType();
 
 	console.log("Quiting room of type: " + matchType);
@@ -171,10 +171,12 @@ export const   quit = (msg: string = "LEAVE", force: string = "") => {
 		return ;
 	quitRoom(msg);
 	if (matchType === "TOURNAMENT")
-		quitTournament(msg);
+		quitTournament(msg, winner);
 
-	if (matchType === "TOURNAMENT" || (matchType === "PONG" && gameInfo.getMatchType() !== "TOURNAMENT"))
-		loadPongHtml("idle") // idlePage(); // TODO : Change Idle to spectator list of tournaments round room
+	if ((matchType === "PONG" && gameInfo.getMatchType() === "TOURNAMENT") && !winner) {
+		console.log("Hello ?");
+		specTournament(gameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
+	}
 }
 
 const   quitRoom = (msg: string = "LEAVE") => {
@@ -207,7 +209,7 @@ const   quitRoom = (msg: string = "LEAVE") => {
 	page.show("/pong");
 }
 
-const quitTournament = (msg: string = "LEAVE") => {
+const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 	const socket = gameInfo.getTournament()?.getSocket();
 	const tournamentId = gameInfo.getTournament()?.getId();
 	const tourPlacement = gameInfo.getTournament()?.getPlacement();
@@ -225,6 +227,9 @@ const quitTournament = (msg: string = "LEAVE") => {
 		socket.close();
 	}
 	gameInfo.resetTournament();
+	console.log("Leaving tournament");
+	if (winner)
+		loadPongHtml("tournament-end", { winner: winner });
 }
 
 export const   messageHandler = (event: MessageEvent)=> {
@@ -248,7 +253,7 @@ export const   messageHandler = (event: MessageEvent)=> {
 		case "CONFIRM":
 			return confirmGame();
 		case "LEAVE":
-			quit("LEAVE", res.data ? res.data : gameInfo.getMatchType());
+			quit("LEAVE", res.data ? res.data : gameInfo.getMatchType(), res.winner);
 			if (res.message === "QUEUE_AGAIN") {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
 				if (res.data === "PONG")
@@ -301,7 +306,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 			gameInfo.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
 			if (document.getElementById("score"))
-				document.getElementById("score")!.innerText = `Player 1: ${score.player1} | Player 2: ${score.player2}`;
+				document.getElementById("score")!.innerText = `Score: ${score.player1} | ${score.player2}`;
 			//  TODO : display score on screen
 			return ;
 		case "SPEC":

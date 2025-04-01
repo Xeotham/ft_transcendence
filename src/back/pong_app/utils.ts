@@ -46,8 +46,9 @@ export interface	RoomInfo {
 
 export interface	TournamentInfo {
 	id:			number;
-	name?:		string;
+	name:		string;
 	started:	boolean;
+	roomId?:     number;
 }
 
 export function* idGenerator() {

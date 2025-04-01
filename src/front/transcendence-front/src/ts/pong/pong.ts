@@ -51,13 +51,17 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 		case "spec-room-info":
 			return specRoomInfoHtml(arg?.roomId!);
 		case "tour-info":
-			return tourInfoHtml(arg?.tourId!, arg?.started!);
+			return tourInfoHtml(arg?.tourId!, arg?.started!, arg?.tourName!);
 		case "list-rooms":
 			return roomListHtml(arg?.roomLst!);
+		case "tour-rooms-list":
+			return tourRoomListHtml(arg?.roomLst!);
 		case "list-tournaments":
 			return tournamentListHtml(arg?.tourLst!);
 		case "draw-game":
 			return drawGame(arg?.game!);
+		case "tournament-end":
+			return tournamentEndPage(arg?.winner!);
 	}
 }
 
@@ -92,20 +96,21 @@ const   specRoomInfoHtml = (roomId: number) => {
 		return ;
 
 	content.innerHTML = `
-			<a href="pong/list/rooms-spectator">Return to Room List</a>
+			<a href="/pong/list/rooms-spectator">Return to Room List</a>
 			<h1>Room Info:</h1>
 			<h2>Room Number: ${roomId}</h2>
 			<button id="spectate">Spectate Room</button>
 			`
 }
 
-const   tourInfoHtml = (tourId: number, started: boolean) => {
+const   tourInfoHtml = (tourId: number, started: boolean, name: string) => {
 	if (!content)
 		return ;
 
 	content.innerHTML = `
 			<a href="/pong/list/tournaments">Return to Tournament List</a>
 			<h1>Tournament Info:</h1>
+			<h2>Tournament name: ${name}</h2>
 			<h2>Tournament Number: ${tourId}</h2>
 		`
 	content.innerHTML += started?
@@ -113,6 +118,27 @@ const   tourInfoHtml = (tourId: number, started: boolean) => {
 		`<p>The tournament hasn't started yet </p>
 			<p>Do you want to join ?</p>
 			<button id="joinTournament">Join the tournament</button>`
+}
+
+const   tourRoomListHtml = (rooms: RoomInfo[]) => {
+	if (!content)
+		return ;
+
+	let listHTML = `
+		<a href="/pong">Back</a>
+		<ul>`;
+
+	rooms.forEach((room: RoomInfo) => {
+		listHTML += `
+		  		<li>
+					<a href="/pong/tournament/room/${room.id}">
+					  Id: ${room.id} Full: ${room.full} Solo: ${room.isSolo}
+					</a>
+		  		</li>
+			`;
+	});
+	listHTML += '</ul>';
+	content.innerHTML = listHTML;
 }
 
 const roomListHtml = (rooms: RoomInfo[]) => {
@@ -126,9 +152,9 @@ const roomListHtml = (rooms: RoomInfo[]) => {
 	rooms.forEach((room: RoomInfo) => {
 		listHTML += `
 		  		<li>
-					<button class="room-button" id="${room.id}">
-						Room ID: ${room.id}, full: ${room.full}, solo: ${room.isSolo}
-					</button>
+					<a href="/pong/room/${room.id}">
+					  Id: ${room.id}
+					</a>
 		  		</li>
 			`;
 	});
@@ -146,9 +172,9 @@ const tournamentListHtml = (tournaments: TournamentInfo[]) => {
 	tournaments.forEach((tournament: TournamentInfo) => {
 		listHTML += `
 		  <li>
-			<button class="tournament-button" id="${tournament.id}">
-			  Tournament ID: ${tournament.id}, Started: ${tournament.started}
-			</button>
+			<a href="/pong/tournament/${tournament.id}">
+			  Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}
+			</a>
 		  </li>
 		`;
 	});
@@ -167,6 +193,17 @@ const   tournamentNameHtml = () => {
 			<input type="text" id="tournamentName" placeholder="Tournament Name">
 			<button id="submitTournamentName">Submit</button>
 		</form>
+	`
+}
+
+const   tournamentEndPage = (winner: number) => {
+	if (!content)
+		return ;
+
+	content.innerHTML = `
+	<a href="/">Home</a>
+	<h1>Tournament Over</h1>
+	<p>Winner: Player ${winner}</p>
 	`
 }
 
@@ -189,6 +226,7 @@ const   tournamentFoundHtml = () => {
     }
 }
 
+// TODO: Add spec tournament board
 
 const   drawBoard = () => {
 	if (!content)
