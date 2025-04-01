@@ -2,11 +2,11 @@
 import  page from 'page';
 
 // Define your routes
-import { loadPongHtml } from "./pong/pong.ts";
-import { homePage } from "./main.ts";
-import { joinMatchmaking, joinSolo, quit } from "./pong/game.ts";
-import { getTournamentName, listTournaments } from "./pong/tournament.ts";
-import { listRoomsSpectator } from "./pong/spectate.ts";
+import  { loadPongHtml } from "./pong/pong.ts";
+import  { homePage } from "./main.ts";
+import  { joinMatchmaking, joinSolo, quit } from "./pong/game.ts";
+import {getTournamentInfo, getTournamentName, getTourRoomInfo, listTournaments} from "./pong/tournament.ts";
+import {getRoomInfo, listRoomsSpectator} from "./pong/spectate.ts";
 
 // page.base(`http://${address}:5000`);
 
@@ -38,6 +38,31 @@ page("/pong/list/rooms-spectator", listRoomsSpectator);
 page("/pong/quit-room", () => quit("LEAVE"));
 page("/pong/game", () => loadPongHtml("board"));
 page("/pong/match-found", () => loadPongHtml("match-found"));
+// @ts-ignore
+page("/pong/tournament/:id", ({ params } ) => {
+	const   tournamentId = Number(params.id);
+
+	console.log("Type: " + typeof tournamentId + " Value: " + tournamentId);
+	getTournamentInfo(tournamentId);
+})
+
+// @ts-ignore
+page("/pong/room/:id", ({ params } ) => {
+	const   roomId = Number(params.id);
+
+	console.log("Type: " + typeof roomId + " Value: " + roomId);
+	getRoomInfo(roomId);
+})
+
+// @ts-ignore
+page("/pong/tournament/room/:id", ({ params } ) => {
+	const   roomId = Number(params.id);
+
+	console.log("Type: " + typeof roomId + " Value: " + roomId);
+	getTourRoomInfo(roomId);
+})
+
+
 
 page('*', () => {
 	console.log('404 Not Found');
