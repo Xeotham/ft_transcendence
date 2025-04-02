@@ -1,5 +1,14 @@
 import	{ FastifyInstance, FastifyRequest } from "fastify";
-import	{ joinMatchmaking, joinSolo, quitRoom, movePaddle, startConfirm, getRooms, getRoomInfo } from "./game-controllers";
+import {
+	joinMatchmaking,
+	joinSolo,
+	quitRoom,
+	movePaddle,
+	startConfirm,
+	getRooms,
+	getRoomInfo,
+	createPrivateRoom, joinPrivateRoom
+} from "./game-controllers";
 import {
 	startTournament,
 	createTournament,
@@ -31,4 +40,6 @@ export default async function pongRoutes(fastify: FastifyInstance) {
 	fastify.get("/get_room_info", getRoomInfo);
 	fastify.get("/get_tournament_round_rooms", getTournamentRoundRooms);
 	fastify.get("/get_tournament_room_info", getTourRoomInfo);
+	fastify.get('/createPrivateRoom', {websocket: true}, createPrivateRoom);
+	fastify.get('/joinPrivRoom', {websocket: true}, joinPrivateRoom);
 }

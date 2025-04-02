@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { Game } from "./pong_game";
 import { getTournamentById, responseFormat } from "../utils";
+import {Rooms} from "../api/game-controllers";
 
 // const { WebSocket } = require('ws');
 // const { Game } = require('./pong_game');
@@ -22,10 +23,10 @@ export class Room {
 	private	started:		boolean;
 	private isInTournament:	boolean;
 	private tourId:			number;
-	// private:	boolean; // TODO: Implement private rooms
-	// inviteCode:	string;
+	private privRoom:   	boolean; // TODO: Implement private rooms
+	private inviteCode: 	string | null;
 
-	constructor(id:	number, isSolo: boolean = false, isInTournament: boolean = false, tourId: number = -1) {
+	constructor(id:	number, isSolo: boolean = false, isInTournament: boolean = false, tourId: number = -1, privRoom: boolean = false) {
 		this.id = id;
 		this.P1 = null;
 		this.P2 = null;
@@ -38,6 +39,11 @@ export class Room {
 		this.started = false;
 		this.isInTournament = isInTournament;
 		this.tourId = tourId;
+		this.privRoom = privRoom;
+		if (privRoom)
+			this.inviteCode = this.generateInviteCode();
+		else
+			this.inviteCode = null;
 	}
 
 	getId() { return this.id; }
@@ -51,6 +57,8 @@ export class Room {
 	hasStarted() { return this.started; }
 	isOver() { return this.game ? this.getGame()!.isOver() : false; }
 	getIsInTournament() { return this.isInTournament; }
+	getInviteCode() { return this.inviteCode; }
+	getIsPrivate() { return this.privRoom; }
 
 	setP1(socket: WebSocket) { this.P1 = socket; }
 	setP2(socket: WebSocket) { this.P2 = socket; }
@@ -79,6 +87,7 @@ export class Room {
 		if (!this.full)
 			return ;
 		this.sendData({ type: "INFO", message: "Room is full, ready to start, awaiting confirmation" });
+		console.log("websockets: " + this.P1 + ", " + this.P2);
 		this.sendData({ type : "CONFIRM" });
 	}
 
@@ -134,5 +143,21 @@ export class Room {
 	removeAllSpectators() {
 		for (let i = this.spectators.length - 1; i >= 0; --i)
 			this.removeSpectator(i, false);
+	}
+
+	generateInviteCode(): string {
+		const   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const   length = 6;
+		let     result: string = '';
+		const   charactersLength = characters.length;
+
+		for (let i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+
+		if (Rooms.find((room) => { return room.getInviteCode() === result; })) {
+			return this.generateInviteCode();
+		}
+		return result;
 	}
 }

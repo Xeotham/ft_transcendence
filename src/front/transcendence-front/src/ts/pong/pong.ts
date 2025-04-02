@@ -1,5 +1,5 @@
 import  { content } from "../main.ts";
-import  { Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg } from "../utils.ts";
+import  { Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg } from "./utils.ts";
 import  { PongRoom } from "./game.ts";
 import  { Tournament } from "./tournament.ts";
 
@@ -62,6 +62,10 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return drawGame(arg?.game!);
 		case "tournament-end":
 			return tournamentEndPage(arg?.winner!);
+		case "priv-room-create":
+			return privRoomCreate(arg?.inviteCode!);
+		case "priv-room-code":
+			return privRoomCode();
 	}
 }
 
@@ -74,6 +78,8 @@ const   idleHtml = () => {
 	        <a href="/">Home Page</a>
 			<a href="/pong/join-game">Join a Game</a>
 			<a href="/pong/solo-game">Create a solo Game</a>
+			<a href="/pong/private-room">Create a Private Room</a>
+			<a href="/pong/join-private-room">Join a Private Room</a>
 			<a href="/pong/create-tournament">Create a tournament</a>
 			<a href="/pong/list/tournaments">Join a tournament</a>
 			<a href="/pong/list/rooms-spectator">Spectate a room</a>
@@ -141,6 +147,31 @@ const   tourRoomListHtml = (rooms: RoomInfo[]) => {
 	content.innerHTML = listHTML;
 }
 
+const   privRoomCreate = (inviteCode: string) => {
+	if (!content)
+		return ;
+
+	content.innerHTML = `
+	<a href="/pong/quit-room">Quit Room</a>
+	<h1>Private Room</h1>
+	<h2>Here is your Invite Code: ${inviteCode}</h2>
+	`
+}
+
+const   privRoomCode = () => {
+	if (!content)
+		return ;
+
+	content.innerHTML = `
+	<a href="/pong" >Back</a>
+	<h1>Please enter your invite code:</h1>
+	<form id="inviteForm">
+		<input type="text" id="inviteCode" placeholder="Invite Code">
+	</form>
+	<button id="submit">Submit</button>
+	`
+}
+
 const roomListHtml = (rooms: RoomInfo[]) => {
 	if (!content)
 		return ;
@@ -191,7 +222,7 @@ const   tournamentNameHtml = () => {
 		<p>Enter the name of the tournament</p>
 		<form>
 			<input type="text" id="tournamentName" placeholder="Tournament Name">
-			<button id="submitTournamentName">Submit</button>
+			<button id="submit">Submit</button>
 		</form>
 	`
 }
@@ -251,6 +282,7 @@ const   confirmPage = () => {
     <button id="confirm-game">Confirm Game</button>
     <p id="timer">Time remaining: 10s</p>
 	`;
+	console.log("LAAAAAAA");
 }
 
 function drawGame(game: Game) {

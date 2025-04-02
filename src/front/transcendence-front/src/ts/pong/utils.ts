@@ -7,6 +7,7 @@ export interface responseFormat {
 	tourId: number | null;
 	roomId: number | null;
 	winner: number | null;
+	inviteCode: string | null;
 }
 
 export interface Game {
@@ -57,6 +58,9 @@ export interface    loadHtmlArg {
 	game?:          Game;
 	tourName?:      string;
 	winner?:        number;
+	inviteCode?:    string;
 }
 
-export type loadPongHtmlType = "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name" | "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game" | "tournament-end" | "tour-rooms-list";
+export type loadPongHtmlType = "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name"
+	| "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game" | "tournament-end"
+	| "tour-rooms-list" | "priv-room-create" | "priv-room-code";

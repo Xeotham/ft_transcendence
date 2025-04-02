@@ -1,4 +1,4 @@
-import {responseFormat, RoomInfo, TournamentInfo} from "../utils";
+import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
 import { address } from "../main.ts";
 import { loadPongHtml, gameInfo } from "./pong.ts";
 import {quit, messageHandler, PongRoom} from "./game.ts";
@@ -12,6 +12,7 @@ export class   Tournament {
 	private tournamentName: string;
 	private tournamentOwner: boolean;
 	private socket: WebSocket | null;
+	private lostTournament: boolean;
 
 	constructor(socket: WebSocket | null, name: string, Owner: boolean = false) {
 		this.tournamentId = -1;
@@ -19,6 +20,7 @@ export class   Tournament {
 		this.tournamentName = name;
 		this.tournamentOwner = Owner;
 		this.socket = socket;
+		this.lostTournament = false;
 	}
 
 	// Getters
@@ -27,6 +29,7 @@ export class   Tournament {
 	getName() { return this.tournamentName; }
 	getIsOwner() { return this.tournamentOwner; }
 	getSocket() { return this.socket; }
+	getLostTournament() { return this.lostTournament; }
 
 	// Setters
 	setId(id: number) { this.tournamentId = id; }
@@ -34,6 +37,7 @@ export class   Tournament {
 	setName(name: string) { this.tournamentName = name; }
 	setOwner(owner: boolean) { this.tournamentOwner = owner; }
 	setSocket(socket: WebSocket) { this.socket = socket; }
+	setLostTournament(lostTournament: boolean) { this.lostTournament = lostTournament; }
 
 	// Methods
 	initSocket() {
@@ -62,7 +66,7 @@ export class   Tournament {
 	}
 }
 
-export const   tourMessageHandler = (res: responseFormat) => {
+export const   tourMessageHandler = async (res: responseFormat) => {
 	switch (res.message) {
 		case "OWNER":
 			gameInfo.getTournament()?.setOwner(true);
@@ -77,8 +81,12 @@ export const   tourMessageHandler = (res: responseFormat) => {
 			gameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
 			// loadPage("room-found");
 			return ;
+		case "SPECLST":
+			if (!gameInfo.getTournament()?.getLostTournament())
+				return ;
+			return await specTournament(gameInfo.getTournament()?.getId() as number);
 		case "CREATE":
-			// console.log("Creating a pong room for a tournament instance");
+			console.log("Creating a pong room for a tournament instance");
 			gameInfo.setRoom(new PongRoom(gameInfo?.getTournament()?.getSocket()!), false);
 			return ;
 		case "LEAVE":
@@ -198,7 +206,7 @@ const   tournamentFound = () => {
 	document.getElementById("quit-room")?.addEventListener("click", () => quit("Leaving room"));
 }
 
-export const    specTournament = (tournamentId: number) => {
+export const    specTournament = async (tournamentId: number) => {
 	fetch(`http://${address}:3000/api/pong/get_tournament_round_rooms?id=${tournamentId}`, {
 		method: "GET",
 		headers: {
@@ -213,6 +221,7 @@ export const    specTournament = (tournamentId: number) => {
 		})
 		.then((data: RoomInfo[])  => {
 			loadPongHtml("tour-rooms-list", { roomLst: data });
+			console.log("Testing this bullshit");
 		})
 		.catch(error => {
 			alert(error);

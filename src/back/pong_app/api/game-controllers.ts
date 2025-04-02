@@ -1,7 +1,16 @@
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from "ws";
 import { Room } from "../server/Room";
-import { requestBody, RoomInfo, idGenerator, quitPong, quitTournament, getRoomById, isPlayerInTournament } from "../utils";
+import {
+	requestBody,
+	RoomInfo,
+	idGenerator,
+	quitPong,
+	quitTournament,
+	getRoomById,
+	isPlayerInTournament,
+	getRoomByInviteCode
+} from "../utils";
 
 // const Fastify = require('fastify');
 // const { WebSocket } = require("ws");
@@ -24,6 +33,39 @@ export function isPlayerInRoom(socket: WebSocket): boolean {
 	return Rooms.find((room) => { return room.getP1() === socket || room.getP2() === socket; }) !== undefined;
 }
 
+export const    createPrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
+	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
+
+	const newRoom = new Room(idGenRoom.next().value, false, false, -1, true);
+
+	newRoom.addPlayer(socket);
+	Rooms.push(newRoom);
+	socket.send(JSON.stringify( { type: "GAME", message: "PRIVOWNER", inviteCode: newRoom.getInviteCode() }));
+}
+
+export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: {inviteCode: string}}>) => {
+	const   inviteCode = req.query.inviteCode;
+
+	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
+	const   room = getRoomByInviteCode(inviteCode);
+
+	if (!room) {
+		socket.send(JSON.stringify({type: "INFO", message: "Room not found"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
+	if (room.isFull()) {
+		socket.send(JSON.stringify({type: "INFO", message: "Room is full"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
+	room.addPlayer(socket);
+}
+
 export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
@@ -34,7 +76,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 	console.log("New Player looking to join room");
 	// Check existing rooms for an available spot
 	for (const room of Rooms) {
-		if (!room.isFull()) {
+		if (!room.isFull() && !room.getIsPrivate()) {
 			room.addPlayer(socket);
 			return ;
 		}
@@ -42,6 +84,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 
 	// If no available room is found, create a new one
 	const newRoom = new Room(idGenRoom.next().value);
+
 	newRoom.addPlayer(socket);
 	Rooms.push(newRoom);
 	return ;

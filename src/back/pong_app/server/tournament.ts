@@ -1,5 +1,5 @@
 import { deleteTournament } from "../api/tournament-controllers";
-import	{ idGenerator, requestBody } from "../utils";
+import {delay, idGenerator, requestBody} from "../utils";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
 import { Room } from "./Room";
@@ -199,7 +199,6 @@ export class Tournament {
 			this.shuffleTree();
 		this.started = true;
 
-
 		for (let i = 0; i < this.positions.length; ++i) {
 			const room = this.rooms[0][Math.floor(i / 2)];
 			this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in room " + room.getId() }));
@@ -216,7 +215,7 @@ export class Tournament {
 		}
 	}
 
-	nextRound(roomId: number) {
+	async nextRound(roomId: number) {
 		console.log("The game of room: " + roomId + " in tournament: " + this.id + " as ended");
 		++this.gameFinished;
 
@@ -244,6 +243,8 @@ export class Tournament {
 			return;
 		}
 
+		await delay(1000);
+
 		for (let i = 0; i < this.rooms[this.round].length; ++i) {
 			const	winner = this.rooms[this.round][i].getGame()?.getWinner();
 
@@ -251,9 +252,7 @@ export class Tournament {
 				console.log("No winner found for room " + this.rooms[this.round][i].getId());
 				continue ;
 			}
-			// console.log("Winner of room " + this.rooms[this.round][i].getId() + " is player number: " + winnerIndex);
 			winner.send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: this.rooms[this.round + 1][Math.floor(i / 2)].getId() }));
-			// console.log("IsWinner closed: " + (winner.readyState === WebSocket.CLOSED));
 			// Don't add player if already left the tournament, it will check later if a player is alone in a room
 			if (winner.readyState !== WebSocket.CLOSED)
 				this.rooms[this.round + 1][Math.floor(i / 2)].addPlayer(winner as WebSocket);
@@ -274,5 +273,6 @@ export class Tournament {
 				room.getGame()?.forfeit("P2");
 			}
 		}
+		this.sendToAll({type: "TOURNAMENT", message: "SPECLST"});
 	}
 }

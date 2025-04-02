@@ -4,7 +4,7 @@ import  { PongRoom, messageHandler } from "./game.ts";
 
 // @ts-ignore
 import  page from "page";
-import { RoomInfo } from "../utils.ts";
+import { RoomInfo } from "./utils.ts";
 
 export const getRoomInfo = (id: number) => {
 

@@ -1,4 +1,4 @@
-import  { Game, score, buttons, intervals, responseFormat } from "../utils.ts";
+import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
 import  { address, content } from "../main.ts";
 import  { loadPongHtml, gameInfo } from "./pong.ts";
 import {specTournament, tourMessageHandler} from "./tournament.ts";
@@ -148,6 +148,25 @@ export class PongRoom {
 	}
 }
 
+export const    createPrivateRoom = () => {
+	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createPrivateRoom`);
+
+	gameInfo.setRoom(new PongRoom(socket));
+	gameInfo.getRoom()?.initSocket();
+}
+
+export const    joinPrivRoom = () => {
+	loadPongHtml("priv-room-code");
+
+	document.getElementById("submit")?.addEventListener("click", () => {
+		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
+		const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinPrivRoom?inviteCode=${inviteCode}`);
+
+		gameInfo.setRoom(new PongRoom(socket));
+		gameInfo.getRoom()?.initSocket();
+	});
+}
+
 export const   joinMatchmaking = async () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinMatchmaking`);
 
@@ -174,7 +193,6 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 		quitTournament(msg, winner);
 
 	if ((matchType === "PONG" && gameInfo.getMatchType() === "TOURNAMENT") && !winner) {
-		console.log("Hello ?");
 		specTournament(gameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
 	}
 }
@@ -300,6 +318,8 @@ const	gameMessageHandler = (res: responseFormat) => {
 			}
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
+			if (gameInfo.getMatchType() === "TOURNAMENT" && res.data !== gameInfo.getRoom()?.getPlayer())
+				gameInfo.getTournament()?.setLostTournament(true);
 			return quit("LEAVE", "PONG");
 		case "SCORE":
 			const   score: score = res.data;
@@ -309,6 +329,9 @@ const	gameMessageHandler = (res: responseFormat) => {
 				document.getElementById("score")!.innerText = `Score: ${score.player1} | ${score.player2}`;
 			//  TODO : display score on screen
 			return ;
+		case "PRIVOWNER":
+			console.log("Invite code: " + res.inviteCode);
+			return loadPongHtml("priv-room-create", { inviteCode: res.inviteCode!});
 		case "SPEC":
 			if (res.data >= 0)
 				gameInfo.getRoom()?.setSpecPlacement(res.data);
@@ -371,9 +394,12 @@ export const keyHandler = (event: KeyboardEvent) => {
 }
 
 const   confirmGame = () => {
-	loadPongHtml("confirm")
+	loadPongHtml("confirm");
+
+	console.log("%cICIIIIIIIIIIIIIIIIIIIIIIIIIIII", "color: red");
 
 	let remainingTime = 10;
+	gameInfo.getRoom()?.clearIntervals();
 	// console.log("Room? : " + gameInfo.getRoom());
 	gameInfo.getRoom()?.setQueueInterval(setInterval(() => {
 		remainingTime--;

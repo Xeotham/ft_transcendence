@@ -97,6 +97,12 @@ export function quitPong(request: FastifyRequest<{ Body: requestBody }>) {
 	Rooms.splice(Rooms.indexOf(room), 1);
 }
 
+export const    getRoomByInviteCode = (inviteCode: string): Room | undefined => {
+	const room = Rooms.find((room: Room) => { return room.getInviteCode() === inviteCode; });
+	if (!room)
+		return undefined;
+	return room;
+}
 
 export function getRoomById(id: number): Room | undefined {
 
