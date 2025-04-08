@@ -20,6 +20,7 @@ export interface	RoomInfo {
 	id:		number;
 	full:	boolean;
 	isSolo:	boolean;
+	privRoom:	boolean;
 }
 
 export interface	TournamentInfo {
