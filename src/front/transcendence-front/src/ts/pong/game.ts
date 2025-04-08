@@ -1,9 +1,11 @@
 import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
 import  { address, content } from "../main.ts";
-import  { loadPongHtml, gameInfo } from "./pong.ts";
+import  { loadPongPage, gameInfo } from "./pong.ts";
 import {specTournament, tourMessageHandler} from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
+// @ts-ignore
+import { loadPongHtml } from "./htmlPage.ts";
 
 
 export class PongRoom {
@@ -156,7 +158,8 @@ export const    createPrivateRoom = () => {
 }
 
 export const    joinPrivRoom = () => {
-	loadPongHtml("priv-room-code");
+	loadPongPage("priv-room-code");
+
 
 	document.getElementById("submit")?.addEventListener("click", () => {
 		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
@@ -172,7 +175,7 @@ export const   joinMatchmaking = async () => {
 
 	gameInfo.setRoom(new PongRoom(socket));
 	gameInfo.getRoom()?.initSocket();
-	page.show("/pong/match-found");
+	loadPongPage("match-found");
 }
 
 export const   joinSolo = async () => {
@@ -247,7 +250,7 @@ const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 	gameInfo.resetTournament();
 	console.log("Leaving tournament");
 	if (winner)
-		loadPongHtml("tournament-end", { winner: winner });
+		loadPongPage("tournament-end", { winner: winner });
 }
 
 export const   messageHandler = (event: MessageEvent)=> {
@@ -298,7 +301,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  gameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
-			page.show("/pong/game");
+			loadPongPage("board");
 			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.getElementById("quit")?.addEventListener("click", () => quit());
@@ -331,17 +334,17 @@ const	gameMessageHandler = (res: responseFormat) => {
 			return ;
 		case "PRIVOWNER":
 			console.log("Invite code: " + res.inviteCode);
-			return loadPongHtml("priv-room-create", { inviteCode: res.inviteCode!});
+			return loadPongPage("priv-room-create", { inviteCode: res.inviteCode!});
 		case "SPEC":
 			if (res.data >= 0)
 				gameInfo.getRoom()?.setSpecPlacement(res.data);
 			gameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
 			console.log("Starting Spectator mode at placement: " + gameInfo.getRoom()?.getSpecPlacement());
-			page.show("/pong/game");
+			loadPongPage("board");
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		default:
 			gameInfo?.getRoom()?.setGame(res.data);
-			loadPongHtml("draw-game", { game: res.data });
+			loadPongPage("draw-game", { game: res.data });
 	}
 }
 
@@ -394,7 +397,7 @@ export const keyHandler = (event: KeyboardEvent) => {
 }
 
 const   confirmGame = () => {
-	loadPongHtml("confirm");
+	loadPongPage("confirm");
 
 	console.log("%cICIIIIIIIIIIIIIIIIIIIIIIIIIIII", "color: red");
 
@@ -422,3 +425,11 @@ const   confirmGame = () => {
 		})
 	});
 }
+
+export const    createPrivRoom = () => {
+	loadPongHtml("priv-room-create");
+	document.getElementById("quit")?.addEventListener("click", () => {
+		quit("LEAVE");
+	})
+}
+

@@ -142,7 +142,7 @@ export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>,
 
 export const	getRooms = async (request: FastifyRequest, reply: FastifyReply) => {
 	const	RoomsLst: RoomInfo[] = [];
-	Rooms.forEach((room) => {RoomsLst.push({ id: room.getId(), full: room.isFull(), isSolo: room.getIsSolo() });});
+	Rooms.forEach((room) => {RoomsLst.push({ id: room.getId(), full: room.isFull(), isSolo: room.getIsSolo(), privRoom: room.getIsPrivate() });});
 	return reply.send(RoomsLst);
 }
 
@@ -151,6 +151,6 @@ export const	getRoomInfo = async (request: FastifyRequest<{ Querystring: RoomInf
 	const Room: Room | undefined = Rooms.find((room) => { return room.getId() === id});
 	if (!Room)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	const RoomInfo: RoomInfo = { id: Room.getId(), full: Room.isFull(), isSolo: Room.getIsSolo() };
+	const RoomInfo: RoomInfo = { id: Room.getId(), full: Room.isFull(), isSolo: Room.getIsSolo(), privRoom: Room.getIsPrivate() };
 	return reply.send(RoomInfo);
 }

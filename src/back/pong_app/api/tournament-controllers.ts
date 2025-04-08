@@ -123,7 +123,7 @@ export const    getTournamentRoundRooms = async (request: FastifyRequest< { Quer
 		return reply.send(JSON.stringify({type: "ERROR", message: "Tournament not found"}));
 	const   roundRooms: RoomInfo[] = [];
 	const   round: Room[] = Tournament.getRooms()[Tournament.getRound()];
-	round.forEach((room) => {roundRooms.push({ id: room.getId(), full: room.isFull(), isSolo: room.getIsSolo() });});
+	round.forEach((room) => {roundRooms.push({ id: room.getId(), full: room.isFull(), isSolo: room.getIsSolo(), privRoom: false });});
 	return reply.send(roundRooms);
 }
 
@@ -137,7 +137,7 @@ export const	getTourRoomInfo = async (request: FastifyRequest<{ Querystring: Tou
 	const   Room: Room | undefined = Tournament?.getRoomById(roomId);
 	if (!Room)
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	const RoomInfo: RoomInfo = { id: Room.getId(), full: Room.isFull(), isSolo: Room.getIsSolo() };
+	const RoomInfo: RoomInfo = { id: Room.getId(), full: Room.isFull(), isSolo: Room.getIsSolo(), privRoom: false };
 	return reply.send(RoomInfo);
 }
 

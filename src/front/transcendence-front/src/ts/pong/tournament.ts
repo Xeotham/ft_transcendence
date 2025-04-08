@@ -1,6 +1,6 @@
 import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
 import { address } from "../main.ts";
-import { loadPongHtml, gameInfo } from "./pong.ts";
+import { loadPongPage, gameInfo } from "./pong.ts";
 import {quit, messageHandler, PongRoom} from "./game.ts";
 // @ts-ignore
 import  page from "page";
@@ -96,9 +96,9 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 }
 
 export const   getTournamentName = async () => {
-	loadPongHtml("tournament-name");
+	loadPongPage("tournament-name");
 
-	document.getElementById("submitTournamentName")?.addEventListener("click", () => {
+	document.getElementById("submit")?.addEventListener("click", () => {
         const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
         createTournament(name);
     });
@@ -126,7 +126,7 @@ export const    listTournaments = () => {
             return response.json();
         })
         .then(data => {
-			loadPongHtml("list-tournaments", { tourLst: data })
+			loadPongPage("list-tournaments", { tourLst: data })
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -155,7 +155,7 @@ export const getTournamentInfo = (id: number) => {
 			if (tournamentName === undefined || started === undefined)
 				throw new Error("Tournament does not exist");
 			console.log("started: " + started + ", name: " + tournamentName);
-			loadPongHtml("tour-info", { tourId: id, started: started, tourName: tournamentName });
+			loadPongPage("tour-info", { tourId: id, started: started, tourName: tournamentName });
             if (!started) {
                 document.getElementById('joinTournament')?.addEventListener("click", () => {
                     joinTournament(id);
@@ -197,7 +197,7 @@ const   startTournament = () => {
 }
 
 const   tournamentFound = () => {
-	loadPongHtml("tournament-found");
+	loadPongPage("tournament-found");
 
 	if (gameInfo.getTournament()?.getIsOwner()) {
 		document.getElementById("start-tournament")?.addEventListener("click", startTournament);
@@ -220,7 +220,7 @@ export const    specTournament = async (tournamentId: number) => {
 			return response.json();
 		})
 		.then((data: RoomInfo[])  => {
-			loadPongHtml("tour-rooms-list", { roomLst: data });
+			loadPongPage("tour-rooms-list", { roomLst: data });
 			console.log("Testing this bullshit");
 		})
 		.catch(error => {
@@ -250,7 +250,7 @@ export const getTourRoomInfo = (roomId: number) => {
 
 			if (full === undefined || isSolo === undefined)
 				throw new Error("Room does not exist");
-			loadPongHtml("spec-room-info", { roomId: roomId });
+			loadPongPage("spec-room-info", { roomId: roomId });
 
 			document.getElementById('spectate')?.addEventListener("click", () => {
 				joinSpectate(roomId);

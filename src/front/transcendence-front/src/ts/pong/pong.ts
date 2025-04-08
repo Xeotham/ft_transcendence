@@ -1,7 +1,10 @@
-import  { content } from "../main.ts";
 import  { Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg } from "./utils.ts";
-import  { PongRoom } from "./game.ts";
-import  { Tournament } from "./tournament.ts";
+import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, PongRoom, quit} from "./game.ts";
+import {getTournamentName, Tournament} from "./tournament.ts";
+import  { loadPongHtml } from "./htmlPage.ts";
+
+// @ts-ignore
+import  page from "page"
 
 class   gameInformation {
 	private room: PongRoom | null;
@@ -34,30 +37,30 @@ class   gameInformation {
 export const	gameInfo: gameInformation = new gameInformation();
 
 
-export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
+export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
 		case "idle":
-			return idleHtml();
+			return idlePage();
 		case "match-found":
-			return matchFoundHtml();
+			return matchFoundPage();
 		case "tournament-found":
-			return tournamentFoundHtml();
+			return tournamentFoundPage();
 		case "board":
 			return drawBoard();
 		case "confirm":
 			return confirmPage();
 		case "tournament-name":
-			return tournamentNameHtml();
+			return tournamentNamePage();
 		case "spec-room-info":
-			return specRoomInfoHtml(arg?.roomId!);
+			return specRoomInfoPage(arg?.roomId!);
 		case "tour-info":
-			return tourInfoHtml(arg?.tourId!, arg?.started!, arg?.tourName!);
+			return tourInfoPage(arg?.tourId!, arg?.started!, arg?.tourName!);
 		case "list-rooms":
-			return roomListHtml(arg?.roomLst!);
+			return roomListPage(arg?.roomLst!);
 		case "tour-rooms-list":
-			return tourRoomListHtml(arg?.roomLst!);
+			return tourRoomListPage(arg?.roomLst!);
 		case "list-tournaments":
-			return tournamentListHtml(arg?.tourLst!);
+			return tournamentListPage(arg?.tourLst!);
 		case "draw-game":
 			return drawGame(arg?.game!);
 		case "tournament-end":
@@ -69,220 +72,93 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 	}
 }
 
-const   idleHtml = () => {
-	if (!content)
-		return ;
-	content.innerHTML = `
-        <h1>Pong</h1>
-        <nav>
-	        <a href="/">Home Page</a>
-			<a href="/pong/join-game">Join a Game</a>
-			<a href="/pong/solo-game">Create a solo Game</a>
-			<a href="/pong/private-room">Create a Private Room</a>
-			<a href="/pong/join-private-room">Join a Private Room</a>
-			<a href="/pong/create-tournament">Create a tournament</a>
-			<a href="/pong/list/tournaments">Join a tournament</a>
-			<a href="/pong/list/rooms-spectator">Spectate a room</a>
-		</nav>	
-`;
+const   idlePage = () => {
+	loadPongHtml("idle");
+
+	document.getElementById("home")?.addEventListener("click", () => { page.show("/home"); });
+	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
+	document.getElementById("solo-game")?.addEventListener("click", joinSolo);
+	document.getElementById("private-room")?.addEventListener("click", createPrivateRoom);
+	document.getElementById("join-priv-room")?.addEventListener("click", joinPrivRoom);
+	document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
+	document.getElementById("tournaments")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
+	document.getElementById("rooms-spectator")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
 }
 
-const   matchFoundHtml = () => {
-	if (!content)
-		return ;
+const   matchFoundPage = () => {
+	loadPongHtml("match-found");
 
-	content.innerHTML= `
-		<p>Room found!</p>
-		<a href="/pong/quit-room">Quit Room</a>
-	`;
+	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
 }
 
-const   specRoomInfoHtml = (roomId: number) => {
-	if (!content)
-		return ;
-
-	content.innerHTML = `
-			<a href="/pong/list/rooms-spectator">Return to Room List</a>
-			<h1>Room Info:</h1>
-			<h2>Room Number: ${roomId}</h2>
-			<button id="spectate">Spectate Room</button>
-			`
+const   specRoomInfoPage = (roomId: number) => {
+	loadPongHtml("spec-room-info", { roomId: roomId });
+	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/list/rooms-spectator"));
 }
 
-const   tourInfoHtml = (tourId: number, started: boolean, name: string) => {
-	if (!content)
-		return ;
+const   tourInfoPage = (tourId: number, started: boolean, name: string) => {
+	loadPongHtml("tour-info", { tourId: tourId, started: started, tourName: name });
 
-	content.innerHTML = `
-			<a href="/pong/list/tournaments">Return to Tournament List</a>
-			<h1>Tournament Info:</h1>
-			<h2>Tournament name: ${name}</h2>
-			<h2>Tournament Number: ${tourId}</h2>
-		`
-	content.innerHTML += started?
-		`<p>The tournament as already started.</p>`:
-		`<p>The tournament hasn't started yet </p>
-			<p>Do you want to join ?</p>
-			<button id="joinTournament">Join the tournament</button>`
+	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/list/tournament-info"));
 }
 
-const   tourRoomListHtml = (rooms: RoomInfo[]) => {
-	if (!content)
-		return ;
-
-	let listHTML = `
-		<a href="/pong">Back</a>
-		<ul>`;
-
-	rooms.forEach((room: RoomInfo) => {
-		listHTML += `
-		  		<li>
-					<a href="/pong/tournament/room/${room.id}">
-					  Id: ${room.id} Full: ${room.full} Solo: ${room.isSolo}
-					</a>
-		  		</li>
-			`;
-	});
-	listHTML += '</ul>';
-	content.innerHTML = listHTML;
+const   tourRoomListPage = (rooms: RoomInfo[]) => {
+	loadPongHtml("tour-rooms-list", { roomLst: rooms });
 }
 
 const   privRoomCreate = (inviteCode: string) => {
-	if (!content)
-		return ;
+	loadPongHtml("priv-room-create", { inviteCode: inviteCode });
 
-	content.innerHTML = `
-	<a href="/pong/quit-room">Quit Room</a>
-	<h1>Private Room</h1>
-	<h2>Here is your Invite Code: ${inviteCode}</h2>
-	`
+	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
 }
 
 const   privRoomCode = () => {
-	if (!content)
-		return ;
+	loadPongHtml("priv-room-code");
 
-	content.innerHTML = `
-	<a href="/pong" >Back</a>
-	<h1>Please enter your invite code:</h1>
-	<form id="inviteForm">
-		<input type="text" id="inviteCode" placeholder="Invite Code">
-	</form>
-	<button id="submit">Submit</button>
-	`
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
-const roomListHtml = (rooms: RoomInfo[]) => {
-	if (!content)
-		return ;
+const roomListPage = (rooms: RoomInfo[]) => {
+	loadPongHtml("list-rooms", { roomLst: rooms });
 
-	let listHTML = `
-		<a href="/pong">Back</a>
-		<ul>`;
-
-	rooms.forEach((room: RoomInfo) => {
-		listHTML += `
-		  		<li>
-					<a href="/pong/room/${room.id}">
-					  Id: ${room.id}
-					</a>
-		  		</li>
-			`;
-	});
-	listHTML += '</ul>';
-	content.innerHTML = listHTML;
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
-const tournamentListHtml = (tournaments: TournamentInfo[]) => {
-	if (!content)
-		return ;
+const tournamentListPage = (tournaments: TournamentInfo[]) => {
+	loadPongHtml("list-tournaments", { tourLst: tournaments });
 
-	let listHTML = `
-		<a href="/pong">Back</a>
-		<ul>`;
-	tournaments.forEach((tournament: TournamentInfo) => {
-		listHTML += `
-		  <li>
-			<a href="/pong/tournament/${tournament.id}">
-			  Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}
-			</a>
-		  </li>
-		`;
-	});
-	listHTML += '</ul>';
-	content.innerHTML = listHTML;
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
-const   tournamentNameHtml = () => {
-	if (!content)
-        return ;
-
-    content.innerHTML = `
-		<a href="/pong">Back</a>
-		<p>Enter the name of the tournament</p>
-		<form>
-			<input type="text" id="tournamentName" placeholder="Tournament Name">
-			<button id="submit">Submit</button>
-		</form>
-	`
+const   tournamentNamePage = () => {
+	loadPongHtml("tournament-name");
+	document.getElementById("back")?.addEventListener("click", () => {page.show("/pong");});
 }
 
 const   tournamentEndPage = (winner: number) => {
-	if (!content)
-		return ;
+	loadPongHtml("tournament-end", { winner: winner });
 
-	content.innerHTML = `
-	<a href="/">Home</a>
-	<h1>Tournament Over</h1>
-	<p>Winner: Player ${winner}</p>
-	`
+	document.getElementById("home")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
-const   tournamentFoundHtml = () => {
-    if (!content)
-        return ;
+const   tournamentFoundPage = () => {
+    loadPongHtml("tournament-found");
+
 	if (!gameInfo.getTournament())
 		return ;
 
-    content.innerHTML= `
-		<p>Tournament found!</p>
-		<a href="/pong/quit-room">Quit Tournament</a>
-	`;
-    if (gameInfo.getTournament()?.getIsOwner()) {
-        content.innerHTML += `
-			<button id="start-tournament">Start Tournament</button>
-			<button id="shuffle-tree">Shuffle Tree</button>
-		`;
-
-    }
+	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
 }
 
 // TODO: Add spec tournament board
 
 const   drawBoard = () => {
-	if (!content)
-		return
-
-	content.innerHTML = `
-                <a href="/pong/quit-room">Quit</a>
-                <h1>Pong Game</h1>
-                <p id="score" >Score: 0 | 0</p>
-				<canvas id="gameCanvas" width="800" height="400"></canvas>
-			`;
+	loadPongHtml("board");
+	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
 }
 
 const   confirmPage = () => {
-	if (!content)
-		return ;
-
-	// TODO: Add quit button
-
-	content.innerHTML = `
-    <p>Game Found, Confirm?</p>
-    <button id="confirm-game">Confirm Game</button>
-    <p id="timer">Time remaining: 10s</p>
-	`;
-	console.log("LAAAAAAA");
+	loadPongHtml("confirm");
 }
 
 function drawGame(game: Game) {
