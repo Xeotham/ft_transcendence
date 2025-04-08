@@ -1,9 +1,8 @@
-import  { address } from "../main.ts";
-import  { gameInfo, loadPongHtml } from "./pong.ts";
-import  { PongRoom, messageHandler } from "./game.ts";
-
 // @ts-ignore
 import  page from "page";
+import  { address } from "../main.ts";
+import  { gameInfo, loadPongPage } from "./pong.ts";
+import  { PongRoom, messageHandler } from "./game.ts";
 import { RoomInfo } from "./utils.ts";
 
 export const getRoomInfo = (id: number) => {
@@ -26,7 +25,7 @@ export const getRoomInfo = (id: number) => {
 
 			if (full === undefined || isSolo === undefined)
 				throw new Error("Room does not exist");
-			loadPongHtml("spec-room-info", { roomId: id });
+			loadPongPage("spec-room-info", { roomId: id });
 
 			document.getElementById('spectate')?.addEventListener("click", () => {
 				joinSpectate(id);
@@ -52,7 +51,7 @@ export const listRoomsSpectator = () => {
 			return response.json();
 		})
 		.then(data => {
-			loadPongHtml("list-rooms", { roomLst: data });
+			loadPongPage("list-rooms", { roomLst: data });
 			// Add event listeners to the buttons
 		})
 		.catch(error => {

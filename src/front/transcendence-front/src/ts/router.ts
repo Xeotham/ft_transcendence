@@ -2,9 +2,9 @@
 import  page from 'page';
 
 // Define your routes
-import  { loadPongHtml } from "./pong/pong.ts";
+import  { loadPongPage } from "./pong/pong.ts";
 import  { homePage } from "./main.ts";
-import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, quit} from "./pong/game.ts";
+import  { createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, quit } from "./pong/game.ts";
 import  { getTournamentInfo, getTournamentName, getTourRoomInfo, listTournaments } from "./pong/tournament.ts";
 import  { getRoomInfo, listRoomsSpectator } from "./pong/spectate.ts";
 
@@ -12,7 +12,7 @@ import  { getRoomInfo, listRoomsSpectator } from "./pong/spectate.ts";
 
 page('/', homePage);
 
-page('/pong', () => loadPongHtml("idle"));
+page('/pong', () => loadPongPage("idle"));
 
 page('/tetris', () => {
 	alert("Page under construction");
@@ -26,27 +26,18 @@ page('/register', () => {
 	alert("Page under construction");
 });
 
+// TODO: Change all the route to return to a more SPA work (Matchmaking, solo, private room, tournament)
+
 // Pong routes
-page("/pong/join-game", joinMatchmaking);
-page("/pong/solo-game", () => {
-	loadPongHtml("match-found");
-	joinSolo()
-});
-page("/pong/private-room", createPrivateRoom);
-page("/pong/join-private-room", joinPrivRoom);
-page("/pong/create-tournament", getTournamentName);
 page("/pong/list/tournaments", listTournaments);
 page("/pong/list/rooms-spectator", listRoomsSpectator);
-page("/pong/quit-room", () => quit("LEAVE"));
-page("/pong/game", () => loadPongHtml("board"));
-page("/pong/match-found", () => loadPongHtml("match-found"));
 // @ts-ignore
 page("/pong/tournament/:id", ({ params } ) => {
 	const   tournamentId = Number(params.id);
 
 	console.log("Type: " + typeof tournamentId + " Value: " + tournamentId);
 	getTournamentInfo(tournamentId);
-})
+}) // TODO: Modify this route to return to pong idle and join tournament if possible
 
 // @ts-ignore
 page("/pong/room/:id", ({ params } ) => {
