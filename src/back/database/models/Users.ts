@@ -18,10 +18,6 @@ export const createUser = (user: User): number => {
         VALUES (?, ?, ?)\
         ');
     stmt.run(username, password, avatar);
-    /*const id = db.prepare('\
-        SELECT last_insert_rowid()\
-        ');
-    stmt.get(id) as number;*/
     return 1;
 };
 
@@ -43,7 +39,7 @@ export const logUserById = (user : User): void => {
         WHERE id = ?\
         ');
     stmt.run(id);
-}
+};
 
 export const logOutUserById = (user : User): void => {
     const {id} = user;
@@ -53,7 +49,7 @@ export const logOutUserById = (user : User): void => {
         WHERE id = ?\
         ');
     stmt.run(id);
-}
+};
 
 export const getUserByUsername = (username: string): User | undefined => {
     const stmt = db.prepare('\
