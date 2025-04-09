@@ -189,26 +189,23 @@ export const    deleteFriend = async (request: FastifyRequest, reply: FastifyRep
     {
         const   user1_id = id;
         const   user2_id = user.id;
-        const   friend = 0;
-        const   blocked = 0;
-        const   blocker_id = 0;
-        let     friendship_status;
+        const   friend_u1 = 0;
+        const   friend_u2 = 0;
+        const   block_u1 = 0;
+        const   block_u2 = 0;
     
         const status = checkFriendshipStatus( user1_id, user2_id );
-        switch (status)
+
+        if (status == 0 || status == 4)
+            return  reply.status(301).send({ message: 'User is not a contact' });
+        else
         {
-            case 0:
-                return  reply.status(301).send({ message: 'User is not a contact' });
-
-            case 1:
-                friendship_status = 'none';
-                modifyContact({ user1_id, user2_id, friend, blocked, blocker_id, friendship_status });
-                return  reply.status(201).send({ message: 'Friend deleted' });
-            case 1:
-                friendship_status = 'none';
-                modifyContact({ user1_id, user2_id, friend, blocked, blocker_id, friendship_status });
-                return  reply.status(201).send({ message: 'Friend deleted' });
-
+            const pos = checkPosContact(user1_id, user2_id);
+            if (pos == 1)
+                modifyContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+            else if (pos == 2)
+                modifyContact({ user2_id, user1_id, friend_u2, friend_u1, block_u1, block_u2 });
+            return  reply.status(201).send({ message: 'Friend deleted' });
         }
     }
 }
@@ -226,16 +223,33 @@ export const    blockContact = async (request: FastifyRequest, reply: FastifyRep
     {
         const   user1_id = id;
         const   user2_id = user.id;
-        const   friend = 0;
-        const   blocked = 1;
-        const   exist = getUserContactById(user1_id);
-        
-        // if (exist)
-        //     modifyContact({ user1_id, user2_id, friend, blocked });
-        // else
-        //     createContact({ user1_id, user2_id, friend, blocked });
+        const   friend_u1 = 0;
+        const   friend_u2 = 0;
+        const   block_u1 = 1;
+        let     block_u2 = 0;
 
-        return  reply.status(201).send({ message: 'Contact  blocked' });
+        const block_status = checkBlockStatus(user1_id, user2_id)
+        if (block_status == 0 || block_status == 3)
+            return  reply.status(301).send({ message: 'Contact is already blocked' });
+
+        let pos;
+        const friend_status = checkFriendshipStatus( user1_id, user2_id );
+        if (friend_status == 0)
+        {
+            createContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+            return  reply.status(201).send({ message: 'User blocked' });
+        }
+        else
+        {
+            if (block_status == 2)
+                block_u2 = 1;
+            pos = checkPosContact(user1_id, user2_id);
+            if (pos == 1)
+                modifyContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+            else
+                modifyContact({ user2_id, user1_id, friend_u2, friend_u1, block_u2, block_u1 });
+            return  reply.status(201).send({ message: 'User blocked' });
+        }
     }
 }
 
@@ -252,16 +266,37 @@ export const    unblockContact = async (request: FastifyRequest, reply: FastifyR
     {
         const   user1_id = id;
         const   user2_id = user.id;
-        const   friend = 0;
-        const   blocked = 0;
-        const   exist = getUserContactById(user1_id);
+        const   friend_u1 = 0;
+        const   friend_u2 = 0;
+        const   block_u1 = 0;
+        let     block_u2 = 0;
+        let     pos;
         
-        // if (exist)
-        //     modifyContact({ user1_id, user2_id, friend, blocked });
-        // else
-        //     createContact({ user1_id, user2_id, friend, blocked });
-        
-            return  reply.status(201).send({ message: 'Contact unblocked' });
+        const block_status = checkBlockStatus(user1_id, user2_id)
+        switch (block_status)
+        {
+            case 0:
+                return  reply.status(301).send({ message: 'Contact is already unblocked' });
+            case 1:
+                pos = checkPosContact(user1_id, user2_id);
+                if (pos == 1)
+                    modifyContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+                else
+                    modifyContact({ user2_id, user1_id, friend_u2, friend_u1, block_u2, block_u1 });
+                return  reply.status(201).send({ message: 'Contact unblocked' });
+            
+            case 2:
+                return  reply.status(301).send({ message: 'Contact is already unblocked' });
+            case 3:
+                block_u2 = 1;
+                pos = checkPosContact(user1_id, user2_id);
+                if (pos == 1)
+                    modifyContact({ user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 });
+                else
+                    modifyContact({ user2_id, user1_id, friend_u2, friend_u1, block_u2, block_u1 });
+                return  reply.status(201).send({ message: 'Contact unblocked' });
+
+        }
     }
 }
 
