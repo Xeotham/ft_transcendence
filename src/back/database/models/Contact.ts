@@ -66,7 +66,7 @@ export const checkFriendshipStatus = (user1_id: number, user2_id: number): numbe
         WHERE (((c.user1_id = ? AND c.user2_id = ?) AND friend_u1 = 0) AND friend_u2 = 0) OR (((c.user1_id = ? AND c.user2_id = ?) AND friend_u1 = 0) AND friend_u2 = 0)\
         ');
     if (stmt.all(user2_id, user1_id, user1_id, user2_id))
-        return 3;
+        return 4;
     return 0;
 };
 
@@ -81,16 +81,16 @@ export const checkBlockStatus = (user1_id: number, user2_id: number): number => 
     stmt = db.prepare('\
         SELECT c.user1_id, c.user2_id \
         FROM contact c \
-        WHERE (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 1) AND block_u2 = 0) OR (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 0) AND block_u2 = 1)\
+        WHERE (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 0) AND block_u2 = 1) OR (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 1) AND block_u2 = 0)\
         ');
-    if (stmt.all(user2_id, user1_id, user1_id, user2_id))
+    if (stmt.all(user1_id, user2_id, user2_id, user1_id))
         return 2;
     stmt = db.prepare('\
         SELECT c.user1_id, c.user2_id \
         FROM contact c \
-        WHERE (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 1) AND block_u2 = 0) OR (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 0) AND block_u2 = 1)\
+        WHERE (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 1) AND block_u2 = 1) OR (((c.user1_id = ? AND c.user2_id = ?) AND block_u1 = 1) AND block_u2 = 1)\
         ');
-    if (stmt.all(user2_id, user1_id, user1_id, user2_id))
+    if (stmt.all(user1_id, user2_id, user2_id, user1_id))
         return 3;
     return 0;
 };
@@ -112,39 +112,3 @@ export const checkPosContact = (user1_id: number, user2_id: number): number => {
         return 2;
     return 0;
 };
-
-// export const checkFriendshipStatus = (user1_id: number, user2_id: number): number => {
-//     let stmt = db.prepare('\
-//         SELECT c.user1_id, c.user2_id \
-//         FROM contact c \
-//         WHERE (((c.user1_id = ? AND c.user2_id = ?) AND friend = 1) AND friendship_status = \'in progress\') OR (((c.user1_id = ? AND c.user2_id = ? ) AND friend = 1) AND friendship_status = \'in progress\') \
-//         ');
-//     if (stmt.all(user1_id, user2_id, user2_id, user1_id))
-//         return 1;
-//     stmt = db.prepare('\
-//         SELECT c.user1_id, c.user2_id \
-//         FROM contact c \
-//         WHERE (((c.user1_id = ? AND c.user2_id = ?) AND friend = 1) AND friendship_status = \'accepted\') OR (((c.user1_id = ? AND c.user2_id = ? ) AND friend = 1) AND friendship_status = \'accepted\') \
-//         ');
-//     if (stmt.all(user1_id, user2_id, user2_id, user1_id))
-//         return 2;
-//     return 0;
-// };
-
-// export const checkBlockStatus = (user1_id: number, user2_id: number): number => {
-//     let stmt = db.prepare('\
-//         SELECT c.user1_id, c.user2_id \
-//         FROM contact c \
-//         WHERE (((c.user1_id = ? AND c.user2_id = ?) AND blocked = 1) AND blocker_id = ?) OR (((c.user1_id = ? AND c.user2_id = ? ) AND blocked = 1) AND blocker_id = ?) \
-//         ');
-//     if (stmt.all(user1_id, user2_id, user1_id, user2_id, user1_id, user1_id))
-//         return 1;
-//     stmt = db.prepare('\
-//         SELECT c.user1_id, c.user2_id \
-//         FROM contact c \
-//         WHERE (((c.user1_id = ? AND c.user2_id = ?) AND friend = 1) AND friendship_status = \'accepted\') OR (((c.user1_id = ? AND c.user2_id = ? ) AND friend = 1) AND friendship_status = \'accepted\') \
-//         ');
-//     if (stmt.all(user1_id, user2_id, user2_id, user2_id, user1_id, user2_id))
-//         return 2;
-//     return 0;
-// };

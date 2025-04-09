@@ -50,7 +50,7 @@ db.exec(`
       friend_u1 BOOLEAN DEFAULT 0,
       friend_u2 BOOLEAN DEFAULT 0,
       block_u1 BOOLEAN DEFAULT 0,
-      block_u1 BOOLEAN DEFAULT 0,
+      block_u2 BOOLEAN DEFAULT 0,
       FOREIGN KEY (user1_id) REFERENCES user(id),
       FOREIGN KEY (user2_id) REFERENCES user(id),
       PRIMARY KEY (user1_id, user2_id),
