@@ -1,8 +1,10 @@
-export const ROTATIONS: string[] = ["WEST", "NORTH", "EAST", "SOUTH"];
-export const WEST = 0;
-export const NORTH = 1;
-export const EAST = 2;
-export const SOUTH = 3;
+import {IPos} from "./IPos";
+
+export const ROTATIONS: string[] = ["north", "east", "south", "west"];
+export const NORTH = 0;
+export const EAST = 1;
+export const SOUTH = 2;
+export const WEST = 3;
 
 export const MAX_LEVEL: number = 15;
 export const MIN_LEVEL: number = 1;
@@ -38,3 +40,48 @@ export const TETRIS_HEIGHT: number = 20;
 export const BUFFER_WIDTH: number = 10;
 export const BUFFER_HEIGHT: number = 20;
 
+export const VARIABLE_GOAL_SYSTEM: number[] = [
+	10,
+	15,
+	20,
+	25,
+	30,
+	35,
+	40,
+	45,
+	50,
+	55,
+	60,
+	65,
+	70,
+	75,
+	80,
+];
+
+export interface block {
+	[key: string]: any;
+	"blocks" : {
+		[key: string]: any;
+		"0": IPos;
+		"1": IPos;
+		"2": IPos;
+		"3": IPos;
+	};
+	"rotationPoints": {
+		[key: string]: any;
+		"1": IPos;
+		"2": IPos;
+		"3": IPos;
+		"4": IPos;
+		"5": IPos;
+	};
+}
+
+export interface pieceStruct {
+	[key: string]: any;
+	"size": number;
+	"north": block;
+	"east": block;
+	"south": block;
+	"west": block;
+}

@@ -1,4 +1,4 @@
-import * as tc from "./TetrisConstants"
+import * as tc from "./tetrisConstants"
 import { IPos } from "./IPos"
 
 export class Mino {
@@ -6,7 +6,7 @@ export class Mino {
 	private coordinates: IPos;
 	private inMatrix: boolean;
 
-	constructor(texture: string,
+	constructor(texture: string = "Empty",
 				coordinates: IPos = new IPos(0, 0),
 				inMatrix: boolean = false) {
 		this.texture = texture;
@@ -23,4 +23,10 @@ export class Mino {
 	public  isInMatrix(): boolean { return this.inMatrix; }
 	public  setInMatrix(inMatrix: boolean): void { this.inMatrix = inMatrix; }
 
+	public isEmpty(): boolean { return this.texture === "Empty"; }
+
+	public reset(): void {
+		this.texture = "Empty";
+		this.inMatrix = false;
+	}
 }

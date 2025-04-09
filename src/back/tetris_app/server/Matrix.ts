@@ -5,15 +5,26 @@ export class Matrix {
 	private readonly size : IPos;
 	private matrix: Mino[][];
 
-	constructor(size: IPos = new IPos(10, 20)) {
-		this.size = size;
-		this.matrix = [];
+	constructor(matrix: Matrix);
+	constructor(size: IPos);
+	constructor(arg: Matrix | IPos) {
+		if (arg instanceof Matrix)
+			this.size = arg.size
+		else
+			this.size = arg;
+		this.matrix = this.createEmptyMatrix();
+		if (arg instanceof Matrix)
+			this.matrix = arg.matrix.map((row) => row.map((mino) => new Mino(mino.getTexture(), mino.getCoordinates(), mino.isInMatrix())));
+	}
 
-		for (let y = 0; y < size.getY(); y++) {
-			for (let x = 0; x < size.getX(); x++)
-				this.matrix[y].push(new Mino("", new IPos(x, y)));
-			this.matrix.push([]);
+	private createEmptyMatrix(): Mino[][] {
+		const matrix: Mino[][] = [];
+		for (let y = 0; y < this.size.getY(); y++) {
+			for (let x = 0; x < this.size.getX(); x++)
+				matrix[y].push(new Mino("Empty", new IPos(x, y)));
+			matrix.push([]);
 		}
+		return matrix;
 	}
 
 	public at(x: number, y: number): Mino;
@@ -34,4 +45,11 @@ export class Matrix {
 	}
 
 	public getSize(): IPos { return this.size; }
+
+	public reset(): void {
+		for (let y = 0; y < this.size.getY(); y++) {
+			for (let x = 0; x < this.size.getX(); x++)
+				this.matrix[y][x].reset();
+		}
+	}
 }

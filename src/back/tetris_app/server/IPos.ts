@@ -41,19 +41,24 @@ export class IPos {
 		return Math.sqrt(Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2));
 	}
 
-	public up(): IPos {
-		return new IPos(this.x, this.y - 1);
+	public distanceToIPos(pos:IPos): IPos {
+		return new IPos(this.x - pos.x, this.y - pos.y);
 	}
 
-	public down(): IPos {
-		return new IPos(this.x, this.y + 1);
+	public up(y: number = 1): IPos {
+		return new IPos(this.x, this.y - y);
 	}
 
-	public left(): IPos {
-		return new IPos(this.x - 1, this.y);
+	public down(y: number = 1): IPos {
+		return new IPos(this.x, this.y + y);
 	}
 
-	public right(): IPos {
-		return new IPos(this.x + 1, this.y);
+	public left(x: number = 1): IPos {
+		return new IPos(this.x - x, this.y);
 	}
+
+	public right(x: number = 1): IPos {
+		return new IPos(this.x + x, this.y);
+	}
+
 }
