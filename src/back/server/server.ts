@@ -1,6 +1,4 @@
 import Fastify from 'fastify';
-import pongRoutes from '../pong_app/api/routes';
-// import userRoutes from '../api/user_management/routes';
 import fastifyCors from '@fastify/cors';
 import fastifyWebsocket from '@fastify/websocket';
 import { fastifyStatic } from "@fastify/static";
@@ -8,6 +6,9 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from 'ws';
 import { join } from "path";
 import { config } from "dotenv";
+import tetrisRoutes from "../tetris_app/api/routes";
+import pongRoutes from '../pong_app/api/routes';
+// import userRoutes from '../api/user_management/routes';
 
 
 config();
@@ -26,7 +27,7 @@ fastify.register(fastifyCors, {
 // TODO: Create the others API
 // fastify.register(userRoutes, { prefix: '/api/user' });
 fastify.register(pongRoutes, { prefix: '/api/pong' });
-// fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
+fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 
 
 // Register fastify-static to serve static files
