@@ -11,6 +11,10 @@ export const MIN_LEVEL: number = 1;
 export const FALL_SPEED = (level: number): number => {
 	return Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
 }
+export const SOFT_DROP_SPEED = (level: number) => {
+	return FALL_SPEED(level) / 20;
+}
+export const HARD_DROP_SPEED = 0.0001
 
 export const SCORING: {[id:string]: number} = {
 	"Single" : 100,

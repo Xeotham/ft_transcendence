@@ -4,29 +4,38 @@ import { IPos } from "./IPos"
 export class Mino {
 	private texture: string;
 	private coordinates: IPos;
-	private inMatrix: boolean;
+	private solid: boolean;
 
 	constructor(texture: string = "Empty",
 				coordinates: IPos = new IPos(0, 0),
-				inMatrix: boolean = false) {
+				isSolid: boolean = false) {
 		this.texture = texture;
 		this.coordinates = coordinates;
-		this.inMatrix = inMatrix;
+		this.solid = isSolid;
+		if (this.texture === "Empty")
+			this.solid = false;
+	}
+
+	public toJSON(){
+		 return { texture: this.texture };
 	}
 
 	public  getTexture(): string { return this.texture; }
-	public  setTexture(texture: string): void { this.texture = texture; }
+	public  setTexture(texture: string): void {
+		this.texture = texture;
+		if (this.texture === "Empty")
+			this.solid = false;
+	}
 
 	public  getCoordinates(): IPos { return this.coordinates; }
 	public  setCoordinates(coordinates: IPos): void { this.coordinates = coordinates; }
 
-	public  isInMatrix(): boolean { return this.inMatrix; }
-	public  setInMatrix(inMatrix: boolean): void { this.inMatrix = inMatrix; }
+	public isSolid(): boolean { return this.solid; }
+	public setSolid(isSolid: boolean): void { this.solid = isSolid; }
 
 	public isEmpty(): boolean { return this.texture === "Empty"; }
 
 	public reset(): void {
 		this.texture = "Empty";
-		this.inMatrix = false;
 	}
 }

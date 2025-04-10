@@ -1,3 +1,5 @@
+import {clamp} from "./utils";
+
 export class IPos {
 	private x: number;
 	private y: number;
@@ -61,4 +63,7 @@ export class IPos {
 		return new IPos(this.x + x, this.y);
 	}
 
+	public clamp(min: IPos, max: IPos): IPos {
+		return new IPos(clamp(this.x, min.x, max.x), clamp(this.y, min.y, max.y));
+	}
 }

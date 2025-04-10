@@ -36,25 +36,14 @@ export class S extends ATetrimino {
 	})();
 
 	constructor(coordinates: IPos = new IPos(0, 0),
-				level: number = 1,
-				inMatrix: boolean = false,
 				texture: string = "S") {
-		super("S", level, coordinates, inMatrix, texture);
-
-		this.innerMatrix = new Matrix(new IPos(S.struct.size, S.struct.size));
-
-		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
-		for (let i = 0; i < 4; ++i) {
-			const pos: IPos = block?.blocks[i];
-			this.innerMatrix.setAt(pos, new Mino(this.texture, new IPos(pos)));
-		}
+		super("S", coordinates, texture);
 	}
 
 	public getSize(): number { return S.struct.size; }
 
-	public rotate(direction: "clockwise" | "counterClockwise", matrix: Matrix): void {
+	public rotate(direction: "clockwise" | "counter-clockwise", matrix: Matrix): void {
 		// TODO : Play the sounds, send animations, etc.
-
 
 		let start: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		let end: tc.block | null = null;
@@ -63,12 +52,10 @@ export class S extends ATetrimino {
 			end = S.struct[tc.ROTATIONS[mod(this.rotation + 1, 4)]];
 		else
 			end = S.struct[tc.ROTATIONS[mod(this.rotation + 3, 4)]];
-
 		if (!end)
 			return ;
 
-		for (let i = 0; i < 4; ++i)
-			this.innerMatrix.at(start.blocks[i]).reset();
+		this.remove(matrix);
 
 		for (let i = 1; i <= 5; ++i) {
 			const startPos: IPos = start.rotationPoints[i];
@@ -79,14 +66,37 @@ export class S extends ATetrimino {
 				matrix.at(this.coordinates.add(end.blocks[1].add(dist))).isEmpty() &&
 				matrix.at(this.coordinates.add(end.blocks[2].add(dist))).isEmpty() &&
 				matrix.at(this.coordinates.add(end.blocks[3].add(dist))).isEmpty()) {
-				for (let j = 0; i < 4; ++j)
-					this.innerMatrix.setAt(end.blocks[j].add(dist), new Mino(this.texture, new IPos(end.blocks[j].add(dist))));
-				return ;
+				this.coordinates = this.coordinates.add(dist);
+				this.rotation = direction === "clockwise" ? mod(this.rotation + 1, 4) : mod(this.rotation + 3, 4);
+				break ;
 			}
 		}
+		this.place(matrix, false);
+	}
 
-		// No rotation possible, so we set the blocks back to their original position
-		for (let i = 0; i < 4; ++i)
-			this.innerMatrix.setAt(start.blocks[i], new Mino(this.texture, new IPos(start.blocks[i])));
+	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
+		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
+		for (let i = 0; i < 4; ++i) {
+			const pos: IPos = this.coordinates.add(block?.blocks[i]).add(offset);
+			if (matrix.isMinoAt(pos))
+				return true;
+		}
+		return false;
+	}
+
+	public place(matrix: Matrix, isSolid: boolean): void {
+		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
+		for (let i = 0; i < 4; ++i) {
+			const pos: IPos = this.coordinates.add(block?.blocks[i]);
+			matrix.setAt(pos, new Mino(this.texture, new IPos(pos), isSolid));
+		}
+	}
+
+	public remove(matrix: Matrix): void {
+		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
+		for (let i = 0; i < 4; ++i) {
+			const pos: IPos = this.coordinates.add(block?.blocks[i]);
+			matrix.setAt(pos, new Mino("Empty", new IPos(pos), false));
+		}
 	}
 }
