@@ -1,7 +1,6 @@
 import Fastify from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyWebsocket from '@fastify/websocket';
-import { fastifyStatic } from "@fastify/static";
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from 'ws';
 import { join } from "path";
@@ -26,16 +25,9 @@ fastify.register(fastifyCors, {
 // Register routes
 // TODO: Create the others API
 // fastify.register(userRoutes, { prefix: '/api/user' });
-fastify.register(pongRoutes, { prefix: '/api/pong' });
 fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
+fastify.register(pongRoutes, { prefix: '/api/pong' });
 
-
-// Register fastify-static to serve static files
-// fastify.register(fastifyStatic, {
-// 	root: join(__dirname, '../../front/public'), // Path to the directory containing your static files
-// 	prefix: '/', // Serve files under the root URL
-// 	decorateReply: false,
-// });
 
 // TODO: Make it the rout to the SPA
 // fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {

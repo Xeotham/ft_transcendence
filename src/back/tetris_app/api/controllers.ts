@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { WebSocket } from "ws";
 import {tetrisReq} from "../utils";
-import * as repl from "node:repl";
+import {TetrisGame} from "../server/TetrisGame";
 
 
 // fastify.get('/joinMatchmaking', {websocket: true}, joinMatchmaking); TODO: Join a Random Room
@@ -15,17 +15,42 @@ import * as repl from "node:repl";
 // TODO: Soft or Hard drop tetriminos
 // TODO: Hold tetriminos
 
+let   tetrisGamesLst: TetrisGame[] = [];
 
-export const    joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
-export const   joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
+export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest) => {
+	try {
+		console.log("New WebSocket connection for Tetris Arcade");
+
+		const tetrisGame = new TetrisGame(socket);
+		tetrisGamesLst.push(tetrisGame);
+
+		socket.send(JSON.stringify({ type: "INFO" }));
+		console.log("INFO message sent");
+
+		socket.send(JSON.stringify({ type: "SOLO" }));
+		console.log("SOLO message sent");
+
+		socket.on('close', (code, reason) => {
+			console.log(`WebSocket closed. Code: ${code}, Reason: ${reason}`);
+			// Clean up the game instance if needed
+		});
+
+		socket.on('error', (error) => {
+			console.error("WebSocket error:", error);
+		});
+
+	} catch (error) {
+		console.error("Error in tetrisArcade handler:", error);
+	}
+};
+
+export const    tetrisCreatePrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
-export const    createPrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
-}
-
-export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
+export const    tetrisJoinPrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
 export const    forfeitGame = async (req: FastifyRequest, reply: FastifyReply) => {

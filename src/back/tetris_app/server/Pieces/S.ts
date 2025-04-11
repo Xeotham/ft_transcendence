@@ -35,8 +35,7 @@ export class S extends ATetrimino {
 		};
 	})();
 
-	constructor(coordinates: IPos = new IPos(0, 0),
-				texture: string = "S") {
+	constructor(coordinates: IPos = new IPos(0, 0), texture: string = "S") {
 		super("S", coordinates, texture);
 	}
 

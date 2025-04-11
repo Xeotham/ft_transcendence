@@ -4,6 +4,7 @@ import { IPos } from "./IPos";
 import { Matrix } from "./Matrix";
 import { ATetrimino } from "./Tetrimino";
 import { S } from "./Pieces/S";
+import { WebSocket } from "ws";
 // import { Z } from "./Pieces/Z";
 // import { I } from "./Pieces/I";
 // import { J } from "./Pieces/J";
@@ -11,6 +12,9 @@ import { S } from "./Pieces/S";
 // import { T } from "./Pieces/T";
 // import { O } from "./Pieces/O";
 import { delay, mod } from "./utils";
+import {idGenerator} from "../../pong_app/utils";
+
+const   idGen = idGenerator()
 
 export class TetrisGame {
 	private readonly player:	WebSocket;
@@ -27,6 +31,7 @@ export class TetrisGame {
 	private	fallSpeed:			number;
 	private	fallInterval:		number;
 	private	sendInterval:		number;
+	private gameId:             number;
 
 	constructor(player: WebSocket) {
 		this.player = player;
@@ -43,6 +48,7 @@ export class TetrisGame {
 		this.fallSpeed = tc.FALL_SPEED(this.level);
 		this.fallInterval = 0;
 		this.sendInterval = 0;
+		this.gameId = idGen.next().value;
 	}
 
 	private toJSON() {
@@ -61,14 +67,16 @@ export class TetrisGame {
 	public getScore(): number { return this.score; }
 	public getLevel(): number { return this.level; }
 	public getLinesCleared(): number { return this.linesCleared; }
+	public getGameId(): number { return this.gameId; }
 
 	public setCurrentPiece(piece: ATetrimino): void { this.currentPiece = piece; }
 	public setScore(score: number): void { this.score = score; }
 	public setLevel(level: number): void { this.level = level; }
 	public setLinesCleared(linesCleared: number): void { this.linesCleared = linesCleared; }
+	public setGameId(gameId: number): void { this.gameId = gameId; }
 
 	private shuffleBag(): ATetrimino[] {
-		const pieces = [new S(), /*new Z(), new I(), new J(), new L(), new T(), new O()*/]; // TODO : add all pieces
+		const pieces: ATetrimino[] = [new S()]; // TODO : add all pieces
 		return pieces.sort(() => Math.random() - 0.5) as ATetrimino[];
 	}
 
@@ -116,12 +124,12 @@ export class TetrisGame {
 
 		this.currentPiece.setCoordinates(new IPos(4 - 2, tc.BUFFER_HEIGHT - 2 - 1)); // -2 to take piece inner size into account
 		this.currentPiece.place(this.matrix, false);
-		if (this.currentPiece.isColliding(this.matrix)) {
+		if (this.currentPiece.isColliding(this.matrix, new IPos(0, 0))) {
 			this.over = true;
 			return ;
 		}
 		this.fallSpeed = tc.FALL_SPEED(this.level);
-		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed);
+		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 	}
 
 	public swap(): void {
@@ -151,7 +159,7 @@ export class TetrisGame {
 				this.fallSpeed = tc.HARD_DROP_SPEED;
 				break;
 		}
-		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed);
+		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 	}
 
 	private async gameLoopIteration() {
@@ -164,7 +172,7 @@ export class TetrisGame {
 	public async gameLoop() {
 		this.sendInterval = setInterval(() => {
 			this.player.send(JSON.stringify({message: this.toJSON()})) // TODO : adapt to the new format
-		}, 1000 / 60); // 60 times per second
+		}, 1000 / 60) as unknown as number; // 60 times per second
 
 		await this.spawnPiece();
 		await this.gameLoopIteration();

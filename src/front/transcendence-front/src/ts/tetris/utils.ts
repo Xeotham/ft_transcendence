@@ -60,7 +60,12 @@ export interface    loadTetrisArgs {
 }
 
 export interface    tetrisReq {
-	argument: string;
+	argument:   string;
+}
+
+export interface    tetrisRes {
+	type:       string;
+	argument:   string;
 }
 
 export type loadTetrisType = "idle" | "setting" | "keybindings" | "change-key" | "board";

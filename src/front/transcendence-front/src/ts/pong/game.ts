@@ -1,6 +1,6 @@
 import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
 import  { address, content } from "../main.ts";
-import  { loadPongPage, gameInfo } from "./pong.ts";
+import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import {specTournament, tourMessageHandler} from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
@@ -138,7 +138,7 @@ export class PongRoom {
 		};
 		this.socket.onclose = () => {
 			console.log("Connection closed");
-			quit(gameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
+			quit(pongGameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
 		};
 		this.socket.addEventListener("message", messageHandler);
 	}
@@ -153,8 +153,8 @@ export class PongRoom {
 export const    createPrivateRoom = () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createPrivateRoom`);
 
-	gameInfo.setRoom(new PongRoom(socket));
-	gameInfo.getRoom()?.initSocket();
+	pongGameInfo.setRoom(new PongRoom(socket));
+	pongGameInfo.getRoom()?.initSocket();
 }
 
 export const    joinPrivRoom = () => {
@@ -165,28 +165,28 @@ export const    joinPrivRoom = () => {
 		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
 		const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinPrivRoom?inviteCode=${inviteCode}`);
 
-		gameInfo.setRoom(new PongRoom(socket));
-		gameInfo.getRoom()?.initSocket();
+		pongGameInfo.setRoom(new PongRoom(socket));
+		pongGameInfo.getRoom()?.initSocket();
 	});
 }
 
 export const   joinMatchmaking = async () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinMatchmaking`);
 
-	gameInfo.setRoom(new PongRoom(socket));
-	gameInfo.getRoom()?.initSocket();
+	pongGameInfo.setRoom(new PongRoom(socket));
+	pongGameInfo.getRoom()?.initSocket();
 	loadPongPage("match-found");
 }
 
 export const   joinSolo = async () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinSolo`);
 
-	gameInfo.setRoom(new PongRoom(socket, true));
-	gameInfo.getRoom()?.initSocket();
+	pongGameInfo.setRoom(new PongRoom(socket, true));
+	pongGameInfo.getRoom()?.initSocket();
 }
 
 export const   quit = (msg: string = "LEAVE", force: string = "", winner: number | null = null) => {
-	const   matchType = force !== "" ? force : gameInfo.getMatchType();
+	const   matchType = force !== "" ? force : pongGameInfo.getMatchType();
 
 	console.log("Quiting room of type: " + matchType);
 	if (!matchType)
@@ -195,20 +195,20 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 	if (matchType === "TOURNAMENT")
 		quitTournament(msg, winner);
 
-	if ((matchType === "PONG" && gameInfo.getMatchType() === "TOURNAMENT") && !winner) {
-		specTournament(gameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
+	if ((matchType === "PONG" && pongGameInfo.getMatchType() === "TOURNAMENT") && !winner) {
+		specTournament(pongGameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
 	}
 }
 
 const   quitRoom = (msg: string = "LEAVE") => {
-	if (!gameInfo.getRoom())
+	if (!pongGameInfo.getRoom())
 		return;
 
-	const   roomId = gameInfo.getRoom()?.getRoomNumber();
-	const   player = gameInfo.getRoom()?.getPlayer();
-	const   specPlacement = gameInfo.getRoom()?.getSpecPlacement();
+	const   roomId = pongGameInfo.getRoom()?.getRoomNumber();
+	const   player = pongGameInfo.getRoom()?.getPlayer();
+	const   specPlacement = pongGameInfo.getRoom()?.getSpecPlacement();
 
-	if (gameInfo.getRoom()?.getIsSolo() || gameInfo.getMatchType() === "TOURNAMENT")
+	if (pongGameInfo.getRoom()?.getIsSolo() || pongGameInfo.getMatchType() === "TOURNAMENT")
 		msg = "LEAVE";
 	if (msg === "QUEUE_TIMEOUT")
 		console.log("You took too long to confirm the game. Back to the lobby");
@@ -219,21 +219,21 @@ const   quitRoom = (msg: string = "LEAVE") => {
 		},
 		body: JSON.stringify({ matchType: "PONG", message: msg, roomId: roomId, P: player, specPlacement: specPlacement })
 	});
-	gameInfo.getRoom()?.clearIntervals();
-	const socket = gameInfo.getRoom()?.getSocket();
-	if (socket && gameInfo.getMatchType() === "PONG") {
+	pongGameInfo.getRoom()?.clearIntervals();
+	const socket = pongGameInfo.getRoom()?.getSocket();
+	if (socket && pongGameInfo.getMatchType() === "PONG") {
 		console.log("Connection closed");
 		socket.onclose = null; // Remove any existing onclose handler
 		socket.close();
 	}
-	gameInfo.resetRoom();
+	pongGameInfo.resetRoom();
 	page.show("/pong");
 }
 
 const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
-	const socket = gameInfo.getTournament()?.getSocket();
-	const tournamentId = gameInfo.getTournament()?.getId();
-	const tourPlacement = gameInfo.getTournament()?.getPlacement();
+	const socket = pongGameInfo.getTournament()?.getSocket();
+	const tournamentId = pongGameInfo.getTournament()?.getId();
+	const tourPlacement = pongGameInfo.getTournament()?.getPlacement();
 
 	fetch(`http://${address}:3000/api/pong/quitRoom`, {
 		method: 'POST',
@@ -247,7 +247,7 @@ const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 		socket.onclose = null; // Remove any existing onclose handler
 		socket.close();
 	}
-	gameInfo.resetTournament();
+	pongGameInfo.resetTournament();
 	console.log("Leaving tournament");
 	if (winner)
 		loadPongPage("tournament-end", { winner: winner });
@@ -274,7 +274,7 @@ export const   messageHandler = (event: MessageEvent)=> {
 		case "CONFIRM":
 			return confirmGame();
 		case "LEAVE":
-			quit("LEAVE", res.data ? res.data : gameInfo.getMatchType(), res.winner);
+			quit("LEAVE", res.data ? res.data : pongGameInfo.getMatchType(), res.winner);
 			if (res.message === "QUEUE_AGAIN") {
 				console.log("The opponent took too long to confirm the game. Restarting the search");
 				if (res.data === "PONG")
@@ -299,34 +299,34 @@ const	gameMessageHandler = (res: responseFormat) => {
 			const   roomNumber: number = typeof res.roomId === "number" ? res.roomId : -1;
 			const   player: string | null = res.player;
 
-			return  gameInfo.getRoom()?.prepareGame(roomNumber, player);
+			return  pongGameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
 			loadPongPage("board");
-			if (gameInfo?.getRoom()?.getPlayer() === "SPEC")
+			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.getElementById("quit")?.addEventListener("click", () => quit());
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
 			return ;
 		case "FINISH":
-			if (gameInfo.getRoom()?.getPlayer() === "SPEC")
+			if (pongGameInfo.getRoom()?.getPlayer() === "SPEC")
 				return quit("LEAVE", "PONG");
-			if (gameInfo.getRoom()?.getIsSolo())
+			if (pongGameInfo.getRoom()?.getIsSolo())
 				alert(res.data + " won!");
 			else {
-				if (gameInfo.getMatchType() === "TOURNAMENT")
-					res.data === gameInfo.getRoom()?.getPlayer() ? console.log("You won!") : console.log("You lost!");
+				if (pongGameInfo.getMatchType() === "TOURNAMENT")
+					res.data === pongGameInfo.getRoom()?.getPlayer() ? console.log("You won!") : console.log("You lost!");
 				else
-					res.data === gameInfo.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
+					res.data === pongGameInfo.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
 			}
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
-			if (gameInfo.getMatchType() === "TOURNAMENT" && res.data !== gameInfo.getRoom()?.getPlayer())
-				gameInfo.getTournament()?.setLostTournament(true);
+			if (pongGameInfo.getMatchType() === "TOURNAMENT" && res.data !== pongGameInfo.getRoom()?.getPlayer())
+				pongGameInfo.getTournament()?.setLostTournament(true);
 			return quit("LEAVE", "PONG");
 		case "SCORE":
 			const   score: score = res.data;
-			gameInfo.getRoom()?.setScore(score);
+			pongGameInfo.getRoom()?.setScore(score);
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
 			if (document.getElementById("score"))
 				document.getElementById("score")!.innerText = `Score: ${score.player1} | ${score.player2}`;
@@ -337,22 +337,22 @@ const	gameMessageHandler = (res: responseFormat) => {
 			return loadPongPage("priv-room-create", { inviteCode: res.inviteCode!});
 		case "SPEC":
 			if (res.data >= 0)
-				gameInfo.getRoom()?.setSpecPlacement(res.data);
-			gameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
-			console.log("Starting Spectator mode at placement: " + gameInfo.getRoom()?.getSpecPlacement());
+				pongGameInfo.getRoom()?.setSpecPlacement(res.data);
+			pongGameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
+			console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
 			loadPongPage("board");
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		default:
-			gameInfo?.getRoom()?.setGame(res.data);
+			pongGameInfo?.getRoom()?.setGame(res.data);
 			loadPongPage("draw-game", { game: res.data });
 	}
 }
 
 export const keyHandler = (event: KeyboardEvent) => {
-	const   game = gameInfo.getRoom()?.getGame();
-	const   roomNumber = gameInfo.getRoom()?.getRoomNumber() as number;
-	const   player = gameInfo.getRoom()?.getPlayer();
-	const   isSolo = gameInfo.getRoom()?.getIsSolo();
+	const   game = pongGameInfo.getRoom()?.getGame();
+	const   roomNumber = pongGameInfo.getRoom()?.getRoomNumber() as number;
+	const   player = pongGameInfo.getRoom()?.getPlayer();
+	const   isSolo = pongGameInfo.getRoom()?.getIsSolo();
 
 	if (!game || roomNumber < 0 || !player || event.repeat)
 		return ;
@@ -385,14 +385,14 @@ export const keyHandler = (event: KeyboardEvent) => {
 	let p = player;
 	if (isSolo)
 		p = event.code === "KeyS" || event.code === "KeyX" ? "P1" : "P2";
-	if (event.type === "keydown" && gameInfo.getRoom()?.getIsButtonPressed(event.code) === false) {
-		gameInfo.getRoom()?.setButtonPressed(event.code, true);
-		gameInfo.getRoom()?.setIntervals(event.code, setInterval(sendPaddleMovement, 1000 / 60, event.code, p));
+	if (event.type === "keydown" && pongGameInfo.getRoom()?.getIsButtonPressed(event.code) === false) {
+		pongGameInfo.getRoom()?.setButtonPressed(event.code, true);
+		pongGameInfo.getRoom()?.setIntervals(event.code, setInterval(sendPaddleMovement, 1000 / 60, event.code, p));
 	}
-	if (event.type === "keyup" && gameInfo.getRoom()?.getIsButtonPressed(event.code) === true) {
-		gameInfo.getRoom()?.setButtonPressed(event.code, false);
-		clearInterval(gameInfo.getRoom()?.getIntervals(event.code) as number);
-		gameInfo.getRoom()?.setIntervals(event.code, null);
+	if (event.type === "keyup" && pongGameInfo.getRoom()?.getIsButtonPressed(event.code) === true) {
+		pongGameInfo.getRoom()?.setButtonPressed(event.code, false);
+		clearInterval(pongGameInfo.getRoom()?.getIntervals(event.code) as number);
+		pongGameInfo.getRoom()?.setIntervals(event.code, null);
 	}
 }
 
@@ -402,26 +402,26 @@ const   confirmGame = () => {
 	console.log("%cICIIIIIIIIIIIIIIIIIIIIIIIIIIII", "color: red");
 
 	let remainingTime = 10;
-	gameInfo.getRoom()?.clearIntervals();
+	pongGameInfo.getRoom()?.clearIntervals();
 	// console.log("Room? : " + gameInfo.getRoom());
-	gameInfo.getRoom()?.setQueueInterval(setInterval(() => {
+	pongGameInfo.getRoom()?.setQueueInterval(setInterval(() => {
 		remainingTime--;
 		if (document.getElementById("timer"))
 			document.getElementById("timer")!.innerText = `Time remaining: ${remainingTime}s`;
 		if (remainingTime <= 0) {
-			clearInterval(gameInfo.getRoom()?.getQueueInterval() as number);
+			clearInterval(pongGameInfo.getRoom()?.getQueueInterval() as number);
 			quit("QUEUE_TIMEOUT");
 		}
 	}, 1000));
 	document.getElementById("confirm-game")?.addEventListener("click", () => {
-		clearInterval(gameInfo.getRoom()?.getQueueInterval() as number);
+		clearInterval(pongGameInfo.getRoom()?.getQueueInterval() as number);
 		document.getElementById("timer")!.innerText = "Confirmed! Awaiting opponent";
 		fetch(`http://${address}:3000/api/pong/startConfirm`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ roomId: gameInfo.getRoom()?.getRoomNumber(), P: gameInfo.getRoom()?.getPlayer() })
+			body: JSON.stringify({ roomId: pongGameInfo.getRoom()?.getRoomNumber(), P: pongGameInfo.getRoom()?.getPlayer() })
 		})
 	});
 }

@@ -30,7 +30,7 @@ export class Matrix {
 	}
 
 	private createEmptyMatrix(): Mino[][] {
-		const matrix: Mino[][] = [];
+		const matrix: Mino[][] = [[]];
 		for (let y = 0; y < this.size.getY(); y++) {
 			for (let x = 0; x < this.size.getX(); x++)
 				matrix[y].push(new Mino("Empty", new IPos(x, y)));
