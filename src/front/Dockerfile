@@ -12,6 +12,7 @@ COPY    transcendence-front/package*.json ./
 
 # Install dependencies
 RUN     npm install
+RUN     npm audit fix
 
 # Copy the rest of the application code
 COPY ./transcendence-front .

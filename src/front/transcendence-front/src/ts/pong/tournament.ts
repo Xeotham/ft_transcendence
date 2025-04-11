@@ -1,6 +1,6 @@
 import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
 import { address } from "../main.ts";
-import { loadPongPage, gameInfo } from "./pong.ts";
+import { loadPongPage, pongGameInfo } from "./pong.ts";
 import {quit, messageHandler, PongRoom} from "./game.ts";
 // @ts-ignore
 import  page from "page";
@@ -69,7 +69,7 @@ export class   Tournament {
 export const   tourMessageHandler = async (res: responseFormat) => {
 	switch (res.message) {
 		case "OWNER":
-			gameInfo.getTournament()?.setOwner(true);
+			pongGameInfo.getTournament()?.setOwner(true);
 			console.log("You are the owner of the tournament");
 			tournamentFound();
 			// loadPage("room-found");
@@ -78,16 +78,16 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 			const tournamentId = typeof res.tourId === "number" ? res.tourId : -1;
 			const tourPlacement = typeof res.tourPlacement === "number" ? res.tourPlacement : -1;
 
-			gameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
+			pongGameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
 			// loadPage("room-found");
 			return ;
 		case "SPECLST":
-			if (!gameInfo.getTournament()?.getLostTournament())
+			if (!pongGameInfo.getTournament()?.getLostTournament())
 				return ;
-			return await specTournament(gameInfo.getTournament()?.getId() as number);
+			return await specTournament(pongGameInfo.getTournament()?.getId() as number);
 		case "CREATE":
 			console.log("Creating a pong room for a tournament instance");
-			gameInfo.setRoom(new PongRoom(gameInfo?.getTournament()?.getSocket()!), false);
+			pongGameInfo.setRoom(new PongRoom(pongGameInfo?.getTournament()?.getSocket()!), false);
 			return ;
 		case "LEAVE":
 			quit();
@@ -107,8 +107,8 @@ export const   getTournamentName = async () => {
 const   createTournament = async (name: string) => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createTournament?name=${name}`);
 
-	gameInfo.setTournament(new Tournament(socket, name, true));
-	gameInfo.getTournament()?.initSocket()
+	pongGameInfo.setTournament(new Tournament(socket, name, true));
+	pongGameInfo.getTournament()?.initSocket()
 	tournamentFound();
 }
 
@@ -171,8 +171,8 @@ export const getTournamentInfo = (id: number) => {
 const joinTournament = (tournamentId: number/*, tourName: string*/) => {
     const socket = new WebSocket(`ws://${address}:3000/api/pong/joinTournament?id=${tournamentId}`);
 
-	gameInfo.setTournament(new Tournament(socket, "tourName"))
-	gameInfo.getTournament()?.initSocket();
+	pongGameInfo.setTournament(new Tournament(socket, "tourName"))
+	pongGameInfo.getTournament()?.initSocket();
 	tournamentFound();
 }
 
@@ -182,7 +182,7 @@ const   shuffleTree = () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ tourId: gameInfo.getTournament()?.getId() })
+        body: JSON.stringify({ tourId: pongGameInfo.getTournament()?.getId() })
     });
 }
 
@@ -192,14 +192,14 @@ const   startTournament = () => {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ tourId: gameInfo.getTournament()?.getId() })
+		body: JSON.stringify({ tourId: pongGameInfo.getTournament()?.getId() })
 	});
 }
 
 const   tournamentFound = () => {
 	loadPongPage("tournament-found");
 
-	if (gameInfo.getTournament()?.getIsOwner()) {
+	if (pongGameInfo.getTournament()?.getIsOwner()) {
 		document.getElementById("start-tournament")?.addEventListener("click", startTournament);
 		document.getElementById("shuffle-tree")?.addEventListener("click", shuffleTree);
 	}
@@ -232,7 +232,7 @@ export const    specTournament = async (tournamentId: number) => {
 
 export const getTourRoomInfo = (roomId: number) => {
 
-	fetch(`http://${address}:3000/api/pong/get_tournament_room_info?roomId=${roomId}&id=${gameInfo.getTournament()?.getId()}`, {
+	fetch(`http://${address}:3000/api/pong/get_tournament_room_info?roomId=${roomId}&id=${pongGameInfo.getTournament()?.getId()}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'

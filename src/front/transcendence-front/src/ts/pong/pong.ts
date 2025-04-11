@@ -1,40 +1,12 @@
-import  { Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg } from "./utils.ts";
-import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, PongRoom, quit} from "./game.ts";
-import {getTournamentName, Tournament} from "./tournament.ts";
+import {Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInformation} from "./utils.ts";
+import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, quit} from "./game.ts";
+import {getTournamentName} from "./tournament.ts";
 import  { loadPongHtml } from "./htmlPage.ts";
 
 // @ts-ignore
 import  page from "page"
 
-class   gameInformation {
-	private room: PongRoom | null;
-	private tournament: Tournament | null;
-	private matchType: "PONG" | "TOURNAMENT" | null;
-
-	constructor () {
-		this.room = null;
-		this.tournament = null;
-		this.matchType = null;
-	}
-
-	getRoom() { return this.room; }
-	getMatchType() { return this.matchType; }
-	getTournament() { return this.tournament; }
-
-	setRoom(room: PongRoom, classic: boolean = true) {
-		this.room = room;
-		if (classic)
-			this.matchType = "PONG";
-	}
-	setTournament(tournament: Tournament) { this.tournament = tournament; this.matchType = "TOURNAMENT"; }
-	resetRoom() {
-		this.room = null;
-		this.matchType = this.matchType === "TOURNAMENT" ? "TOURNAMENT" : null;
-	}
-	resetTournament() { this.resetRoom(); this.tournament = null; this.matchType = null; }
-}
-
-export const	gameInfo: gameInformation = new gameInformation();
+export const	pongGameInfo: gameInformation = new gameInformation();
 
 
 export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
@@ -75,7 +47,7 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 const   idlePage = () => {
 	loadPongHtml("idle");
 
-	document.getElementById("home")?.addEventListener("click", () => { page.show("/home"); });
+	document.getElementById("home")?.addEventListener("click", () => { page.show("/"); });
 	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
 	document.getElementById("solo-game")?.addEventListener("click", joinSolo);
 	document.getElementById("private-room")?.addEventListener("click", createPrivateRoom);
@@ -144,7 +116,7 @@ const   tournamentEndPage = (winner: number) => {
 const   tournamentFoundPage = () => {
     loadPongHtml("tournament-found");
 
-	if (!gameInfo.getTournament())
+	if (!pongGameInfo.getTournament())
 		return ;
 
 	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));

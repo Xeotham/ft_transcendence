@@ -4,6 +4,7 @@ import { IPos } from "./IPos";
 import { Matrix } from "./Matrix";
 import { ATetrimino } from "./Tetrimino";
 import { S } from "./Pieces/S";
+import { WebSocket } from "ws";
 // import { Z } from "./Pieces/Z";
 // import { I } from "./Pieces/I";
 // import { J } from "./Pieces/J";
@@ -11,6 +12,9 @@ import { S } from "./Pieces/S";
 // import { T } from "./Pieces/T";
 // import { O } from "./Pieces/O";
 import { delay, mod } from "./utils";
+import {idGenerator} from "../../pong_app/utils";
+
+const   idGen = idGenerator()
 
 export class TetrisGame {
 	private readonly player:	WebSocket;
@@ -36,6 +40,7 @@ export class TetrisGame {
 
 	private	fallInterval:		number;
 	private	sendInterval:		number;
+	private gameId:             number;
 
 
 	constructor(player: WebSocket) {
@@ -62,6 +67,7 @@ export class TetrisGame {
 
 		this.fallInterval = 0;
 		this.sendInterval = 0;
+		this.gameId = idGen.next().value;
 	}
 
 	public toJSON() {
@@ -71,6 +77,7 @@ export class TetrisGame {
 			matrix: this.matrix.toJSON(),
 			bags: jsonBags,
 			hold: this.hold?.toJSON(),
+			score: this.score,
 		};
 	}
 
@@ -243,7 +250,7 @@ export class TetrisGame {
 				this.shouldLock = true;
 				break;
 		}
-		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed);
+		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 	}
 
 	private async gameLoopIteration() {
@@ -256,7 +263,7 @@ export class TetrisGame {
 	public async gameLoop() {
 		this.sendInterval = setInterval(() => {
 			this.player.send(JSON.stringify({message: this.toJSON()})) // TODO : adapt to the new format
-		}, 1000 / 60); // 60 times per second
+		}, 1000 / 60) as unknown as number; // 60 times per second
 
 		await this.spawnPiece();
 		await this.gameLoopIteration();

@@ -1,10 +1,11 @@
-import {keys, loadTetrisArgs, loadTetrisType, setKey} from "./utils.ts";
+import {keys, loadTetrisArgs, loadTetrisType, setKey, tetrisGame} from "./utils.ts";
 import {loadTetrisHtml} from "./htmlPage.ts";
 // @ts-ignore
 import page from "page"
 import {arcadeGame, searchGame} from "./gameManagement.ts";
 
 export const userKeys = new keys();
+export const tetrisGameInfo = new tetrisGame();
 
 export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
@@ -14,6 +15,8 @@ export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | nul
 			return settingPage();
 		case "keybindings":
 			return keybindsPage(arg!);
+		case "board":
+			return drawBoard();
 	}
 }
 
@@ -69,4 +72,8 @@ const changeKeys = (keyType: string) => {
 	}
 
 	document.addEventListener("keydown", getNewKey);
+}
+
+const   drawBoard = () => {
+
 }
