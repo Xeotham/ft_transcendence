@@ -31,7 +31,6 @@ export class Game {
 	private lastTime:	number;
 
 	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = []) {
-		// console.log("Game constructor id : " + id);
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };

@@ -11,7 +11,6 @@ export abstract class ATetrimino {
 
 	protected static struct:	tc.pieceStruct;
 
-
 	protected constructor(name: string = "None",
 				coordinates: IPos = new IPos(0, 0),
 				texture: string = "Empty") {
@@ -29,7 +28,7 @@ export abstract class ATetrimino {
 		};
 	}
 
-	public abstract		rotate(direction: "clockwise" | "counter-clockwise", matrix: Matrix): void;
+	public abstract		rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): void;
 	public abstract		getSize(): number;
 	public abstract		place(matrix: Matrix, isSolid: boolean): void;
 	public abstract		remove(matrix: Matrix): void;

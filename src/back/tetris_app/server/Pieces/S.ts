@@ -35,14 +35,14 @@ export class S extends ATetrimino {
 		};
 	})();
 
-	constructor(coordinates: IPos = new IPos(0, 0),
+	public constructor(coordinates: IPos = new IPos(0, 0),
 				texture: string = "S") {
 		super("S", coordinates, texture);
 	}
 
 	public getSize(): number { return S.struct.size; }
 
-	public rotate(direction: "clockwise" | "counter-clockwise", matrix: Matrix): void {
+	public rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): void {
 		// TODO : Play the sounds, send animations, etc.
 
 		let start: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
@@ -50,6 +50,8 @@ export class S extends ATetrimino {
 
 		if (direction === "clockwise")
 			end = S.struct[tc.ROTATIONS[mod(this.rotation + 1, 4)]];
+		else if (direction === "180")
+			end = S.struct[tc.ROTATIONS[mod(this.rotation + 2, 4)]];
 		else
 			end = S.struct[tc.ROTATIONS[mod(this.rotation + 3, 4)]];
 		if (!end)
@@ -88,7 +90,7 @@ export class S extends ATetrimino {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
-			matrix.setAt(pos, new Mino(this.texture, new IPos(pos), isSolid));
+			matrix.setAt(pos, new Mino(this.texture, isSolid));
 		}
 	}
 
@@ -96,7 +98,7 @@ export class S extends ATetrimino {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
-			matrix.setAt(pos, new Mino("Empty", new IPos(pos), false));
+			matrix.setAt(pos, new Mino("Empty", false));
 		}
 	}
 }

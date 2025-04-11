@@ -27,16 +27,42 @@ export const SCORING: {[id:string]: number} = {
 	"T-Spin Double" : 1200,
 	"T-Spin Triple" : 1600,
 	"Back-to-Back Bonus" : 1.5,
+	"Normal Drop" : 0,
 	"Soft Drop" : 1,
 	"Hard Drop" : 2,
 }
 
-export const SCORE_CALCULUS = (score: string, level: number, type: string = "") => {
-	if (score === "Soft Drop" || score === "Hard Drop")
-		return SCORING[type];
-	if (type === "Back-to-Back Bonus")
-		return SCORING[score] * level * SCORING[type];
+export const SCORE_CALCULUS = (score: string, level: number, isB2B: boolean) => {
+	if (SCORING[score] === undefined)
+		return 0;
+	if (score === "Normal Drop" || score === "Soft Drop" || score === "Hard Drop")
+		return SCORING[score];
+	if (isB2B)
+		return SCORING[score] * level * SCORING["Back-to-Back Bonus"];
 	return SCORING[score] * level;
+}
+
+export const LINES_CLEARED: {[id:string]: number} = {
+	"Single" : 1,
+	"Mini T-Spin" : 1,
+	"Mini T-Spin Single" : 2,
+	"Double" : 3,
+	"T-Spin" : 4,
+	"Triple" : 5,
+	"Tetris" : 8,
+	"T-Spin Single" : 8,
+	"T-Spin Double" : 12,
+	"T-Spin Triple" : 16,
+	"PerfectClear" : 20,
+	"Back-to-Back Bonus" : 1.5,
+}
+
+export const LINES_CLEAR_CALCULUS = (score: string, isB2B: boolean) => {
+	if (LINES_CLEARED[score] === undefined)
+		return 0;
+	if (isB2B)
+		return LINES_CLEARED[score] * LINES_CLEARED["Back-to-Back Bonus"];
+	return LINES_CLEARED[score];
 }
 
 export const TETRIS_WIDTH: number = 10;
@@ -45,6 +71,7 @@ export const BUFFER_WIDTH: number = 10;
 export const BUFFER_HEIGHT: number = 20;
 
 export const VARIABLE_GOAL_SYSTEM: number[] = [
+	0, // start at level 1 so we can use 1 as the index
 	10,
 	15,
 	20,

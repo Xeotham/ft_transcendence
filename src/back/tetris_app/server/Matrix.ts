@@ -4,6 +4,9 @@ import { ATetrimino } from "./Tetrimino";
 import * as tc from "./tetrisConstants";
 
 export class Matrix {
+
+	private static readonly full: Mino = new Mino("Full", true);
+
 	private readonly size : IPos;
 	private matrix: Mino[][];
 
@@ -18,7 +21,7 @@ export class Matrix {
 		if (arg instanceof Matrix)
 			this.matrix = arg.matrix.map((row) =>
 				row.map((mino) =>
-					new Mino(mino.getTexture(), mino.getCoordinates())));
+					new Mino(mino.getTexture(), mino.isSolid())));
 	}
 
 	public toJSON() {
@@ -30,10 +33,10 @@ export class Matrix {
 	}
 
 	private createEmptyMatrix(): Mino[][] {
-		const matrix: Mino[][] = [];
+		const matrix: Mino[][] = [[]];
 		for (let y = 0; y < this.size.getY(); y++) {
 			for (let x = 0; x < this.size.getX(); x++)
-				matrix[y].push(new Mino("Empty", new IPos(x, y)));
+				matrix[y].push(new Mino("Empty"));
 			matrix.push([]);
 		}
 		return matrix;
@@ -44,10 +47,11 @@ export class Matrix {
 	public at(arg1: number | IPos, arg2?: number): Mino {
 		let pos: IPos;
 		if (arg1 instanceof IPos)
-			pos = new IPos(arg1);
+			pos = arg1;
 		else
 			pos = new IPos(arg1, arg2 as number);
-		pos = pos.clamp(new IPos(0, 0), this.size.subtract(1, 1));
+		if (!pos.equals(pos.clamp(new IPos(0, 0), this.size.subtract(1, 1))))
+			return Matrix.full;
 		return this.matrix[pos.getY()][pos.getX()];
 	}
 
@@ -56,10 +60,11 @@ export class Matrix {
 	public setAt(arg1: number | IPos, arg2: number | Mino, arg3?: Mino): void {
 		let pos: IPos;
 		if (arg1 instanceof IPos)
-			pos = new IPos(arg1);
+			pos = arg1;
 		else
 			pos = new IPos(arg1, arg2 as number);
-		pos = pos.clamp(new IPos(0, 0), this.size.subtract(1, 1));
+		if (!pos.equals(pos.clamp(new IPos(0, 0), this.size.subtract(1, 1))))
+			return ;
 		this.matrix[pos.getY()][pos.getX()] = arg1 instanceof IPos ? arg2 as Mino : arg3 as Mino;
 	}
 
@@ -80,9 +85,49 @@ export class Matrix {
 	public getSize(): IPos { return this.size; }
 
 	public reset(): void {
-		for (let y = 0; y < this.size.getY(); y++) {
-			for (let x = 0; x < this.size.getX(); x++)
+		for (let y = this.size.getY() - 1; y >= 0; --y) {
+			for (let x = this.size.getX() - 1; x >= 0; --x)
 				this.matrix[y][x].reset();
 		}
 	}
+
+	public isRowFull(row: number): boolean {
+		for (let x = this.size.getX() - 1; x >= 0 ; --x) {
+			if (this.matrix[row][x].isEmpty())
+				return false;
+		}
+		return true;
+	}
+
+	public markRow(row: number): void {
+		for (let x = this.size.getX() - 1; x >= 0 ; --x)
+			this.matrix[row][x].setShouldRemove(true);
+	}
+
+	public shiftDown(): number {
+		let lineRemoved = 0;
+
+		for (let y = 0; y < this.size.getY(); ++y) {
+			if (this.matrix[y][0].getShouldRemove()) {
+				for (let x = 0 ; x < this.size.getX(); ++x) {
+					for (let i = y; i > 0; --i)
+						this.matrix[i][x] = this.matrix[i - 1][x];
+					this.matrix[0][x] = new Mino("Empty");
+				}
+				++lineRemoved;
+			}
+		}
+		return lineRemoved;
+	}
+
+	public isEmpty(): boolean {
+		for (let y = 0; y < this.size.getY(); ++y) {
+			for (let x = 0; x < this.size.getX(); ++x) {
+				if (!this.matrix[y][x].isEmpty())
+					return false;
+			}
+		}
+		return true;
+	}
+
 }

@@ -66,4 +66,8 @@ export class IPos {
 	public clamp(min: IPos, max: IPos): IPos {
 		return new IPos(clamp(this.x, min.x, max.x), clamp(this.y, min.y, max.y));
 	}
+
+	public equals(pos: IPos): boolean {
+		return this.x === pos.x && this.y === pos.y;
+	}
 }
