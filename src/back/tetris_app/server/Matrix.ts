@@ -93,7 +93,7 @@ export class Matrix {
 
 	public isRowFull(row: number): boolean {
 		for (let x = this.size.getX() - 1; x >= 0 ; --x) {
-			if (this.matrix[row][x].isEmpty())
+			if (!this.isMinoAt(x, row))
 				return false;
 		}
 		return true;

@@ -30,8 +30,8 @@ export abstract class ATetrimino {
 
 	public abstract		rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): void;
 	public abstract		getSize(): number;
-	public abstract		place(matrix: Matrix, isSolid: boolean): void;
-	public abstract		remove(matrix: Matrix): void;
+	public abstract		place(matrix: Matrix, isSolid: boolean, isShadow: boolean): void;
+	public abstract		remove(matrix: Matrix, isShadow: boolean): void;
 	public abstract		isColliding(matrix: Matrix, offset: IPos): boolean
 
 	public getCoordinates(): IPos				{ return this.coordinates; }
@@ -41,7 +41,11 @@ export abstract class ATetrimino {
 	public setTexture(texture: string): void	{ this.texture = texture; }
 
 	public getName(): string					{ return this.name; }
-	public setRotation(name: string): void		{ this.name = name; }
+	public setName(name: string): void			{ this.name = name; }
+
+	public getRotation(): number				{ return this.rotation; }
+	public setRotation(rotation: number): void	{ this.rotation = rotation; }
+
 
 	public shouldFall(matrix: Matrix): boolean {
 		return !this.isColliding(matrix, new IPos(0, 1));

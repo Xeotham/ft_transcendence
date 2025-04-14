@@ -1,5 +1,4 @@
 import * as tc from "./tetrisConstants";
-import { Mino } from "./Mino";
 import { IPos } from "./IPos";
 import { Matrix } from "./Matrix";
 import { ATetrimino } from "./Tetrimino";
@@ -12,7 +11,7 @@ import { WebSocket } from "ws";
 // import { T } from "./Pieces/T";
 // import { O } from "./Pieces/O";
 import { delay, mod } from "./utils";
-import {getRoomById, idGenerator} from "../../pong_app/utils";
+import { getRoomById, idGenerator } from "../../pong_app/utils";
 
 const   idGen = idGenerator()
 
@@ -21,6 +20,7 @@ export class TetrisGame {
 	private readonly size:		IPos;
 	private matrix:				Matrix;
 	private currentPiece:		ATetrimino | null;
+	private shadowPiece:		ATetrimino | null;
 	private bags:				ATetrimino[][]; // 2 bags of 7 pieces each
 	private hold:				ATetrimino | null;
 
@@ -34,7 +34,8 @@ export class TetrisGame {
 
 	private	canSwap:			boolean;
 	private shouldLock:			boolean;
-	private shouldSpawn:			boolean;
+	private shouldSpawn:		boolean;
+	private shouldChangeSpeed:	boolean;
 	private	fallSpeed:			number;
 	private	over:				boolean;
 
@@ -46,8 +47,9 @@ export class TetrisGame {
 	constructor(player: WebSocket) {
 		this.player = player;
 		this.size = new IPos(tc.TETRIS_WIDTH, tc.TETRIS_HEIGHT);
-		this.matrix = new Matrix(this.size.add(tc.BUFFER_WIDTH, tc.BUFFER_HEIGHT));
+		this.matrix = new Matrix(this.size.add(0, tc.BUFFER_HEIGHT));
 		this.currentPiece = null;
+		this.shadowPiece = null;
 		this.bags = [this.shuffleBag(), this.shuffleBag()];
 		this.hold = null;
 
@@ -62,6 +64,7 @@ export class TetrisGame {
 		this.canSwap = true;
 		this.shouldLock = false;
 		this.shouldSpawn = false;
+		this.shouldChangeSpeed = false;
 		this.fallSpeed = tc.FALL_SPEED(this.level);
 		this.over = false;
 
@@ -100,18 +103,23 @@ export class TetrisGame {
 	private async spawnPiece() {
 		// console.log("spawnPiece, currentPiece: ", this.currentPiece);
 		clearInterval(this.fallInterval);
+		this.fallInterval = 0;
 		this.shouldLock = false;
+		this.shouldSpawn = false;
 
 		if (!this.canSwap) { // If swap was called, we are in hold phase
-			if (this.hold && this.currentPiece) {
+			// console.log("Hold phase");
+ 			if (this.hold && this.currentPiece) {
+				this.currentPiece.remove(this.matrix, false);
+				this.currentPiece.setRotation(tc.NORTH);
 				const temp: ATetrimino = this.currentPiece;
-				this.currentPiece.remove(this.matrix);
 				this.currentPiece = this.hold as ATetrimino;
 				this.hold = temp;
 			}
 			else if (!this.hold && this.currentPiece) {
+				this.currentPiece.remove(this.matrix, false);
+				this.currentPiece.setRotation(tc.NORTH);
 				this.hold = this.currentPiece;
-				this.currentPiece.remove(this.matrix);
 				this.currentPiece = this.getNextPiece();
 			}
 			else {
@@ -129,14 +137,17 @@ export class TetrisGame {
 			return ;
 
 		this.currentPiece.setCoordinates(new IPos(4 - 2, tc.BUFFER_HEIGHT - 2 - 1)); // -2 to take piece inner size into account
-		this.currentPiece.place(this.matrix, false);
+		this.currentPiece.place(this.matrix, false, false);
+		this.placeShadow();
 		// console.log("isColliding at spawn: ", this.currentPiece.isColliding(this.matrix, new IPos(0, 1)));
 		if (this.currentPiece.isColliding(this.matrix, new IPos(0, 1))) {
-			console.log("Game Over");
+			console.log("Piece is colliding at spawn, game over");
 			this.over = true;
 			return ;
 		}
-		this.fallSpeed = tc.FALL_SPEED(this.level);
+		this.dropType === "hard" ? this.dropType = "normal" : true;
+		this.dropType === "normal" ? this.fallSpeed = tc.FALL_SPEED(this.level) : tc.SOFT_DROP_SPEED(this.level);
+
 		// console.log("Level : " + this.level + ", linecleared: " + this.linesCleared + ", lineClearGoal: " + this.lineClearGoal + ", FallSpeed : " + this.fallSpeed);
 		await delay(200);
 	}
@@ -144,17 +155,18 @@ export class TetrisGame {
 	private async fallPiece(): Promise<void> {
 		if (!this.currentPiece)
 			return ;
-		this.shouldSpawn = false;
+		// this.shouldSpawn = false;
 		if (this.currentPiece.shouldFall(this.matrix)) {
-			this.currentPiece.remove(this.matrix);
+			this.currentPiece.remove(this.matrix, false);
 			this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().down());
-			this.currentPiece.place(this.matrix, false);
+			this.currentPiece.place(this.matrix, false, false);
 		}
 		else {
 			clearInterval(this.fallInterval);
-			this.currentPiece.remove(this.matrix);
+			this.fallInterval = 0;
+			this.currentPiece.remove(this.matrix, false);
 			this.currentPiece.setTexture(this.currentPiece.getTexture() + "_LOCKED")
-			this.currentPiece.place(this.matrix, true);
+			this.currentPiece.place(this.matrix, true, false);
 			this.currentPiece = null;
 			this.shouldSpawn = true;
 		}
@@ -200,11 +212,32 @@ export class TetrisGame {
 			++this.level;
 			this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
 		}
+		// if (this.shouldChangeSpeed) {
+		// 	clearInterval(this.fallInterval);
+		// 	this.fallInterval = 0;
+		// 	this.shouldChangeSpeed = false;
+		// 	this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
+		// 	// ^^^ restart the loop starting in fallPiece
+		// }
 		if (this.shouldSpawn) {
 			await this.spawnPiece();
 			this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 			// ^^^ restart the loop starting in fallPiece
 		}
+		this.placeShadow();
+	}
+
+	private placeShadow(): void {
+		if (!this.currentPiece)
+			return ;
+		this.shadowPiece?.remove(this.matrix, true);
+		this.shadowPiece = new (this.currentPiece!.constructor as { new (coordinates: IPos, texture: string): ATetrimino })(
+			this.currentPiece.getCoordinates(), this.currentPiece.getTexture() + "_SHADOW");
+		this.shadowPiece.setCoordinates(this.currentPiece.getCoordinates());
+		this.shadowPiece.setRotation(this.currentPiece.getRotation());
+		while (this.shadowPiece.shouldFall(this.matrix))
+			this.shadowPiece.setCoordinates(this.shadowPiece.getCoordinates().down());
+		this.shadowPiece.place(this.matrix, false, true);
 	}
 
 	private scoreName(nbClear: number): string {
@@ -241,15 +274,26 @@ export class TetrisGame {
 			++this.B2B;
 	}
 
-	public swap(): void {
-		if (!this.canSwap)
+	public async swap() {
+		if (!this.canSwap || this.over || this.fallInterval === 0)
 			return ;
+		// console.log("Holding piece");
 		this.canSwap = false;
-		this.shouldSpawn = true;
+		// this.shouldSpawn = true;
+
+		clearInterval(this.fallInterval);
+		this.fallInterval = 0;
+		await this.spawnPiece();
+		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 	}
 
 	public changeFallSpeed(type: "normal" | "soft" | "hard"): void {
+		if (this.over || type === this.dropType || this.fallInterval === 0)
+			return ;
+		// this.shouldChangeSpeed = true;
+
 		clearInterval(this.fallInterval);
+		this.fallInterval = 0;
 		this.dropType = type;
 		switch (type) {
 			case "normal":
@@ -270,6 +314,21 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 		this.currentPiece.rotate(direction, this.matrix);
+		this.placeShadow();
+	}
+
+	public move(direction: "left" | "right"): void {
+		if (!this.currentPiece)
+			return ;
+
+		const offset: IPos = direction === "left" ? new IPos(-1, 0) : new IPos(1, 0);
+		if (this.currentPiece.isColliding(this.matrix, offset))
+			// console.log("Collision detected");
+			return ;
+		this.currentPiece.remove(this.matrix, false);
+		this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().add(offset));
+		this.currentPiece.place(this.matrix, false, false);
+		this.placeShadow();
 	}
 
 	private async gameLoopIteration() {
@@ -279,6 +338,7 @@ export class TetrisGame {
 					setTimeout(Iteration, 0); // Schedule the next iteration
 					return;
 				}
+				console.log("Game Over, calling resolve");
 				resolve();
 			}
 			Iteration();
@@ -291,10 +351,12 @@ export class TetrisGame {
 		}, 1000 / 60) as unknown as number; // 60 times per second
 
 		await this.spawnPiece();
+		this.placeShadow();
 		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 		await this.gameLoopIteration();
 
 		clearInterval(this.fallInterval);
+		this.fallInterval = 0;
 		clearInterval(this.sendInterval);
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()})) // TODO : adapt to the new format
 		console.log("Game Over");

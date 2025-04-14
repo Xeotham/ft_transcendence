@@ -1,8 +1,8 @@
-import {getMinoColor, keys, loadTetrisArgs, loadTetrisType, minoSize, setKey, tetrisGame} from "./utils.ts";
-import {loadTetrisHtml} from "./htmlPage.ts";
+import { getMinoColor, keys, loadTetrisArgs, loadTetrisType, minoSize, setKey, tetrisGame } from "./utils.ts";
+import { loadTetrisHtml } from "./htmlPage.ts";
 // @ts-ignore
 import page from "page"
-import {arcadeGame, searchGame} from "./gameManagement.ts";
+import { arcadeGame, searchGame } from "./gameManagement.ts";
 
 export const userKeys = new keys();
 export const tetrisGameInfo = new tetrisGame();

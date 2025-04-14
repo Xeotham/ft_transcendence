@@ -56,48 +56,65 @@ export class S extends ATetrimino {
 		if (!end)
 			return ;
 
-		this.remove(matrix);
+		this.remove(matrix, false);
 
 		for (let i = 1; i <= 5; ++i) {
 			const startPos: IPos = start.rotationPoints[i];
 			const endPos: IPos = end.rotationPoints[i];
 			const dist = startPos.distanceToIPos(endPos);
 
-			if (matrix.at(this.coordinates.add(end.blocks[0].add(dist))).isEmpty() &&
-				matrix.at(this.coordinates.add(end.blocks[1].add(dist))).isEmpty() &&
-				matrix.at(this.coordinates.add(end.blocks[2].add(dist))).isEmpty() &&
-				matrix.at(this.coordinates.add(end.blocks[3].add(dist))).isEmpty()) {
+			if (!matrix.isMinoAt(this.coordinates.add(end.blocks[0].add(dist))) &&
+				!matrix.isMinoAt(this.coordinates.add(end.blocks[1].add(dist))) &&
+				!matrix.isMinoAt(this.coordinates.add(end.blocks[2].add(dist))) &&
+				!matrix.isMinoAt(this.coordinates.add(end.blocks[3].add(dist)))) {
 				this.coordinates = this.coordinates.add(dist);
-				this.rotation = direction === "clockwise" ? mod(this.rotation + 1, 4) : mod(this.rotation + 3, 4);
+				this.rotation = direction === "clockwise" ? mod(this.rotation + 1, 4) :
+					direction === "180" ? mod(this.rotation + 2, 4) : mod(this.rotation + 3, 4);
+
+				// switch (direction) {
+				// 	case "clockwise":
+				// 		this.rotation = mod(this.rotation + 1, 4);
+				// 		break ;
+				// 	case "180":
+				// 		this.rotation = mod(this.rotation + 2, 4);
+				// 		break ;
+				// 	case "counter-clockwise":
+				// 		this.rotation = mod(this.rotation + 3, 4);
+				// 		break ;
+				// }
 				break ;
 			}
 		}
-		this.place(matrix, false);
+		this.place(matrix, false, false);
 	}
 
 	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
-			const pos: IPos = this.coordinates.add(block?.blocks[i].getX(), block?.blocks[i].getY()).add(offset);
+			const pos: IPos = this.coordinates.add(block?.blocks[i]).add(offset);
 			if (matrix.isMinoAt(pos))
 				return true;
 		}
 		return false;
 	}
 
-	public place(matrix: Matrix, isSolid: boolean): void {
+	public place(matrix: Matrix, isSolid: boolean, isShadow: boolean): void {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
-			matrix.setAt(pos, new Mino(this.texture, isSolid));
+			// if (isShadow)
+			// 	console.log("mino at : " + pos.getX() + ", " + pos.getY() + ", text: " + this.texture + ", solid: " + isSolid);
+			if (!isShadow || (isShadow && !matrix.isMinoAt(pos)))
+				matrix.setAt(pos, new Mino(this.texture, isSolid));
 		}
 	}
 
-	public remove(matrix: Matrix): void {
+	public remove(matrix: Matrix, isShadow: boolean): void {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
-			matrix.setAt(pos, new Mino("Empty", false));
+			if (!(isShadow && matrix.isMinoAt(pos)))
+				matrix.setAt(pos, new Mino("Empty", false));
 		}
 	}
 }

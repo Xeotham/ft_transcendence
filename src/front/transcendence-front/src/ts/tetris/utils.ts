@@ -16,7 +16,7 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "Space";
+		this.rotate_180             = "w";
 		this.hard_drop              = "ArrowUp";
 		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
@@ -48,7 +48,7 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "Space";
+		this.rotate_180             = "w";
 		this.hard_drop              = "ArrowUp";
 		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
@@ -167,6 +167,14 @@ export const    getFromApi = async (url: string) => {
 
 export const    getMinoColor = (texture: string): string => {
 	switch (texture) {
+		case "I_SHADOW":
+		case "J_SHADOW":
+		case "L_SHADOW":
+		case "O_SHADOW":
+		case "S_SHADOW":
+		case "T_SHADOW":
+		case "Z_SHADOW":
+			return "gray";
 		case "I_LOCKED":
 		case "I":
 			return "cyan";
