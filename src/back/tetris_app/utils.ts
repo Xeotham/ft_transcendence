@@ -1,3 +1,4 @@
 export interface    tetrisReq {
-	argument: string;
+	argument:   string;
+	roomId:     number;
 }

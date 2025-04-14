@@ -47,6 +47,7 @@ const  keybindsPage = (keys: loadTetrisArgs) => {
 	document.getElementById("moveRight")?.addEventListener("click", () => changeKeys("moveRight"));
 	document.getElementById("rotClock")?.addEventListener("click", () => changeKeys("rotClock"));
 	document.getElementById("rotCountClock")?.addEventListener("click", () => changeKeys("rotCountClock"));
+	document.getElementById("rot180")?.addEventListener("click", () => changeKeys("rot180"));
 	document.getElementById("hardDrop")?.addEventListener("click", () => changeKeys("hardDrop"));
 	document.getElementById("softDrop")?.addEventListener("click", () => changeKeys("softDrop"));
 	document.getElementById("hold")?.addEventListener("click", () => changeKeys("hold"));
@@ -68,7 +69,7 @@ const changeKeys = (keyType: string) => {
 		setKey(keyType, newKey);
 		console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
-		document.getElementById(keyType)!.innerText = newKey;
+		document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
 	}
 
 	document.addEventListener("keydown", getNewKey);
@@ -86,10 +87,10 @@ const   drawBoard = () => {
 	c.clearRect(0, 0, canvas.width, canvas.height);
 	c.beginPath();
 
-	for (let i = 0; i < game.matrix.length; ++i) {
-		for (let j = 0; j < game.matrix[i].length; ++j) {
-			c.fillStyle = getMinoColor(game.matrix[i][j].texture);
-			c.fillRect(j * minoSize, i * minoSize, minoSize, minoSize);
+	for (let y = game.matrix.length - 1; y > 15; --y) {
+		for (let x = 0; x < game.matrix[y].length; ++x) {
+			c.fillStyle = getMinoColor(game.matrix[y][x].texture);
+			c.fillRect(x * minoSize, y * minoSize - 15 * minoSize , minoSize, minoSize);
 		}
 	}
 }

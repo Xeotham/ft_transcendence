@@ -9,12 +9,12 @@ export const WEST = 3;
 export const MAX_LEVEL: number = 15;
 export const MIN_LEVEL: number = 1;
 export const FALL_SPEED = (level: number): number => {
-	return Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
+	return Math.pow(0.8 - ((level - 1) * 0.007), level - 1) * 1000;
 }
 export const SOFT_DROP_SPEED = (level: number) => {
 	return FALL_SPEED(level) / 20;
 }
-export const HARD_DROP_SPEED = 0.0001
+export const HARD_DROP_SPEED = 0.1;
 
 export const SCORING: {[id:string]: number} = {
 	"Single" : 100,
@@ -40,29 +40,6 @@ export const SCORE_CALCULUS = (score: string, level: number, isB2B: boolean) => 
 	if (isB2B)
 		return SCORING[score] * level * SCORING["Back-to-Back Bonus"];
 	return SCORING[score] * level;
-}
-
-export const LINES_CLEARED: {[id:string]: number} = {
-	"Single" : 1,
-	"Mini T-Spin" : 1,
-	"Mini T-Spin Single" : 2,
-	"Double" : 3,
-	"T-Spin" : 4,
-	"Triple" : 5,
-	"Tetris" : 8,
-	"T-Spin Single" : 8,
-	"T-Spin Double" : 12,
-	"T-Spin Triple" : 16,
-	"PerfectClear" : 20,
-	"Back-to-Back Bonus" : 1.5,
-}
-
-export const LINES_CLEAR_CALCULUS = (score: string, isB2B: boolean) => {
-	if (LINES_CLEARED[score] === undefined)
-		return 0;
-	if (isB2B)
-		return LINES_CLEARED[score] * LINES_CLEARED["Back-to-Back Bonus"];
-	return LINES_CLEARED[score];
 }
 
 export const TETRIS_WIDTH: number = 10;

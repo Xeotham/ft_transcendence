@@ -78,7 +78,7 @@ export class S extends ATetrimino {
 	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
-			const pos: IPos = this.coordinates.add(block?.blocks[i]).add(offset);
+			const pos: IPos = this.coordinates.add(block?.blocks[i].getX(), block?.blocks[i].getY()).add(offset);
 			if (matrix.isMinoAt(pos))
 				return true;
 		}

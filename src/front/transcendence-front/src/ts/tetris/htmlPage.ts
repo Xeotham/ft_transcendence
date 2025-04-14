@@ -60,6 +60,8 @@ const keybindsHtml = (keys: keys) => {
 			<button id="rotClock">${keys.getClockwizeRotate()}</button>
 			<p>Rotate Piece Counter Clockwize:</p>
 			<button id="rotCountClock">${keys.getCountClockwizeRotate()}</button>
+			<p>Rotate Piece 180</p>
+			<button id="rot180">${keys.getRotate180()}</button>
 			<p>Hard Drop Piece:</p>
 			<button id="hardDrop">${keys.getHardDrop()}</button>
 			<p>Soft Drop Piece:</p>

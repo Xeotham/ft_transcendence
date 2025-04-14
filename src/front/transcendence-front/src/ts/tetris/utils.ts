@@ -5,6 +5,7 @@ export class   keys {
 	private moveRight:              string;
 	private clockwise_rotate:       string;
 	private count_clockwise_rotate: string;
+	private rotate_180:             string;
 	private hard_drop:              string;
 	private soft_drop:              string;
 	private hold:                   string;
@@ -15,6 +16,7 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
+		this.rotate_180             = "Space";
 		this.hard_drop              = "ArrowUp";
 		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
@@ -25,6 +27,7 @@ export class   keys {
 	getMoveRight(): string { return this.moveRight ; }
 	getClockwizeRotate(): string { return this.clockwise_rotate; }
 	getCountClockwizeRotate(): string { return this.count_clockwise_rotate; }
+	getRotate180(): string { return this.rotate_180; }
 	getHardDrop(): string { return this.hard_drop; }
 	getSoftDrop(): string { return this.soft_drop; }
 	getHold(): string { return this.hold; }
@@ -34,6 +37,7 @@ export class   keys {
 	setMoveRight(moveRight: string): void { this.moveRight = moveRight; }
 	setClockwizeRotate(clockwise_rotate: string): void { this.clockwise_rotate = clockwise_rotate; }
 	setCountClockwizeRotate(count_clockwise_rotate: string): void { this.count_clockwise_rotate = count_clockwise_rotate; }
+	setRotate180(rotate_180: string): void { this.rotate_180 = rotate_180; }
 	setHardDrop(hard_drop: string): void { this.hard_drop = hard_drop; }
 	setSoftDrop(soft_drop: string): void { this.soft_drop = soft_drop; }
 	setHold(hold: string): void { this.hold = hold; }
@@ -44,6 +48,7 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
+		this.rotate_180             = "Space";
 		this.hard_drop              = "ArrowUp";
 		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
@@ -82,9 +87,9 @@ export class    tetrisGame {
 	getGameId(): number { return this.gameId; }
 	getGame(): tetrisGameInfo | null { return this.game; }
 
-	setSocket(socket: WebSocket): void { this.socket = socket; }
+	setSocket(socket: WebSocket | null): void { this.socket = socket; }
 	setGameId(gameId: number): void { this.gameId = gameId; }
-	setGame(game: tetrisGameInfo): void { this.game = game; }
+	setGame(game: tetrisGameInfo | null): void { this.game = game; }
 
 	reset() {
 		this.socket = null;
@@ -99,6 +104,7 @@ export interface    loadTetrisArgs {
 
 export interface    tetrisReq {
 	argument:   string;
+	roomId:     number;
 }
 
 export interface    tetrisRes {
@@ -119,6 +125,8 @@ export const    setKey = (keyType: string, value: string) => {
 			return userKeys.setClockwizeRotate(value);
 		case "rotCountClock":
 			return userKeys.setCountClockwizeRotate(value);
+		case "rot180":
+			return userKeys.setRotate180(value);
 		case "hardDrop":
 			return userKeys.setHardDrop(value);
 		case "softDrop":
@@ -133,6 +141,8 @@ export const    setKey = (keyType: string, value: string) => {
 }
 
 export const    postToApi = async (url: string, data: tetrisReq) => {
+	console.log("Data: ", data);
+
 	const   response = await fetch(url, {
 		method: "POST",
 		headers: {
@@ -157,18 +167,25 @@ export const    getFromApi = async (url: string) => {
 
 export const    getMinoColor = (texture: string): string => {
 	switch (texture) {
+		case "I_LOCKED":
 		case "I":
 			return "cyan";
+		case "J_LOCKED":
 		case "J":
 			return "blue";
+		case "L_LOCKED":
 		case "L":
 			return "orange";
+		case "O_LOCKED":
 		case "O":
 			return "yellow";
+		case "S_LOCKED":
 		case "S":
 			return "green";
+		case "T_LOCKED":
 		case "T":
 			return "purple";
+		case "Z_LOCKED":
 		case "Z":
 			return "red";
 		default:

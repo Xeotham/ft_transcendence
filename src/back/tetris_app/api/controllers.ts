@@ -26,6 +26,7 @@ export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest) => {
 		const tetrisGame = new TetrisGame(socket);
 		tetrisGamesLst.push(tetrisGame);
 
+		console.log(tetrisGame.toJSON());
 		socket.send(JSON.stringify({ type: "SOLO", game: tetrisGame.toJSON() }));
 		tetrisGame.gameLoop();
 	} catch (error) {
@@ -72,13 +73,17 @@ export const    rotatePiece = async (req: FastifyRequest<{Body: tetrisReq}>, rep
 		return reply.status(400).send({error: "No body"});
 	}
 
+	const   room = tetrisGamesLst.find((game) => game.getRoomId() === request.roomId);
+	// console.log("Rotate for Room ID: " + request.roomId + " - Found: " + room);
+	console.log(request);
+
 	switch (request.argument) {
 		case "clockwise":
-			reply.status(200).send({message: "Rotating clockwise"});
-			return console.log("Rotating clockwise");
 		case "counter-clockwise":
-			reply.status(200).send({message: "Rotating counter-clockwise"});
-			return console.log("Rotating counter-clockwise");
+		case "180":
+			console.log("Rotating piece " + request.argument);
+			reply.status(200).send({message: "Rotating piece " + request.argument});
+			return room?.rotate(request.argument);
 		default:
 			return reply.status(400).send({error: "Invalid argument"});
 	}

@@ -79,7 +79,7 @@ export class Matrix {
 		if (pos.getX() < 0 || pos.getX() >= this.size.getX() ||
 			pos.getY() < 0 || pos.getY() >= this.size.getY())
 			return true;
-		return (!this.matrix[pos.getY()][pos.getX()].isEmpty() && !this.matrix[pos.getY()][pos.getX()].isSolid());
+		return (!this.matrix[pos.getY()][pos.getX()].isEmpty() && this.matrix[pos.getY()][pos.getX()].isSolid());
 	}
 
 	public getSize(): IPos { return this.size; }
