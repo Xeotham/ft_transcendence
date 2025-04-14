@@ -17,7 +17,7 @@ const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcenden
 // DROP TABLE IF EXISTS stats_users;
 // DROP TABLE IF EXISTS contact;
 // DROP TABLE IF EXISTS message;
-db.exec(`
+db.exec(` \
   
   CREATE TABLE IF NOT EXISTS user 
   (
@@ -35,12 +35,15 @@ db.exec(`
     date 	DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
-  CREATE TABLE IF NOT EXISTS stat (
+  CREATE TABLE IF NOT EXISTS stat
+  (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER,
     pong_win    INTEGER DEFAULT 0,
     pong_lose   INTEGER DEFAULT 0,
     tetris_win  INTEGER DEFAULT 0,
-    tetris_lose INTEGER DEFAULT 0
+    tetris_lose INTEGER DEFAULT 0,
+    FOREIGN KEY (user1_id) REFERENCES user(id)
   );
 
   CREATE TABLE IF NOT EXISTS contact
@@ -70,27 +73,31 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS games_users 
   (
-      user_id INTEGER NOT NULL,
-      game_id INTEGER NOT NULL,
-      score   INTEGER NOT NULL,
-      winner  BOOLEAN NOT NULL,
-      type    VARCHAR(50) NOT NULL,
-      FOREIGN KEY (user_id) REFERENCES user(id),
-      FOREIGN KEY (game_id) REFERENCES game(id),
-      PRIMARY KEY (user_id, game_id),
-      UNIQUE (user_id, game_id)
-  );
-
-  CREATE TABLE IF NOT EXISTS stats_users (
     user_id INTEGER NOT NULL,
-    stat_id INTEGER NOT NULL,
+    game_id INTEGER NOT NULL,
+    score   INTEGER NOT NULL,
+    winner  BOOLEAN NOT NULL,
+    type    VARCHAR(50) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (stat_id) REFERENCES stat(id),
-    PRIMARY KEY (user_id, stat_id),
-    UNIQUE      (user_id, stat_id)
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    PRIMARY KEY (user_id, game_id),
+    UNIQUE (user_id, game_id)
   );
 
-  
+  CREATE TABLE IF NOT EXISTS parameter
+  (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id             INTEGER NOT NULL,
+    left                VARCHAR(50) DEFAULT "a",
+    right               VARCHAR(50) DEFAULT "d",
+    clockwise_rot       VARCHAR(50) DEFAULT "ArrowRight",
+    count_clockwise_rot VARCHAR(50) DEFAULT "ArrowLeft",
+    hard_drop           VARCHAR(50) DEFAULT "ArrowUp",
+    soft_drop           VARCHAR(50) DEFAULT "ArrowDown",
+    hold                VARCHAR(50) DEFAULT "Shift",
+    forfeit             VARCHAR(50) DEFAULT "Escape",
+    FOREIGN KEY (user_id) REFERENCES user(id)
+  );
 
 `);
 
