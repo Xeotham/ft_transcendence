@@ -17,8 +17,8 @@ export const createUser = (user: User): number => {
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\
         ');
-    stmt.run(username, password, avatar);
-    return 1;
+    const result = stmt.run(username, password, avatar);
+    return result.lastInsertRowid as number;
 };
 
 export const updateUserById = (user: User): void => {

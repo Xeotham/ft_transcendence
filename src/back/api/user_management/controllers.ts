@@ -3,8 +3,12 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 // Interactions with the DataBase to create and get Users
 import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById } from '../../database/models/Users';
 import { createContact, modifyContact, getUserContactById, checkFriendshipStatus, checkBlockStatus, checkPosContact } from '../../database/models/Contact';
+import { createStats, getStatsById, updateStats } from '../../database/models/Stat' ;
 import { request } from 'http';
+import {createUserGameStats, getUserStatsGame} from '../../database/models/Games_users';
 import { getMessageById, saveMessage } from '../../database/models/Message';
+import { saveGame } from '../../database/models/Game';
+import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
 
 interface Users {
     id?:            number;
@@ -32,6 +36,9 @@ interface Message {
 
 
 /*----------------------------------------------------------------------------*/
+/* User */
+
+
 export const registerUser = async (request: FastifyRequest, reply: FastifyReply) => {
     const { username, password, avatar, connected } = request.body as { username: string; password: string; avatar: string; connected: boolean };
 
@@ -44,7 +51,9 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     }
     const id = createUser({ username, password, avatar, connected });
 
-    // const user = getUserById(id);
+    createStats(id);
+
+    createParam(id);
     
     return reply.status(201).send({ message: 'User registered successfully', id });
 };
@@ -103,6 +112,7 @@ export const    getUserInfo = async (request: FastifyRequest, reply: FastifyRepl
 }
 
 /*----------------------------------------------------------------------------*/
+/* Contact */
 
 export const    getFriends = async (request: FastifyRequest, reply: FastifyReply) => {
 
@@ -300,7 +310,9 @@ export const    unblockContact = async (request: FastifyRequest, reply: FastifyR
     }
 }
 
-/*----------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------*/
+/* Message */
+
 
 export const    addMessage = async (request: FastifyRequest, reply: FastifyReply) => {
     const   { id, username, content, date } = request.body as { id: number, username: string, content:string, date:string };
@@ -337,5 +349,34 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
         const mess = getMessageById( sender_id, recipient_id )
 
         return  reply.status(201).send({ message: '', mess });
+    }
+}
+
+/*--------------------------------------------------------------------------------------------*/
+/* Game */
+
+export const createGame = async (request: FastifyRequest, replyL:FastifyReply) => {
+    const   { username1, username2, date, scorep1, scorep2, winner, type } = request.query as { username1:string, username2:string, date:string, scorep1:number, scorep2:number, winner:string, type:string }
+
+    const   player1 = getUserByUsername(username1) as Users;
+    const   player2 = getUserByUsername(username2) as Users;
+
+    if (!player1 || !player2)
+    {
+        return replyL.status(401).send({ message: 'Invalid username'});
+    }
+
+    if (player1.id && player2.id)
+    {
+        if (scorep1 < 0 || scorep2 << 0)
+            return replyL.status(401).send({ message: 'Invalid username'});
+
+        const game_id = saveGame(date);
+
+        createUserGameStats(player1.id, game_id, scorep1, username1 === winner, type);
+        createUserGameStats(player2.id, game_id, scorep1, username2 === winner, type);
+
+        updateStats(player1.id);
+        updateStats(player2.id);
     }
 }

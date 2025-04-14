@@ -1,3 +1,4 @@
+import { SrvRecord } from 'dns';
 import db from '../db';
 
 interface Game {
@@ -11,14 +12,15 @@ interface Game {
     stmt.run(player1, player2, 0, 0, 0, 0);
 };*/
 
-export const createGame = (game: Game): void => {
-    const { date } = game;
-    const stmt = db.prepare('\
-        INSERT INTO games (date) \
-        VALUES (?)\
-        ');
-    stmt.run(date);
+export const saveGame = (date: string): number => {
+    const stmt = db.prepare(`
+        INSERT INTO games (date)
+        VALUES (?)
+    `);
+    const result = stmt.run(date);
+    return result.lastInsertRowid as number;
 };
+
 
 // export const getUserByUsername = (username: string): Users | undefined => {
 //     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');

@@ -22,7 +22,8 @@ export const modifyContact = (contact: Contact): void => {
     const stmt = db.prepare('\
         UPDATE contact \
         SET friend_u1 = ?, friend_u2 = ?, block_u1, block_u2 = ?\
-        WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)');
+        WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)\
+        ');
     stmt.run(friend_u1, friend_u2, block_u1, block_u2, user1_id, user2_id, user2_id, user1_id);
 };
 
