@@ -1,27 +1,46 @@
 import db from '../db';
+import {createUserGameStats, getUserStatsGame} from '../../database/models/Games_users';
+
 
 interface Stats {
 	id?:			number;
-	pong_win:		number,
-	pong_lose:		number,
-	tetris_win:		number,
-	tetris_lose:	number,
+	user_id:		number;
+	pong_win:		number;
+	pong_lose:		number;
+	tetris_win:		number;
+	tetris_lose:	number;
 }
 
-export const createUserStats = (user: Stats): void => {
+export const createStats = (id: number): void => {
 	const stmt = db.prepare('\
-		INSERT INTO user_stats (pong_win, pong_lose, tetris_win, tetris_lose) \
-		VALUES (?, ?, ?, ?)');
-	stmt.run(0, 0, 0, 0);
+		INSERT INTO stats (user_id) \
+		VALUES (?) \
+		');
+	stmt.run(id);
 };
 
-export const getUserStatsById = (id: number): Stats | undefined => {
+export const getStatsById = (id: number): Stats | undefined => {
 	const stmt = db.prepare('\
 		SELECT * \
 		FROM user u \
-		JOIN stats_users su ON su.user_id = u.id \
-		JOIN stat s ON su.stat_id = s._id \
+		JOIN stat s  ON s.user_id = u.id \
 		WHERE u.id = ? \
 		');
 	return stmt.get(id) as Stats | undefined;
+};
+
+export const updateStats = (user_id: number): void => {
+	
+	const pong_win = getUserStatsGame(user_id, "pong", true);
+	const pong_lose = getUserStatsGame(user_id, "pong", false);
+	const tetris_win = getUserStatsGame(user_id, "tetris", true);
+	const tetris_lose = getUserStatsGame(user_id, "tetris", false);
+
+	const stmt = db.prepare('\
+        UPDATE stat \
+        SET pong_win = ?, pong_lose = ?, tetris_win = ?, tetris_lose\
+        WHERE user_id = ?\
+        ');
+	stmt.run(pong_win, pong_lose, tetris_win, tetris_win);
+
 };
