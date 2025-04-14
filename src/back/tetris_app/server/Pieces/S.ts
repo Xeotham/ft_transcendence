@@ -3,7 +3,7 @@ import { ATetrimino } from "../Tetrimino";
 import { IPos } from "../IPos";
 import { Matrix } from "../Matrix";
 import * as tc from "../tetrisConstants";
-import SJson from "./S.json";
+import SJson from "./SJson.json";
 import { mod } from "../utils"
 
 export class S extends ATetrimino {

@@ -1,4 +1,4 @@
-import {keys, loadTetrisArgs, loadTetrisType, setKey, tetrisGame} from "./utils.ts";
+import {getMinoColor, keys, loadTetrisArgs, loadTetrisType, minoSize, setKey, tetrisGame} from "./utils.ts";
 import {loadTetrisHtml} from "./htmlPage.ts";
 // @ts-ignore
 import page from "page"
@@ -75,5 +75,21 @@ const changeKeys = (keyType: string) => {
 }
 
 const   drawBoard = () => {
+	loadTetrisHtml("board");
 
+	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
+	const game = tetrisGameInfo.getGame();
+
+	if (!c || !game)
+		return;
+	c.clearRect(0, 0, canvas.width, canvas.height);
+	c.beginPath();
+
+	for (let i = 0; i < game.matrix.length; ++i) {
+		for (let j = 0; j < game.matrix[i].length; ++j) {
+			c.fillStyle = getMinoColor(game.matrix[i][j].texture);
+			c.fillRect(j * minoSize, i * minoSize, minoSize, minoSize);
+		}
+	}
 }

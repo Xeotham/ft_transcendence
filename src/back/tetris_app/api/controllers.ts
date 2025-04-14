@@ -22,26 +22,12 @@ export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyReques
 
 export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest) => {
 	try {
-		console.log("New WebSocket connection for Tetris Arcade");
-
+		console.log("New Tetris Arcade connection");
 		const tetrisGame = new TetrisGame(socket);
 		tetrisGamesLst.push(tetrisGame);
 
-		socket.send(JSON.stringify({ type: "INFO" }));
-		console.log("INFO message sent");
-
-		socket.send(JSON.stringify({ type: "SOLO" }));
-		console.log("SOLO message sent");
-
-		socket.on('close', (code, reason) => {
-			console.log(`WebSocket closed. Code: ${code}, Reason: ${reason}`);
-			// Clean up the game instance if needed
-		});
-
-		socket.on('error', (error) => {
-			console.error("WebSocket error:", error);
-		});
-
+		socket.send(JSON.stringify({ type: "SOLO", game: tetrisGame.toJSON() }));
+		tetrisGame.gameLoop();
 	} catch (error) {
 		console.error("Error in tetrisArcade handler:", error);
 	}

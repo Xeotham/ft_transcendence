@@ -51,8 +51,46 @@ export class   keys {
 	}
 }
 
-export class    tetrisGame {
+export interface tetriminoInfo {
+	name:       string;
+	rotation:   number;
+	texture:    string;
+}
 
+export interface minoInfo {
+	texture: string;
+}
+
+export interface    tetrisGameInfo {
+	matrix: minoInfo[][];
+	bags:   tetriminoInfo[][];
+	hold:   tetriminoInfo;
+	score:  number;
+	gameId: number;
+}
+
+export class    tetrisGame {
+	socket: WebSocket | null;
+	gameId: number;
+	game:   tetrisGameInfo | null;
+	constructor() {
+		this.socket = null;
+		this.gameId = -1;
+		this.game   = null;
+	}
+	getSocket(): WebSocket | null { return this.socket; }
+	getGameId(): number { return this.gameId; }
+	getGame(): tetrisGameInfo | null { return this.game; }
+
+	setSocket(socket: WebSocket): void { this.socket = socket; }
+	setGameId(gameId: number): void { this.gameId = gameId; }
+	setGame(game: tetrisGameInfo): void { this.game = game; }
+
+	reset() {
+		this.socket = null;
+		this.gameId = -1;
+		this.game   = null;
+	}
 }
 
 export interface    loadTetrisArgs {
@@ -66,6 +104,7 @@ export interface    tetrisReq {
 export interface    tetrisRes {
 	type:       string;
 	argument:   string;
+	game:	    tetrisGameInfo;
 }
 
 export type loadTetrisType = "idle" | "setting" | "keybindings" | "change-key" | "board";
@@ -114,6 +153,27 @@ export const    getFromApi = async (url: string) => {
 		console.error("Error:", response.statusText);
 	}
 	return response.json();
+}
+
+export const    getMinoColor = (texture: string): string => {
+	switch (texture) {
+		case "I":
+			return "cyan";
+		case "J":
+			return "blue";
+		case "L":
+			return "orange";
+		case "O":
+			return "yellow";
+		case "S":
+			return "green";
+		case "T":
+			return "purple";
+		case "Z":
+			return "red";
+		default:
+			return "black";
+	}
 }
 
 export const    minoSize = 30;

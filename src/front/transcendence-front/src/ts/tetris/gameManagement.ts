@@ -1,7 +1,7 @@
 // import { loadTetrisPage } from "./tetris.ts";
 import {loadTetrisHtml} from "./htmlPage.ts";
 import {postToApi, tetrisRes} from "./utils.ts";
-import {userKeys} from "./tetris.ts";
+import {loadTetrisPage, tetrisGameInfo, userKeys} from "./tetris.ts";
 import {address} from "../main.ts";
 // @ts-ignore
 import page from "page";
@@ -22,6 +22,7 @@ export const    arcadeGame = () => {
 	} else {
 		console.error('WebSocket connection died. Code:', event.code, 'Reason:', event.reason);
 	}};
+	tetrisGameInfo.setSocket(socket);
 	loadTetrisHtml("board");
 	gameControllers();
 }
@@ -34,9 +35,17 @@ const   messageHandler = (event: MessageEvent)=> {
 	switch (res.type) {
 		case 'SOLO':
 			console.log("SOLO");
+			tetrisGameInfo.setGame(res.game);
+			tetrisGameInfo.setGameId(res.game.gameId);
+			loadTetrisPage("board");
 			return ;
 		case 'INFO':
 			console.log("INFO: " + res.argument);
+			return ;
+		case "GAME":
+			console.log("GAME: " + res.argument);
+			tetrisGameInfo.setGame(res.game);
+			loadTetrisPage("board");
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);
