@@ -9,15 +9,16 @@ const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcenden
 // TODO: Create the right tables with the right references
 
 // Create tables (if they don't exist)
-// DROP TABLE IF EXISTS users;
-// DROP TABLE IF EXISTS user;
-// DROP TABLE IF EXISTS game;
-// DROP TABLE IF EXISTS stat;
-// DROP TABLE IF EXISTS games_users;
-// DROP TABLE IF EXISTS stats_users;
-// DROP TABLE IF EXISTS contact;
-// DROP TABLE IF EXISTS message;
+// DROP TABLE IF EXISTS parameter;
+//   DROP TABLE IF EXISTS games_users;
+//   DROP TABLE IF EXISTS message;
+//   DROP TABLE IF EXISTS contact;
+//   DROP TABLE IF EXISTS stat;
+//   DROP TABLE IF EXISTS game;
+//   DROP TABLE IF EXISTS user;
 db.exec(` \
+  
+
   
   CREATE TABLE IF NOT EXISTS user 
   (
@@ -38,12 +39,12 @@ db.exec(` \
   CREATE TABLE IF NOT EXISTS stat
   (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id     INTEGER,
+    user_id     INTEGER NOT NULL,
     pong_win    INTEGER DEFAULT 0,
     pong_lose   INTEGER DEFAULT 0,
     tetris_win  INTEGER DEFAULT 0,
     tetris_lose INTEGER DEFAULT 0,
-    FOREIGN KEY (user1_id) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES user(id)
   );
 
   CREATE TABLE IF NOT EXISTS contact
@@ -100,14 +101,5 @@ db.exec(` \
   );
 
 `);
-
-// CREATE TRIGGER update_win_pong_stat
-//   AFTER INSERT ON games_users
-//   WHEN winner = true AND type = 'pong' 
-//   BEGIN
-//     UPDATE stat
-//     SET pong_win = pong_win + 1
-//     WHERE id = NEW.users_id;
-//   END;
 
 export default db;
