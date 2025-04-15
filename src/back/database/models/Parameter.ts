@@ -21,7 +21,6 @@ export const createParam = (id: number): void => {
 	stmt.run(id);
 };
 
-
 export const getParamById = (id: number): Parameter | undefined => {
 	const stmt = db.prepare('\
 		SELECT * \
@@ -50,7 +49,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET left = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 1:
 			stmt = db.prepare('\
@@ -58,7 +57,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET right = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 2:
 			stmt = db.prepare('\
@@ -66,7 +65,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET  clockwise_rot = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 3:
 			stmt = db.prepare('\
@@ -74,7 +73,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET count_clockwise_rot = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 4:
 			stmt = db.prepare('\
@@ -82,7 +81,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET hard_drop = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 5:
 			stmt = db.prepare('\
@@ -90,7 +89,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET soft_drop = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 6:
 			stmt = db.prepare('\
@@ -98,7 +97,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET hold = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 		case 7:
 			stmt = db.prepare('\
@@ -106,7 +105,7 @@ export const updateParam = (id: number, command: string, key: string ): void => 
 				SET forfeit = ? \
 				WHERE id = ?\
 				');
-			stmt.run(id, key);
+			stmt.run(key, id);
 			break;
 	}
 };
