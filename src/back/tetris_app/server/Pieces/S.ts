@@ -103,9 +103,12 @@ export class S extends ATetrimino {
 		for (let i = 0; i < 4; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
 			// if (isShadow)
-			// 	console.log("mino at : " + pos.getX() + ", " + pos.getY() + ", text: " + this.texture + ", solid: " + isSolid);
-			if (!isShadow || (isShadow && !matrix.isMinoAt(pos)))
+			// 	console.log("mino at : " + pos.getX() + ", " + pos.getY() + ", text: " + matrix.at(pos).getTexture() + ", solid: " + isSolid + ", so is empty: " + matrix.at(pos).isEmpty());
+			if (!isShadow || (isShadow && matrix.at(pos).isEmpty())) {
 				matrix.setAt(pos, new Mino(this.texture, isSolid));
+				if (isShadow)
+					matrix.at(pos).setShadow(true);
+			}
 		}
 	}
 
@@ -113,7 +116,7 @@ export class S extends ATetrimino {
 		const block: tc.block = S.struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < 4; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
-			if (!(isShadow && matrix.isMinoAt(pos)))
+			if (!isShadow || (isShadow && matrix.at(pos).getIsShadow()))
 				matrix.setAt(pos, new Mino("Empty", false));
 		}
 	}

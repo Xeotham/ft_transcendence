@@ -115,7 +115,8 @@ export const    dropPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 		case "normal":
 			room.changeFallSpeed(request.argument);
 			reply.status(200).send({message: request.argument + " Dropping the piece"});
-			return console.log(request.argument + " Dropping the piece");
+			// return console.log(request.argument + " Dropping the piece");
+			return ;
 		default:
 			return reply.status(400).send({error: "Invalid argument"});
 	}

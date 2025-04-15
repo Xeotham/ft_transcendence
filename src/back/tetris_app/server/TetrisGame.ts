@@ -86,9 +86,18 @@ export class TetrisGame {
 	}
 
 	public getRoomId(): number { return this.gameId; }
+
 	private shuffleBag(): ATetrimino[] {
 		const pieces: ATetrimino[] = [new S(), /*new Z(), new I(), new J(), new L(), new T(), new O()*/]; // TODO : add all pieces
 		return pieces.sort(() => Math.random() - 0.5) as ATetrimino[];
+	}
+
+	private trySetInterval() {
+		if (this.fallInterval !== 0) {
+			console.log("Fall interval already set, not launching another one");
+			return ;
+		}
+		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 	}
 
 	private getNextPiece(): ATetrimino {
@@ -216,12 +225,12 @@ export class TetrisGame {
 		// 	clearInterval(this.fallInterval);
 		// 	this.fallInterval = 0;
 		// 	this.shouldChangeSpeed = false;
-		// 	this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
+		// 	this.trySetInterval;
 		// 	// ^^^ restart the loop starting in fallPiece
 		// }
 		if (this.shouldSpawn) {
 			await this.spawnPiece();
-			this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
+			this.trySetInterval();
 			// ^^^ restart the loop starting in fallPiece
 		}
 		this.placeShadow();
@@ -237,6 +246,7 @@ export class TetrisGame {
 		this.shadowPiece.setRotation(this.currentPiece.getRotation());
 		while (this.shadowPiece.shouldFall(this.matrix))
 			this.shadowPiece.setCoordinates(this.shadowPiece.getCoordinates().down());
+
 		this.shadowPiece.place(this.matrix, false, true);
 	}
 
@@ -284,7 +294,7 @@ export class TetrisGame {
 		clearInterval(this.fallInterval);
 		this.fallInterval = 0;
 		await this.spawnPiece();
-		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
+		this.trySetInterval();
 	}
 
 	public changeFallSpeed(type: "normal" | "soft" | "hard"): void {
@@ -307,7 +317,7 @@ export class TetrisGame {
 				this.shouldLock = true;
 				break;
 		}
-		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
+		this.trySetInterval();
 	}
 
 	public rotate(direction: "clockwise" | "counter-clockwise" | "180"): void {
@@ -352,7 +362,7 @@ export class TetrisGame {
 
 		await this.spawnPiece();
 		this.placeShadow();
-		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
+		this.trySetInterval();
 		await this.gameLoopIteration();
 
 		clearInterval(this.fallInterval);

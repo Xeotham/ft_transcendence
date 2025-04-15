@@ -7,7 +7,7 @@ export const SOUTH = 2;
 export const WEST = 3;
 
 export const MAX_LEVEL: number = 15;
-export const MIN_LEVEL: number = 5;
+export const MIN_LEVEL: number = 1;
 export const FALL_SPEED = (level: number): number => {
 	return Math.pow(0.8 - ((level - 1) * 0.007), level - 1) * 1000;
 }

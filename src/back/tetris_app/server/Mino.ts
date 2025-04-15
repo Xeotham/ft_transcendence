@@ -4,6 +4,7 @@ import { IPos } from "./IPos"
 export class Mino {
 	private texture:		string;
 	private solid:			boolean;
+	private isShadow:		boolean;
 	private shouldRemove:	boolean;
 
 	constructor(texture: string = "Empty",
@@ -12,6 +13,7 @@ export class Mino {
 		this.solid = isSolid;
 		if (this.texture === "Empty")
 			this.solid = false;
+		this.isShadow = false;
 		this.shouldRemove = false;
 	}
 
@@ -32,11 +34,15 @@ export class Mino {
 	public getShouldRemove(): boolean { return this.shouldRemove; }
 	public setShouldRemove(shouldRemove: boolean): void { this.shouldRemove = shouldRemove; }
 
-	public isEmpty(): boolean { return !this.solid; }
+	public getIsShadow(): boolean { return this.isShadow; }
+	public setShadow(isShadow: boolean): void { this.isShadow = isShadow; }
+
+	public isEmpty(): boolean { return this.texture === "Empty"; }
 
 	public reset(): void {
 		this.texture = "Empty";
 		this.solid = false;
+		this.isShadow = false;
 		this.shouldRemove = false;
 	}
 }
