@@ -3,7 +3,7 @@ import db from '../db';
 // TODO: Creates a create user, getUserByUsername, getUserById
 
 interface User {
-    id?:            number;
+    id?:             number;
     username:       string;
     password:       string;
     avatar:         string;
@@ -11,8 +11,7 @@ interface User {
     created_at?:    string;
 }
 
-export const createUser = (user: User): number => {
-    const { username, password, avatar } = user;
+export const createUser = (username:string, password:string, avatar:string): number => {
     let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\
@@ -21,18 +20,46 @@ export const createUser = (user: User): number => {
     return result.lastInsertRowid as number;
 };
 
-export const updateUserById = (user: User): void => {
-    const { id, username, password, avatar } = user;
-    const stmt = db.prepare('\
-        UPDATE user \
-        SET username = ?, password = ?, avatar = ?\
-        WHERE id = ?\
-        ');
-    stmt.run(username, password, avatar, id);
+export const updateUserById = (id: number, type: string, update: string): void => {
+    const array = ["username", "password", "avatar"];
+	let i = 0;
+	let stmt;
+	while (array[i])
+	{
+		if (array[i] == type)
+			break;
+		i++;
+	}
+	switch (i)
+	{
+		case 0:
+			stmt = db.prepare('\
+				UPDATE USER \
+				SET username = ? \
+				WHERE id = ?\
+				');
+			stmt.run(update, id);
+			break;
+		case 1:
+			stmt = db.prepare('\
+				UPDATE USER \
+				SET password = ? \
+				WHERE id = ?\
+				');
+			stmt.run(update, id);
+			break;
+		case 2:
+			stmt = db.prepare('\
+				UPDATE USER \
+				SET  avatar = ? \
+				WHERE id = ?\
+				');
+			stmt.run(update, id);
+			break;
+    }
 };
 
-export const logUserById = (user : User): void => {
-    const {id} = user;
+export const logUserById = (id : number): void => {
     const stmt = db.prepare('\
         UPDATE user \
         SET connected = 1 \
@@ -41,8 +68,7 @@ export const logUserById = (user : User): void => {
     stmt.run(id);
 };
 
-export const logOutUserById = (user : User): void => {
-    const {id} = user;
+export const logOutUserById = (id : number): void => {
     const stmt = db.prepare('\
         UPDATE user \
         SET connected = 0 \
