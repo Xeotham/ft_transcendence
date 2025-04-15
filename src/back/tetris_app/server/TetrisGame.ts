@@ -33,18 +33,13 @@ export class TetrisGame {
 	private B2B:				number;
 
 	private	canSwap:			boolean;
+	private shouldLock:			boolean;
 	private shouldSpawn:		boolean;
+	private shouldChangeSpeed:	boolean;
 	private	fallSpeed:			number;
 	private	over:				boolean;
 
-	private shouldLock:			boolean;
-	private isInLockPhase:		boolean;
-	private nbMoves:			number;
-	private lowestReached:		number;
-	private msSinceLockPhase:	number;
-
 	private	fallInterval:		number;
-	private	lockInterval:		number;
 	private	sendInterval:		number;
 	private gameId:             number;
 
@@ -67,19 +62,14 @@ export class TetrisGame {
 		this.B2B = 0;
 
 		this.canSwap = true;
+		this.shouldLock = false;
 		this.shouldSpawn = false;
+		this.shouldChangeSpeed = false;
 		this.fallSpeed = tc.FALL_SPEED(this.level);
 		this.over = false;
 
-		this.shouldLock = false;
-		this.isInLockPhase = false;
-		this.nbMoves = 0;
-		this.lowestReached = 0;
-		this.msSinceLockPhase = 0;
-
-		this.fallInterval = -1;
-		this.lockInterval = -1;
-		this.sendInterval = -1;
+		this.fallInterval = 0;
+		this.sendInterval = 0;
 		this.gameId = idGen.next().value;
 	}
 
@@ -102,12 +92,12 @@ export class TetrisGame {
 		return pieces.sort(() => Math.random() - 0.5) as ATetrimino[];
 	}
 
-	private trySetInterval(interval: number = this.fallSpeed): void {
-		if (this.fallInterval !== -1) {
+	private trySetInterval() {
+		if (this.fallInterval !== 0) {
 			console.log("Fall interval already set, not launching another one");
 			return ;
 		}
-		this.fallInterval = setInterval(() => this.fallPiece(), interval) as unknown as number;
+		this.fallInterval = setInterval(() => this.fallPiece(), this.fallSpeed) as unknown as number;
 	}
 
 	private getNextPiece(): ATetrimino {
@@ -122,7 +112,7 @@ export class TetrisGame {
 	private async spawnPiece() {
 		// console.log("spawnPiece, currentPiece: ", this.currentPiece);
 		clearInterval(this.fallInterval);
-		this.fallInterval = -1;
+		this.fallInterval = 0;
 		this.shouldLock = false;
 		this.shouldSpawn = false;
 
@@ -164,75 +154,30 @@ export class TetrisGame {
 			this.over = true;
 			return ;
 		}
-
-		// console.log("Level : " + this.level + ", linecleared: " + this.linesCleared + ", lineClearGoal: " + this.lineClearGoal + ", FallSpeed : " + this.fallSpeed);
-		await delay(200);
 		this.dropType === "hard" ? this.dropType = "normal" : true;
 		this.dropType === "normal" ? this.fallSpeed = tc.FALL_SPEED(this.level) : tc.SOFT_DROP_SPEED(this.level);
 
-	}
-
-	private resetLockPhase(): void {
-		clearInterval(this.lockInterval);
-		this.lockInterval = -1;
-		this.isInLockPhase = false;
-		this.shouldLock = false;
-		this.msSinceLockPhase = 0;
-		this.nbMoves = 0;
-		this.lowestReached = this.currentPiece?.getCoordinates().getY() || 0;
-		// console.log("Stopping countdown for lock phase");
-	}
-
-	private async extendedLockDown(lowestReached: number) {
-		++this.msSinceLockPhase;
-		// console.log("msSinceLockPhase: ", this.msSinceLockPhase);
-		if (lowestReached < this.lowestReached)
-			return this.resetLockPhase();
-		if (this.nbMoves > 14 || this.msSinceLockPhase >= 500) {
-			console.log("Lock phase reached, locking piece at " + this.msSinceLockPhase + " ms");
-			this.nbMoves > 15 ? console.log("Max moves reached") : console.log("Max time reached");
-			this.shouldLock = true;
-			this.resetLockPhase();
-			this.shouldLock = true;
-			clearInterval(this.fallInterval);
-			this.fallInterval = -1;
-			this.trySetInterval(0);
-		}
+		// console.log("Level : " + this.level + ", linecleared: " + this.linesCleared + ", lineClearGoal: " + this.lineClearGoal + ", FallSpeed : " + this.fallSpeed);
+		await delay(200);
 	}
 
 	private async fallPiece(): Promise<void> {
 		if (!this.currentPiece)
 			return ;
+		// this.shouldSpawn = false;
 		if (this.currentPiece.shouldFall(this.matrix)) {
 			this.currentPiece.remove(this.matrix);
 			this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().down());
 			this.currentPiece.place(this.matrix);
-			if (this.currentPiece.getCoordinates().getY() > this.lowestReached) {
-				if (this.isInLockPhase)
-					this.resetLockPhase();
-				this.lowestReached = this.currentPiece.getCoordinates().getY();
-			}
 		}
-		if (!this.currentPiece.shouldFall(this.matrix)) {
-			if (this.shouldLock) {
-				console.log("Fall piece is locked");
-				clearInterval(this.fallInterval);
-				this.fallInterval = -1;
-				this.currentPiece.remove(this.matrix);
-				this.currentPiece.setTexture(this.currentPiece.getTexture() + "_LOCKED")
-				this.currentPiece.place(this.matrix, true);
-				this.currentPiece = null;
-				this.shouldSpawn = true;
-				this.isInLockPhase = false;
-			}
-			else if (!this.isInLockPhase) {
-				this.isInLockPhase = true;
-				if (this.lockInterval === -1) {
-					console.log("Starting countdown for lock phase");
-					this.lockInterval = setInterval(() => this.extendedLockDown(this.lowestReached), 1) as unknown as number;
-				}
-			}
-
+		else {
+			clearInterval(this.fallInterval);
+			this.fallInterval = 0;
+			this.currentPiece.remove(this.matrix);
+			this.currentPiece.setTexture(this.currentPiece.getTexture() + "_LOCKED")
+			this.currentPiece.place(this.matrix, true);
+			this.currentPiece = null;
+			this.shouldSpawn = true;
 		}
 		this.patternPhase();
 	}
@@ -276,6 +221,13 @@ export class TetrisGame {
 			++this.level;
 			this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
 		}
+		// if (this.shouldChangeSpeed) {
+		// 	clearInterval(this.fallInterval);
+		// 	this.fallInterval = 0;
+		// 	this.shouldChangeSpeed = false;
+		// 	this.trySetInterval;
+		// 	// ^^^ restart the loop starting in fallPiece
+		// }
 		if (this.shouldSpawn) {
 			await this.spawnPiece();
 			this.trySetInterval();
@@ -333,31 +285,26 @@ export class TetrisGame {
 	}
 
 	public async swap() {
-		if (!this.canSwap || this.over || this.fallInterval === -1)
+		if (!this.canSwap || this.over || this.fallInterval === 0)
 			return ;
 		// console.log("Holding piece");
 		this.canSwap = false;
 		// this.shouldSpawn = true;
 
 		clearInterval(this.fallInterval);
-		this.fallInterval = -1;
-		this.resetLockPhase();
-		console.log("swap resetLockPhase");
+		this.fallInterval = 0;
 		await this.spawnPiece();
 		this.trySetInterval();
 	}
 
 	public changeFallSpeed(type: "normal" | "soft" | "hard"): void {
-		if (this.over || type === this.dropType || this.fallInterval === -1)
+		if (this.over || type === this.dropType || this.fallInterval === 0)
 			return ;
 		// this.shouldChangeSpeed = true;
 
 		clearInterval(this.fallInterval);
-		this.fallInterval = -1;
-		this.resetLockPhase();
+		this.fallInterval = 0;
 		this.dropType = type;
-		if (type === "hard")
-			console.log("Hard drop");
 		switch (type) {
 			case "normal":
 				this.fallSpeed = tc.FALL_SPEED(this.level);
@@ -376,11 +323,6 @@ export class TetrisGame {
 	public rotate(direction: "clockwise" | "counter-clockwise" | "180"): void {
 		if (!this.currentPiece)
 			return ;
-		if (this.isInLockPhase) {
-			console.log("Turn in lock phase");
-			++this.nbMoves;
-			this.msSinceLockPhase = 0;
-		}
 		this.currentPiece.rotate(direction, this.matrix);
 		this.placeShadow();
 	}
@@ -388,11 +330,6 @@ export class TetrisGame {
 	public move(direction: "left" | "right"): void {
 		if (!this.currentPiece)
 			return ;
-		if (this.isInLockPhase) {
-			console.log("Move in lock phase");
-			++this.nbMoves;
-			this.msSinceLockPhase = 0;
-		}
 
 		const offset: IPos = direction === "left" ? new IPos(-1, 0) : new IPos(1, 0);
 		if (this.currentPiece.isColliding(this.matrix, offset))
@@ -429,7 +366,7 @@ export class TetrisGame {
 		await this.gameLoopIteration();
 
 		clearInterval(this.fallInterval);
-		this.fallInterval = -1;
+		this.fallInterval = 0;
 		clearInterval(this.sendInterval);
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()})) // TODO : adapt to the new format
 		console.log("Game Over");
