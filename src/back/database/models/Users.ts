@@ -1,7 +1,7 @@
 import db from '../db';
 import bcrypt from 'bcrypt';
 
-interface User 
+interface User
 {
     id?:             number;
     username:       string;
@@ -17,7 +17,7 @@ interface   Username_id
     username:   string;
 }
 
-export const createUser = (username:string, password:string, avatar:string): number => 
+export const createUser = (username:string, password:string, avatar:string): number =>
 {
     let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
@@ -29,7 +29,7 @@ export const createUser = (username:string, password:string, avatar:string): num
     return result.lastInsertRowid as number;
 };
 
-export const updateUserById = (id: number, type: string, update: string): void => 
+export const updateUserById = (id: number, type: string, update: string): void =>
 {
     const array = ["username", "password", "avatar"];
 	let i = 0;
@@ -70,7 +70,7 @@ export const updateUserById = (id: number, type: string, update: string): void =
     }
 };
 
-export const logUserById = (id : number): void => 
+export const logUserById = (id : number): void =>
 {
     const stmt = db.prepare('\
         UPDATE user \
@@ -81,7 +81,7 @@ export const logUserById = (id : number): void =>
     stmt.run(id);
 };
 
-export const logOutUserById = (id : number): void => 
+export const logOutUserById = (id : number): void =>
 {
     const stmt = db.prepare('\
         UPDATE user \
@@ -92,7 +92,7 @@ export const logOutUserById = (id : number): void =>
     stmt.run(id);
 };
 
-export const getUserByUsername = (username: string): User | undefined => 
+export const getUserByUsername = (username: string): User | undefined =>
 {
     const stmt = db.prepare('\
         SELECT * \
@@ -103,7 +103,7 @@ export const getUserByUsername = (username: string): User | undefined =>
     return stmt.get(username) as User | undefined;
 };
 
-export const getUserById = (id: number): User | undefined => 
+export const getUserById = (id: number): User | undefined =>
 {
     const stmt = db.prepare('\
         SELECT * \
@@ -114,7 +114,7 @@ export const getUserById = (id: number): User | undefined =>
     return stmt.get(id) as User | undefined;
 };
 
-export const getUsernameById = (id: number): string => 
+export const getUsernameById = (id: number): string =>
 {
     const stmt = db.prepare('\
         SELECT username \
@@ -127,9 +127,9 @@ export const getUsernameById = (id: number): string =>
 
 export const hashPassword = async (password:string, saltRounds = 10): Promise<string | null> =>
 {
-    if (!password) 
+    if (!password)
         return null;
-    
+
     try
     {
         return await bcrypt.hash(password, saltRounds);

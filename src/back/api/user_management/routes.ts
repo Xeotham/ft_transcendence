@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { registerUser, updateUser, loginUser, logoutUser,
-    getUserInfo, getFriends, addFriend , deleteFriend, blockContact, 
-    unblockContact, addMessage, getMessage, createGame, getStat, 
+    getUserInfo, getFriends, addFriend , deleteFriend, blockContact,
+    unblockContact, addMessage, getMessage, createGame, getStat,
     getGameHistory, updateParameter, getParameter  } from './controllers';
 import { create } from 'domain';
 
@@ -24,6 +24,6 @@ export default async function userRoutes(fastify: FastifyInstance)
     fastify.get('/get_message', getMessage);
     fastify.post('/create_game', createGame);
     fastify.get('/get_stat', getStat);
-    
-    
+
+
 }

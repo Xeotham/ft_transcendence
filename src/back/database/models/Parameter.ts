@@ -1,6 +1,6 @@
 import db from '../db';
 
-interface Parameter 
+interface Parameter
 {
 	id?:					number;
 	user_id:				number;
@@ -14,7 +14,7 @@ interface Parameter
 	forfeit:				string;
 }
 
-export const createParam = (id: number): void => 
+export const createParam = (id: number): void =>
 {
 	const stmt = db.prepare('\
 		INSERT INTO parameter (user_id) \
@@ -24,7 +24,7 @@ export const createParam = (id: number): void =>
 	stmt.run(id);
 };
 
-export const getParamById = (id: number): Parameter | undefined => 
+export const getParamById = (id: number): Parameter | undefined =>
 {
 	const stmt = db.prepare('\
 		SELECT * \
@@ -36,7 +36,7 @@ export const getParamById = (id: number): Parameter | undefined =>
 	return stmt.get(id) as Parameter | undefined;
 };
 
-export const updateParam = (id: number, command: string, key: string ): void => 
+export const updateParam = (id: number, command: string, key: string ): void =>
 {
     const comm = ["left", "right", "clockwise_rot", "count_clockwise_rot", "hard_drop", "soft_drop", "hold", "forfeit"];
 	let i = 0;
