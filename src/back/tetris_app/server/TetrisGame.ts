@@ -1,15 +1,15 @@
+import { WebSocket } from "ws";
 import * as tc from "./tetrisConstants";
 import { IPos } from "./IPos";
 import { Matrix } from "./Matrix";
-import { ATetrimino } from "./Tetrimino";
+import { ATetrimino } from "./ATetrimino";
 import { S } from "./Pieces/S";
-import { WebSocket } from "ws";
-// import { Z } from "./Pieces/Z";
-// import { I } from "./Pieces/I";
-// import { J } from "./Pieces/J";
-// import { L } from "./Pieces/L";
-// import { T } from "./Pieces/T";
-// import { O } from "./Pieces/O";
+import { T } from "./Pieces/T";
+import { Z } from "./Pieces/Z";
+import { L } from "./Pieces/L";
+import { J } from "./Pieces/J";
+import { O } from "./Pieces/O";
+import { I } from "./Pieces/I";
 import { delay, mod } from "./utils";
 import { getRoomById, idGenerator } from "../../pong_app/utils";
 
@@ -88,7 +88,7 @@ export class TetrisGame {
 	public getRoomId(): number { return this.gameId; }
 
 	private shuffleBag(): ATetrimino[] {
-		const pieces: ATetrimino[] = [new S(), /*new Z(), new I(), new J(), new L(), new T(), new O()*/]; // TODO : add all pieces
+		const pieces: ATetrimino[] = [new S(), new T(), new Z(), new L(), new J(), new O(), new I()];
 		return pieces.sort(() => Math.random() - 0.5) as ATetrimino[];
 	}
 
@@ -119,14 +119,14 @@ export class TetrisGame {
 		if (!this.canSwap) { // If swap was called, we are in hold phase
 			// console.log("Hold phase");
  			if (this.hold && this.currentPiece) {
-				this.currentPiece.remove(this.matrix, false);
+				this.currentPiece.remove(this.matrix);
 				this.currentPiece.setRotation(tc.NORTH);
 				const temp: ATetrimino = this.currentPiece;
 				this.currentPiece = this.hold as ATetrimino;
 				this.hold = temp;
 			}
 			else if (!this.hold && this.currentPiece) {
-				this.currentPiece.remove(this.matrix, false);
+				this.currentPiece.remove(this.matrix);
 				this.currentPiece.setRotation(tc.NORTH);
 				this.hold = this.currentPiece;
 				this.currentPiece = this.getNextPiece();
@@ -146,7 +146,7 @@ export class TetrisGame {
 			return ;
 
 		this.currentPiece.setCoordinates(new IPos(4 - 2, tc.BUFFER_HEIGHT - 2 - 1)); // -2 to take piece inner size into account
-		this.currentPiece.place(this.matrix, false, false);
+		this.currentPiece.place(this.matrix);
 		this.placeShadow();
 		// console.log("isColliding at spawn: ", this.currentPiece.isColliding(this.matrix, new IPos(0, 1)));
 		if (this.currentPiece.isColliding(this.matrix, new IPos(0, 1))) {
@@ -166,16 +166,16 @@ export class TetrisGame {
 			return ;
 		// this.shouldSpawn = false;
 		if (this.currentPiece.shouldFall(this.matrix)) {
-			this.currentPiece.remove(this.matrix, false);
+			this.currentPiece.remove(this.matrix);
 			this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().down());
-			this.currentPiece.place(this.matrix, false, false);
+			this.currentPiece.place(this.matrix);
 		}
 		else {
 			clearInterval(this.fallInterval);
 			this.fallInterval = 0;
-			this.currentPiece.remove(this.matrix, false);
+			this.currentPiece.remove(this.matrix);
 			this.currentPiece.setTexture(this.currentPiece.getTexture() + "_LOCKED")
-			this.currentPiece.place(this.matrix, true, false);
+			this.currentPiece.place(this.matrix, true);
 			this.currentPiece = null;
 			this.shouldSpawn = true;
 		}
@@ -335,9 +335,9 @@ export class TetrisGame {
 		if (this.currentPiece.isColliding(this.matrix, offset))
 			// console.log("Collision detected");
 			return ;
-		this.currentPiece.remove(this.matrix, false);
+		this.currentPiece.remove(this.matrix);
 		this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().add(offset));
-		this.currentPiece.place(this.matrix, false, false);
+		this.currentPiece.place(this.matrix);
 		this.placeShadow();
 	}
 

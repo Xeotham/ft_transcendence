@@ -1,6 +1,6 @@
 import { IPos } from "./IPos";
 import { Mino } from "./Mino";
-import { ATetrimino } from "./Tetrimino";
+import { ATetrimino } from "./ATetrimino";
 import * as tc from "./tetrisConstants";
 
 export class Matrix {

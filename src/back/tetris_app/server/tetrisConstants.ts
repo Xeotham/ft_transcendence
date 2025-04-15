@@ -68,21 +68,10 @@ export const VARIABLE_GOAL_SYSTEM: number[] = [
 
 export interface block {
 	[key: string]: any;
-	"blocks" : {
-		[key: string]: any;
-		"0": IPos;
-		"1": IPos;
-		"2": IPos;
-		"3": IPos;
-	};
-	"rotationPoints": {
-		[key: string]: any;
-		"1": IPos;
-		"2": IPos;
-		"3": IPos;
-		"4": IPos;
-		"5": IPos;
-	};
+	"nbBlocks": number,
+	"blocks" : IPos[];
+	"nbRotationPoints": number,
+	"rotationPoints": IPos[];
 }
 
 export interface pieceStruct {
