@@ -112,6 +112,7 @@ export const    dropPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 	switch (request.argument) {
 		case "hard":
 		case "soft":
+		case "normal":
 			room.changeFallSpeed(request.argument);
 			reply.status(200).send({message: request.argument + " Dropping the piece"});
 			return console.log(request.argument + " Dropping the piece");

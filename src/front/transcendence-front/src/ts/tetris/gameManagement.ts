@@ -1,6 +1,6 @@
 // import { loadTetrisPage } from "./tetris.ts";
 import {loadTetrisHtml} from "./htmlPage.ts";
-import {postToApi, tetrisRes} from "./utils.ts";
+import {postToApi, tetrisGame, tetrisRes} from "./utils.ts";
 import {loadTetrisPage, tetrisGameInfo, userKeys} from "./tetris.ts";
 import {address} from "../main.ts";
 // @ts-ignore
@@ -54,17 +54,25 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setSocket(null);
 			tetrisGameInfo.setGameId(-1);
 			tetrisGameInfo.setGame(null);
+			gameControllers(true);
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);
 	}
 }
 
-const gameControllers = () => {
-
-	const getNewKey = (event: KeyboardEvent) => {
+const gameControllers = (finish: boolean = false) => {
+	const keydownHandler = (event: KeyboardEvent) => {
 		const key = event.key;
+
 		console.log("Room ID: " + tetrisGameInfo.getGameId());
+
+		if (tetrisGameInfo.getGameId() === -1) {
+			document.removeEventListener('keydown', keydownHandler);
+			document.removeEventListener('keyup', keyupHandler);
+			return ;
+		}
+
 		switch (key) {
 			case userKeys.getMoveLeft():
 				return postToApi(`http://${address}:3000/api/tetris/movePiece`, { argument: "left", roomId: tetrisGameInfo.getGameId() });
@@ -84,11 +92,22 @@ const gameControllers = () => {
 				return postToApi(`http://${address}:3000/api/tetris/holdPiece`, { argument: "hold", roomId: tetrisGameInfo.getGameId() });
 			case userKeys.getForfeit():
 				postToApi(`http://${address}:3000/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
-				document.removeEventListener('keydown', getNewKey);
-				page.show("/tetris");
-				return ;
+				document.removeEventListener('keydown', keydownHandler);
+				document.removeEventListener('keyup', keyupHandler);
+				page.show("/tetris")
+				return;
 		}
 	}
 
-	document.addEventListener("keydown", getNewKey);
+	const keyupHandler = (event: KeyboardEvent) => {
+		const key = event.key;
+		if (key === userKeys.getSoftDrop())
+			return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
+	}
+
+	if (finish)
+		return page.show("/tetris");
+
+	document.addEventListener("keydown", keydownHandler);
+	document.addEventListener("keyup", keyupHandler);
 }
