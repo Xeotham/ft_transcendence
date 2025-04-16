@@ -1,0 +1,89 @@
+
+> ft_transcendence@1.0.0 dev
+> npm run back && npx ts-node-dev --respawn --transpile-only ./server/server.ts
+
+
+> ft_transcendence@1.0.0 back
+> npx tsc --project tsconfig.json
+
+[INFO] 14:25:40 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.8.2)
+🚀 Server listening at http://127.0.0.1:3000
+New Tetris Arcade connection
+Starting countdown for lock phase
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+Starting countdown for lock phase
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+Starting countdown for lock phase
+Hard drop
+Fall piece is locked
+Starting countdown for lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+Starting countdown for lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+Starting countdown for lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+Starting countdown for lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+Hard drop
+Fall piece is locked
+Starting countdown for lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+Starting countdown for lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+{ argument: 'clockwise', roomId: 0 }
+{ argument: 'clockwise', roomId: 0 }
+Hard drop
+Fall piece is locked
+Starting countdown for lock phase
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+{ argument: 'clockwise', roomId: 0 }
+{ argument: 'clockwise', roomId: 0 }
+swap resetLockPhase
+{ argument: 'clockwise', roomId: 0 }
+Hard drop
+Fall piece is locked
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+Hard drop
+Fall piece is locked
+{ argument: 'clockwise', roomId: 0 }
+{ argument: 'counter-clockwise', roomId: 0 }
+{ argument: 'counter-clockwise', roomId: 0 }
+Starting countdown for lock phase
+{ argument: 'clockwise', roomId: 0 }
+Turn in lock phase
+{ argument: 'counter-clockwise', roomId: 0 }
+Turn in lock phase
+Lock phase reached, locking piece at 500 ms
+Max time reached
+Fall piece is locked
+{ argument: 'counter-clockwise', roomId: 0 }
+{ argument: 'clockwise', roomId: 0 }
+{ argument: 'counter-clockwise', roomId: 0 }
