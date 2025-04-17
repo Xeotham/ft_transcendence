@@ -1,16 +1,19 @@
-import { SrvRecord } from 'dns';
 import db from '../db';
 
-interface Game {
+interface Game 
+{
     id?:    number;
     date:   string;
 }
 
-export const saveGame = (date: string): number => {
+export const saveGame = (date: string): number => 
+{
     const stmt = db.prepare(`
         INSERT INTO games (date)
         VALUES (?)
-    `);
+        `);
+
     const result = stmt.run(date);
+
     return result.lastInsertRowid as number;
 };
