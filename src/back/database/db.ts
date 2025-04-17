@@ -9,13 +9,13 @@ const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcenden
 // TODO: Create the right tables with the right references
 
 // Create tables (if they don't exist)
-// DROP TABLE IF EXISTS parameter;
-//   DROP TABLE IF EXISTS games_users;
-//   DROP TABLE IF EXISTS message;
-//   DROP TABLE IF EXISTS contact;
-//   DROP TABLE IF EXISTS stat;
-//   DROP TABLE IF EXISTS game;
-//   DROP TABLE IF EXISTS user;
+  // DROP TABLE IF EXISTS parameter;
+  // DROP TABLE IF EXISTS games_users;
+  // DROP TABLE IF EXISTS message;
+  // DROP TABLE IF EXISTS contact;
+  // DROP TABLE IF EXISTS stats_users;
+  // DROP TABLE IF EXISTS game;
+  // DROP TABLE IF EXISTS user;
 db.exec(` \
   
 
@@ -51,10 +51,10 @@ db.exec(` \
   (
       user1_id INTEGER NOT NULL,
       user2_id INTEGER NOT NULL,
-      friend_u1 BOOLEAN DEFAULT 0,
-      friend_u2 BOOLEAN DEFAULT 0,
-      block_u1 BOOLEAN DEFAULT 0,
-      block_u2 BOOLEAN DEFAULT 0,
+      friend_u1 BOOLEAN DEFAULT false,
+      friend_u2 BOOLEAN DEFAULT false,
+      block_u1 BOOLEAN DEFAULT false,
+      block_u2 BOOLEAN DEFAULT false,
       FOREIGN KEY (user1_id) REFERENCES user(id),
       FOREIGN KEY (user2_id) REFERENCES user(id),
       PRIMARY KEY (user1_id, user2_id),

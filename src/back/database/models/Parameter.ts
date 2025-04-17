@@ -1,6 +1,7 @@
 import db from '../db';
 
-interface Parameter {
+interface Parameter 
+{
 	id?:					number;
 	user_id:				number;
 	left:					string;
@@ -13,28 +14,34 @@ interface Parameter {
 	forfeit:				string;
 }
 
-export const createParam = (id: number): void => {
+export const createParam = (id: number): void => 
+{
 	const stmt = db.prepare('\
 		INSERT INTO parameter (user_id) \
 		VALUES (?) \
 		');
+
 	stmt.run(id);
 };
 
-export const getParamById = (id: number): Parameter | undefined => {
+export const getParamById = (id: number): Parameter | undefined => 
+{
 	const stmt = db.prepare('\
 		SELECT * \
 		FROM user u \
 		JOIN parameter p  ON p.user_id = u.id \
 		WHERE u.id = ? \
 		');
+
 	return stmt.get(id) as Parameter | undefined;
 };
 
-export const updateParam = (id: number, command: string, key: string ): void => {
+export const updateParam = (id: number, command: string, key: string ): void => 
+{
     const comm = ["left", "right", "clockwise_rot", "count_clockwise_rot", "hard_drop", "soft_drop", "hold", "forfeit"];
 	let i = 0;
 	let stmt;
+
 	while (comm[i])
 	{
 		if (comm[i] == command)
