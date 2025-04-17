@@ -2,7 +2,8 @@ import db from '../db';
 import {createUserGameStats, getUserStatsGame} from '../../database/models/Games_users';
 
 
-interface Stats {
+interface Stat 
+{
 	id?:			number;
 	user_id:		number;
 	pong_win:		number;
@@ -11,25 +12,30 @@ interface Stats {
 	tetris_lose:	number;
 }
 
-export const createStats = (id: number): void => {
+export const createStats = (id: number): void => 
+{
 	const stmt = db.prepare('\
-		INSERT INTO stats (user_id) \
+		INSERT INTO stat (user_id) \
 		VALUES (?) \
 		');
+
 	stmt.run(id);
 };
 
-export const getStatsById = (id: number): Stats | undefined => {
+export const getStatsById = (id: number): Stat | undefined => 
+{
 	const stmt = db.prepare('\
 		SELECT * \
 		FROM user u \
 		JOIN stat s  ON s.user_id = u.id \
 		WHERE u.id = ? \
 		');
-	return stmt.get(id) as Stats | undefined;
+
+	return stmt.get(id) as Stat | undefined;
 };
 
-export const updateStats = (user_id: number): void => {
+export const updateStats = (user_id: number): void => 
+{
 	
 	const pong_win = getUserStatsGame(user_id, "pong", true);
 	const pong_lose = getUserStatsGame(user_id, "pong", false);
@@ -41,5 +47,6 @@ export const updateStats = (user_id: number): void => {
         SET pong_win = ?, pong_lose = ?, tetris_win = ?, tetris_lose\
         WHERE user_id = ?\
         ');
+
 	stmt.run(pong_win, pong_lose, tetris_win, tetris_win);
 };

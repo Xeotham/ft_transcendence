@@ -1,8 +1,7 @@
 import db from '../db';
 
-// TODO: Creates a create user, getUserByUsername, getUserById
-
-interface User {
+interface User 
+{
     id?:             number;
     username:       string;
     password:       string;
@@ -11,19 +10,24 @@ interface User {
     created_at?:    string;
 }
 
-export const createUser = (username:string, password:string, avatar:string): number => {
+export const createUser = (username:string, password:string, avatar:string): number => 
+{
     let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\
         ');
+
     const result = stmt.run(username, password, avatar);
+
     return result.lastInsertRowid as number;
 };
 
-export const updateUserById = (id: number, type: string, update: string): void => {
+export const updateUserById = (id: number, type: string, update: string): void => 
+{
     const array = ["username", "password", "avatar"];
 	let i = 0;
 	let stmt;
+
 	while (array[i])
 	{
 		if (array[i] == type)
@@ -59,38 +63,46 @@ export const updateUserById = (id: number, type: string, update: string): void =
     }
 };
 
-export const logUserById = (id : number): void => {
+export const logUserById = (id : number): void => 
+{
     const stmt = db.prepare('\
         UPDATE user \
         SET connected = 1 \
         WHERE id = ?\
         ');
+
     stmt.run(id);
 };
 
-export const logOutUserById = (id : number): void => {
+export const logOutUserById = (id : number): void => 
+{
     const stmt = db.prepare('\
         UPDATE user \
         SET connected = 0 \
         WHERE id = ?\
         ');
+
     stmt.run(id);
 };
 
-export const getUserByUsername = (username: string): User | undefined => {
+export const getUserByUsername = (username: string): User | undefined => 
+{
     const stmt = db.prepare('\
         SELECT * \
         FROM user \
         WHERE username = ?\
         ');
+
     return stmt.get(username) as User | undefined;
 };
 
-export const getUserById = (id: number): User | undefined => {
+export const getUserById = (id: number): User | undefined => 
+{
     const stmt = db.prepare('\
         SELECT * \
         FROM user \
         WHERE id = ?\
         ');
+
     return stmt.get(id) as User | undefined;
 };
