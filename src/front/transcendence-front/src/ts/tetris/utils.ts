@@ -74,22 +74,77 @@ export interface    tetrisGameInfo {
 	gameId: number;
 }
 
+export class   TimeoutKey {
+	start:      number;
+	timer:      number;
+	delay:      number;
+	remaining:  number;
+	callback:   () => void;
+
+	constructor(callback: () => void, delay: number) {
+		this.start = Date.now();
+		this.timer = setTimeout(callback, delay);
+		this.delay = delay;
+		this.remaining = delay;
+		this.callback = callback;
+	}
+	pause() {
+		console.log("Pause timer");
+		clearTimeout(this.timer);
+		this.timer = 0;
+		this.remaining -= Date.now() - this.start;
+	}
+	resume() {
+		console.log("Resume timer");
+		if (this.timer !== 0) {
+			return ;
+		}
+		this.start = Date.now();
+		this.timer = setTimeout(this.callback, this.remaining);
+	}
+	clear() {
+		clearTimeout(this.timer);
+		this.timer = 0;
+		this.remaining = 0;
+		this.start = 0;
+		this.delay = 0;
+		this.callback = () => {};
+	}
+}
+
 export class    tetrisGame {
-	socket: WebSocket | null;
-	gameId: number;
-	game:   tetrisGameInfo | null;
+	socket:         WebSocket | null;
+	gameId:         number;
+	game:           tetrisGameInfo | null;
+	keyTimeout:     {[key: string]: TimeoutKey | null};
+	keyFirstMove:   {[key: string]: boolean};
+
+	// TODO: Add interval for key
+
 	constructor() {
 		this.socket = null;
 		this.gameId = -1;
 		this.game   = null;
+		this.keyTimeout = {
+			"moveLeft": null,
+			"moveRight": null,
+		};
+		this.keyFirstMove = {
+			"moveLeft": true,
+			"moveRight": true,
+		};
 	}
 	getSocket(): WebSocket | null { return this.socket; }
 	getGameId(): number { return this.gameId; }
 	getGame(): tetrisGameInfo | null { return this.game; }
+	getKeyTimeout(arg: string): TimeoutKey | null { return this.keyTimeout[arg]; }
+	getKeyFirstMove(arg: string): boolean { return this.keyFirstMove[arg]; }
 
 	setSocket(socket: WebSocket | null): void { this.socket = socket; }
 	setGameId(gameId: number): void { this.gameId = gameId; }
 	setGame(game: tetrisGameInfo | null): void { this.game = game; }
+	setKeyTimeout(arg: string, value: TimeoutKey | null): void { this.keyTimeout[arg] = value; }
+	setKeyFirstMove(arg: string, value: boolean): void { this.keyFirstMove[arg] = value; }
 
 	reset() {
 		this.socket = null;
@@ -141,7 +196,7 @@ export const    setKey = (keyType: string, value: string) => {
 }
 
 export const    postToApi = async (url: string, data: tetrisReq) => {
-	console.log("Data: ", data);
+	// console.log("Data: ", data);
 
 	const   response = await fetch(url, {
 		method: "POST",
@@ -153,7 +208,7 @@ export const    postToApi = async (url: string, data: tetrisReq) => {
 	if (!response.ok) {
 		console.error("Error:", response.statusText);
 	}
-	console.log(response.json().then((data) => console.log(data)));
+	// console.log(response.json().then((data) => console.log(data)));
 	// return response.json();
 }
 

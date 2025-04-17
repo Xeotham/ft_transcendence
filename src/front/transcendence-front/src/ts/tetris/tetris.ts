@@ -76,8 +76,6 @@ const changeKeys = (keyType: string) => {
 }
 
 const   drawBoard = () => {
-	loadTetrisHtml("board");
-
 	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 	const game = tetrisGameInfo.getGame();

@@ -1,6 +1,6 @@
 // import { loadTetrisPage } from "./tetris.ts";
 import {loadTetrisHtml} from "./htmlPage.ts";
-import {postToApi, tetrisGame, tetrisRes} from "./utils.ts";
+import {postToApi, tetrisRes, TimeoutKey} from "./utils.ts";
 import {loadTetrisPage, tetrisGameInfo, userKeys} from "./tetris.ts";
 import {address} from "../main.ts";
 // @ts-ignore
@@ -38,13 +38,13 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
+			loadTetrisHtml("board");
 			loadTetrisPage("board");
 			return ;
 		case 'INFO':
 			console.log("INFO: " + res.argument);
 			return ;
 		case "GAME":
-			// console.log("GAME: " + res.game);
 			tetrisGameInfo.setGame(res.game);
 			loadTetrisPage("board");
 			return ;
@@ -61,11 +61,37 @@ const   messageHandler = (event: MessageEvent)=> {
 	}
 }
 
-const gameControllers = (finish: boolean = false) => {
-	const keydownHandler = (event: KeyboardEvent) => {
-		const key = event.key;
+// TODO: Need to make the timeout pause when the opposit key is pressed ( https://stackoverflow.com/questions/3969475/javascript-pause-settimeout )
 
-		console.log("Room ID: " + tetrisGameInfo.getGameId());
+const   movePiece = (direction: string) => {
+	const   arg = direction === "moveLeft" ? "left" : "right";
+	const   opposite = direction === "moveLeft" ? "moveRight" : "moveLeft";
+
+	if (tetrisGameInfo.getKeyTimeout(opposite) != null && !tetrisGameInfo.getKeyFirstMove(opposite)) {
+		tetrisGameInfo.getKeyTimeout(opposite)?.pause();
+	}
+
+	const   repeat = async () => {
+
+		postToApi(`http://${address}:3000/api/tetris/movePiece`, { argument: arg, roomId: tetrisGameInfo.getGameId() });
+		if (tetrisGameInfo.getKeyFirstMove(direction)) {
+			tetrisGameInfo.setKeyFirstMove(direction, false);
+			console.log("First move")
+			tetrisGameInfo.setKeyTimeout(direction, new TimeoutKey(repeat, 200));
+			console.log("First move done");
+		}
+		else {
+			tetrisGameInfo.getKeyTimeout(direction)?.clear();
+			tetrisGameInfo.setKeyTimeout(direction, new TimeoutKey(repeat, 50));
+		}
+	}
+	repeat();
+}
+
+const gameControllers = async (finish: boolean = false) => {
+
+	const   keydownHandler = async (event: KeyboardEvent) => {
+		const key = event.key;
 
 		if (tetrisGameInfo.getGameId() === -1) {
 			document.removeEventListener('keydown', keydownHandler);
@@ -73,23 +99,47 @@ const gameControllers = (finish: boolean = false) => {
 			return ;
 		}
 
+		// TODO: Check to make the key spamable but with an interval
+
 		switch (key) {
 			case userKeys.getMoveLeft():
-				return postToApi(`http://${address}:3000/api/tetris/movePiece`, { argument: "left", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				movePiece("moveLeft");
+				return ;
 			case userKeys.getMoveRight():
-				return postToApi(`http://${address}:3000/api/tetris/movePiece`, { argument: "right", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				movePiece("moveRight");
+				return ;
 			case userKeys.getClockwizeRotate():
-				return postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "clockwise", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "clockwise", roomId: tetrisGameInfo.getGameId() });
+				return ;
 			case userKeys.getCountClockwizeRotate():
-				return postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "counter-clockwise", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "counter-clockwise", roomId: tetrisGameInfo.getGameId() });
+				return ;
 			case userKeys.getRotate180():
-				return postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "180", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "180", roomId: tetrisGameInfo.getGameId() });
+				return ;
 			case userKeys.getHardDrop():
-				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "hard", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "hard", roomId: tetrisGameInfo.getGameId() });
+				return ;
 			case userKeys.getSoftDrop():
-				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "soft", roomId: tetrisGameInfo.getGameId() });
+				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "soft", roomId: tetrisGameInfo.getGameId() });
+				return ;
 			case userKeys.getHold():
-				return postToApi(`http://${address}:3000/api/tetris/holdPiece`, { argument: "hold", roomId: tetrisGameInfo.getGameId() });
+				if (event.repeat)
+					return ;
+				postToApi(`http://${address}:3000/api/tetris/holdPiece`, { argument: "hold", roomId: tetrisGameInfo.getGameId() });
+				return ;
 			case userKeys.getForfeit():
 				postToApi(`http://${address}:3000/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
 				document.removeEventListener('keydown', keydownHandler);
@@ -101,8 +151,31 @@ const gameControllers = (finish: boolean = false) => {
 
 	const keyupHandler = (event: KeyboardEvent) => {
 		const key = event.key;
-		if (key === userKeys.getSoftDrop())
-			return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
+
+		switch (key) {
+			case userKeys.getMoveLeft():
+				tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+				tetrisGameInfo.setKeyTimeout("moveLeft", null);
+				tetrisGameInfo.setKeyFirstMove("moveLeft", true);
+				console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight") !== null);
+				if (!!tetrisGameInfo.getKeyTimeout("moveRight")) {
+					console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight"));
+					tetrisGameInfo.getKeyTimeout("moveRight")?.resume();
+				}
+				return ;
+			case userKeys.getMoveRight():
+				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+				tetrisGameInfo.setKeyTimeout("moveRight", null);
+				tetrisGameInfo.setKeyFirstMove("moveRight", true);
+				console.log("Move Left: ", !!tetrisGameInfo.getKeyTimeout("moveLeft") !== null);
+				if (!!tetrisGameInfo.getKeyTimeout("moveLeft")) {
+					console.log("Move Left: ", tetrisGameInfo.getKeyTimeout("moveLeft"));
+					tetrisGameInfo.getKeyTimeout("moveLeft")?.resume();
+				}
+				return ;
+			case userKeys.getSoftDrop():
+				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
+		}
 	}
 
 	if (finish)
