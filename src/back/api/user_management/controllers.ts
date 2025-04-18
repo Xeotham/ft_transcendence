@@ -1,7 +1,7 @@
 // Fastify request and response to create the controllers for the API
 import { FastifyRequest, FastifyReply } from 'fastify';
 // Interactions with the DataBase to create and get Users
-import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById } from '../../database/models/Users';
+import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById, getUsernameById } from '../../database/models/Users';
 import { createContact, modifyContact, getUserContactById, checkFriendshipStatus, checkBlockStatus, checkPosContact } from '../../database/models/Contact';
 import { createStats, getStatsById, updateStats } from '../../database/models/Stat' ;
 import { request } from 'http';
@@ -109,14 +109,19 @@ export const    getFriends = async (request: FastifyRequest, reply: FastifyReply
     const   user = getUserByUsername(username);
 
     if (!user)
-        return reply.status(400).send({ message: 'Invalid request. ID is required.' });
+        return reply.status(400).send({ message: 'Invalid username' });
 
-    const   contact = getUserContactById(user.id as number);
+    const   contacts = getUserContactById(user.id as number);
 
-    if (!contact)
+    const contacts_username = await Promise.all(contacts.map(async (id) => {
+        const friend_username = await getUsernameById(id);
+        return { friend_id: id, friend_username: friend_username};
+    }));
+
+    if (!contacts.length)
         return reply.status(401).send({ message: 'Client does not have any contact.' });
 
-    return reply.status(201).send({ message: "Contacts founds", contact })
+    return reply.status(201).send({ message: "Contacts found", contacts_username })
 };
 
 export const    addFriend = async (request: FastifyRequest, reply: FastifyReply) => 
@@ -372,11 +377,13 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 
 export const createGame = async (request: FastifyRequest, reply:FastifyReply) => 
 {
-    const   { username1, username2, date, scorep1, scorep2, winner, type } = request.query as { username1:string, username2:string, date:string, scorep1:number, scorep2:number, winner:string, type:string }
+    const   { username1, username2, date, scorep1, scorep2, winner, type } = request.body as { username1:string, username2:string, date:string, scorep1:number, scorep2:number, winner:string, type:string }
 
+    
     const   player1 = getUserByUsername(username1) as Users;
     const   player2 = getUserByUsername(username2) as Users;
 
+    console.log(username1, username2);
     if (!player1 || !player2)
         return reply.status(401).send({ message: 'Invalid username'});
 
@@ -430,7 +437,10 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
     if (user.id)
     {
         const games_id = getUserGameHistory(user.id);
-        const full_game_history = games_id.map(id => ({ game_id: id, players: getGameDetailsById(user.id as number)}));
+        const full_game_history = await Promise.all(games_id.map(async (id) => {
+            const gameDetails = await getGameDetailsById(id); // Pass individual ID
+            return { game_id: id, players: gameDetails };
+        }));
 
         return  reply.status(201).send({ message: 'Stat received', full_game_history });
     }

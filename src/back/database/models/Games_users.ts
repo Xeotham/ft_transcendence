@@ -24,16 +24,18 @@ interface GameIdRow
 
 export const createUserGameStats = (user_id: number, game_id: number, score: number, winner: boolean, type:string): void => 
 {
+	const win = (winner === true ? 1 : 0);
 	const stmt = db.prepare('\
 		INSERT INTO games_users (user_id, game_id, score, winner, type) \
 		VALUES (?, ?, ?, ?, ?) \
 		');
 
-	stmt.run(user_id, game_id, score, winner, type);
+	stmt.run(user_id, game_id, score, win, type);
 };
 
 export const getUserStatsGame = (user_id: number, type: string, winner: boolean): number => 
 {
+	const win = (winner === true ? 1 : 0);
 	const stmt = db.prepare(` \
 		SELECT * \
 		FROM user u \
@@ -41,7 +43,7 @@ export const getUserStatsGame = (user_id: number, type: string, winner: boolean)
 		WHERE ((u.id = ? AND type = ?) AND winner = ?) \
 		`);
 
-	const rows = stmt.all(user_id, type, winner);
+	const rows = stmt.all(user_id, type, win);
 
 	return rows.length;
 };
