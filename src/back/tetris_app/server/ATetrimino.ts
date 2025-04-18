@@ -22,6 +22,8 @@ export abstract class ATetrimino {
 		this.rotation = tc.NORTH;
 	}
 
+	protected abstract getSpin(matrix: Matrix, rotationPointUsed: number): string;
+
 	public toJSON() {
 		return {
 			name: this.name,
@@ -32,11 +34,11 @@ export abstract class ATetrimino {
 
 	protected static convertBlock(jsonBlock: any): tc.block {
 		let blocks: IPos[] = [];
-		for (let i = 0; i < jsonBlock.nbBlocks; i++)
+		for (let i = 0; i < jsonBlock.nbBlocks; ++i)
 			blocks.push(new IPos(jsonBlock.blocks[i].x, jsonBlock.blocks[i].y));
 
 		let rotationPoints: IPos[] = [];
-		for (let i = 0; i < jsonBlock.nbRotationPoints; i++)
+		for (let i = 0; i < jsonBlock.nbRotationPoints; ++i)
 			rotationPoints.push(new IPos(jsonBlock.rotationPoints[i].x, jsonBlock.rotationPoints[i].y));
 
 		return ({
@@ -52,9 +54,9 @@ export abstract class ATetrimino {
 		return (this.constructor as typeof ATetrimino).struct;
 	}
 
-	public rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): void {
+	public rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): string {
 		// TODO : Play the sounds, send animations, etc.
-
+		let rotationPointUsed: number = -1;
 		const struct = this.getStruct();
 		let start: tc.block = struct[tc.ROTATIONS[this.rotation]];
 		let end: tc.block | null = null;
@@ -66,7 +68,7 @@ export abstract class ATetrimino {
 		else
 			end = struct[tc.ROTATIONS[mod(this.rotation + 3, 4)]];
 		if (!end)
-			return ;
+			return "";
 
 		this.remove(matrix, false);
 
@@ -79,6 +81,7 @@ export abstract class ATetrimino {
 				!matrix.isMinoAt(this.coordinates.add(end.blocks[1].add(dist))) &&
 				!matrix.isMinoAt(this.coordinates.add(end.blocks[2].add(dist))) &&
 				!matrix.isMinoAt(this.coordinates.add(end.blocks[3].add(dist)))) {
+				rotationPointUsed = i;
 				this.coordinates = this.coordinates.add(dist);
 				this.rotation = direction === "clockwise" ? mod(this.rotation + 1, 4) :
 					direction === "180" ? mod(this.rotation + 2, 4) : mod(this.rotation + 3, 4);
@@ -86,6 +89,7 @@ export abstract class ATetrimino {
 			}
 		}
 		this.place(matrix, false);
+		return this.getSpin(matrix, rotationPointUsed);
 	}
 
 	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
@@ -104,6 +108,10 @@ export abstract class ATetrimino {
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < block.nbBlocks; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
+			if (pos.getY() < 0) {
+				// TODO : Top Out
+				return ;
+			}
 			if (!isShadow || (isShadow && matrix.at(pos).isEmpty())) {
 				matrix.setAt(pos, new Mino(this.texture, isSolid));
 				if (isShadow)

@@ -2,6 +2,7 @@ import { ATetrimino } from "../ATetrimino";
 import { IPos } from "../IPos";
 import * as tc from "../tetrisConstants";
 import OJson from "./OJson.json";
+import {Matrix} from "../Matrix";
 
 export class O extends ATetrimino {
 
@@ -18,6 +19,10 @@ export class O extends ATetrimino {
 
 	constructor(coordinates: IPos = new IPos(0, 0), texture: string = "O") {
 		super("O", coordinates, texture);
+	}
+
+	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
+		return "";
 	}
 
 	public getSize(): number { return O.struct.size; }

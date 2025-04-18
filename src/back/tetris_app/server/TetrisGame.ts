@@ -26,9 +26,10 @@ export class TetrisGame {
 
 	private score:				number;
 	private level:				number;
-	private dropType:			"normal" | "soft" | "hard";
+	private dropType:			"Normal" | "Soft" | "Hard";
 	private linesCleared:		number;
 	private lineClearGoal:		number;
+	private spinType:			string;
 	private lastClear:			string;
 	private B2B:				number;
 
@@ -39,6 +40,7 @@ export class TetrisGame {
 
 	private shouldLock:			boolean;
 	private isInLockPhase:		boolean;
+	private lockFrame:			boolean;
 	private nbMoves:			number;
 	private lowestReached:		number;
 	private msSinceLockPhase:	number;
@@ -60,9 +62,10 @@ export class TetrisGame {
 
 		this.score = 0;
 		this.level = tc.MIN_LEVEL;
-		this.dropType = "normal";
+		this.dropType = "Normal";
 		this.linesCleared = 0;
 		this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
+		this.spinType = "";
 		this.lastClear = "";
 		this.B2B = 0;
 
@@ -73,6 +76,7 @@ export class TetrisGame {
 
 		this.shouldLock = false;
 		this.isInLockPhase = false;
+		this.lockFrame = false;
 		this.nbMoves = 0;
 		this.lowestReached = 0;
 		this.msSinceLockPhase = 0;
@@ -92,6 +96,7 @@ export class TetrisGame {
 			hold: this.hold?.toJSON(),
 			gameId: this.gameId,
 			score: this.score,
+			level: this.level,
 		};
 	}
 
@@ -125,6 +130,7 @@ export class TetrisGame {
 		this.fallInterval = -1;
 		this.shouldLock = false;
 		this.shouldSpawn = false;
+		this.spinType = "";
 
 		if (!this.canSwap) { // If swap was called, we are in hold phase
 			// console.log("Hold phase");
@@ -155,7 +161,7 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 
-		this.currentPiece.setCoordinates(new IPos(4 - 2, tc.BUFFER_HEIGHT - 2 - 1)); // -2 to take piece inner size into account
+		this.currentPiece.setCoordinates(new IPos(3 - 2, tc.BUFFER_HEIGHT - 2 - 2)); // -2 to take piece inner size into account
 		this.currentPiece.place(this.matrix);
 		this.placeShadow();
 		// console.log("isColliding at spawn: ", this.currentPiece.isColliding(this.matrix, new IPos(0, 1)));
@@ -165,10 +171,9 @@ export class TetrisGame {
 			return ;
 		}
 
-		// console.log("Level : " + this.level + ", linecleared: " + this.linesCleared + ", lineClearGoal: " + this.lineClearGoal + ", FallSpeed : " + this.fallSpeed);
-		await delay(200);
-		this.dropType === "hard" ? this.dropType = "normal" : true;
-		this.dropType === "normal" ? this.fallSpeed = tc.FALL_SPEED(this.level) : tc.SOFT_DROP_SPEED(this.level);
+		await delay(150);
+		this.dropType === "Hard" ? this.dropType = "Normal" : true;
+		this.dropType === "Normal" ? this.fallSpeed = tc.FALL_SPEED(this.level) : tc.SOFT_DROP_SPEED(this.level);
 
 	}
 
@@ -189,14 +194,14 @@ export class TetrisGame {
 		if (lowestReached < this.lowestReached)
 			return this.resetLockPhase();
 		if (this.nbMoves > 14 || this.msSinceLockPhase >= 500) {
-			console.log("Lock phase reached, locking piece at " + this.msSinceLockPhase + " ms");
-			this.nbMoves > 15 ? console.log("Max moves reached") : console.log("Max time reached");
+			// console.log("Lock phase reached, locking piece at " + this.msSinceLockPhase + " ms");
+			// this.nbMoves >= 500 ? console.log("Max time reached") : console.log("Max moves reached");
 			this.shouldLock = true;
 			this.resetLockPhase();
 			this.shouldLock = true;
 			clearInterval(this.fallInterval);
 			this.fallInterval = -1;
-			this.trySetInterval(0);
+			this.trySetInterval(1);
 		}
 	}
 
@@ -204,6 +209,7 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 		if (this.currentPiece.shouldFall(this.matrix)) {
+			this.spinType = "";
 			this.currentPiece.remove(this.matrix);
 			this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().down());
 			this.currentPiece.place(this.matrix);
@@ -215,8 +221,9 @@ export class TetrisGame {
 		}
 		if (!this.currentPiece.shouldFall(this.matrix)) {
 			if (this.shouldLock) {
-				console.log("Fall piece is locked");
+				// console.log("Fall piece is locked");
 				clearInterval(this.fallInterval);
+				this.lockFrame = true;
 				this.fallInterval = -1;
 				this.currentPiece.remove(this.matrix);
 				this.currentPiece.setTexture(this.currentPiece.getTexture() + "_LOCKED")
@@ -228,11 +235,9 @@ export class TetrisGame {
 			else if (!this.isInLockPhase) {
 				this.isInLockPhase = true;
 				if (this.lockInterval === -1) {
-					console.log("Starting countdown for lock phase");
 					this.lockInterval = setInterval(() => this.extendedLockDown(this.lowestReached), 1) as unknown as number;
 				}
 			}
-
 		}
 		this.patternPhase();
 	}
@@ -256,23 +261,29 @@ export class TetrisGame {
 	}
 
 	private eliminatePhase(): void {
-		// TODO : Special Moves score Points
-		const nbClear: number = this.matrix.shiftDown();
-		// console.log("nbClear: ", nbClear);
-		this.lastClear = this.scoreName(nbClear);
-		this.linesCleared += nbClear;
-		// console.log("lastClear: ", this.lastClear + ", B2B: ", this.B2B);
+		if (this.lockFrame) {
+			const nbClear: number = this.matrix.shiftDown();
+			this.lastClear = this.scoreName(nbClear);
+			this.linesCleared += nbClear;
+		}
 		this.completionPhase();
 		return ;
 	}
 
 	private async completionPhase() {
 		this.score += tc.SCORE_CALCULUS(this.dropType + " Drop", 0, false);
-		this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
-		if (this.matrix.isEmpty())
-			this.score += tc.SCORE_CALCULUS("PerfectClear", this.level, this.B2B > 0);
- 		this.updateB2B();
-		if (this.level < tc.MAX_LEVEL && this.linesCleared >= this.lineClearGoal) {
+		if (this.lockFrame) {
+			this.updateB2B("pre");
+			if (this.lastClear !== "")
+				console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
+			this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
+			if (this.matrix.isEmpty())
+				this.score += tc.SCORE_CALCULUS("PerfectClear", this.level, this.B2B > 0);
+			this.updateB2B("post");
+			this.lockFrame = false;
+
+		}
+ 		if (this.level < tc.MAX_LEVEL && this.linesCleared >= this.lineClearGoal) {
 			++this.level;
 			this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
 		}
@@ -300,7 +311,10 @@ export class TetrisGame {
 
 	private scoreName(nbClear: number): string {
 		let name: string = "";
-		// TODO : T-Spin, , etc.
+		// console.log("Getting score name");
+
+		if (this.spinType !== "")
+			name = this.spinType + " ";
 
 		switch (nbClear) {
 			case 1:
@@ -323,12 +337,19 @@ export class TetrisGame {
 		return name;
 	}
 
-	private updateB2B(): void {
-		if (this.lastClear === "" || this.lastClear === "PerfectClear" || this.lastClear === "Mini T-Spin")
+	private updateB2B(moment: "pre" | "post"): void {
+		const isIgnored = (): boolean => {
+			return this.lastClear === "" || this.lastClear === "PerfectClear" || this.lastClear === "Mini T-Spin" || this.lastClear === "T-Spin";
+		}
+		const isB2B = (): boolean => {
+			return this.lastClear.includes("Tetris") || this.lastClear.includes("T-Spin") || this.lastClear.includes("Mini T-Spin");
+		}
+
+		if (isIgnored())
 			return ;
-		if (this.lastClear === "Single" || this.lastClear === "Double" || this.lastClear === "Triple")
+		if (moment === "pre" && !isB2B())
 			this.B2B = 0;
-		else
+		else if (moment === "post" && isB2B())
 			++this.B2B;
 	}
 
@@ -342,12 +363,11 @@ export class TetrisGame {
 		clearInterval(this.fallInterval);
 		this.fallInterval = -1;
 		this.resetLockPhase();
-		console.log("swap resetLockPhase");
 		await this.spawnPiece();
 		this.trySetInterval();
 	}
 
-	public changeFallSpeed(type: "normal" | "soft" | "hard"): void {
+	public changeFallSpeed(type: "Normal" | "Soft" | "Hard"): void {
 		if (this.over || type === this.dropType || this.fallInterval === -1)
 			return ;
 		// this.shouldChangeSpeed = true;
@@ -356,16 +376,14 @@ export class TetrisGame {
 		this.fallInterval = -1;
 		this.resetLockPhase();
 		this.dropType = type;
-		if (type === "hard")
-			console.log("Hard drop");
 		switch (type) {
-			case "normal":
+			case "Normal":
 				this.fallSpeed = tc.FALL_SPEED(this.level);
 				break;
-			case "soft":
+			case "Soft":
 				this.fallSpeed = tc.SOFT_DROP_SPEED(this.level);
 				break;
-			case "hard":
+			case "Hard":
 				this.fallSpeed = tc.HARD_DROP_SPEED;
 				this.shouldLock = true;
 				break;
@@ -377,11 +395,12 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 		if (this.isInLockPhase) {
-			console.log("Turn in lock phase");
 			++this.nbMoves;
 			this.msSinceLockPhase = 0;
 		}
-		this.currentPiece.rotate(direction, this.matrix);
+		this.spinType = this.currentPiece.rotate(direction, this.matrix);
+		if (this.spinType !== "")
+			console.log("Spin type: " + this.spinType);
 		this.placeShadow();
 	}
 
@@ -389,7 +408,6 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 		if (this.isInLockPhase) {
-			console.log("Move in lock phase");
 			++this.nbMoves;
 			this.msSinceLockPhase = 0;
 		}
@@ -411,7 +429,6 @@ export class TetrisGame {
 					setTimeout(Iteration, 0); // Schedule the next iteration
 					return;
 				}
-				console.log("Game Over, calling resolve");
 				resolve();
 			}
 			Iteration();
@@ -431,8 +448,13 @@ export class TetrisGame {
 		clearInterval(this.fallInterval);
 		this.fallInterval = -1;
 		clearInterval(this.sendInterval);
+		this.sendInterval = -1;
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()})) // TODO : adapt to the new format
 		console.log("Game Over");
 		this.player.send(JSON.stringify({type: "FINISH"}))
+	}
+
+	public forfeit() {
+		this.over = true;
 	}
 }
