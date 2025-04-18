@@ -10,6 +10,12 @@ interface User
     created_at?:    string;
 }
 
+interface   Username_id
+{
+    key:        string;
+    username:   string;
+}
+
 export const createUser = (username:string, password:string, avatar:string): number => 
 {
     let stmt = db.prepare('\
@@ -105,4 +111,15 @@ export const getUserById = (id: number): User | undefined =>
         ');
 
     return stmt.get(id) as User | undefined;
+};
+
+export const getUsernameById = (id: number): string => 
+{
+    const stmt = db.prepare('\
+        SELECT username \
+        FROM user \
+        WHERE id = ?\
+        ');
+
+        return stmt.get(id).username as string;
 };

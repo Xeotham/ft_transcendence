@@ -48,5 +48,5 @@ export const updateStats = (user_id: number): void =>
         WHERE user_id = ?\
         ');
 
-	stmt.run(pong_win, pong_lose, tetris_win, tetris_win);
+	stmt.run(pong_win, pong_lose, tetris_win, tetris_win, user_id);
 };

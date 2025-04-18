@@ -10,6 +10,11 @@ interface Contact
     block_u2:			boolean;
 }
 
+interface FriendIdRow
+{
+    friend_id: number;
+}
+
 export const createContact = (contact: Contact): void => 
 {
     const { user1_id, user2_id, friend_u1, friend_u2, block_u1, block_u2 } = contact;
@@ -34,16 +39,32 @@ export const modifyContact = (user1_id:number, user2_id:number, friend_u1:boolea
 };
 
 
-export const getUserContactById = (id: number): Contact[] | undefined => 
+export const getUserContactById = (id: number): number[] => 
 {
-	const stmt = db.prepare('\
-        SELECT u.username, c.user2_id, c.user1_id \
+	const stmt1 = db.prepare('\
+        SELECT c.user2_id as friend_id\
         FROM user u \
         JOIN contact c \
-        ON ( c.user1_id = u.id OR c.user2_id = u.id )\
-        WHERE u.id = ?\
+        ON c.user1_id = u.id \
+        WHERE ((u.id = ? AND friend_u1 = 1) AND friend_u2 = 1) \
         ');
-	return stmt.all(id) as Contact[] | undefined;
+	const rows1 = stmt1.all(id) as FriendIdRow[];
+
+    const stmt2 = db.prepare('\
+        SELECT c.user1_id as friend_id\
+        FROM user u \
+        JOIN contact c \
+        ON c.user2_id = u.id \
+        WHERE ((u.id = ? AND friend_u1 = 1) AND friend_u2 = 1)\
+        ');
+    const rows2 = stmt2.all(id) as FriendIdRow[];
+
+    const contactIds = [
+        ...rows1.map(row => row.friend_id),
+        ...rows2.map(row => row.friend_id)
+    ];
+
+    return contactIds;
 };
 
 export const checkFriendshipStatus = (user1_id: number, user2_id: number): number => 
