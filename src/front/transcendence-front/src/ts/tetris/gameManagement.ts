@@ -54,6 +54,12 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setSocket(null);
 			tetrisGameInfo.setGameId(-1);
 			tetrisGameInfo.setGame(null);
+			tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+			tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+			tetrisGameInfo.setKeyTimeout("moveLeft", null);
+			tetrisGameInfo.setKeyTimeout("moveRight", null);
+			tetrisGameInfo.setKeyFirstMove("moveLeft", true);
+			tetrisGameInfo.setKeyFirstMove("moveRight", true);
 			gameControllers(true);
 			return ;
 		default:
@@ -77,12 +83,12 @@ const   movePiece = (direction: string) => {
 		if (tetrisGameInfo.getKeyFirstMove(direction)) {
 			tetrisGameInfo.setKeyFirstMove(direction, false);
 			console.log("First move")
-			tetrisGameInfo.setKeyTimeout(direction, new TimeoutKey(repeat, 200));
+			tetrisGameInfo.setKeyTimeout(direction, new TimeoutKey(repeat, 150));
 			console.log("First move done");
 		}
 		else {
 			tetrisGameInfo.getKeyTimeout(direction)?.clear();
-			tetrisGameInfo.setKeyTimeout(direction, new TimeoutKey(repeat, 50));
+			tetrisGameInfo.setKeyTimeout(direction, new TimeoutKey(repeat, 40));
 		}
 	}
 	repeat();
@@ -130,10 +136,10 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getHardDrop():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "hard", roomId: tetrisGameInfo.getGameId() });
+				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Hard", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getSoftDrop():
-				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "soft", roomId: tetrisGameInfo.getGameId() });
+				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Soft", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getHold():
 				if (event.repeat)
@@ -175,7 +181,8 @@ const gameControllers = async (finish: boolean = false) => {
 				}
 				return ;
 			case userKeys.getSoftDrop():
-				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
+				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Normal", roomId: tetrisGameInfo.getGameId() });
+			// case userKeys.getHold():
 		}
 	}
 

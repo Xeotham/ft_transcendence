@@ -156,6 +156,8 @@ const   drawBoard = () => {
 	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
 	const game = tetrisGameInfo.getGame();
 
+
+	document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
 	if (!ctx || !game)
 		return;
 	// c.clearRect(0, 0, canvas.width, canvas.height);

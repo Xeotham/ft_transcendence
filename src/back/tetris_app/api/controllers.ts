@@ -40,8 +40,21 @@ export const    tetrisCreatePrivateRoom = async (socket: WebSocket, req: Fastify
 export const    tetrisJoinPrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
-export const    forfeitGame = async (req: FastifyRequest, reply: FastifyReply) => {
+export const    forfeitGame = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
+	const   request = req.body;
+
 	reply.status(200).send({message: "Forfeiting the game"});
+
+	if (!request) {
+		return reply.status(400).send({error: "No body"});
+	}
+
+	const   room = tetrisGamesLst.find((game) => game.getRoomId() === req.body.roomId);
+	if (!room) {
+		return reply.status(400).send({error: "Room not found"});
+	}
+
+	room.forfeit();
 }
 
 export const    startGame = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -84,7 +97,7 @@ export const    rotatePiece = async (req: FastifyRequest<{Body: tetrisReq}>, rep
 	}
 
 	// console.log("Rotate for Room ID: " + request.roomId + " - Found: " + room);
-	console.log(request);
+	// console.log(request);
 
 	switch (request.argument) {
 		case "clockwise":
@@ -110,9 +123,9 @@ export const    dropPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 	}
 
 	switch (request.argument) {
-		case "hard":
-		case "soft":
-		case "normal":
+		case "Hard":
+		case "Soft":
+		case "Normal":
 			room.changeFallSpeed(request.argument);
 			reply.status(200).send({message: request.argument + " Dropping the piece"});
 			// return console.log(request.argument + " Dropping the piece");
