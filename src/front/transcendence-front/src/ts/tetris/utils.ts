@@ -256,8 +256,84 @@ export const    getMinoColor = (texture: string): string => {
 	}
 }
 
+export const    tetriminoPaterns: {[key: string]: number[][]} = {
+	"I": [
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 1, 1, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+	],
+	"J": [
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 1, 0, 0, 0, 0 ],
+		[ 0, 0, 1, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+	],
+	"L": [
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 1, 0, 0 ],
+		[ 0, 0, 1, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+	],
+	"O": [
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+	],
+	"S": [
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0 ,1, 1, 0, 0 ],
+		[ 0, 0, 1, 1, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+	],
+	"T": [
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 1, 0, 0, 0 ],
+		[ 0, 0, 1, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+	],
+	"Z": [
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 1, 1, 0, 0, 0 ],
+		[ 0, 0, 0, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 0 ],
+	],
+}
+
+export const    borderSize = 2;
 export const    minoSize = 30;
-
 export const    boardWidth = minoSize * 10;
-
 export const    boardHeight = minoSize * 25;
+export const    boardCoord = {x: 4 * minoSize + borderSize, y: 0}
+export const    holdWidth = (minoSize * 4) + 8;
+export const    holdHeight = (minoSize * 4) + 8;
+export const    holdCoord = {x: 0, y: 0}
+export const    bagWidth = minoSize * 4;
+export const    bagHeight = boardHeight;
+export const    bagCoord = {x: (14 * minoSize) + (borderSize * 2), y: 0}
+
+export const    canvasWidth = boardWidth + bagWidth + holdWidth + (borderSize * 2);
+export const    canvasHeight = boardHeight;

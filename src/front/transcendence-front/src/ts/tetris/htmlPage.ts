@@ -1,4 +1,4 @@
-import {boardHeight, boardWidth, keys, loadTetrisArgs, loadTetrisType} from "./utils.ts";
+import { canvasHeight, canvasWidth, keys, loadTetrisArgs, loadTetrisType } from "./utils.ts";
 import { content } from "../main.ts";
 
 export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
@@ -75,13 +75,14 @@ const keybindsHtml = (keys: keys) => {
 }
 
 const boardHtml = () => {
-	if (!content)
+	if (!content) {
 		return;
+	}
 
 	content.innerHTML = `
 		<h1>Tetris</h1>
 		<p id="score">Score: 0</p>
-		<canvas id="gameCanvas" width="${boardWidth}" height="${boardHeight}"></canvas>
+		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
 	`
 }
 

@@ -139,6 +139,7 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/holdPiece`, { argument: "hold", roomId: tetrisGameInfo.getGameId() });
+				loadTetrisPage("board");
 				return ;
 			case userKeys.getForfeit():
 				postToApi(`http://${address}:3000/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
@@ -157,9 +158,9 @@ const gameControllers = async (finish: boolean = false) => {
 				tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
 				tetrisGameInfo.setKeyTimeout("moveLeft", null);
 				tetrisGameInfo.setKeyFirstMove("moveLeft", true);
-				console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight") !== null);
+				// console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight") !== null);
 				if (!!tetrisGameInfo.getKeyTimeout("moveRight")) {
-					console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight"));
+					// console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight"));
 					tetrisGameInfo.getKeyTimeout("moveRight")?.resume();
 				}
 				return ;
@@ -167,9 +168,9 @@ const gameControllers = async (finish: boolean = false) => {
 				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 				tetrisGameInfo.setKeyTimeout("moveRight", null);
 				tetrisGameInfo.setKeyFirstMove("moveRight", true);
-				console.log("Move Left: ", !!tetrisGameInfo.getKeyTimeout("moveLeft") !== null);
+				// console.log("Move Left: ", !!tetrisGameInfo.getKeyTimeout("moveLeft") !== null);
 				if (!!tetrisGameInfo.getKeyTimeout("moveLeft")) {
-					console.log("Move Left: ", tetrisGameInfo.getKeyTimeout("moveLeft"));
+					// console.log("Move Left: ", tetrisGameInfo.getKeyTimeout("moveLeft"));
 					tetrisGameInfo.getKeyTimeout("moveLeft")?.resume();
 				}
 				return ;

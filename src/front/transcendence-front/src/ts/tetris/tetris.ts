@@ -1,4 +1,16 @@
-import { getMinoColor, keys, loadTetrisArgs, loadTetrisType, minoSize, setKey, tetrisGame } from "./utils.ts";
+import {
+	bagCoord,
+	bagWidth,
+	boardCoord, boardHeight, boardWidth, borderSize,
+	getMinoColor, holdCoord, holdHeight, holdWidth,
+	keys,
+	loadTetrisArgs,
+	loadTetrisType,
+	minoInfo,
+	minoSize,
+	setKey, tetriminoInfo, tetriminoPaterns,
+	tetrisGame
+} from "./utils.ts";
 import { loadTetrisHtml } from "./htmlPage.ts";
 // @ts-ignore
 import page from "page"
@@ -75,20 +87,82 @@ const changeKeys = (keyType: string) => {
 	document.addEventListener("keydown", getNewKey);
 }
 
-const   drawBoard = () => {
-	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
-	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
-	const game = tetrisGameInfo.getGame();
-
-	if (!c || !game)
-		return;
-	c.clearRect(0, 0, canvas.width, canvas.height);
-	c.beginPath();
-
-	for (let y = game.matrix.length - 1; y > 15; --y) {
-		for (let x = 0; x < game.matrix[y].length; ++x) {
-			c.fillStyle = getMinoColor(game.matrix[y][x].texture);
-			c.fillRect(x * minoSize, y * minoSize - 15 * minoSize , minoSize, minoSize);
+const   drawMatrix = (matrix: minoInfo[][], ctx: CanvasRenderingContext2D) => {
+	ctx.clearRect(boardCoord.x, boardCoord.y, boardWidth, boardHeight);
+	ctx.beginPath();
+	for (let y = matrix.length - 1; y > 15; --y) {
+		for (let x = 0; x < matrix[y].length; ++x) {
+			ctx.fillStyle = getMinoColor(matrix[y][x].texture);
+			ctx.fillRect((x * minoSize) + boardCoord.x, ((y - 15) * minoSize) + boardCoord.y , minoSize, minoSize);
 		}
 	}
+}
+
+const   drawBorder = (ctx: CanvasRenderingContext2D) => {
+	ctx.strokeStyle = "gray";
+	ctx.lineWidth = 2;
+	ctx.strokeRect(holdCoord.x - borderSize, holdCoord.y, holdWidth + (2 * borderSize), holdHeight - 8);
+	ctx.strokeRect(boardCoord.x - borderSize, boardCoord.y, boardWidth + (2 * borderSize), boardHeight);
+}
+
+const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coord: {x: number, y: number}, height: number, width: number, minoLength: number, colors: string[]) => {
+	ctx.clearRect(coord.x, coord.y, height, width);
+	ctx.beginPath();
+	for (let y = 0; y < pattern.length; ++y) {
+		for (let x = 0; x < pattern[y].length; ++x) {
+			if (pattern[y][x] !== 0) {
+				const   newX = (x * minoLength) + coord.x;
+				const   newY = (y * minoLength) + coord.y;
+
+				ctx.fillStyle = colors[pattern[y][x]];
+				ctx.fillRect(newX, newY, minoLength, minoLength);
+			}
+		}
+	}
+}
+
+// TODO: Fix the hold piece drawing
+const   drawHold = (ctx: CanvasRenderingContext2D, hold: tetriminoInfo) => {
+	
+	const   pattern = tetriminoPaterns[hold.name];
+	const   margin = 4;
+	const   holdMinoSize = ((holdWidth - (2 * margin)) / (pattern.length));
+	const   colors: string[] = [ "black", getMinoColor(hold.name) ];
+
+	drawTetrimino(ctx, pattern, holdCoord, holdHeight - 8, holdWidth - 8, holdMinoSize, colors);
+}
+
+const   drawBag = (ctx: CanvasRenderingContext2D, bags: tetriminoInfo[][]) => {
+	const   firstBag = bags[0];
+	const   secondBag = bags[1];
+	let     bagToPrint: tetriminoInfo[] = [];
+
+	if (firstBag.length >= 4)
+		bagToPrint = firstBag.slice(0, 4);
+	else
+		bagToPrint = firstBag.concat(secondBag.slice(0, 4 - firstBag.length));
+	for (let i = 0; i < bagToPrint.length; ++i) {
+		const   pattern = tetriminoPaterns[bagToPrint[i].name];
+		const   colors: string[] = [ "black", getMinoColor(bagToPrint[i].name) ];
+		const   bagMinoSize = ((bagWidth - (2 * borderSize)) / (pattern.length));
+
+		drawTetrimino(ctx, pattern, {x: bagCoord.x, y: bagCoord.y + (i * holdHeight)}, holdHeight - 8, holdWidth - 8, bagMinoSize, colors);
+	}
+
+}
+
+const   drawBoard = () => {
+	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
+	const game = tetrisGameInfo.getGame();
+
+	if (!ctx || !game)
+		return;
+	// c.clearRect(0, 0, canvas.width, canvas.height);
+	// c.beginPath();
+	drawBorder(ctx);
+	drawMatrix(game.matrix, ctx);
+	drawBag(ctx, game.bags);
+	if (game.hold)
+		drawHold(ctx, game.hold);
 }
