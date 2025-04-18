@@ -9,7 +9,7 @@ interface Game
 export const saveGame = (date: string): number => 
 {
     const stmt = db.prepare(`
-        INSERT INTO games (date)
+        INSERT INTO game (date)
         VALUES (?)
         `);
 
