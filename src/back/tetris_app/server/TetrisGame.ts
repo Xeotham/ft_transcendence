@@ -272,17 +272,22 @@ export class TetrisGame {
 
 	private async completionPhase() {
 		this.score += tc.SCORE_CALCULUS(this.dropType + " Drop", 0, false);
+
 		if (this.lockFrame) {
 			this.updateB2B("pre");
-			if (this.lastClear !== "")
+			if (this.lastClear !== "") {
 				console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
+				this.player.send(JSON.stringify({type: "EFFECT", arguments: this.lastClear}));
+			}
 			this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
-			if (this.matrix.isEmpty())
+			if (this.matrix.isEmpty()) {
 				this.score += tc.SCORE_CALCULUS("PerfectClear", this.level, this.B2B > 0);
+				this.player.send(JSON.stringify({type: "EFFECT", arguments: "PerfectClear"}));
+			}
 			this.updateB2B("post");
 			this.lockFrame = false;
-
 		}
+
  		if (this.level < tc.MAX_LEVEL && this.linesCleared >= this.lineClearGoal) {
 			++this.level;
 			this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
@@ -399,8 +404,10 @@ export class TetrisGame {
 			this.msSinceLockPhase = 0;
 		}
 		this.spinType = this.currentPiece.rotate(direction, this.matrix);
-		if (this.spinType !== "")
+		if (this.spinType !== "") {
 			console.log("Spin type: " + this.spinType);
+			// this.player.send(JSON.stringify({type: "EFFECT", arguments: this.spinType}))
+		}
 		this.placeShadow();
 	}
 
