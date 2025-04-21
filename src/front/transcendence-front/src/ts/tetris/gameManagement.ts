@@ -90,6 +90,12 @@ const   movePiece = (direction: string) => {
 
 const gameControllers = async (finish: boolean = false) => {
 
+	const keyStates = {
+		moveLeft: false,
+		moveRight: false,
+		softDrop: false,
+	};
+
 	const   keydownHandler = async (event: KeyboardEvent) => {
 		const key = event.key;
 
@@ -102,46 +108,72 @@ const gameControllers = async (finish: boolean = false) => {
 		// TODO: Check to make the key spamable but with an interval
 
 		switch (key) {
+			case userKeys.getMoveLeft().toUpperCase():
+			case userKeys.getMoveLeft().toLowerCase():
 			case userKeys.getMoveLeft():
-				if (event.repeat)
+				if (event.repeat || keyStates.moveLeft)
 					return ;
+				keyStates.moveLeft = true;
+				console.log("moving piece left");
 				movePiece("moveLeft");
 				return ;
 			case userKeys.getMoveRight():
-				if (event.repeat)
+			case userKeys.getMoveRight().toLowerCase():
+			case userKeys.getMoveRight().toUpperCase():
+				if (event.repeat || keyStates.moveRight)
 					return ;
+				keyStates.moveRight = true;
+				console.log("moving piece right");
 				movePiece("moveRight");
 				return ;
 			case userKeys.getClockwizeRotate():
+			case userKeys.getClockwizeRotate().toLowerCase():
+			case userKeys.getClockwizeRotate().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "clockwise", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getCountClockwizeRotate():
+			case userKeys.getCountClockwizeRotate().toLowerCase():
+			case userKeys.getCountClockwizeRotate().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "counter-clockwise", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getRotate180():
+			case userKeys.getRotate180().toLowerCase():
+			case userKeys.getRotate180().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "180", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getHardDrop():
+			case userKeys.getHardDrop().toLowerCase():
+			case userKeys.getHardDrop().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "hard", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getSoftDrop():
+			case userKeys.getSoftDrop().toLowerCase():
+			case userKeys.getSoftDrop().toUpperCase():
+				if (event.repeat || keyStates.softDrop)
+					return ;
+				keyStates.softDrop = true;
 				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "soft", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getHold():
+			case userKeys.getHold().toLowerCase():
+			case userKeys.getHold().toUpperCase():
+				console.log("holding Piece.");
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/holdPiece`, { argument: "hold", roomId: tetrisGameInfo.getGameId() });
 				loadTetrisPage("board");
 				return ;
 			case userKeys.getForfeit():
+			case userKeys.getForfeit().toLowerCase():
+			case userKeys.getForfeit().toUpperCase():
 				postToApi(`http://${address}:3000/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
 				document.removeEventListener('keydown', keydownHandler);
 				document.removeEventListener('keyup', keyupHandler);
@@ -150,31 +182,38 @@ const gameControllers = async (finish: boolean = false) => {
 		}
 	}
 
-	const keyupHandler = (event: KeyboardEvent) => {
+	const keyupHandler = async (event: KeyboardEvent) => {
 		const key = event.key;
 
 		switch (key) {
 			case userKeys.getMoveLeft():
+			case userKeys.getMoveLeft().toLowerCase():
+			case userKeys.getMoveLeft().toUpperCase():
+				console.log("Not moving piece left");
 				tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
 				tetrisGameInfo.setKeyTimeout("moveLeft", null);
 				tetrisGameInfo.setKeyFirstMove("moveLeft", true);
-				// console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight") !== null);
+				keyStates.moveLeft = false;
 				if (!!tetrisGameInfo.getKeyTimeout("moveRight")) {
-					// console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight"));
 					tetrisGameInfo.getKeyTimeout("moveRight")?.resume();
 				}
 				return ;
 			case userKeys.getMoveRight():
+			case userKeys.getMoveRight().toLowerCase():
+			case userKeys.getMoveRight().toUpperCase():
+				console.log("Not moving piece right");
 				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 				tetrisGameInfo.setKeyTimeout("moveRight", null);
 				tetrisGameInfo.setKeyFirstMove("moveRight", true);
-				// console.log("Move Left: ", !!tetrisGameInfo.getKeyTimeout("moveLeft") !== null);
+				keyStates.moveRight = false;
 				if (!!tetrisGameInfo.getKeyTimeout("moveLeft")) {
-					// console.log("Move Left: ", tetrisGameInfo.getKeyTimeout("moveLeft"));
 					tetrisGameInfo.getKeyTimeout("moveLeft")?.resume();
 				}
 				return ;
 			case userKeys.getSoftDrop():
+			case userKeys.getSoftDrop().toLowerCase():
+			case userKeys.getSoftDrop().toUpperCase():
+				keyStates.softDrop = false;
 				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
 		}
 	}
