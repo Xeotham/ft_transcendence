@@ -1,10 +1,20 @@
 // @ts-ignore
 import Database from 'better-sqlite3';
 import * as dotenv from 'dotenv';
+import path from "node:path";
+import * as fs from "node:fs";
 
 dotenv.config();
 
-const db = new Database(/*process.env.DATABASE_URL*/"./back/database/transcendence.sqlite");
+const dbPath = "./back/database/transcendence.sqlite";
+const dbDir = path.dirname(dbPath);
+
+// Ensure the directory exists
+if (!fs.existsSync(dbDir)) {
+	fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const db = new Database(dbPath); /* process.env.DATABASE_URL */
 
 // TODO: Create the right tables with the right references
 
