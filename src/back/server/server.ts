@@ -7,8 +7,7 @@ import { join } from "path";
 import { config } from "dotenv";
 import tetrisRoutes from "../tetris_app/api/routes";
 import pongRoutes from '../pong_app/api/routes';
-// import userRoutes from '../api/user_management/routes';
-
+import userRoutes from '../api/user_management/routes';
 
 export const userSockets: {[key: string]: WebSocket} = {};
 
@@ -26,7 +25,7 @@ fastify.register(fastifyCors, {
 
 // Register routes
 // TODO: Create the others API
-// fastify.register(userRoutes, { prefix: '/api/user' });
+fastify.register(userRoutes, { prefix: '/api/user' });
 fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 fastify.register(pongRoutes, { prefix: '/api/pong' });
 

@@ -122,7 +122,7 @@ export const getUsernameById = (id: number): string =>
         WHERE id = ?\
         ');
 
-        return stmt.get(id).username as string;
+        return (stmt.get(id) as { username: string }).username as string;
 };
 
 export const hashPassword = async (password:string, saltRounds = 10): Promise<string | null> =>
