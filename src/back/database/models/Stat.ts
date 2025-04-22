@@ -25,7 +25,7 @@ export const createStats = (id: number): void =>
 export const getStatsById = (id: number): Stat | undefined => 
 {
 	const stmt = db.prepare('\
-		SELECT * \
+		SELECT u.username, s.pong_win, s.pong_lose, s.tetris_win, s.tetris_lose \
 		FROM user u \
 		JOIN stat s  ON s.user_id = u.id \
 		WHERE u.id = ? \
@@ -44,9 +44,9 @@ export const updateStats = (user_id: number): void =>
 
 	const stmt = db.prepare('\
         UPDATE stat \
-        SET pong_win = ?, pong_lose = ?, tetris_win = ?, tetris_lose\
+        SET pong_win = ?, pong_lose = ?, tetris_win = ?, tetris_lose = ?\
         WHERE user_id = ?\
         ');
 
-	stmt.run(pong_win, pong_lose, tetris_win, tetris_win, user_id);
+	stmt.run(pong_win, pong_lose, tetris_win, tetris_lose, user_id);
 };

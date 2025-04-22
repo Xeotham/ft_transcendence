@@ -25,7 +25,7 @@ db.exec(` \
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     username    VARCHAR(150) UNIQUE NOT NULL,
     password    VARCHAR(150) NOT NULL,
-    avatar      VARCHAR(150) DEFAULT null,
+    avatar      BLOB,
     connected   BOOLEAN DEFAULT false,
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
   );
