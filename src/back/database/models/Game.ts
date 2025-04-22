@@ -8,12 +8,24 @@ interface Game
 
 export const saveGame = (date: string): number => 
 {
-    const stmt = db.prepare(`
-        INSERT INTO game (date)
-        VALUES (?)
-        `);
+    if (date)
+    {
 
-    const result = stmt.run(date);
-
-    return result.lastInsertRowid as number;
+        const stmt = db.prepare(`
+            INSERT INTO game (date)
+            VALUES (?)
+            `);
+            
+        const result = stmt.run(date);
+        return result.lastInsertRowid as number;
+    }
+    else
+    {
+        const stmt = db.prepare(`
+            INSERT INTO game DEFAULT VALUES
+            `);
+            
+        const result = stmt.run();
+        return result.lastInsertRowid as number;
+    }
 };
