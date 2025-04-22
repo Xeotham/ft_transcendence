@@ -1,7 +1,7 @@
 // Fastify request and response to create the controllers for the API
 import { FastifyRequest, FastifyReply } from 'fastify';
 // Interactions with the DataBase to create and get Users
-import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById, getUsernameById } from '../../database/models/Users';
+import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById, getUsernameById, hashPassword } from '../../database/models/Users';
 import { createContact, modifyContact, getUserContactById, checkFriendshipStatus, checkBlockStatus, checkPosContact } from '../../database/models/Contact';
 import { createStats, getStatsById, updateStats } from '../../database/models/Stat' ;
 import { request } from 'http';
@@ -9,6 +9,9 @@ import {createUserGameStats, getUserStatsGame, getUserGameHistory, getGameDetail
 import { getMessageById, saveMessage } from '../../database/models/Message';
 import { saveGame } from '../../database/models/Game';
 import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
+import bcrypt from 'bcrypt';
+
+
 
 interface Users {
     id?:            number;
@@ -35,13 +38,22 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     if (existingUser)
         return reply.status(400).send({ message: 'Username already exists' });
 
-    const id = createUser( username, password, avatar );
+    try
+    {
+        const hashed_password = await hashPassword(password);
 
-    createStats(id);
+        const id = createUser( username, hashed_password as string, avatar );
 
-    createParam(id);
+        createStats(id);
     
-    return reply.status(201).send({ message: 'User registered successfully', id });
+        createParam(id);
+
+        return reply.status(201).send({ message: 'User registered successfully', id });
+    }
+    catch (err)
+    {
+        return reply.status(400).send({ error: err.message });
+    }
 };
 
 export const updateUser = async (request: FastifyRequest, reply: FastifyReply) => 
@@ -52,9 +64,27 @@ export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =
     if (!user)
         return reply.status(400).send({ message: 'User doesn\'t exist' });
 
-    updateUserById( user.id as number, type, update);
+    if (type == "password")
+    {
+        try
+        {
+            const hashed_password = await hashPassword(update);
 
-    return reply.status(201).send({ message: 'User updated successfully' });
+            updateUserById(user.id as number, type, hashed_password as string);
+
+            return reply.status(201).send({ message: 'User updated successfully' });
+        }
+        catch (err)
+        {
+            return reply.status(400).send({ error: err.message });
+        }
+    }
+    else
+    {
+        updateUserById( user.id as number, type, update);
+        
+        return reply.status(201).send({ message: 'User updated successfully' });
+    }
 };
 
 export const loginUser = async (request: FastifyRequest, reply: FastifyReply) => 
@@ -62,29 +92,39 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
     const { username, password } = request.body as { username: string, password: string };
 
     let user = getUserByUsername(username);
-    if (!user || user.password !== password)
+
+
+    if (!user || !(await bcrypt.compare(password, user.password)))
         return reply.status(401).send({ message: 'Invalid username or password' });
+
+    if (user?.connected)
+        return reply.status(401).send({ message: 'User already disconnected' });
 
     logUserById(user.id as number);
 
     user = getUserById(user.id as number);
 
-    return reply.send({ message: 'Login successful', user });
+    return reply.send({ message: 'Login successful' });
 };
 
 export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) => 
 {
-    const { username, password } = request.body as { username: string, password: string };
+    const { username } = request.body as { username: string, };
 
     let user = getUserByUsername(username);
-    if (!user || user.password !== password)
+
+    if (!user )
         return reply.status(401).send({ message: 'Invalid username or password' });
+
+    if (!user?.connected)
+        return reply.status(401).send({ message: 'User already connected' });
+
 
     logOutUserById(user.id as number);
 
     user = getUserById(user.id as number);
 
-    return reply.send({ message: 'Logout successful', user });
+    return reply.send({ message: 'Logout successful' });
 };
 
 export const    getUserInfo = async (request: FastifyRequest, reply: FastifyReply) => 
@@ -383,19 +423,18 @@ export const createGame = async (request: FastifyRequest, reply:FastifyReply) =>
     const   player1 = getUserByUsername(username1) as Users;
     const   player2 = getUserByUsername(username2) as Users;
 
-    console.log(username1, username2);
     if (!player1 || !player2)
         return reply.status(401).send({ message: 'Invalid username'});
 
     if (player1.id && player2.id)
     {
-        if (scorep1 < 0 || scorep2 << 0)
+        if (scorep1 < 0 || scorep2 < 0)
             return reply.status(401).send({ message: 'Invalid username'});
 
         const game_id = saveGame(date);
 
         createUserGameStats(player1.id, game_id, scorep1, username1 === winner, type);
-        createUserGameStats(player2.id, game_id, scorep1, username2 === winner, type);
+        createUserGameStats(player2.id, game_id, scorep2, username2 === winner, type);
 
         updateStats(player1.id);
         updateStats(player2.id);
