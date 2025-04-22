@@ -29,8 +29,6 @@ interface Users {
 
 export const registerUser = async (request: FastifyRequest, reply: FastifyReply) => 
 {
-    console.log("Bonjouuuuuurrrrrr1");
-
     const { username, password, avatar } = request.body as { username: string, password: string, avatar: string };
 
     if(!username || !password || !avatar )
@@ -40,36 +38,21 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     if (existingUser)
         return reply.status(400).send({ message: 'Username already exists' });
 
-    console.log("Bonjouuuuuurrrrrr2");
-
     try
     {
-        console.log("Bonjouuuuuurrrrrr3");
-
         const hashed_password = await hashPassword(password);
-
-        console.log("Bonjouuuuuurrrrrr3.5");
 
         const id = createUser( username, hashed_password as string, avatar );
 
-        console.log("Bonjouuuuuurrrrrr3.9");
-
         createStats(id);
 
-        console.log("Bonjouuuuuurrrrrr4");
-
         createParam(id);
-
-        console.log("Bonjouuuuuurrrrrr5");
 
         return reply.status(201).send({ message: 'User registered successfully', id });
     }
     catch (err)
     {
-
-        console.log("NONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
-
-        return reply.status(400).send({ error: (err as Error).message });
+        return reply.status(400).send({ error: err.message });
     }
 };
 
@@ -99,7 +82,7 @@ export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =
     else
     {
         updateUserById( user.id as number, type, update);
-        
+
         return reply.status(201).send({ message: 'User updated successfully' });
     }
 };
