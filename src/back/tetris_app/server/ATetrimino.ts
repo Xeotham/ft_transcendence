@@ -12,6 +12,7 @@ export abstract class ATetrimino {
 	protected texture:				string;
 
 	protected static struct:	tc.pieceStruct;
+	protected static SpinCheck:	number[][];
 
 	protected constructor(name: string = "None",
 				coordinates: IPos = new IPos(0, 0),
@@ -22,7 +23,7 @@ export abstract class ATetrimino {
 		this.rotation = tc.NORTH;
 	}
 
-	protected abstract getSpin(matrix: Matrix, rotationPointUsed: number): string;
+	protected abstract getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string;
 
 	public toJSON() {
 		return {
@@ -52,6 +53,10 @@ export abstract class ATetrimino {
 
 	protected getStruct(): tc.pieceStruct {
 		return (this.constructor as typeof ATetrimino).struct;
+	}
+
+	protected getSpinCheck(): number[][] {
+		return (this.constructor as typeof ATetrimino).SpinCheck;
 	}
 
 	public rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): string {
@@ -90,6 +95,26 @@ export abstract class ATetrimino {
 		}
 		this.place(matrix, false);
 		return this.getSpin(matrix, rotationPointUsed);
+	}
+
+	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
+		if (this.canFall(matrix))
+			return "";
+		let checks: number[][] = this.getSpinCheck();
+		for (let i = 0; i < this.rotation; ++i)
+			checks = checks[0].map((val, index) => checks.map(row => row[index]).reverse())
+
+		let major: number = 0;
+		let minor: number = 0;
+		for (let i = 0; i < checks.length; ++i) {
+			for (let j = 0; j < checks[i].length; ++j) {
+				if (checks[i][j] === 2 && matrix.isMinoAt(this.coordinates.add(j, i)))
+					++major;
+				if (checks[i][j] === 3 && matrix.isMinoAt(this.coordinates.add(j, i)))
+					++minor;
+			}
+		}
+		return this.getSpinSpecific(major, minor, rotationPointUsed);
 	}
 
 	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
@@ -143,7 +168,7 @@ export abstract class ATetrimino {
 	public setRotation(rotation: number): void	{ this.rotation = rotation; }
 
 
-	public shouldFall(matrix: Matrix): boolean {
+	public canFall(matrix: Matrix): boolean {
 		return !this.isColliding(matrix, new IPos(0, 1));
 	}
 

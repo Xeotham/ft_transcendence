@@ -6,6 +6,17 @@ import {Matrix} from "../Matrix";
 
 export class Z extends ATetrimino {
 
+	protected static readonly SpinCheck: number[][] = [
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 3, 3, 0, 0, 0],
+		[0, 0, 1, 1, 2, 0, 0],
+		[0, 0, 2, 1, 1, 3, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+	]; // 2 major, 3 minor
+
+
 	// Load the JSON file and convert it to the pieceStruct
 	protected static struct: tc.pieceStruct = (() => {
 		return {
@@ -21,7 +32,10 @@ export class Z extends ATetrimino {
 		super("Z", coordinates, texture);
 	}
 
-	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
+	protected getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string {
+		if (major >= 2 ||
+			(major >= 1 && minor >= 2))
+			return "Mini Z-Spin";
 		return "";
 	}
 

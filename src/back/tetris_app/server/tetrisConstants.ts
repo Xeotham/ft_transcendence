@@ -17,15 +17,22 @@ export const SOFT_DROP_SPEED = (level: number) => {
 export const HARD_DROP_SPEED = 0.1;
 
 export const SCORING: {[id:string]: number} = {
+	"Zero" : 0,
 	"Single" : 100,
 	"Double" : 300,
 	"Triple" : 500,
-	"Tetris" : 800,
-	"PerfectClear" : 1200,
-	"Mini T-Spin" : 100,
-	"T-Spin Single" : 800,
-	"T-Spin Double" : 1200,
-	"T-Spin Triple" : 1600,
+	"Quad" : 800,
+	"Spin Zero": 400,
+	"Spin Single" : 800,
+	"Spin Double" : 1200,
+	"Spin Triple" : 1600,
+	"Spin Quad" : 1600,
+	"Mini Spin Zero": 100,
+	"Mini Spin Single": 200,
+	"Mini Spin Double": 400,
+	"Mini Spin Triple": 800,
+	"Mini Spin Quad": 1600,
+	"PerfectClear" : 3500,
 	"Back-to-Back Bonus" : 1.5,
 	"Normal Drop" : 0,
 	"Soft Drop" : 1,
@@ -33,12 +40,17 @@ export const SCORING: {[id:string]: number} = {
 }
 
 export const SCORE_CALCULUS = (score: string, level: number, isB2B: boolean) => {
-	if (SCORING[score] === undefined)
+	// remove the "T-" / "Z-" / "L-" / "J-" / "S-" / "I-"
+	if (score.includes("Spin"))
+		score = score.substring(0, score.indexOf("Spin") - 2) + score.substring(score.indexOf("Spin"));
+	// console.log("score name in score calculus: " + score);
+	if (SCORING[score] === undefined || score === "Zero")
 		return 0;
 	if (score === "Normal Drop" || score === "Soft Drop" || score === "Hard Drop")
 		return SCORING[score];
 	if (isB2B)
 		return SCORING[score] * level * SCORING["Back-to-Back Bonus"];
+
 	return SCORING[score] * level;
 }
 

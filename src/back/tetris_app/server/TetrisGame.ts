@@ -34,6 +34,7 @@ export class TetrisGame {
 	private B2B:				number;
 
 	private	canSwap:			boolean;
+	private holdPhase:			boolean;
 	private shouldSpawn:		boolean;
 	private	fallSpeed:			number;
 	private	over:				boolean;
@@ -49,6 +50,14 @@ export class TetrisGame {
 	private	lockInterval:		number;
 	private	sendInterval:		number;
 	private gameId:             number;
+
+	// settings
+
+	private showShadowPiece:		boolean;
+	private infiniteHold:			boolean;
+	private infiniteMovement:		boolean;
+	private ARE:					number;
+	private lineClearARE:			number;
 
 
 	constructor(player: WebSocket) {
@@ -70,6 +79,7 @@ export class TetrisGame {
 		this.B2B = 0;
 
 		this.canSwap = true;
+		this.holdPhase = false;
 		this.shouldSpawn = false;
 		this.fallSpeed = tc.FALL_SPEED(this.level);
 		this.over = false;
@@ -85,6 +95,12 @@ export class TetrisGame {
 		this.lockInterval = -1;
 		this.sendInterval = -1;
 		this.gameId = idGen.next().value;
+
+		this.showShadowPiece = true;
+		this.infiniteHold = true; // TODO : set to false for real games
+		this.infiniteMovement = true; // TODO : set to false for real games
+		this.ARE = -1; // TODO : set to 500 for real games
+		this.lineClearARE = 0; // 250 in the guideline
 	}
 
 	public toJSON() {
@@ -132,32 +148,24 @@ export class TetrisGame {
 		this.shouldSpawn = false;
 		this.spinType = "";
 
-		if (!this.canSwap) { // If swap was called, we are in hold phase
+		if (this.holdPhase) { // If swap was called, we are in hold phase
+			this.holdPhase = false;
 			// console.log("Hold phase");
+			this.currentPiece?.remove(this.matrix);
+			this.currentPiece?.setRotation(tc.NORTH);
  			if (this.hold && this.currentPiece) {
-				this.currentPiece.remove(this.matrix);
-				this.currentPiece.setRotation(tc.NORTH);
 				const temp: ATetrimino = this.currentPiece;
 				this.currentPiece = this.hold as ATetrimino;
 				this.hold = temp;
 			}
 			else if (!this.hold && this.currentPiece) {
-				this.currentPiece.remove(this.matrix);
-				this.currentPiece.setRotation(tc.NORTH);
 				this.hold = this.currentPiece;
 				this.currentPiece = this.getNextPiece();
 			}
-			else {
-				this.canSwap = true;
-				this.currentPiece = this.getNextPiece();
-			}
 		}
-		else {
-			this.canSwap = true;
+		else
 			this.currentPiece = this.getNextPiece();
-		}
 
-		// console.log("currentPiece after change: ", this.currentPiece);
 		if (!this.currentPiece)
 			return ;
 
@@ -170,10 +178,10 @@ export class TetrisGame {
 			this.over = true;
 			return ;
 		}
-
-		await delay(150);
 		this.dropType === "Hard" ? this.dropType = "Normal" : true;
 		this.dropType === "Normal" ? this.fallSpeed = tc.FALL_SPEED(this.level) : tc.SOFT_DROP_SPEED(this.level);
+
+		await delay(this.lineClearARE);
 
 	}
 
@@ -193,7 +201,8 @@ export class TetrisGame {
 		// console.log("msSinceLockPhase: ", this.msSinceLockPhase);
 		if (lowestReached < this.lowestReached)
 			return this.resetLockPhase();
-		if (this.nbMoves > 14 || this.msSinceLockPhase >= 500) {
+		if ((!this.infiniteMovement && this.nbMoves > 14) ||
+			(this.ARE >= 0 && this.msSinceLockPhase >= this.ARE)) {
 			// console.log("Lock phase reached, locking piece at " + this.msSinceLockPhase + " ms");
 			// this.nbMoves >= 500 ? console.log("Max time reached") : console.log("Max moves reached");
 			this.shouldLock = true;
@@ -208,7 +217,7 @@ export class TetrisGame {
 	private async fallPiece(): Promise<void> {
 		if (!this.currentPiece)
 			return ;
-		if (this.currentPiece.shouldFall(this.matrix)) {
+		if (this.currentPiece.canFall(this.matrix)) {
 			this.spinType = "";
 			this.currentPiece.remove(this.matrix);
 			this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().down());
@@ -219,7 +228,7 @@ export class TetrisGame {
 				this.lowestReached = this.currentPiece.getCoordinates().getY();
 			}
 		}
-		if (!this.currentPiece.shouldFall(this.matrix)) {
+		if (!this.currentPiece.canFall(this.matrix)) {
 			if (this.shouldLock) {
 				// console.log("Fall piece is locked");
 				clearInterval(this.fallInterval);
@@ -271,20 +280,23 @@ export class TetrisGame {
 	}
 
 	private async completionPhase() {
-		this.score += tc.SCORE_CALCULUS(this.dropType + " Drop", 0, false);
+		if (this.currentPiece?.canFall(this.matrix))
+			this.score += tc.SCORE_CALCULUS(this.dropType + " Drop", 0, false);
 
 		if (this.lockFrame) {
 			this.updateB2B("pre");
-			if (this.lastClear !== "") {
+			if (this.lastClear !== "Zero") {
 				console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
-				this.player.send(JSON.stringify({type: "EFFECT", arguments: this.lastClear}));
+				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: this.lastClear}));
 			}
 			this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
 			if (this.matrix.isEmpty()) {
 				this.score += tc.SCORE_CALCULUS("PerfectClear", this.level, this.B2B > 0);
-				this.player.send(JSON.stringify({type: "EFFECT", arguments: "PerfectClear"}));
+				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: "PerfectClear"}));
 			}
 			this.updateB2B("post");
+			if (this.lastClear !== "Zero")
+				this.player.send(JSON.stringify({type: "B2B", argument: this.B2B}));
 			this.lockFrame = false;
 		}
 
@@ -301,14 +313,14 @@ export class TetrisGame {
 	}
 
 	private placeShadow(): void {
-		if (!this.currentPiece)
+		if (!this.currentPiece || !this.showShadowPiece)
 			return ;
 		this.shadowPiece?.remove(this.matrix, true);
 		this.shadowPiece = new (this.currentPiece!.constructor as { new (coordinates: IPos, texture: string): ATetrimino })(
 			this.currentPiece.getCoordinates(), this.currentPiece.getTexture() + "_SHADOW");
 		this.shadowPiece.setCoordinates(this.currentPiece.getCoordinates());
 		this.shadowPiece.setRotation(this.currentPiece.getRotation());
-		while (this.shadowPiece.shouldFall(this.matrix))
+		while (this.shadowPiece.canFall(this.matrix))
 			this.shadowPiece.setCoordinates(this.shadowPiece.getCoordinates().down());
 
 		this.shadowPiece.place(this.matrix, false, true);
@@ -332,10 +344,10 @@ export class TetrisGame {
 				name += "Triple";
 				break ;
 			case 4:
-				name += "Tetris";
+				name += "Quad";
 				break ;
 			default:
-				name += "";
+				name += "Zero";
 				break ;
 		}
 
@@ -343,14 +355,11 @@ export class TetrisGame {
 	}
 
 	private updateB2B(moment: "pre" | "post"): void {
-		const isIgnored = (): boolean => {
-			return this.lastClear === "" || this.lastClear === "PerfectClear" || this.lastClear === "Mini T-Spin" || this.lastClear === "T-Spin";
-		}
 		const isB2B = (): boolean => {
-			return this.lastClear.includes("Tetris") || this.lastClear.includes("T-Spin") || this.lastClear.includes("Mini T-Spin");
+			return this.lastClear.includes("Quad") || this.lastClear.includes("Spin");
 		}
 
-		if (isIgnored())
+		if (this.lastClear.includes("Zero") || this.lastClear === "PerfectClear")
 			return ;
 		if (moment === "pre" && !isB2B())
 			this.B2B = 0;
@@ -361,9 +370,10 @@ export class TetrisGame {
 	public async swap() {
 		if (!this.canSwap || this.over || this.fallInterval === -1)
 			return ;
-		// console.log("Holding piece");
-		this.canSwap = false;
-		// this.shouldSpawn = true;
+
+		this.holdPhase = true;
+		if (!this.infiniteHold)
+			this.canSwap = false;
 
 		clearInterval(this.fallInterval);
 		this.fallInterval = -1;
@@ -400,13 +410,14 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 		if (this.isInLockPhase) {
-			++this.nbMoves;
+			if (!this.infiniteMovement)
+				++this.nbMoves;
 			this.msSinceLockPhase = 0;
 		}
 		this.spinType = this.currentPiece.rotate(direction, this.matrix);
 		if (this.spinType !== "") {
 			console.log("Spin type: " + this.spinType);
-			// this.player.send(JSON.stringify({type: "EFFECT", arguments: this.spinType}))
+			this.player.send(JSON.stringify({type: "SPIN", argument: this.spinType}))
 		}
 		this.placeShadow();
 	}
@@ -414,15 +425,16 @@ export class TetrisGame {
 	public move(direction: "left" | "right"): void {
 		if (!this.currentPiece)
 			return ;
-		if (this.isInLockPhase) {
-			++this.nbMoves;
-			this.msSinceLockPhase = 0;
-		}
 
 		const offset: IPos = direction === "left" ? new IPos(-1, 0) : new IPos(1, 0);
 		if (this.currentPiece.isColliding(this.matrix, offset))
 			// console.log("Collision detected");
 			return ;
+		if (this.isInLockPhase) {
+			if (!this.infiniteMovement)
+				++this.nbMoves;
+			this.msSinceLockPhase = 0;
+		}
 		this.currentPiece.remove(this.matrix);
 		this.currentPiece.setCoordinates(this.currentPiece.getCoordinates().add(offset));
 		this.currentPiece.place(this.matrix);

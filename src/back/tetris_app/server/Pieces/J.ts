@@ -6,6 +6,17 @@ import {Matrix} from "../Matrix";
 
 export class J extends ATetrimino {
 
+	protected static readonly SpinCheck: number[][] = [
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 1, 0, 0, 0, 0],
+		[0, 0, 1, 1, 1, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+	]; // 2 major, 3 minor
+
+
 	// Load the JSON file and convert it to the pieceStruct
 	protected static struct: tc.pieceStruct = (() => {
 		return {
@@ -21,7 +32,9 @@ export class J extends ATetrimino {
 		super("J", coordinates, texture);
 	}
 
-	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
+	protected getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string {
+		if (rotationPointUsed === 4)
+			return "Mini J-Spin";
 		return "";
 	}
 

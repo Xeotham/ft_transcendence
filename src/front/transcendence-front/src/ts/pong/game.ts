@@ -1,7 +1,7 @@
 import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
 import  { address, content } from "../main.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
-import {specTournament, tourMessageHandler} from "./tournament.ts";
+import { specTournament, tourMessageHandler } from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore

@@ -16,9 +16,9 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "w";
-		this.hard_drop              = "ArrowUp";
-		this.soft_drop              = "ArrowDown";
+		this.rotate_180             = "ArrowUp";
+		this.hard_drop              = "w";
+		this.soft_drop              = "s";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 	}
@@ -89,13 +89,13 @@ export class   TimeoutKey {
 		this.callback = callback;
 	}
 	pause() {
-		console.log("Pause timer");
+		// console.log("Pause timer");
 		clearTimeout(this.timer);
 		this.timer = 0;
 		this.remaining -= Date.now() - this.start;
 	}
 	resume() {
-		console.log("Resume timer");
+		// console.log("Resume timer");
 		if (this.timer !== 0) {
 			return ;
 		}

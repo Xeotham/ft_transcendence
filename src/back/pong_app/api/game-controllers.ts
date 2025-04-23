@@ -137,7 +137,7 @@ export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>,
 
 	if (!room || !room.getGame())
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	room.getGame()?.movePaddle(request.body);
+	room.getGame()?.movePaddle(request.body.P, request.body.key);
 };
 
 export const	getRooms = async (request: FastifyRequest, reply: FastifyReply) => {

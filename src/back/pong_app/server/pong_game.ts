@@ -12,7 +12,7 @@ import {
 	PADDLE_SPEED
 } from "./constants"
 import { WebSocket } from "ws";
-import {requestBody, delay, getRoomById} from "../utils";
+import { requestBody, delay, getRoomById } from "../utils";
 
 export class Game {
 	readonly id:number;
@@ -47,7 +47,7 @@ export class Game {
 		this.lastTime = this.startTime;
 	}
 
-	toJSON() {
+	public 	toJSON() {
 		return {
 			paddle1: this.paddle1,
 			paddle2: this.paddle2,
@@ -55,8 +55,8 @@ export class Game {
 		};
 	}
 
-	isOver()	{ return this.over; }
-	addSpectator(spectator: WebSocket) { this.spectators.push(spectator); }
+	public isOver()	{ return this.over; }
+	public addSpectator(spectator: WebSocket) { this.spectators.push(spectator); }
 
 	private sendData(data: any, toSpectators: boolean = true) {
 		this.players.player1?.send(JSON.stringify(data));
@@ -67,7 +67,7 @@ export class Game {
 				spectator?.send(JSON.stringify(data));
 	}
 
-	sendScore() {
+	public sendScore() {
 		this.sendData({ type: "GAME", data: this.score, message: "SCORE" }, true);
 	}
 
@@ -89,7 +89,7 @@ export class Game {
 		this.lastTime = performance.now();
 	}
 
-	async gameLoop() {
+	public 	async gameLoop() {
 		return new Promise<void>((resolve) => {
 
 			this.startTime = performance.now();
@@ -102,8 +102,9 @@ export class Game {
 				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
 					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
-					return
+					return ;
 				}
+				// Game Over
 				clearInterval(intervalId);
 				this.finishTime = performance.now();
 				if (!this.over) // If the game didn't end because of a forfeit
@@ -176,17 +177,17 @@ export class Game {
 		}
 	}
 
-	movePaddle(res: requestBody) {
-		let paddle = res.P === "P1" ? this.paddle1 : this.paddle2;
+	public movePaddle(player: string | "P1" | "P2", key: string | "up" | "down") {
+		let paddle = player === "P1" ? this.paddle1 : this.paddle2;
 
-		paddle.y += (res.key === "up") ? -PADDLE_SPEED : PADDLE_SPEED;
+		paddle.y += (key === "up") ? -PADDLE_SPEED : PADDLE_SPEED;
 		if (paddle.y < 0)
 			paddle.y = 0;
 		if (paddle.y > HEIGHT - paddle.y_size)
 			paddle.y = HEIGHT - paddle.y_size;
 	}
 
-	forfeit(player: string) {
+	public forfeit(player: string) {
 		if (this.over)
 			return ;
 		if (player === "P1")
@@ -198,7 +199,7 @@ export class Game {
 		this.over = true;
 	}
 
-	getWinner() : WebSocket | null {
+	public getWinner() : WebSocket | null {
 		return this.winner;
 	}
 }
