@@ -31,7 +31,9 @@ export class T extends ATetrimino {
 		super("T", coordinates, texture);
 	}
 
-	protected getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string {
+	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
+		if (rotationPointUsed === -1)
+			return "";
 		if (major >= 2 && minor >= 1)
 			return "T-Spin";
 		if (minor >= 1 && minor >= 1 && rotationPointUsed === 4)

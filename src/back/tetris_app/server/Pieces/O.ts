@@ -32,7 +32,7 @@ export class O extends ATetrimino {
 		super("O", coordinates, texture);
 	}
 
-	protected getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string {
+	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
 		return "";
 	}
 

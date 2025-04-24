@@ -25,8 +25,8 @@ export class   keys {
 	// Getters
 	getMoveLeft(): string { return this.moveLeft ; }
 	getMoveRight(): string { return this.moveRight ; }
-	getClockwizeRotate(): string { return this.clockwise_rotate; }
-	getCountClockwizeRotate(): string { return this.count_clockwise_rotate; }
+	getClockWiseRotate(): string { return this.clockwise_rotate; }
+	getCounterClockWiseRotate(): string { return this.count_clockwise_rotate; }
 	getRotate180(): string { return this.rotate_180; }
 	getHardDrop(): string { return this.hard_drop; }
 	getSoftDrop(): string { return this.soft_drop; }
@@ -35,8 +35,8 @@ export class   keys {
 	// Setters
 	setMoveLeft(moveLeft: string): void { this.moveLeft = moveLeft; }
 	setMoveRight(moveRight: string): void { this.moveRight = moveRight; }
-	setClockwizeRotate(clockwise_rotate: string): void { this.clockwise_rotate = clockwise_rotate; }
-	setCountClockwizeRotate(count_clockwise_rotate: string): void { this.count_clockwise_rotate = count_clockwise_rotate; }
+	setClockWiseRotate(clockwise_rotate: string): void { this.clockwise_rotate = clockwise_rotate; }
+	SetClockWiseRotate(count_clockwise_rotate: string): void { this.count_clockwise_rotate = count_clockwise_rotate; }
 	setRotate180(rotate_180: string): void { this.rotate_180 = rotate_180; }
 	setHardDrop(hard_drop: string): void { this.hard_drop = hard_drop; }
 	setSoftDrop(soft_drop: string): void { this.soft_drop = soft_drop; }
@@ -177,9 +177,9 @@ export const    setKey = (keyType: string, value: string) => {
 		case "moveRight":
 			return userKeys.setMoveRight(value);
 		case "rotClock":
-			return userKeys.setClockwizeRotate(value);
+			return userKeys.setClockWiseRotate(value);
 		case "rotCountClock":
-			return userKeys.setCountClockwizeRotate(value);
+			return userKeys.SetClockWiseRotate(value);
 		case "rot180":
 			return userKeys.setRotate180(value);
 		case "hardDrop":

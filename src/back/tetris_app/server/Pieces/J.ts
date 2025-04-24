@@ -32,10 +32,10 @@ export class J extends ATetrimino {
 		super("J", coordinates, texture);
 	}
 
-	protected getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string {
-		if (rotationPointUsed === 4)
-			return "Mini J-Spin";
-		return "";
+	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
+		if (rotationPointUsed === -1 || this.canSlide(matrix) || !this.isColliding(matrix, new IPos(0, -1)))
+			return "";
+		return "Mini J-Spin";
 	}
 
 	public getSize(): number { return J.struct.size; }

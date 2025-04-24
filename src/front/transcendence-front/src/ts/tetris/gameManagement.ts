@@ -141,16 +141,16 @@ const gameControllers = async (finish: boolean = false) => {
 				// console.log("moving piece right");
 				movePiece("moveRight");
 				return ;
-			case userKeys.getClockwizeRotate():
-			case userKeys.getClockwizeRotate().toLowerCase():
-			case userKeys.getClockwizeRotate().toUpperCase():
+			case userKeys.getClockWiseRotate():
+			case userKeys.getClockWiseRotate().toLowerCase():
+			case userKeys.getClockWiseRotate().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "clockwise", roomId: tetrisGameInfo.getGameId() });
 				return ;
-			case userKeys.getCountClockwizeRotate():
-			case userKeys.getCountClockwizeRotate().toLowerCase():
-			case userKeys.getCountClockwizeRotate().toUpperCase():
+			case userKeys.getCounterClockWiseRotate():
+			case userKeys.getCounterClockWiseRotate().toLowerCase():
+			case userKeys.getCounterClockWiseRotate().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "counter-clockwise", roomId: tetrisGameInfo.getGameId() });

@@ -23,7 +23,7 @@ export abstract class ATetrimino {
 		this.rotation = tc.NORTH;
 	}
 
-	protected abstract getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string;
+	protected abstract getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string;
 
 	public toJSON() {
 		return {
@@ -114,7 +114,7 @@ export abstract class ATetrimino {
 					++minor;
 			}
 		}
-		return this.getSpinSpecific(major, minor, rotationPointUsed);
+		return this.getSpinSpecific(matrix, major, minor, rotationPointUsed);
 	}
 
 	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
@@ -170,6 +170,11 @@ export abstract class ATetrimino {
 
 	public canFall(matrix: Matrix): boolean {
 		return !this.isColliding(matrix, new IPos(0, 1));
+	}
+
+	public canSlide(matrix: Matrix) {
+		// console.log("Can slide on left: " + !this.isColliding(matrix, new IPos(-1, 0)) + " and right: " + !this.isColliding(matrix, new IPos(1, 0)));
+		return !this.isColliding(matrix, new IPos(1, 0)) || !this.isColliding(matrix, new IPos(-1, 0));
 	}
 
 }

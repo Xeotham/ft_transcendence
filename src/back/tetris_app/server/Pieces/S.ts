@@ -11,7 +11,7 @@ export class S extends ATetrimino {
 		[0, 0, 0, 3, 3, 0, 0],
 		[0, 0, 2, 1, 1, 0, 0],
 		[0, 3, 1, 1, 2, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 3, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0, 0],
 	]; // 2 major, 3 minor
@@ -32,10 +32,16 @@ export class S extends ATetrimino {
 		super("S", coordinates, texture);
 	}
 
-	protected getSpinSpecific(major: number, minor: number, rotationPointUsed: number): string {
-		if (major >= 2 ||
-			(major >= 1 && minor >= 2))
-			return "Mini S-Spin";
-		return "";
+	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
+		if (rotationPointUsed === -1 || this.canSlide(matrix) || !this.isColliding(matrix, new IPos(0, -1)))
+			return "";
+		return "Mini S-Spin";
+		// if (major >= 2 ||
+		// 	(major >= 1 && minor >= 2))
+		// 	return "Mini S-Spin";
+		// return "";
 	}
+
+	public getSize(): number { return S.struct.size; }
+
 }

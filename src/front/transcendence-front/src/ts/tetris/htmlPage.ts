@@ -57,9 +57,9 @@ const keybindsHtml = (keys: keys) => {
 			<p>Move Piece Right:</p>
 			<button id="moveRight">${keys.getMoveRight()}</button>
 			<p>Rotate Piece Clockwise:</p>
-			<button id="rotClock">${keys.getClockwizeRotate()}</button>
-			<p>Rotate Piece Counter Clockwize:</p>
-			<button id="rotCountClock">${keys.getCountClockwizeRotate()}</button>
+			<button id="rotClock">${keys.getClockWiseRotate()}</button>
+			<p>Rotate Piece Counter Clockwise:</p>
+			<button id="rotCountClock">${keys.getCounterClockWiseRotate()}</button>
 			<p>Rotate Piece 180</p>
 			<button id="rot180">${keys.getRotate180()}</button>
 			<p>Hard Drop Piece:</p>
@@ -68,7 +68,7 @@ const keybindsHtml = (keys: keys) => {
 			<button id="softDrop">${keys.getSoftDrop()}</button>
 			<p>Hold Piece:</p>
 			<button id="hold">${keys.getHold()}</button>
-			<p>Move Piece Left:</p>
+			<p>Forfeit:</p>
 			<button id="forfeit">${keys.getForfeit()}</button>
 		</div>
 	`
