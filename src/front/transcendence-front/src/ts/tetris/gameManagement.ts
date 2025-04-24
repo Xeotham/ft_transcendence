@@ -48,6 +48,18 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			loadTetrisPage("board");
 			return ;
+		case "SPECIAL_LOCK":
+			console.log("Special Lock: " + res.argument);
+			return ;
+		case "SPIN":
+			console.log("Spin: " + res.argument);
+			return;
+		case "B2B":
+			console.log("B2B: " + res.argument);
+			return;
+		case "STATS":
+			console.log("Stats: " + JSON.stringify(res.argument));
+			return;
 		case "FINISH":
 			console.log("Game Over");
 			tetrisGameInfo.getSocket()?.close();
@@ -62,21 +74,12 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setKeyFirstMove("moveRight", true);
 			gameControllers(true);
 			return ;
-		case "SPECIAL_LOCK":
-			console.log("Special Lock: " + res.argument);
-			return ;
-		case "SPIN":
-			console.log("Spin: " + res.argument);
-			return;
-		case "B2B":
-			console.log("B2B: " + res.argument);
-			return;
 		default:
 			console.log("Unknown message type: " + res.type);
 	}
 }
 
-// TODO: Need to make the timeout pause when the opposit key is pressed ( https://stackoverflow.com/questions/3969475/javascript-pause-settimeout )
+// TODO: Need to make the timeout pause when the opposite key is pressed ( https://stackoverflow.com/questions/3969475/javascript-pause-settimeout )
 
 const   movePiece = (direction: string) => {
 	const   arg = direction === "moveLeft" ? "left" : "right";
@@ -88,6 +91,7 @@ const   movePiece = (direction: string) => {
 
 	const   repeat = async () => {
 
+		// console.log("Moving piece " + arg);
 		postToApi(`http://${address}:3000/api/tetris/movePiece`, { argument: arg, roomId: tetrisGameInfo.getGameId() });
 		if (tetrisGameInfo.getKeyFirstMove(direction)) {
 			tetrisGameInfo.setKeyFirstMove(direction, false);
@@ -120,7 +124,7 @@ const gameControllers = async (finish: boolean = false) => {
 			return ;
 		}
 
-		// TODO: Check to make the key spamable but with an interval
+		// TODO: Check to make the key spammable but with an interval
 
 		switch (key) {
 			case userKeys.getMoveLeft().toUpperCase():
@@ -141,16 +145,16 @@ const gameControllers = async (finish: boolean = false) => {
 				// console.log("moving piece right");
 				movePiece("moveRight");
 				return ;
-			case userKeys.getClockWiseRotate():
-			case userKeys.getClockWiseRotate().toLowerCase():
-			case userKeys.getClockWiseRotate().toUpperCase():
+			case userKeys.getClockwiseRotate():
+			case userKeys.getClockwiseRotate().toLowerCase():
+			case userKeys.getClockwiseRotate().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "clockwise", roomId: tetrisGameInfo.getGameId() });
 				return ;
-			case userKeys.getCounterClockWiseRotate():
-			case userKeys.getCounterClockWiseRotate().toLowerCase():
-			case userKeys.getCounterClockWiseRotate().toUpperCase():
+			case userKeys.getCounterclockwise():
+			case userKeys.getCounterclockwise().toLowerCase():
+			case userKeys.getCounterclockwise().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}:3000/api/tetris/rotatePiece`, { argument: "counter-clockwise", roomId: tetrisGameInfo.getGameId() });

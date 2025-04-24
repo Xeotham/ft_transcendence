@@ -32,7 +32,7 @@ export const SCORING: {[id:string]: number} = {
 	"Mini Spin Double": 400,
 	"Mini Spin Triple": 800,
 	"Mini Spin Quad": 1600,
-	"PerfectClear" : 3500,
+	"Perfect Clear" : 3500,
 	"Back-to-Back Bonus" : 1.5,
 	"Normal Drop" : 0,
 	"Soft Drop" : 1,
@@ -77,6 +77,26 @@ export const VARIABLE_GOAL_SYSTEM: number[] = [
 	75,
 	80,
 ];
+
+export interface linesCleared {
+	[key: string]: number;
+	"Single": number,
+	"Double": number,
+	"Triple": number,
+	"Quad": number,
+	"T-Spin Zero": number,
+	"T-Spin Single" : number,
+	"T-Spin Double" : number,
+	"T-Spin Triple" : number,
+	"T-Spin Quad" : number,
+	"Mini T-Spin Zero": number,
+	"Mini T-Spin Single" : number,
+	"Mini Spin Zero": number,
+	"Mini Spin Single": number,
+	"Mini Spin Double": number,
+	"Mini Spin Triple": number,
+	"Mini Spin Quad": number,
+}
 
 export interface block {
 	[key: string]: any;

@@ -34,7 +34,7 @@ export class I extends ATetrimino {
 	}
 
 	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
-		if (rotationPointUsed === -1 || this.canSlide(matrix) || !this.isColliding(matrix, new IPos(0, -1)))
+		if (this.canSlide(matrix) || !this.isColliding(matrix, new IPos(0, -1)))
 			return "";
 		return "Mini I-Spin";
 	}

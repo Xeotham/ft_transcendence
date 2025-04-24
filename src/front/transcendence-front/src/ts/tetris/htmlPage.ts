@@ -8,7 +8,7 @@ export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null 
 		case "setting":
 			return settingHtml();
 		case "keybindings":
-			return keybindsHtml(arg?.keys!);
+			return keyBindsHtml(arg?.keys!);
 		case "board":
 			return boardHtml();
 	}
@@ -43,7 +43,7 @@ const settingHtml = () => {
 	`
 }
 
-const keybindsHtml = (keys: keys) => {
+const keyBindsHtml = (keys: keys) => {
 	if (!content)
 		return;
 
@@ -57,9 +57,9 @@ const keybindsHtml = (keys: keys) => {
 			<p>Move Piece Right:</p>
 			<button id="moveRight">${keys.getMoveRight()}</button>
 			<p>Rotate Piece Clockwise:</p>
-			<button id="rotClock">${keys.getClockWiseRotate()}</button>
-			<p>Rotate Piece Counter Clockwise:</p>
-			<button id="rotCountClock">${keys.getCounterClockWiseRotate()}</button>
+			<button id="rotClock">${keys.getClockwiseRotate()}</button>
+			<p>Rotate Piece CounterClockwise:</p>
+			<button id="rotCountClock">${keys.getCounterclockwise()}</button>
 			<p>Rotate Piece 180</p>
 			<button id="rot180">${keys.getRotate180()}</button>
 			<p>Hard Drop Piece:</p>
@@ -82,6 +82,8 @@ const boardHtml = () => {
 	content.innerHTML = `
 		<h1>Tetris</h1>
 		<p id="score">Score: 0</p>
+		<p id="time">Time: 00:00.000</p>
+		<p id="PPS">Pieces: 0, 0.00/S</p>
 		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
 	`
 }

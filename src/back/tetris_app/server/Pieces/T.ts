@@ -32,13 +32,13 @@ export class T extends ATetrimino {
 	}
 
 	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
-		if (rotationPointUsed === -1)
-			return "";
 		if (major >= 2 && minor >= 1)
 			return "T-Spin";
-		if (minor >= 1 && minor >= 1 && rotationPointUsed === 4)
+		if (minor >= 2 && minor >= 1 && rotationPointUsed === 4)
 			return "T-Spin";
-		if (minor >= 1 && major >= 1)
+		if (minor >= 2 && major >= 1)
+			return "Mini T-Spin";
+		if (minor >= 1 && major >= 1 && !this.canSlide(matrix) && !this.isColliding(matrix, new IPos(0, -1)))
 			return "Mini T-Spin";
 		return "";
 	}

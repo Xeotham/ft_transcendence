@@ -8,7 +8,7 @@ import {
 	loadTetrisType,
 	minoInfo,
 	minoSize,
-	setKey, tetriminoInfo, tetriminoPaterns,
+	setKey, tetriminoInfo, tetriminoPatterns,
 	tetrisGame
 } from "./utils.ts";
 import { loadTetrisHtml } from "./htmlPage.ts";
@@ -26,7 +26,7 @@ export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | nul
 		case "setting":
 			return settingPage();
 		case "keybindings":
-			return keybindsPage(arg!);
+			return keyBindsPage(arg!);
 		case "board":
 			return drawBoard();
 	}
@@ -49,7 +49,7 @@ const   settingPage = () => {
 
 }
 
-const  keybindsPage = (keys: loadTetrisArgs) => {
+const  keyBindsPage = (keys: loadTetrisArgs) => {
 	loadTetrisHtml("keybindings", keys);
 
 	document.getElementById("idle")?.addEventListener("click", () => loadTetrisPage("idle"));
@@ -124,7 +124,7 @@ const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coo
 // TODO: Fix the hold piece drawing
 const   drawHold = (ctx: CanvasRenderingContext2D, hold: tetriminoInfo) => {
 	
-	const   pattern = tetriminoPaterns[hold.name];
+	const   pattern = tetriminoPatterns[hold.name];
 	const   margin = 4;
 	const   holdMinoSize = ((holdWidth - (2 * margin)) / (pattern.length));
 	const   colors: string[] = [ "black", getMinoColor(hold.name) ];
@@ -142,7 +142,7 @@ const   drawBag = (ctx: CanvasRenderingContext2D, bags: tetriminoInfo[][]) => {
 	else
 		bagToPrint = firstBag.concat(secondBag.slice(0, 4 - firstBag.length));
 	for (let i = 0; i < bagToPrint.length; ++i) {
-		const   pattern = tetriminoPaterns[bagToPrint[i].name];
+		const   pattern = tetriminoPatterns[bagToPrint[i].name];
 		const   colors: string[] = [ "black", getMinoColor(bagToPrint[i].name) ];
 		const   bagMinoSize = ((bagWidth - (2 * borderSize)) / (pattern.length));
 
@@ -156,10 +156,15 @@ const   drawBoard = () => {
 	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
 	const game = tetrisGameInfo.getGame();
 
-
-	document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
 	if (!ctx || !game)
 		return;
+
+	document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
+	// document.getElementById("time")!.innerText = "Time: " + tetrisGameInfo.getGame()?.time;
+	document.getElementById("time")!.innerText = "Time: " +
+		(new Date(tetrisGameInfo.getGame()?.time || 0).toISOString().substring(11, 23));
+	document.getElementById("PPS")!.innerText = "Pieces: " + tetrisGameInfo.getGame()?.piecesPlaced +
+		", " + tetrisGameInfo.getGame()?.piecesPerSecond + "/S";
 	// c.clearRect(0, 0, canvas.width, canvas.height);
 	// c.beginPath();
 	drawBorder(ctx);

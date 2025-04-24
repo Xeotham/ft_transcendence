@@ -25,8 +25,8 @@ export class   keys {
 	// Getters
 	getMoveLeft(): string { return this.moveLeft ; }
 	getMoveRight(): string { return this.moveRight ; }
-	getClockWiseRotate(): string { return this.clockwise_rotate; }
-	getCounterClockWiseRotate(): string { return this.count_clockwise_rotate; }
+	getClockwiseRotate(): string { return this.clockwise_rotate; }
+	getCounterclockwise(): string { return this.count_clockwise_rotate; }
 	getRotate180(): string { return this.rotate_180; }
 	getHardDrop(): string { return this.hard_drop; }
 	getSoftDrop(): string { return this.soft_drop; }
@@ -72,6 +72,10 @@ export interface    tetrisGameInfo {
 	hold:   tetriminoInfo;
 	score:  number;
 	gameId: number;
+	time: 	number;
+	linesCleared: number,
+	piecesPlaced: number,
+	piecesPerSecond: number,
 }
 
 export class   TimeoutKey {
@@ -256,7 +260,7 @@ export const    getMinoColor = (texture: string): string => {
 	}
 }
 
-export const    tetriminoPaterns: {[key: string]: number[][]} = {
+export const    tetriminoPatterns: {[key: string]: number[][]} = {
 	"I": [
 		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
 		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
