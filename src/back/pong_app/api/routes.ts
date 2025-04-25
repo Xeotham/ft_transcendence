@@ -2,6 +2,7 @@ import	{ FastifyInstance, FastifyRequest } from "fastify";
 import {
 	joinMatchmaking,
 	joinSolo,
+	joinBot,
 	quitRoom,
 	movePaddle,
 	startConfirm,
@@ -27,6 +28,7 @@ export default async function pongRoutes(fastify: FastifyInstance) {
 
 	fastify.get('/joinMatchmaking', {websocket: true}, joinMatchmaking);
 	fastify.get('/joinSolo', {websocket: true}, joinSolo);
+	fastify.get('/joinBot', {websocket: true}, joinBot);
 	fastify.get('/createTournament', {websocket: true}, createTournament);
 	fastify.get('/joinTournament', {websocket: true}, joinTournament);
 	fastify.get('/addSpectatorToRoom', {websocket: true}, addSpectatorToRoom);

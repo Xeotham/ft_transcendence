@@ -13,6 +13,7 @@ import {
 } from "./constants"
 import { WebSocket } from "ws";
 import {requestBody, delay, getRoomById} from "../utils";
+import {botLogic} from "./bot";
 
 export class Game {
 	readonly id:number;
@@ -24,13 +25,14 @@ export class Game {
 	over:		boolean;
 	winner:		WebSocket | null;
 	isSolo:		boolean;
+	isBot:		boolean;
 	spectators:	WebSocket[];
 
 	private startTime:	number;
 	private finishTime:	number;
 	private lastTime:	number;
 
-	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = []) {
+	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };
@@ -40,6 +42,7 @@ export class Game {
 		this.over = false;
 		this.winner = null;
 		this.isSolo = isSolo;
+		this.isBot = isBot;
 		this.spectators = spectators;
 
 		this.startTime = performance.now();
@@ -65,6 +68,8 @@ export class Game {
 		if (toSpectators)
 			for (let spectator of this.spectators)
 				spectator?.send(JSON.stringify(data));
+		if (this.isBot)
+			botLogic(data, this.id); // send to bot function
 	}
 
 	sendScore() {
@@ -102,7 +107,7 @@ export class Game {
 				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
 					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
-					return
+					return ;
 				}
 				clearInterval(intervalId);
 				this.finishTime = performance.now();
@@ -176,15 +181,16 @@ export class Game {
 		}
 	}
 
-	movePaddle(res: requestBody) {
-		let paddle = res.P === "P1" ? this.paddle1 : this.paddle2;
+	movePaddle(player: string | "P1" | "P2", key: string | "up" | "down") {
+		let paddle = player === "P1" ? this.paddle1 : this.paddle2;
 
-		paddle.y += (res.key === "up") ? -PADDLE_SPEED : PADDLE_SPEED;
+		paddle.y += (key === "up") ? -PADDLE_SPEED : PADDLE_SPEED;
 		if (paddle.y < 0)
 			paddle.y = 0;
 		if (paddle.y > HEIGHT - paddle.y_size)
 			paddle.y = HEIGHT - paddle.y_size;
 	}
+
 
 	forfeit(player: string) {
 		if (this.over)

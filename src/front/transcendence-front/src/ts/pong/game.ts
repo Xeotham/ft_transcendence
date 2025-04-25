@@ -15,19 +15,21 @@ export class PongRoom {
 	private socket: WebSocket | null;
 	private score: score;
 	private isSolo: boolean;
+	private isBot: boolean;
 	private isButtonPressed: buttons;
 	private intervals: intervals;
 	private queueInterval: number | null;
 	private specPlacement: number;
 
 
-	constructor(socket: WebSocket, isSolo: boolean = false) {
+	constructor(socket: WebSocket, isSolo: boolean = false, isBot: boolean = false) {
 		this.roomNumber = -1;
 		this.game = null;
 		this.player = null;
 		this.socket = socket;
 		this.score = { player1: 0, player2: 0 };
 		this.isSolo = isSolo;
+		this.isBot = isBot;
 		this.isButtonPressed = { "ArrowUp": false, "ArrowDown": false, "KeyS": false, "KeyX": false };
 		this.intervals = { "ArrowUp": null, "ArrowDown": null, "KeyS": null, "KeyX": null };
 		this.queueInterval = null;
@@ -40,6 +42,7 @@ export class PongRoom {
 	getSocket(): WebSocket | null { return this.socket; }
 	getScore(): score { return this.score; }
 	getIsSolo(): boolean { return this.isSolo; }
+	getIsBot(): boolean { return this.isBot; }
 	getQueueInterval(): number | null { return this.queueInterval; }
 	getMatchType(): string { return "PONG"; }
 	getSpecPlacement(): number { return this.specPlacement; }
@@ -79,6 +82,7 @@ export class PongRoom {
 	setSocket(socket: WebSocket | null): void { this.socket = socket; }
 	setScore(score: score): void { this.score = score; }
 	setIsSolo(isSolo: boolean): void { this.isSolo = isSolo; }
+	setIsBot(isBot: boolean): void { this.isBot = isBot; }
 	setQueueInterval(queueInterval: number | null): void { this.queueInterval = queueInterval; }
 	setSpecPlacement(specPlacement: number): void { this.specPlacement = specPlacement; }
 	setButtonPressed(idx: string, value: boolean): void {
@@ -182,6 +186,14 @@ export const   joinSolo = async () => {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinSolo`);
 
 	pongGameInfo.setRoom(new PongRoom(socket, true));
+	pongGameInfo.getRoom()?.initSocket();
+}
+
+export const   joinBot = async () => {
+	console.log("ok front");
+	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinBot`);
+
+	pongGameInfo.setRoom(new PongRoom(socket, true, true));
 	pongGameInfo.getRoom()?.initSocket();
 }
 

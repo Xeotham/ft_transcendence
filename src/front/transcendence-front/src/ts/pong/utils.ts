@@ -51,6 +51,7 @@ export interface	RoomInfo {
 	id:		number;
 	full:	boolean;
 	isSolo:	boolean;
+	isBot:	boolean;
 	privRoom:	boolean;
 }
 
