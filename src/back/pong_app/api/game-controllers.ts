@@ -103,6 +103,20 @@ export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
 	newRoom.startGame();
 }
 
+export const joinBot = async (socket: WebSocket, req: FastifyRequest) => {
+	console.log("ok");
+	if (isPlayerInRoom(socket)) {
+		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
+		return socket.send(JSON.stringify({type: "LEAVE"}));
+	}
+
+	console.log("New Player creating bot room");
+	const newRoom = new Room(idGenRoom.next().value, true);
+	Rooms.push(newRoom);
+	newRoom.botSetup(socket);
+	newRoom.startGame();
+}
+
 export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
 	let room = getRoomById(request.body.roomId);
 	const	player: string | "P1" | "P2" = request.body.P;

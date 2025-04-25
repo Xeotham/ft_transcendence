@@ -1,5 +1,5 @@
 import {Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInformation} from "./utils.ts";
-import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, quit} from "./game.ts";
+import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
 import  { loadPongHtml } from "./htmlPage.ts";
 
@@ -50,6 +50,7 @@ const   idlePage = () => {
 	document.getElementById("home")?.addEventListener("click", () => { page.show("/"); });
 	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
 	document.getElementById("solo-game")?.addEventListener("click", joinSolo);
+	document.getElementById("bot-game")?.addEventListener("click", joinBot);
 	document.getElementById("private-room")?.addEventListener("click", createPrivateRoom);
 	document.getElementById("join-priv-room")?.addEventListener("click", joinPrivRoom);
 	document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);

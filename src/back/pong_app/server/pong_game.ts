@@ -13,6 +13,7 @@ import {
 } from "./constants"
 import { WebSocket } from "ws";
 import { requestBody, delay, getRoomById } from "../utils";
+import { botLogic } from "./bot";
 
 export class Game {
 	readonly id:number;
@@ -24,13 +25,14 @@ export class Game {
 	over:		boolean;
 	winner:		WebSocket | null;
 	isSolo:		boolean;
+	isBot:		boolean;
 	spectators:	WebSocket[];
 
 	private startTime:	number;
 	private finishTime:	number;
 	private lastTime:	number;
 
-	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = []) {
+	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };
@@ -40,6 +42,7 @@ export class Game {
 		this.over = false;
 		this.winner = null;
 		this.isSolo = isSolo;
+		this.isBot = isBot;
 		this.spectators = spectators;
 
 		this.startTime = performance.now();
@@ -65,6 +68,8 @@ export class Game {
 		if (toSpectators)
 			for (let spectator of this.spectators)
 				spectator?.send(JSON.stringify(data));
+		if (this.isBot)
+			botLogic(data, this.id); // send to bot function
 	}
 
 	public sendScore() {

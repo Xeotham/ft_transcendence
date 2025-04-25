@@ -46,6 +46,7 @@ const   idleHtml = () => {
 	        <button id="home">Home Page</button>
 			<button id="join-game">Join a Game</button>
 			<button id="solo-game">Create a solo Game</button>
+			<button id="bot-game">Create a bot Game</button>
 			<button id="private-room">Create a Private Room</button>
 			<button id="join-priv-room">Join a Private Room</button>
 			<button id="create-tournament">Create a tournament</button>
@@ -104,7 +105,7 @@ const   tourRoomListHtml = (rooms: RoomInfo[]) => {
 		listHTML += `
 		  		<li>
 					<a href="/pong/tournament/room/${room.id}">
-					  Id: ${room.id} Full: ${room.full} Solo: ${room.isSolo}
+					  Id: ${room.id} Full: ${room.full} Solo: ${room.isSolo} Bot: ${room.isBot}
 					</a>
 		  		</li>
 			`;

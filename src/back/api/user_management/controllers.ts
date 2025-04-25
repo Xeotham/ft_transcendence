@@ -10,7 +10,7 @@ import { getMessageById, saveMessage } from '../../database/models/Message';
 import { saveGame } from '../../database/models/Game';
 import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
 import bcrypt from 'bcrypt';
-
+import fs from 'fs';
 
 
 interface Users {
@@ -41,8 +41,8 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     try
     {
         const hashed_password = await hashPassword(password);
-
-        const id = createUser( username, hashed_password as string, avatar );
+        const base_64_avatar = avatar.split(',')[1];
+        const id = createUser( username, hashed_password as string, base_64_avatar );
 
         createStats(id);
 
@@ -52,7 +52,7 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     }
     catch (err)
     {
-        return reply.status(400).send({ error: err.message });
+        return reply.status(400).send({ error: (err as Error).message });
     }
 };
 
