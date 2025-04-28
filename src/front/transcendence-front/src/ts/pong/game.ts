@@ -190,10 +190,9 @@ export const   joinSolo = async () => {
 }
 
 export const   joinBot = async () => {
-	console.log("ok front");
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinBot`);
 
-	pongGameInfo.setRoom(new PongRoom(socket, true, true));
+	pongGameInfo.setRoom(new PongRoom(socket, false, true));
 	pongGameInfo.getRoom()?.initSocket();
 }
 
@@ -410,8 +409,6 @@ export const keyHandler = (event: KeyboardEvent) => {
 
 const   confirmGame = () => {
 	loadPongPage("confirm");
-
-	console.log("%cICIIIIIIIIIIIIIIIIIIIIIIIIIIII", "color: red");
 
 	let remainingTime = 10;
 	pongGameInfo.getRoom()?.clearIntervals();
