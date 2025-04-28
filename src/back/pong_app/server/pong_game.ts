@@ -13,7 +13,9 @@ import {
 } from "./constants"
 import { WebSocket } from "ws";
 import { requestBody, delay, getRoomById } from "../utils";
-import { botLogic } from "./bot";
+import { botLogic, resetBot } from "./bot";
+import { Room } from "./Room";
+// impoer { Timeout } from
 
 export class Game {
 	readonly id:number;
@@ -52,9 +54,9 @@ export class Game {
 
 	public 	toJSON() {
 		return {
-			paddle1: this.paddle1,
-			paddle2: this.paddle2,
-			ball: this.ball,
+			paddle1: { ...this.paddle1 },
+			paddle2: { ...this.paddle2 },
+			ball: { ...this.ball},
 		};
 	}
 
@@ -68,8 +70,6 @@ export class Game {
 		if (toSpectators)
 			for (let spectator of this.spectators)
 				spectator?.send(JSON.stringify(data));
-		if (this.isBot)
-			botLogic(data, this.id); // send to bot function
 	}
 
 	public sendScore() {
@@ -77,20 +77,21 @@ export class Game {
 	}
 
 	private async spawnBall(side: string | "P1" | "P2") {
+		resetBot(this.id, 0);
 		this.sendScore();
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-		this.ball.y = HEIGHT / 2; // TODO : Remove this line
-		this.ball.orientation = 0; // TODO : Remove this line
+		// this.ball.y = HEIGHT / 2; // TODO : Remove this line
+		// this.ball.orientation = 0; // TODO : Remove this line
 		if (side === "P1")
 			this.ball.orientation += Math.PI;
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
 		if (this.score.player1 < 10 && this.score.player2 < 10)
-			// await delay(1250);
-			await delay(0); // TODO : Remove this line
+			await delay(1250);
+			// await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
 	}
 
@@ -102,6 +103,12 @@ export class Game {
 			const intervalId = setInterval(() => {
 				this.sendData({ type: "GAME", data: this.toJSON() }, true);
 			}, 1000 / 60); // 60 times per second
+			let botInterval: number = 0;
+			if (this.isBot)
+				botInterval = setInterval(() => {
+			console.log("rotation in calss Game is " + this.ball.orientation)
+				botLogic(this.toJSON(), this.id);
+			}, 1000) as unknown as number; // once per second
 
 			const gameLoopIteration = async () => {
 				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
@@ -111,6 +118,7 @@ export class Game {
 				}
 				// Game Over
 				clearInterval(intervalId);
+				clearInterval(botInterval);
 				this.finishTime = performance.now();
 				if (!this.over) // If the game didn't end because of a forfeit
 					this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
@@ -121,6 +129,7 @@ export class Game {
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
+				resetBot(this.id, 1);
 				resolve();
 			};
 
@@ -149,6 +158,7 @@ export class Game {
 		}
 		if (player === "P2" && this.ball.x + this.ball.size / 2 > paddle.x) {
 			this.ball.x = paddle.x - this.ball.size;
+			console.log("paddle hit at y ", this.ball.y)
 			this.hitPaddle(player, paddle);
 		}
 	}
@@ -161,16 +171,16 @@ export class Game {
 
 		this.paddleCollision("P1");
 		this.paddleCollision("P2");
-		if (this.ball.y - this.ball.size < 0 || this.ball.y + this.ball.size >= HEIGHT)
+		if (this.ball.y < 0 || this.ball.y + this.ball.size >= HEIGHT)
 			this.ball.orientation = -this.ball.orientation;
-
-		this.ball.x += speed * Math.cos(this.ball.orientation);
-		this.ball.y += speed * Math.sin(this.ball.orientation);
 
 		if (this.ball.y < 0)
 			this.ball.y = this.ball.size;
 		if (this.ball.y > HEIGHT)
 			this.ball.y = HEIGHT - this.ball.size;
+
+		this.ball.x += speed * Math.cos(this.ball.orientation);
+		this.ball.y += speed * Math.sin(this.ball.orientation);
 
 		if (this.ball.x - this.ball.size < 0) {
 			this.score.player2++;
