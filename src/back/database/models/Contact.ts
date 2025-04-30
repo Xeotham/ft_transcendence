@@ -30,6 +30,7 @@ export const modifyContact = (user1_id:number, user2_id:number, friend_u1:boolea
     const f2 = friend_u2 ? 1 : 0;
     const b1 = block_u1 ? 1 : 0;
     const b2 = block_u2 ? 1 : 0;
+
     const stmt = db.prepare('\
         UPDATE contact \
         SET friend_u1 = ?, friend_u2 = ?, block_u1 = ?, block_u2 = ?\
