@@ -56,12 +56,57 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(null);
 			gameControllers(true);
 			return ;
+		case "EFFECT":
+			effectHandler(res.argument);
+			return;
 		default:
 			console.log("Unknown message type: " + res.type);
 	}
 }
 
-// TODO: Need to make the timeout pause when the opposit key is pressed ( https://stackoverflow.com/questions/3969475/javascript-pause-settimeout )
+const   effectHandler = async (effect: string) => {
+	const   effectBalise = document.getElementById("effect");
+
+	console.log("Effect: " + effect);
+	switch (effect) {
+		case "Single":
+			effectBalise!.innerHTML = "Single";
+			break ;
+		case "Double":
+			effectBalise!.innerHTML = "Double";
+			break ;
+		case "Triple":
+			effectBalise!.innerHTML = "Triple";
+			break ;
+		case "Tetris":
+			effectBalise!.innerHTML = "Tetris";
+			break ;
+		case "PerfectClear":
+			effectBalise!.innerHTML = "PerfectClear";
+			break ;
+		case "Mini T-Spin":
+			effectBalise!.innerHTML = "Mini T-Spin";
+			break ;
+		case "T-Spin Single":
+			effectBalise!.innerHTML = "T-Spin Single";
+			break ;
+		case "T-Spin Double":
+			effectBalise!.innerHTML = "T-Spin Double";
+			break ;
+		case "T-Spin Triple":
+			effectBalise!.innerHTML = "T-Spin Triple";
+			break ;
+		case "Normal Drop":
+			effectBalise!.innerHTML = "Normal Drop";
+			break ;
+		case "Soft Drop":
+			effectBalise!.innerHTML = "Soft Drop";
+			break ;
+		case "Hard Drop":
+			effectBalise!.innerHTML = "Hard Drop";
+			break ;
+	}
+}
 
 const   movePiece = (direction: string) => {
 	const   arg = direction === "moveLeft" ? "left" : "right";
@@ -88,7 +133,7 @@ const   movePiece = (direction: string) => {
 	repeat();
 }
 
-const gameControllers = async (finish: boolean = false) => {
+const   gameControllers = async (finish: boolean = false) => {
 
 	const   keydownHandler = async (event: KeyboardEvent) => {
 		const key = event.key;
@@ -195,7 +240,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getSoftDrop():
 			case userKeys.getSoftDrop().toLowerCase():
 			case userKeys.getSoftDrop().toUpperCase():
-				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
+				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Normal", roomId: tetrisGameInfo.getGameId() });
 		}
 	}
 
