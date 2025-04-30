@@ -32,7 +32,7 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
 
     const { username, password, avatar } = request.body as { username: string, password: string, avatar: string };
 
-    if(!username || !password || !avatar )
+    if(!username || !password || !avatar)
         return reply.status(400).send({ message: 'Username, password and avatar can\'t be empty' });
 
     const existingUser = getUserByUsername(username);
@@ -67,13 +67,13 @@ export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =
     if (!user)
         return reply.status(400).send({ message: 'User doesn\'t exist' });
 
-    if (type == "password")
+    if (type === "password")
     {
         try
         {
             const hashed_password = await hashPassword(update);
 
-            updateUserById(user.id as number, type, hashed_password as string);
+            updateUserById(user.id!, type, hashed_password as string);
 
             return reply.status(201).send({ message: 'User updated successfully' });
         }
@@ -94,18 +94,16 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
     const { username, password } = request.body as { username: string, password: string };
 
-    let user = getUserByUsername(username);
+    const user = getUserByUsername(username);
 
 
     if (!user || !(await bcrypt.compare(password, user.password)))
         return reply.status(401).send({ message: 'Invalid username or password' });
 
     if (user?.connected)
-        return reply.status(401).send({ message: 'User already disconnected' });
+        return reply.status(401).send({ message: 'User already connected' });
 
     logUserById(user.id as number);
-
-    user = getUserById(user.id as number);
 
     return reply.send({ message: 'Login successful' });
 };
@@ -114,18 +112,16 @@ export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) =
 {
     const { username } = request.body as { username: string, };
 
-    let user = getUserByUsername(username);
+    const user = getUserByUsername(username);
 
-    if (!user )
-        return reply.status(401).send({ message: 'Invalid username or password' });
+    if (!user)
+        return reply.status(401).send({ message: 'Invalid username' });
 
     if (!user?.connected)
-        return reply.status(401).send({ message: 'User already connected' });
+        return reply.status(401).send({ message: 'User already disconnected' });
 
 
     logOutUserById(user.id as number);
-
-    user = getUserById(user.id as number);
 
     return reply.send({ message: 'Logout successful' });
 };
@@ -139,7 +135,7 @@ export const    getUserInfo = async (request: FastifyRequest, reply: FastifyRepl
     if (!user)
         return reply.status(401).send({ message: 'Invalid username' });
     
-    return reply.status(201).send({ message: 'User\s infos sended', user });
+    return reply.status(201).send({ message: 'User\'s infos sended', user });
 };
 
 /*----------------------------------------------------------------------------*/
@@ -178,7 +174,7 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
     if (!user || !user_friend)
         return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id == user_friend.id)
+    if (user.id === user_friend.id)
         return reply.status(401).send({ message: 'User cannot add himself' });
 
     if (user_friend.id)
@@ -274,18 +270,18 @@ export const    blockContact = async (request: FastifyRequest, reply: FastifyRep
 
     const   user = getUserByUsername(username);
 
-    const   user_friend = getUserByUsername(username_friend);
+    const   contact = getUserByUsername(username_friend);
 
-    if (!user || !user_friend)
+    if (!user || !contact)
         return reply.status(401).send({ message: 'Invalid username' });
 
     if (!user)
         return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user_friend.id)
+    if (contact.id)
     {
         const   user1_id = user.id as number;
-        const   user2_id = user_friend.id as number;
+        const   user2_id = contact.id as number;
         const   friend_u1 = false;
         const   friend_u2 = false;
         const   block_u1 = true;
@@ -323,18 +319,18 @@ export const    unblockContact = async (request: FastifyRequest, reply: FastifyR
 
     const   user = getUserByUsername(username);
 
-    const   user_friend = getUserByUsername(username_friend);
+    const   contact = getUserByUsername(username_friend);
 
-    if (!user || !user_friend)
+    if (!user || !contact)
         return reply.status(401).send({ message: 'Invalid username' });
 
     if (!user)
         return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user_friend.id)
+    if (contact.id)
     {
         const   user1_id = user.id as number;
-        const   user2_id = user_friend.id as number;
+        const   user2_id = contact.id as number;
         const   friend_u1 = false;
         const   friend_u2 = false;
         const   block_u1 = false;
@@ -409,7 +405,7 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
     {
         const   sender_id = id;
         const   recipient_id = user.id;
-        const mess = getMessageById( sender_id, recipient_id );
+        const   mess = getMessageById( sender_id, recipient_id );
 
         return  reply.status(201).send({ message: 'Message received', mess });
     }

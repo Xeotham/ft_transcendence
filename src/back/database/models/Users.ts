@@ -41,6 +41,7 @@ export const updateUserById = (id: number, type: string, update: string): void =
 			break;
 		i++;
 	}
+
 	switch (i)
 	{
 		case 0:
@@ -127,7 +128,7 @@ export const getUsernameById = (id: number): string =>
 
 export const hashPassword = async (password:string, saltRounds = 10): Promise<string | null> =>
 {
-    if (!password) 
+    if (!password)
         return null;
     
     try
