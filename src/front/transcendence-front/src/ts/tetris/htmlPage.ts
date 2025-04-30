@@ -82,6 +82,7 @@ const boardHtml = () => {
 	content.innerHTML = `
 		<h1>Tetris</h1>
 		<p id="score">Score: 0</p>
+		<p id="effect"></p>
 		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
 	`
 }

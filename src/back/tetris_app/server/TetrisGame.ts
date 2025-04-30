@@ -277,12 +277,12 @@ export class TetrisGame {
 			this.updateB2B("pre");
 			if (this.lastClear !== "") {
 				console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
-				this.player.send(JSON.stringify({type: "EFFECT", arguments: this.lastClear}));
+				this.player.send(JSON.stringify({type: "EFFECT", argument: this.lastClear}));
 			}
 			this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
 			if (this.matrix.isEmpty()) {
 				this.score += tc.SCORE_CALCULUS("PerfectClear", this.level, this.B2B > 0);
-				this.player.send(JSON.stringify({type: "EFFECT", arguments: "PerfectClear"}));
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "PerfectClear"}));
 			}
 			this.updateB2B("post");
 			this.lockFrame = false;

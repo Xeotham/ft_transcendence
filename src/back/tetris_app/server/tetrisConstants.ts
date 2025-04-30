@@ -23,6 +23,7 @@ export const SCORING: {[id:string]: number} = {
 	"Tetris" : 800,
 	"PerfectClear" : 1200,
 	"Mini T-Spin" : 100,
+	"T-Spin" : 400,
 	"T-Spin Single" : 800,
 	"T-Spin Double" : 1200,
 	"T-Spin Triple" : 1600,
