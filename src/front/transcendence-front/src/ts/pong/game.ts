@@ -246,6 +246,8 @@ const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 	const tournamentId = pongGameInfo.getTournament()?.getId();
 	const tourPlacement = pongGameInfo.getTournament()?.getPlacement();
 
+	console.log("Quiting tournament: " + tournamentId);
+
 	fetch(`http://${address}:3000/api/pong/quitRoom`, {
 		method: 'POST',
 		headers: {
@@ -257,6 +259,7 @@ const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 		console.log("Connection closed");
 		socket.onclose = null; // Remove any existing onclose handler
 		socket.close();
+		loadPongPage("idle");
 	}
 	pongGameInfo.resetTournament();
 	console.log("Leaving tournament");

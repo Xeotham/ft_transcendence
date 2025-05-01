@@ -213,20 +213,23 @@ export const    specTournament = async (tournamentId: number) => {
 			'Content-Type': 'application/json'
 		}
 	})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok ' + response.statusText);
-			}
-			return response.json();
-		})
-		.then((data: RoomInfo[])  => {
-			loadPongPage("tour-rooms-list", { roomLst: data });
-			console.log("Testing this bullshit");
-		})
-		.catch(error => {
-			alert(error);
-			page.show("/pong");
-		});
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok ' + response.statusText);
+		}
+		return response.json();
+	})
+	.then((data: RoomInfo[])  => {
+		if (data.length === undefined) {
+			return ;
+		}
+		loadPongPage("tour-rooms-list", { roomLst: data });
+		console.log("Testing this bullshit");
+	})
+	.catch(error => {
+		alert(error);
+		page.show("/pong");
+	});
 }
 
 

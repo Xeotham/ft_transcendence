@@ -1,3 +1,4 @@
+// @ts-ignore
 import { WebSocket } from "ws";
 import * as tc from "./tetrisConstants";
 import { IPos } from "./IPos";
@@ -97,6 +98,7 @@ export class TetrisGame {
 			gameId: this.gameId,
 			score: this.score,
 			level: this.level,
+			canSwap: this.canSwap,
 		};
 	}
 

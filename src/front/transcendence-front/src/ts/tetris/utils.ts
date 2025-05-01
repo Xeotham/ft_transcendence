@@ -1,4 +1,4 @@
-import { userKeys } from "./tetris.ts";
+import {tetrisTextures, userKeys} from "./tetris.ts";
 
 export class   keys {
 	private moveLeft:               string;
@@ -67,11 +67,12 @@ export interface minoInfo {
 }
 
 export interface    tetrisGameInfo {
-	matrix: minoInfo[][];
-	bags:   tetriminoInfo[][];
-	hold:   tetriminoInfo;
-	score:  number;
-	gameId: number;
+	matrix:     minoInfo[][];
+	bags:       tetriminoInfo[][];
+	hold:       tetriminoInfo;
+	score:      number;
+	gameId:     number;
+	canSwap:    boolean;
 }
 
 export class   TimeoutKey {
@@ -220,6 +221,49 @@ export const    getFromApi = async (url: string) => {
 	return response.json();
 }
 
+export const    getMinoTexture = (texture: string): HTMLImageElement | null => {
+	switch (texture) {
+		case "I_SHADOW":
+		case "J_SHADOW":
+		case "L_SHADOW":
+		case "O_SHADOW":
+		case "S_SHADOW":
+		case "T_SHADOW":
+		case "Z_SHADOW":
+			return tetrisTextures["SHADOW"];
+		case "I_LOCKED":
+		case "I":
+			console.log("I texture");
+			return tetrisTextures["I"];
+		case "J_LOCKED":
+		case "J":
+			console.log("J texture");
+			return tetrisTextures["J"];
+		case "L_LOCKED":
+		case "L":
+			console.log("L texture");
+			return tetrisTextures["L"];
+		case "O_LOCKED":
+		case "O":
+			console.log("O texture");
+			return tetrisTextures["O"];
+		case "S_LOCKED":
+		case "S":
+			console.log("S texture");
+			return tetrisTextures["S"];
+		case "T_LOCKED":
+		case "T":
+			console.log("T texture");
+			return tetrisTextures["T"];
+		case "Z_LOCKED":
+		case "Z":
+			console.log("Z texture");
+			return tetrisTextures["Z"];
+		default:
+			return null;
+	}
+}
+
 export const    getMinoColor = (texture: string): string => {
 	switch (texture) {
 		case "I_SHADOW":
@@ -258,82 +302,55 @@ export const    getMinoColor = (texture: string): string => {
 
 export const    tetriminoPaterns: {[key: string]: number[][]} = {
 	"I": [
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 1, 1, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0 ],
+		[ 1, 1, 1, 1 ],
+		[ 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0 ],
 	],
 	"J": [
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 1, 0, 0, 0, 0 ],
-		[ 0, 0, 1, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 1, 0, 0 ],
+		[ 1, 1, 1 ],
+		[ 0, 0, 0 ],
 	],
 	"L": [
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 1, 0, 0 ],
-		[ 0, 0, 1, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 1 ],
+		[ 1, 1, 1 ],
+		[ 0, 0, 0 ],
 	],
 	"O": [
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 1, 1 ],
+		[ 0, 1, 1 ],
+		[ 0, 0, 0 ],
 	],
 	"S": [
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0 ,1, 1, 0, 0 ],
-		[ 0, 0, 1, 1, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0 ,1, 1 ],
+		[ 1, 1, 0 ],
+		[ 0, 0, 0 ],
 	],
 	"T": [
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 1, 0, 0, 0 ],
-		[ 0, 0, 1, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 1, 0 ],
+		[ 1, 1, 1 ],
+		[ 0, 0, 0 ],
 	],
 	"Z": [
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 1, 1, 0, 0, 0 ],
-		[ 0, 0, 0, 1, 1, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
-		[ 0, 0, 0, 0, 0, 0, 0 ],
+		[ 1, 1, 0 ],
+		[ 0, 1, 1 ],
+		[ 0, 0, 0 ],
 	],
 }
 
-export const    borderSize = 2;
-export const    minoSize = 30;
-export const    boardWidth = minoSize * 10;
-export const    boardHeight = minoSize * 25;
-export const    boardCoord = {x: 4 * minoSize + borderSize, y: 0}
-export const    holdWidth = (minoSize * 4) + 8;
-export const    holdHeight = (minoSize * 4) + 8;
-export const    holdCoord = {x: 0, y: 0}
-export const    bagWidth = minoSize * 4;
-export const    bagHeight = boardHeight;
-export const    bagCoord = {x: (14 * minoSize) + (borderSize * 2), y: 0}
 
-export const    canvasWidth = boardWidth + bagWidth + holdWidth + (borderSize * 2);
-export const    canvasHeight = boardHeight;
+export const    borderSize = 2;
+export const    minoSize = 32;
+// export const    boardWidth = minoSize * 10;
+// export const    boardHeight = minoSize * 23;
+// export const    boardCoord = {x: 4 * minoSize + borderSize, y: 0}
+export const    holdWidth = (minoSize * 4);
+export const    holdHeight = (minoSize * 4);
+// export const    holdCoord = {x: 0, y: 0}
+export const    bagWidth = minoSize * 4;
+export const    bagHeight = minoSize * 23;
+// export const    bagCoord = {x: (14 * minoSize) + (borderSize * 2), y: 0}
+
+// export const    canvasWidth = boardWidth + bagWidth + holdWidth + (borderSize * 2);
+// export const    canvasHeight = boardHeight;

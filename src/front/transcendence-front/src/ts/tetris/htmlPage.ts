@@ -19,14 +19,15 @@ const idleHtml = () => {
 		return;
 
 	content.innerHTML = `
-	<h1>Tetris</h1>
-	<nav>
-		<button id="home">Home Page</button>
-		<button id="matchmaking">Matchmaking</button>
-		<button id="arcade">Arcade Mod</button>
-		<button id="setting">Settings</button>
-	</nav>
-	`
+	<div class="tetris">
+		<h1>Tetris</h1>
+		<nav>
+			<button id="home">Home Page</button>
+			<button id="matchmaking">Matchmaking</button>
+			<button id="arcade">Arcade Mod</button>
+			<button id="setting">Settings</button>
+		</nav>
+	</div>`
 }
 
 const settingHtml = () => {
@@ -80,9 +81,9 @@ const boardHtml = () => {
 	}
 
 	content.innerHTML = `
-		<h1>Tetris</h1>
-		<p id="score">Score: 0</p>
-		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
-	`
+<!--		<p id="score">Score: 0</p>-->
+		<div id="board">
+		<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
+		</div>`
 }
 

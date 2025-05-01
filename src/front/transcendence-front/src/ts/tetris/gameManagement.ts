@@ -100,6 +100,8 @@ const gameControllers = async (finish: boolean = false) => {
 		const key = event.key;
 
 		if (tetrisGameInfo.getGameId() === -1) {
+			tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+			tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 			document.removeEventListener('keydown', keydownHandler);
 			document.removeEventListener('keyup', keyupHandler);
 			return ;
@@ -152,7 +154,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getHardDrop().toUpperCase():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "hard", roomId: tetrisGameInfo.getGameId() });
+				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Hard", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getSoftDrop():
 			case userKeys.getSoftDrop().toLowerCase():
@@ -160,7 +162,7 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat || keyStates.softDrop)
 					return ;
 				keyStates.softDrop = true;
-				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "soft", roomId: tetrisGameInfo.getGameId() });
+				postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Soft", roomId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getHold():
 			case userKeys.getHold().toLowerCase():
@@ -175,6 +177,8 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getForfeit().toLowerCase():
 			case userKeys.getForfeit().toUpperCase():
 				postToApi(`http://${address}:3000/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
+				tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 				document.removeEventListener('keydown', keydownHandler);
 				document.removeEventListener('keyup', keyupHandler);
 				page.show("/tetris")
@@ -214,12 +218,17 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getSoftDrop().toLowerCase():
 			case userKeys.getSoftDrop().toUpperCase():
 				keyStates.softDrop = false;
-				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "normal", roomId: tetrisGameInfo.getGameId() });
+				return postToApi(`http://${address}:3000/api/tetris/dropPiece`, { argument: "Normal", roomId: tetrisGameInfo.getGameId() });
 		}
 	}
 
-	if (finish)
+	if (finish) {
+		tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+		tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+		document.removeEventListener('keydown', keydownHandler);
+		document.removeEventListener('keyup', keyupHandler);
 		return page.show("/tetris");
+	}
 
 	document.addEventListener("keydown", keydownHandler);
 	document.addEventListener("keyup", keyupHandler);

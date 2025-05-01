@@ -1,8 +1,7 @@
 import {
-	bagCoord,
 	bagWidth,
-	boardCoord, boardHeight, boardWidth, borderSize,
-	getMinoColor, holdCoord, holdHeight, holdWidth,
+	borderSize,
+	getMinoTexture, holdWidth, holdHeight,
 	keys,
 	loadTetrisArgs,
 	loadTetrisType,
@@ -28,7 +27,7 @@ export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | nul
 		case "keybindings":
 			return keybindsPage(arg!);
 		case "board":
-			return drawBoard();
+			return drawGame();
 	}
 }
 
@@ -87,54 +86,111 @@ const changeKeys = (keyType: string) => {
 	document.addEventListener("keydown", getNewKey);
 }
 
-const   drawMatrix = (matrix: minoInfo[][], ctx: CanvasRenderingContext2D) => {
-	ctx.clearRect(boardCoord.x, boardCoord.y, boardWidth, boardHeight);
+
+export const tetrisTextures: { [key: string]: HTMLImageElement } = {};
+
+export const loadTetrisTextures = () => {
+
+	const   texturePaths = {
+		"I":        './src/textures/tetris/I.png',
+		"J":        './src/textures/tetris/J.png',
+		"L":        './src/textures/tetris/L.png',
+		"O":        './src/textures/tetris/O.png',
+		"S":        './src/textures/tetris/S.png',
+		"T":        './src/textures/tetris/T.png',
+		"Z":        './src/textures/tetris/Z.png',
+		"SHADOW":   './src/textures/tetris/shadow.png',
+		"BACKGROUND": './src/textures/tetris/background.jpg',
+		"MATRIX":   './src/textures/tetris/matrix.png',
+		"HOLD":     './src/textures/tetris/hold.png',
+		"BAGS":     './src/textures/tetris/bags.png',
+	}
+
+	return Promise.all(
+		Object.entries(texturePaths).map(([key, path]) => {
+			return new Promise<void>((resolve, reject) => {
+				const img = new Image();
+				// console.log(`Loading texture: ${key} from ${path}`);
+				img.src = path;
+				img.onload = () => {
+					tetrisTextures[key] = img;
+					resolve();
+				};
+				img.onerror = (err) => {
+					console.error(`Failed to load texture: ${key} from ${path}`, err);
+					reject(err)
+				};
+				// console.log(tetrisTextures[key]);
+			});
+		})
+	);
+};
+
+
+const   drawMino = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, texture: string) => {
+	const   minoTexture = getMinoTexture(texture);
+
+	// console.log("Mino texture: ", minoTexture);
+	if (minoTexture === null)
+		return ;
+	if (minoTexture) {
+		ctx.drawImage(minoTexture, x, y, size, size);
+	}
+	else
+		console.error(`Texture not found for ${texture}`);
+}
+
+const   drawMatrix = (ctx: CanvasRenderingContext2D, matrix: minoInfo[][], xCoord: number, yCoord: number, width: number, height: number, minoSize: number) => {
+	// ctx.clearRect(xCoord, yCoord, width, height);
 	ctx.beginPath();
-	for (let y = matrix.length - 1; y > 15; --y) {
+	for (let y = matrix.length - 1; y > 17; --y) {
 		for (let x = 0; x < matrix[y].length; ++x) {
-			ctx.fillStyle = getMinoColor(matrix[y][x].texture);
-			ctx.fillRect((x * minoSize) + boardCoord.x, ((y - 15) * minoSize) + boardCoord.y , minoSize, minoSize);
+			const   newX = (x * minoSize) + xCoord;
+			const   newY = ((y - 17) * minoSize) + yCoord;
+			drawMino(ctx, newX, newY, minoSize, matrix[y][x].texture);
+			// ctx.fillStyle = getMinoColor(matrix[y][x].texture);
+			// ctx.fillRect((x * minoSize) + boardCoord.x, ((y - 15) * minoSize) + boardCoord.y , minoSize, minoSize);
 		}
 	}
 }
 
-const   drawBorder = (ctx: CanvasRenderingContext2D) => {
-	ctx.strokeStyle = "gray";
-	ctx.lineWidth = 2;
-	ctx.strokeRect(holdCoord.x - borderSize, holdCoord.y, holdWidth + (2 * borderSize), holdHeight - 8);
-	ctx.strokeRect(boardCoord.x - borderSize, boardCoord.y, boardWidth + (2 * borderSize), boardHeight);
-}
-
-const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coord: {x: number, y: number}, height: number, width: number, minoLength: number, colors: string[]) => {
-	ctx.clearRect(coord.x, coord.y, height, width);
+const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coord: {x: number, y: number}, minoLength: number, colors: string[]) => {
+	// ctx.clearRect(coord.x, coord.y, height, width);
 	ctx.beginPath();
 	for (let y = 0; y < pattern.length; ++y) {
 		for (let x = 0; x < pattern[y].length; ++x) {
+			const   newX = (x * minoLength) + coord.x;
+			const   newY = (y * minoLength) + coord.y;
 			if (pattern[y][x] !== 0) {
-				const   newX = (x * minoLength) + coord.x;
-				const   newY = (y * minoLength) + coord.y;
 
-				ctx.fillStyle = colors[pattern[y][x]];
-				ctx.fillRect(newX, newY, minoLength, minoLength);
+				drawMino(ctx, newX, newY, minoLength, colors[pattern[y][x]]);
+				// ctx.fillStyle = colors[pattern[y][x]];
+				// ctx.fillRect(newX, newY, minoLength, minoLength);
 			}
+			// else {
+			// 	ctx.fillStyle = "gray";
+			// 	ctx.fillRect(newX, newY, minoLength, minoLength);
+			// }
 		}
 	}
 }
 
 // TODO: Fix the hold piece drawing
-const   drawHold = (ctx: CanvasRenderingContext2D, hold: tetriminoInfo) => {
+const   drawHold = (ctx: CanvasRenderingContext2D, hold: tetriminoInfo, holdCoord: {x: number, y: number}) => {
 	
 	const   pattern = tetriminoPaterns[hold.name];
-	const   margin = 4;
+	const   margin = 10;
 	const   holdMinoSize = ((holdWidth - (2 * margin)) / (pattern.length));
-	const   colors: string[] = [ "black", getMinoColor(hold.name) ];
+	const   colors: string[] = [ "black", tetrisGameInfo.getGame()?.canSwap ? hold.name : hold.name + "_SHADOW" ];
 
-	drawTetrimino(ctx, pattern, holdCoord, holdHeight - 8, holdWidth - 8, holdMinoSize, colors);
+	drawTetrimino(ctx, pattern, holdCoord, holdMinoSize, colors);
 }
 
-const   drawBag = (ctx: CanvasRenderingContext2D, bags: tetriminoInfo[][]) => {
+const   drawBag = (ctx: CanvasRenderingContext2D, bags: tetriminoInfo[][], bagCoord: {x: number, y: number}) => {
 	const   firstBag = bags[0];
 	const   secondBag = bags[1];
+	const   margin = 10;
+
 	let     bagToPrint: tetriminoInfo[] = [];
 
 	if (firstBag.length >= 4)
@@ -143,28 +199,78 @@ const   drawBag = (ctx: CanvasRenderingContext2D, bags: tetriminoInfo[][]) => {
 		bagToPrint = firstBag.concat(secondBag.slice(0, 4 - firstBag.length));
 	for (let i = 0; i < bagToPrint.length; ++i) {
 		const   pattern = tetriminoPaterns[bagToPrint[i].name];
-		const   colors: string[] = [ "black", getMinoColor(bagToPrint[i].name) ];
-		const   bagMinoSize = ((bagWidth - (2 * borderSize)) / (pattern.length));
+		const   colors: string[] = [ "black", bagToPrint[i].name ];
+		const   bagMinoSize = ((bagWidth - (2 * margin)) / (pattern.length));
 
-		drawTetrimino(ctx, pattern, {x: bagCoord.x, y: bagCoord.y + (i * holdHeight)}, holdHeight - 8, holdWidth - 8, bagMinoSize, colors);
+		drawTetrimino(ctx, pattern, {x: bagCoord.x, y: bagCoord.y + (i * holdHeight)}, bagMinoSize, colors);
 	}
 
 }
 
-const   drawBoard = () => {
-	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
+const   drawBackground = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height:number) => {
+	ctx.clearRect(x, y, width, height);
+	ctx.drawImage(tetrisTextures["BACKGROUND"], x, y, width, height);
+}
+
+const   drawBoard = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+	const   matrixTexture = tetrisTextures["MATRIX"];
+	const   holdTexture = tetrisTextures["HOLD"];
+	const   bagsTexture = tetrisTextures["BAGS"];
+
+	const   matrixCoord: {x: number, y: number} = { x: x, y: y };
+	const   holdCoord: {x: number, y: number} = { x: x - 20 - holdTexture.width, y: y };
+	const   bagsCoord: {x: number, y: number} = { x: x + 20 + matrixTexture.width, y: y};
+
+	ctx.drawImage(matrixTexture, matrixCoord.x, matrixCoord.y, matrixTexture.width, matrixTexture.height);
+	ctx.drawImage(holdTexture, holdCoord.x, holdCoord.y, holdTexture.width, holdTexture.height);
+	ctx.drawImage(bagsTexture, bagsCoord.x, bagsCoord.y, bagsTexture.width, bagsTexture.height);
+
+}
+
+//
+// export const    borderSize = 2;
+// // export const    minoSize = 32;
+// // export const    boardWidth = minoSize * 10;
+// // export const    boardHeight = minoSize * 23;
+// // export const    boardCoord = {x: 4 * minoSize + borderSize, y: 0}
+// export const    holdWidth = (minoSize * 4) + 8;
+// // export const    holdHeight = (minoSize * 4) + 8;
+// // export const    holdCoord = {x: 0, y: 0}
+// export const    bagWidth = minoSize * 4;
+// export const    bagHeight = boardHeight;
+// export const    bagCoord = {x: (14 * minoSize) + (borderSize * 2), y: 0}
+//
+// // export const    canvasWidth = boardWidth + bagWidth + holdWidth + (borderSize * 2);
+// // export const    canvasHeight = boardHeight;
+
+
+const   drawGame = () => {
+	const canvas = document.getElementById("tetrisCanvas")  as HTMLCanvasElement;
 	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
 	const game = tetrisGameInfo.getGame();
 
+	const   minoSize = 32;
+	const   boardCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (tetrisTextures["MATRIX"].width / 2)), y: ((canvas.height / 2) - (tetrisTextures["MATRIX"].height / 2)) };
+	const   matrixCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (5 * minoSize)), y: ((canvas.height / 2) - (11.5 * minoSize)) };
+	const   matrixSize: { width: number, height: number } = { width: (10 * minoSize), height: (23 * minoSize) };
+	const   holdCoord: { x: number, y: number } = { x: (matrixCoord.x - tetrisTextures["HOLD"].width - 20) + 10, y: (matrixCoord.y + 20) + 10 }
+	const   bagsCoord: { x: number, y: number } = { x: (matrixCoord.x + matrixSize.width + 20) + 30, y: (matrixCoord.y + 20) + 10 }
 
-	document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
+	// console.log("Matrix Size: ", matrixSize); // height: 736 width: 320
+
+	window.addEventListener('resize', () => {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		// setTimeout(drawBoard, 100);
+	});
+
+	// document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
 	if (!ctx || !game)
 		return;
-	// c.clearRect(0, 0, canvas.width, canvas.height);
-	// c.beginPath();
-	drawBorder(ctx);
-	drawMatrix(game.matrix, ctx);
-	drawBag(ctx, game.bags);
+	drawBackground(ctx, 0, 0, canvas.width, canvas.height);
+	drawBoard(ctx, boardCoord.x, boardCoord.y);
+	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, matrixSize.width, matrixSize.height, minoSize);
+	drawBag(ctx, game.bags, bagsCoord);
 	if (game.hold)
-		drawHold(ctx, game.hold);
+		drawHold(ctx, game.hold, holdCoord);
 }

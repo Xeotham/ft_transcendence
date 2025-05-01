@@ -1,5 +1,6 @@
 // @ts-ignore
 import  page from 'page';
+import {loadTetrisTextures, tetrisTextures} from "./tetris/tetris.ts";
 
 // @ts-ignore
 export const	address = "DUMMY_ADDRESS";

@@ -148,7 +148,7 @@ const roomListHtml = (rooms: RoomInfo[]) => {
 		<ul>`;
 
 	rooms.forEach((room: RoomInfo) => {
-		if (!room.privRoom) {
+		if (!room.privRoom && !room.isSolo) {
 			listHTML += `
                 <li>
 					<a href="/pong/room/${room.id}">
