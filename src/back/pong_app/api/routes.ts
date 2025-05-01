@@ -20,7 +20,6 @@ import {
 	getTourRoomInfo
 } from "./tournament-controllers";
 import	{ addSpectatorToRoom } from "./spectator-controllers";
-import {tetrisArcade} from "../../tetris_app/api/controllers";
 
 
 export default async function pongRoutes(fastify: FastifyInstance) {

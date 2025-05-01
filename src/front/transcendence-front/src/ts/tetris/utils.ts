@@ -1,5 +1,17 @@
 import { userKeys } from "./tetris.ts";
 
+export const generateUsername = (): string => {
+	const   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const   length = 10;
+	let     result: string = '';
+	const   charactersLength = characters.length;
+
+	for (let i = 0; i < length; i++)
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+
+	return result;
+}
+
 export class   keys {
 	private moveLeft:               string;
 	private moveRight:              string;
@@ -10,6 +22,7 @@ export class   keys {
 	private soft_drop:              string;
 	private hold:                   string;
 	private forfeit:                string;
+	private retry:                	string;
 
 	constructor() {
 		this.moveLeft               = "a";
@@ -21,6 +34,7 @@ export class   keys {
 		this.soft_drop              = "s";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
+		this.retry                  = "r";
 	}
 	// Getters
 	getMoveLeft(): string { return this.moveLeft ; }
@@ -32,6 +46,7 @@ export class   keys {
 	getSoftDrop(): string { return this.soft_drop; }
 	getHold(): string { return this.hold; }
 	getForfeit(): string { return this.forfeit; }
+	getRetry(): string { return this.retry; }
 	// Setters
 	setMoveLeft(moveLeft: string): void { this.moveLeft = moveLeft; }
 	setMoveRight(moveRight: string): void { this.moveRight = moveRight; }
@@ -42,6 +57,7 @@ export class   keys {
 	setSoftDrop(soft_drop: string): void { this.soft_drop = soft_drop; }
 	setHold(hold: string): void { this.hold = hold; }
 	setForfeit(forfeit: string): void { this.forfeit = forfeit; }
+	setRetry(retry: string): void { this.retry = retry; }
 	// Methods
 	resetKeys(): void {
 		this.moveLeft               = "a";
@@ -53,6 +69,7 @@ export class   keys {
 		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
+		this.retry					= "r";
 	}
 }
 
@@ -71,9 +88,11 @@ export interface    tetrisGameInfo {
 	bags:   tetriminoInfo[][];
 	hold:   tetriminoInfo;
 	score:  number;
+	level:  number;
 	gameId: number;
 	time: 	number;
 	linesCleared: number,
+	lineClearGoal: number,
 	piecesPlaced: number,
 	piecesPerSecond: number,
 }
@@ -117,16 +136,22 @@ export class   TimeoutKey {
 }
 
 export class    tetrisGame {
-	socket:         WebSocket | null;
-	gameId:         number;
-	game:           tetrisGameInfo | null;
-	keyTimeout:     {[key: string]: TimeoutKey | null};
-	keyFirstMove:   {[key: string]: boolean};
+	socket:			WebSocket | null;
+	roomCode:		string;
+	roomOwner:		boolean;
+	gameId:			number;
+	game:			tetrisGameInfo | null;
+	keyTimeout:		{[key: string]: TimeoutKey | null};
+	keyFirstMove:	{[key: string]: boolean};
+	needSave:		boolean;
+	settings:		{[key: string]: any};
 
 	// TODO: Add interval for key
 
 	constructor() {
 		this.socket = null;
+		this.roomCode = "";
+		this.roomOwner = false;
 		this.gameId = -1;
 		this.game   = null;
 		this.keyTimeout = {
@@ -137,18 +162,37 @@ export class    tetrisGame {
 			"moveLeft": true,
 			"moveRight": true,
 		};
+		this.needSave = false;
+		this.settings = {
+			"showShadowPiece":			true,
+			"showBags":					true,
+			"swapAllowed":				true,
+			"infiniteHold":				false,
+			"infiniteMovement":			false,
+			"ARE":						500,
+			"spawnARE":					0,
+		};
 	}
 	getSocket(): WebSocket | null { return this.socket; }
+	getRoomCode(): string { return this.roomCode; }
+	getRoomOwner(): boolean { return this.roomOwner; }
 	getGameId(): number { return this.gameId; }
 	getGame(): tetrisGameInfo | null { return this.game; }
 	getKeyTimeout(arg: string): TimeoutKey | null { return this.keyTimeout[arg]; }
 	getKeyFirstMove(arg: string): boolean { return this.keyFirstMove[arg]; }
+	getSettings(): any { return this.settings; }
+	getNeedSave(): boolean { return this.needSave; }
+	getSettingsValue(arg: string): any { return this.settings[arg]; }
 
 	setSocket(socket: WebSocket | null): void { this.socket = socket; }
+	setRoomCode(roomCode: string): void { this.roomCode = roomCode; }
+	setRoomOwner(roomOwner: boolean): void { this.roomOwner = roomOwner; }
 	setGameId(gameId: number): void { this.gameId = gameId; }
 	setGame(game: tetrisGameInfo | null): void { this.game = game; }
 	setKeyTimeout(arg: string, value: TimeoutKey | null): void { this.keyTimeout[arg] = value; }
 	setKeyFirstMove(arg: string, value: boolean): void { this.keyFirstMove[arg] = value; }
+	setNeedSave(needSave: boolean): void { this.needSave = needSave; }
+	setSettings(settings: any): void { this.settings = settings; }
 
 	reset() {
 		this.socket = null;
@@ -162,8 +206,11 @@ export interface    loadTetrisArgs {
 }
 
 export interface    tetrisReq {
-	argument:   string;
-	roomId:     number;
+	argument:	string;
+	gameId:		number;
+	username?:	string;
+	roomCode?:	string;
+	prefix?:	any;
 }
 
 export interface    tetrisRes {
@@ -172,7 +219,7 @@ export interface    tetrisRes {
 	game:	    tetrisGameInfo;
 }
 
-export type loadTetrisType = "idle" | "setting" | "keybindings" | "change-key" | "board";
+export type loadTetrisType = "idle" | "setting" | "keybindings" | "change-key" | "board" | "multiplayer-room";
 
 export const    setKey = (keyType: string, value: string) => {
 	switch (keyType) {

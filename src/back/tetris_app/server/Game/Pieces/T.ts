@@ -38,7 +38,7 @@ export class T extends ATetrimino {
 			return "T-Spin";
 		if (minor >= 2 && major >= 1)
 			return "Mini T-Spin";
-		if (minor >= 1 && major >= 1 && !this.canSlide(matrix) && !this.isColliding(matrix, new IPos(0, -1)))
+		if (minor >= 1 && major >= 1 && !this.canSlide(matrix) && this.isColliding(matrix, new IPos(0, -1)))
 			return "Mini T-Spin";
 		return "";
 	}

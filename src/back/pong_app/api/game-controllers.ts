@@ -46,7 +46,7 @@ export const    createPrivateRoom = async (socket: WebSocket, req: FastifyReques
 	socket.send(JSON.stringify( { type: "GAME", message: "PRIVOWNER", inviteCode: newRoom.getInviteCode() }));
 }
 
-export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: {inviteCode: string}}>) => {
+export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: { inviteCode: string }}>) => {
 	const   inviteCode = req.query.inviteCode;
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {

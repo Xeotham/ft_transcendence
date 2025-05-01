@@ -399,8 +399,6 @@ export const keyHandler = (event: KeyboardEvent) => {
 const   confirmGame = () => {
 	loadPongPage("confirm");
 
-	console.log("%cICIIIIIIIIIIIIIIIIIIIIIIIIIIII", "color: red");
-
 	let remainingTime = 10;
 	pongGameInfo.getRoom()?.clearIntervals();
 	// console.log("Room? : " + gameInfo.getRoom());

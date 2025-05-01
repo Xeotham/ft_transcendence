@@ -10,6 +10,8 @@ import pongRoutes from '../pong_app/api/routes';
 // import userRoutes from '../api/user_management/routes';
 
 
+export const userSockets: {[key: string]: WebSocket} = {};
+
 config();
 
 export const fastify = Fastify(/*{ logger: true }*/);
@@ -45,4 +47,3 @@ fastify.listen({ port: parseInt(process.env.BACK_PORT!), host: "0.0.0.0" }, (err
 	// });
 	console.log(`🚀 Server listening at ${address}`);
 });
-

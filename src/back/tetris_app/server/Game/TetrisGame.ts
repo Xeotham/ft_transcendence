@@ -11,7 +11,7 @@ import { J } from "./Pieces/J";
 import { O } from "./Pieces/O";
 import { I } from "./Pieces/I";
 import { delay, mod } from "./utils";
-import { getRoomById, idGenerator } from "../../pong_app/utils";
+import { getRoomById, idGenerator } from "../../../pong_app/utils";
 
 const   idGen = idGenerator()
 
@@ -53,6 +53,8 @@ export class TetrisGame {
 
 	private beginningTime:				number;
 	private gameTime:					number;
+	private	combo:						number;
+	private	maxCombo:					number;
 	private piecesPlaced:				number;
 	private piecesPerSecond:			number;
 	private attacksSent:				number;
@@ -68,15 +70,18 @@ export class TetrisGame {
 	private linesPerMinute:				number;
 	private maxB2B:						number;
 	private perfectClears:				number;
-	private allLinesClear:					tc.linesCleared;
+	private allLinesClear:				tc.linesCleared;
 
 	// settings
 
 	private showShadowPiece:			boolean;
+	private showBags:					boolean;
+	private holdAllowed:				boolean;
+	private showHold:					boolean;
 	private infiniteHold:				boolean;
 	private infiniteMovement:			boolean;
 	private ARE:						number;
-	private lineClearARE:				number;
+	private spawnARE:					number;
 
 
 	constructor(player: WebSocket) {
@@ -91,10 +96,11 @@ export class TetrisGame {
 
 		this.level = tc.MIN_LEVEL;
 		this.dropType = "Normal";
-		this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
+		this.lineClearGoal = tc.FIXED_GOAL_SYSTEM[this.level];
 		this.spinType = "";
 		this.lastClear = "";
-		this.B2B = 0;
+		this.combo = -1;
+		this.B2B = -1;
 
 		this.canSwap = true;
 		this.holdPhase = false;
@@ -119,6 +125,7 @@ export class TetrisGame {
 
 		this.beginningTime = Date.now();
 		this.gameTime = 0;
+		this.maxCombo = 0;
 		this.piecesPlaced = 0;
 		this.piecesPerSecond = 0;
 		this.attacksSent = 0;
@@ -156,30 +163,50 @@ export class TetrisGame {
 		// settings
 
 		this.showShadowPiece = true;
+		this.showBags = true;
+		this.holdAllowed = true;
+		this.showHold = true;
 		this.infiniteHold = true; // TODO : set to false for real games
 		this.infiniteMovement = true; // TODO : set to false for real games
-		this.ARE = -1; // Amount of time in ms in between a piece being place and the next one spawning // TODO : set to 500 for real games
-		this.lineClearARE = 0; // Amount of time in ms in between the piece spawning and starting to move // 250 in the guideline
+		this.ARE = -1; // Amount of time in ms in between a piece reaching the ground and locking down // TODO : set to 500 for real games
+		this.spawnARE = 0; // Amount of time in ms in between the piece spawning and starting to move // 250 in the guideline
 	}
 
 	public toJSON() {
-		const jsonBags: {texture: string}[][] = this.bags.map((bag) =>
-			bag.map((piece) => piece.toJSON()));
+		let jsonBags: { texture: string }[][] | undefined;
+		this.showBags ? jsonBags = this.bags.map((bag) =>
+			bag.map((piece) => piece.toJSON())) :
+			jsonBags = undefined;
 		return {
 			matrix: this.matrix.toJSON(),
 			bags: jsonBags,
-			hold: this.hold?.toJSON(),
+			hold: this.showHold ? this.hold?.toJSON() : undefined,
 			gameId: this.gameId,
 			score: this.score,
 			level: this.level,
 			time: this.gameTime,
 			linesCleared: this.linesCleared,
+			lineClearGoal: this.lineClearGoal,
 			piecesPlaced: this.piecesPlaced,
 			piecesPerSecond: this.piecesPerSecond,
 		};
 	}
 
-	public getRoomId(): number { return this.gameId; }
+	public getGameId(): number { return this.gameId; }
+	public isOver(): boolean { return this.over; }
+	public setOver(over: boolean): void { this.over = over; }
+	public getPlayer(): WebSocket { return this.player; }
+
+	public setSettings(settings: any): void {
+		if (!settings)
+			return ;
+		Object.keys(settings).forEach((key) => {
+			console.log("Setting " + key + " to " + settings[key]);
+			if (key in this && settings[key] !== undefined) {
+				(this as any)[key] = settings[key];
+			}
+		});
+	}
 
 	private shuffleBag(): ATetrimino[] {
 		const pieces: ATetrimino[] = [new S(), new T(), new Z(), new L(), new J(), new O(), new I()];
@@ -226,13 +253,14 @@ export class TetrisGame {
 				this.currentPiece = this.getNextPiece();
 			}
 		}
-		else
+		else {
+			this.canSwap = true;
 			this.currentPiece = this.getNextPiece();
-
+		}
 		if (!this.currentPiece)
 			return ;
 
-		this.currentPiece.setCoordinates(new IPos(3 - 2, tc.BUFFER_HEIGHT - 2 - 2)); // -2 to take piece inner size into account
+		this.currentPiece.setCoordinates(new IPos(3 - 2, tc.BUFFER_HEIGHT - 3 - 2)); // -2 to take piece inner size into account
 		if (this.currentPiece.isColliding(this.matrix, new IPos(0, 0))) {
 			console.log("Piece is colliding at spawn, game over");
 			this.over = true;
@@ -244,7 +272,7 @@ export class TetrisGame {
 		this.dropType === "Hard" ? this.dropType = "Normal" : true;
 		this.dropType === "Normal" ? this.fallSpeed = tc.FALL_SPEED(this.level) : tc.SOFT_DROP_SPEED(this.level);
 
-		await delay(this.lineClearARE);
+		await delay(this.spawnARE);
 
 	}
 
@@ -348,7 +376,18 @@ export class TetrisGame {
 			this.score += tc.SCORE_CALCULUS(this.dropType + " Drop", 0, false);
 
 		if (this.lockFrame) {
-			this.updateB2B("pre");
+			this.updateB2B();
+			if (this.lastClear.includes("Zero")) {
+				if (this.combo >= 1)
+					this.player.send(JSON.stringify({type: "COMBO", argument: "break"}))
+				this.combo = -1;
+			}
+			else
+				++this.combo;
+			if (this.combo > this.maxCombo)
+				this.maxCombo = this.combo;
+			if (this.combo > 0)
+				this.score += tc.STANDARD_COMBO_SCORING(this.combo, this.level);
 			if (this.lastClear !== "Zero") {
 				if (this.lastClear.includes("-Spin") && !this.lastClear.includes("T")) // Register T-Spin and Mini T-Spin uniquely
 					// remove the "Z-" / "L-" / "J-" / "S-" / "I-". Not "T-"
@@ -357,6 +396,8 @@ export class TetrisGame {
 					++this.allLinesClear[this.lastClear];
 				console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
 				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: this.lastClear}));
+				if (this.combo > 0)
+					this.player.send(JSON.stringify({type: "COMBO", argument: this.combo}));
 			}
 			this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
 			if (this.matrix.isEmpty()) {
@@ -364,15 +405,14 @@ export class TetrisGame {
 				this.score += tc.SCORE_CALCULUS("Perfect Clear", this.level, this.B2B > 0);
 				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: "Perfect Clear"}));
 			}
-			this.updateB2B("post");
-			if (this.lastClear !== "Zero")
+			if (this.lastClear !== "Zero" && this.B2B > 0)
 				this.player.send(JSON.stringify({type: "B2B", argument: this.B2B}));
 			this.lockFrame = false;
 		}
 
  		if (this.level < tc.MAX_LEVEL && this.linesCleared >= this.lineClearGoal) {
 			++this.level;
-			this.lineClearGoal = tc.VARIABLE_GOAL_SYSTEM[this.level];
+			this.lineClearGoal = tc.FIXED_GOAL_SYSTEM[this.level];
 		}
 		if (this.shouldSpawn) {
 			await this.spawnPiece();
@@ -424,23 +464,21 @@ export class TetrisGame {
 		return name;
 	}
 
-	private updateB2B(moment: "pre" | "post"): void {
-		const isB2B = (): boolean => {
-			return this.lastClear.includes("Quad") || this.lastClear.includes("Spin");
-		}
-
+	private updateB2B(): void {
 		if (this.lastClear.includes("Zero") || this.lastClear === "Perfect Clear")
 			return ;
-		if (moment === "pre" && !isB2B())
-			this.B2B = 0;
-		else if (moment === "post" && isB2B())
+		if (this.lastClear.includes("Quad") || this.lastClear.includes("Spin"))
 			++this.B2B;
+		else {
+			this.B2B = -1;
+			this.player.send(JSON.stringify({type: "B2B", argument: "break"}));
+		}
 		if (this.B2B > this.maxB2B)
 			this.maxB2B = this.B2B;
 	}
 
 	public async swap() {
-		if (!this.canSwap || this.over || this.fallInterval === -1)
+		if (!this.holdAllowed || !this.canSwap || this.over || this.fallInterval === -1)
 			return ;
 
 		++this.keysPressed;
@@ -554,7 +592,7 @@ export class TetrisGame {
 		this.sendInterval = -1;
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}))
 		this.sendStats();
-		console.log("Game Over");
+		// console.log("Game Over");
 		this.player.send(JSON.stringify({type: "FINISH"}))
 	}
 
@@ -576,8 +614,8 @@ export class TetrisGame {
 			linesPerMinute: this.linesPerMinute,
 			maxB2B: this.maxB2B,
 			PerfectClears: this.perfectClears,
-			allLinesClear: this.allLinesClear,
-		}}));
+			allLinesClear: {...this.allLinesClear},
+		}})); // TODO : Destructure allLinesClear
 	}
 
 	public forfeit() {

@@ -1,4 +1,5 @@
 import { IPos } from "./IPos";
+import { clamp } from "./utils";
 
 export const ROTATIONS: string[] = ["north", "east", "south", "west"];
 export const NORTH = 0;
@@ -54,28 +55,72 @@ export const SCORE_CALCULUS = (score: string, level: number, isB2B: boolean) => 
 	return SCORING[score] * level;
 }
 
+export const STANDARD_COMBO_SCORING = (combo: number, level: number) => {
+	return 50 * (combo + 1) * level;
+}
+
+export const STANDARD_COMBO_TABLE: number[] = [
+	0,
+	0,
+	1,
+	1,
+	2,
+	2,
+	3,
+	3,
+	4,
+	4,
+	4,
+	5,
+	5,
+	5
+];
+
+export const 	EXTRA_GARBAGE_COMBO_CALCULUS = (combo: number, table: number[]) => {
+	return table[clamp(combo, 0, table.length)];
+}
+
 export const TETRIS_WIDTH: number = 10;
 export const TETRIS_HEIGHT: number = 20;
-export const BUFFER_WIDTH: number = 10;
+export const BUFFER_WIDTH: number = TETRIS_WIDTH;
 export const BUFFER_HEIGHT: number = 20;
 
 export const VARIABLE_GOAL_SYSTEM: number[] = [
 	0, // start at level 1 so we can use 1 as the index
-	10,
+	5,
 	15,
-	20,
-	25,
 	30,
-	35,
-	40,
-	45,
 	50,
-	55,
-	60,
-	65,
-	70,
 	75,
+	105,
+	140,
+	180,
+	225,
+	275,
+	330,
+	390,
+	455,
+	525,
+	600
+];
+
+export const FIXED_GOAL_SYSTEM: number[] = [
+	0, // start at level 1 so we can use 1 as the index
+	10,
+	20,
+	30,
+	40,
+	50,
+	60,
+	70,
 	80,
+	90,
+	100,
+	110,
+	120,
+	130,
+	140,
+	150,
 ];
 
 export interface linesCleared {
