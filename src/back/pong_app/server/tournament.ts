@@ -233,7 +233,7 @@ export class Tournament {
 				(winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody") + "\x1b[0m");
 			this.sendToAll({type: "INFO", message: "Tournament ended"});
 			this.sendToAll({
-				type: "INFO", message: "The Grand winner is player number: " +
+				type: "ALERT", message: "The Grand winner is player number: " +
 					(winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody")
 			});
 			// TODO : Change players to name

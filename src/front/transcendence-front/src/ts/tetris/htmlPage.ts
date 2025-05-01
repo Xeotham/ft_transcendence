@@ -24,16 +24,17 @@ const idleHtml = () => {
 		return;
 
 	content.innerHTML = `
-	<h1>Tetris</h1>
-	<nav>
-		<button id="home">Home Page</button>
-<!--		<button id="matchmaking">Matchmaking</button>-->
-		<button id="arcade">Arcade Mod</button>
-		<button id="create-room">Create room</button>
-		<button id="get-multiplayer-rooms">Join a room</button>
-		<button id="setting">Settings</button>
-	</nav>
-	`
+	<div class="tetris">
+		<h1>Tetris</h1>
+		<nav>
+			<button id="home">Home Page</button>
+<!--			<button id="matchmaking">Matchmaking</button>-->
+			<button id="arcade">Arcade Mod</button>
+			<button id="create-room">Create room</button>
+			<button id="get-multiplayer-rooms">Join a room</button>
+			<button id="setting">Settings</button>
+		</nav>
+	</div>`
 }
 
 const settingHtml = () => {
@@ -81,21 +82,34 @@ const keyBindsHtml = (keys: keys) => {
 	`
 }
 
+
+// const boardHtml = () => {
+// 	if (!content) {
+// 		return;
+// 	}
+//
+// 	content.innerHTML = `
+// 		<h1>Tetris</h1>
+// 		<p id="score">Score: 0</p>
+// <!--TODO : add theses line-->
+// <!--		<p id="time">Time: 00:00.000</p>-->
+// 		<p id="PPS">Pieces: 0, 0.00/S</p>
+// <!--		<p id="level">Level: 1</p>-->
+// <!--		<p id="lines">Lines: 0/10</p>-->
+// 		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
+// 	`
+// }
+
 const boardHtml = () => {
 	if (!content) {
 		return;
 	}
 
 	content.innerHTML = `
-		<h1>Tetris</h1>
-		<p id="score">Score: 0</p>
-<!--TODO : add theses line-->
-<!--		<p id="time">Time: 00:00.000</p>-->
-		<p id="PPS">Pieces: 0, 0.00/S</p>
-<!--		<p id="level">Level: 1</p>-->
-<!--		<p id="lines">Lines: 0/10</p>-->
-		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
-	`
+<!--		<p id="score">Score: 0</p>-->
+		<div id="board">
+		<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
+		</div>`
 }
 
 const multiplayerRoomHtml = (code: string) => {

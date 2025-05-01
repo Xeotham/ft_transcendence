@@ -208,6 +208,8 @@ const gameControllers = async (finish: boolean = false) => {
 		const key = event.key;
 
 		if (tetrisGameInfo.getGameId() === -1) {
+			tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+			tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 			document.removeEventListener('keydown', keydownHandler);
 			document.removeEventListener('keyup', keyupHandler);
 			return ;
@@ -283,6 +285,8 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getForfeit().toLowerCase():
 			case userKeys.getForfeit().toUpperCase():
 				postToApi(`http://${address}:3000/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInfo.getGameId() });
+				tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 				document.removeEventListener('keydown', keydownHandler);
 				document.removeEventListener('keyup', keyupHandler);
 				page.show("/tetris")
@@ -333,8 +337,13 @@ const gameControllers = async (finish: boolean = false) => {
 		}
 	}
 
-	if (finish)
+	if (finish) {
+		tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+		tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+		document.removeEventListener('keydown', keydownHandler);
+		document.removeEventListener('keyup', keyupHandler);
 		return page.show("/tetris");
+	}
 
 	document.addEventListener("keydown", keydownHandler);
 	document.addEventListener("keyup", keyupHandler);
