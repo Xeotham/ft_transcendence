@@ -394,7 +394,7 @@ export class TetrisGame {
 					++this.allLinesClear[this.lastClear.substring(0, this.lastClear.indexOf("Spin") - 2) + this.lastClear.substring(this.lastClear.indexOf("Spin"))];
 				else
 					++this.allLinesClear[this.lastClear];
-				console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
+				// console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
 				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: this.lastClear}));
 				if (this.combo > 0)
 					this.player.send(JSON.stringify({type: "COMBO", argument: this.combo}));
@@ -590,10 +590,10 @@ export class TetrisGame {
 		this.fallInterval = -1;
 		clearInterval(this.sendInterval);
 		this.sendInterval = -1;
-		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}))
+		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}));
 		this.sendStats();
 		// console.log("Game Over");
-		this.player.send(JSON.stringify({type: "FINISH"}))
+		this.player.send(JSON.stringify({type: "FINISH"}));
 	}
 
 	private sendStats() {
@@ -614,8 +614,8 @@ export class TetrisGame {
 			linesPerMinute: this.linesPerMinute,
 			maxB2B: this.maxB2B,
 			PerfectClears: this.perfectClears,
-			allLinesClear: {...this.allLinesClear},
-		}})); // TODO : Destructure allLinesClear
+			...this.allLinesClear,
+		}}));
 	}
 
 	public forfeit() {

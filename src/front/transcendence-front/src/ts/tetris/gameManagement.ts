@@ -1,5 +1,5 @@
 import { loadTetrisHtml } from "./htmlPage.ts";
-import {generateUsername, postToApi, tetrisGame, tetrisRes, TimeoutKey} from "./utils.ts";
+import {generateUsername, postToApi, roomInfo, tetrisGame, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInfo, userKeys } from "./tetris.ts";
 import { address } from "../main.ts";
 // @ts-ignore
@@ -9,6 +9,7 @@ let socket: WebSocket | null = null;
 export const username = generateUsername();
 
 const socketInit = (socket: WebSocket) => {
+	tetrisGameInfo.setSocket(socket);
 	socket.onmessage = messageHandler;
 	socket.onerror = err => { console.error("Error:", err) };
 	socket.onopen = () => { console.log("Connected to server") };
@@ -17,10 +18,13 @@ const socketInit = (socket: WebSocket) => {
 			console.log('WebSocket connection closed cleanly.');
 		else
 			console.error('WebSocket connection died. Code:', event.code, 'Reason:', event.reason);
+		postToApi(`http://${address}:3000/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInfo.getGameId(),
+			username: username, roomCode: tetrisGameInfo.getRoomCode() });
 		tetrisGameInfo.setGameId(-1);
 		tetrisGameInfo.setGame(null);
 		tetrisGameInfo.setSocket(null);
 		tetrisGameInfo.setRoomOwner(false);
+		console.log("Leaving room : " + tetrisGameInfo.getRoomCode());
 		tetrisGameInfo.setRoomCode("");
 	};
 }
@@ -44,6 +48,7 @@ export const    searchGame = () => {
 }
 
 export const    arcadeGame = () => {
+	// console.log("arcadeGame");
 	socket = new WebSocket(`ws://${address}:3000/api/tetris/arcade`);
 
 	socketInit(socket);
@@ -57,14 +62,32 @@ export const createRoom = () => {
 
 	socket = new WebSocket(`ws://${address}:3000/api/tetris/createRoom?username=${username}`);
 	socketInit(socket);
-	tetrisGameInfo.setSocket(socket);
 	tetrisGameInfo.setRoomOwner(true);
 }
 
-export const joinRoom = () => {
-	socket = new WebSocket(`ws://${address}:3000/api/tetris/joinRoom?username=${username}`);
+export const getMultiplayerRooms = () => {
+	fetch(`http://${address}:3000/api/tetris/getMultiplayerRooms`, {
+		method: "GET",
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok ' + response.statusText);
+			}
+			return response.json();
+		})
+		.then((data: roomInfo[]) => {
+			loadTetrisPage("display-multiplayer-room", {rooms: data});
+		})
+		.catch(error => { alert(error); });
+}
+
+export const joinRoom = (roomCode: string) => {
+	console.log("Joining room: " + roomCode);
+	socket = new WebSocket(`ws://${address}:3000/api/tetris/joinRoom?code=${roomCode}&username=${username}`);
 	socketInit(socket);
-	tetrisGameInfo.setSocket(socket);
 }
 
 export const startRoom = () => {
@@ -92,12 +115,17 @@ const   messageHandler = (event: MessageEvent)=> {
 			gameControllers();
 			return ;
 		case 'MULTIPLAYER_JOIN':
-			console.log("MULTIPLAYER_JOIN");
-			if (res.argument === "OWNER")
+			if (res.argument === "OWNER") {
+				console.log("MULTIPLAYER_OWNER");
 				tetrisGameInfo.setRoomOwner(true);
-			else
+			}
+			else {
+				console.log("MULTIPLAYER_JOIN");
 				tetrisGameInfo.setRoomCode(res.argument);
-			loadTetrisPage("multiplayer-room");
+				page.show(`/tetris/room:${res.argument}`);
+			}
+			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInfo.getRoomCode()}]});
+			// loadTetrisPage("multiplayer-room");
 			return ;
 		case 'INFO':
 			console.log("INFO: " + res.argument);

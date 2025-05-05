@@ -1,5 +1,6 @@
-import { canvasHeight, canvasWidth, keys, loadTetrisArgs, loadTetrisType } from "./utils.ts";
+import { canvasHeight, canvasWidth, keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
 import { content } from "../main.ts";
+import {tetrisGameInfo} from "./tetris.ts";
 
 export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
@@ -12,7 +13,9 @@ export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null 
 		case "board":
 			return boardHtml();
 		case "multiplayer-room":
-			return multiplayerRoomHtml();
+			return multiplayerRoomHtml((arg?.rooms!)[0]!.roomCode!);
+		case "display-multiplayer-room":
+			return displayMultiplayerRoomHtml(arg?.rooms!);
 	}
 }
 
@@ -24,10 +27,10 @@ const idleHtml = () => {
 	<h1>Tetris</h1>
 	<nav>
 		<button id="home">Home Page</button>
-		<button id="matchmaking">Matchmaking</button>
+<!--		<button id="matchmaking">Matchmaking</button>-->
 		<button id="arcade">Arcade Mod</button>
 		<button id="create-room">Create room</button>
-		<button id="join-room">Join room</button>
+		<button id="get-multiplayer-rooms">Join a room</button>
 		<button id="setting">Settings</button>
 	</nav>
 	`
@@ -95,14 +98,20 @@ const boardHtml = () => {
 	`
 }
 
-const multiplayerRoomHtml = () => {
+const multiplayerRoomHtml = (code: string) => {
 	if (!content)
 		return;
 
 	content.innerHTML = `
 	<h1>Tetris</h1>
+	<h3>Code ${code}</h3>
 	<nav>
 		<button id="idle">Back</button>
+	`
+	if (!tetrisGameInfo.getRoomOwner())
+		return ;
+	// TODO : Make the non owner able to see but not change the settings (like transparent)
+	content.innerHTML += `
 		<button id="start">Start</button>
 		<input type="checkbox" id="show-shadow" checked="checked">Show Shadow</input>
 		<input type="checkbox" id="show-bags" checked="checked">Show bags</input>
@@ -116,4 +125,37 @@ const multiplayerRoomHtml = () => {
 	</nav>
 	`
 
+}
+
+const displayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
+	if (!content)
+		return;
+
+	content.innerHTML = `
+	<h1>Tetris</h1>
+	<button id="idle" >Back</button>
+	<h1>Enter the code of the room or join an open room:</h1>
+	<form id="codeForm">
+		<input type="text" id="room-code" placeholder="Room Code">
+	</form>
+	<button id="submit">Submit</button>
+	<button id="refresh">Refresh List</button>
+	`
+
+	if (rooms.length === 0) {
+		content.innerHTML += `<p>No rooms available</p>`;
+		return;
+	}
+	let listHTML = `<ul>`;
+
+	rooms.forEach((room: roomInfo) => {
+		listHTML += `
+		  		<li>
+					<a href="/tetris/room:${room?.roomCode}">
+					Room with code: ${room.roomCode}</a>
+		  		</li>
+			`;
+	});
+	listHTML += '</ul>';
+	content.innerHTML += listHTML;
 }

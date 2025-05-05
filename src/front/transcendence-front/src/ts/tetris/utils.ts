@@ -201,8 +201,13 @@ export class    tetrisGame {
 	}
 }
 
+export interface roomInfo {
+	roomCode:		string;
+}
+
 export interface    loadTetrisArgs {
 	keys?:  keys;
+	rooms?: roomInfo[];
 }
 
 export interface    tetrisReq {
@@ -219,7 +224,7 @@ export interface    tetrisRes {
 	game:	    tetrisGameInfo;
 }
 
-export type loadTetrisType = "idle" | "setting" | "keybindings" | "change-key" | "board" | "multiplayer-room";
+export type loadTetrisType = "idle" | "setting" | "keybindings" | "change-key" | "board" | "multiplayer-room" | "display-multiplayer-room";
 
 export const    setKey = (keyType: string, value: string) => {
 	switch (keyType) {

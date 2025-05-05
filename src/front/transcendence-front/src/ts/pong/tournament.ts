@@ -221,7 +221,6 @@ export const    specTournament = async (tournamentId: number) => {
 		})
 		.then((data: RoomInfo[])  => {
 			loadPongPage("tour-rooms-list", { roomLst: data });
-			console.log("Testing this bullshit");
 		})
 		.catch(error => {
 			alert(error);

@@ -101,9 +101,7 @@ clean: down
 	fi
 	@ echo "$(GREEN)All cleaned!$(BASE_COLOR)"
 
-re:
-	@ $(MAKE) down
-	@ $(MAKE) up
+re: down up
 
 fre: clean up
 
