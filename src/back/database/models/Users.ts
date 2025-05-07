@@ -120,20 +120,20 @@ export const getUsernameById = (id: number): string =>
         return (stmt.get(id) as { username: string }).username as string;
 };
 
-export const hashPassword = async (password:string, saltRounds = 10): Promise<string | null> =>
-{
-    if (!password)
-        return null;
-
-    try
-    {
-        return await bcrypt.hash(password, saltRounds);
-    }
-    catch (err)
-    {
-        return null;
-    }
-};
+// export const hashPassword = async (password:string, saltRounds = 10): Promise<string | null> =>
+// {
+//     if (!password)
+//         return null;
+//
+//     try
+//     {
+//         return await bcrypt.hash(password, saltRounds);
+//     }
+//     catch (err)
+//     {
+//         return null;
+//     }
+// };
 
 export const hashPassword = async (password:string, saltRounds = 10): Promise<string | null> =>
 {

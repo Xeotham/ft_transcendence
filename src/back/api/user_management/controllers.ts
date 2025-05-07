@@ -11,8 +11,6 @@ import { saveGame } from '../../database/models/Game';
 import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
-import { S } from '../../tetris_app/server/Pieces/S';
-
 
 interface Users {
     id?:            number;

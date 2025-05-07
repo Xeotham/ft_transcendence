@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     server: {
-        port: DUMMY_FRONT_PORT,
+        port: 5000,
         hot: true,
     },
     build: {

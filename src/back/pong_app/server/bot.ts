@@ -4,7 +4,7 @@ import { movePaddle } from '../api/game-controllers';
 import { getRoomById } from '../utils';
 import { Room } from './Room';
 import * as constants from "./constants";
-import { clamp, mod } from '../../tetris_app/server/utils';
+import { clamp, mod } from '../../tetris_app/server/Game/utils';
 
 let intervalIds: {[id: number]: number} = {};
 
