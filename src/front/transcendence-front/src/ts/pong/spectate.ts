@@ -1,7 +1,7 @@
 // @ts-ignore
 import  page from "page";
 import  { address } from "../main.ts";
-import  { gameInfo, loadPongPage } from "./pong.ts";
+import  { pongGameInfo, loadPongPage } from "./pong.ts";
 import  { PongRoom, messageHandler } from "./game.ts";
 import { RoomInfo } from "./utils.ts";
 
@@ -62,10 +62,10 @@ export const listRoomsSpectator = () => {
 export async function	joinSpectate(roomId: Number) {
 	const   socket = new WebSocket(`ws://${address}:3000/api/pong/addSpectatorToRoom?id=${roomId}`);
 
-	gameInfo.setRoom(new PongRoom(socket));
-	gameInfo.getRoom()?.setPlayer("SPEC");
+	pongGameInfo.setRoom(new PongRoom(socket));
+	pongGameInfo.getRoom()?.setPlayer("SPEC");
 
-	gameInfo.getRoom()?.initSocket();
+	pongGameInfo.getRoom()?.initSocket();
 	// Listen for messages
 	socket.addEventListener("message", messageHandler);
 }

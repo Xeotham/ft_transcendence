@@ -1,6 +1,6 @@
 import {Game, loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo} from "./utils.ts";
 import {content} from "../main.ts";
-import {gameInfo} from "./pong.ts";
+import {pongGameInfo} from "./pong.ts";
 
 export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
@@ -208,14 +208,14 @@ const   tournamentEndPage = (winner: number) => {
 const   tournamentFoundHtml = () => {
 	if (!content)
 		return ;
-	if (!gameInfo.getTournament())
+	if (!pongGameInfo.getTournament())
 		return ;
 
 	content.innerHTML= `
 		<p>Tournament found!</p>
 		<button id="quit">Quit Tournament</button>
 	`;
-	if (gameInfo.getTournament()?.getIsOwner()) {
+	if (pongGameInfo.getTournament()?.getIsOwner()) {
 		content.innerHTML += `
 			<button id="start-tournament">Start Tournament</button>
 			<button id="shuffle-tree">Shuffle Tree</button>

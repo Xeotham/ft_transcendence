@@ -81,7 +81,7 @@ clean: down
 # 	@ echo "$(RED)Removing files in .data...$(BASE_COLOR)"
 # 	@ sudo rm -rf ~/.data/database/* ~/.data/web/* ~/.data/vsftpd/* ~/.data/log/vsftpd/*
 	@ echo "$(RED)Removing all docker image...$(BASE_COLOR)"
-	@ docker system prune -f >/dev/null
+	@ docker system prune -af >/dev/null
 	@ if [ -n "$$(docker ps -qa)" ]; then \
 		echo "$(RED)Stopping and removing running docker...$(BASE_COLOR)"; \
 		docker stop $$(docker ps -qa) >/dev/null; \
@@ -101,9 +101,7 @@ clean: down
 	fi
 	@ echo "$(GREEN)All cleaned!$(BASE_COLOR)"
 
-re:
-	@ $(MAKE) down
-	@ $(MAKE) up
+re: down up
 
 fre: clean up
 

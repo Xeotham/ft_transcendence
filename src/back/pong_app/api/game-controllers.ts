@@ -46,7 +46,7 @@ export const    createPrivateRoom = async (socket: WebSocket, req: FastifyReques
 	socket.send(JSON.stringify( { type: "GAME", message: "PRIVOWNER", inviteCode: newRoom.getInviteCode() }));
 }
 
-export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: {inviteCode: string}}>) => {
+export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: { inviteCode: string }}>) => {
 	const   inviteCode = req.query.inviteCode;
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
@@ -137,7 +137,7 @@ export const movePaddle = async (request: FastifyRequest<{ Body: requestBody }>,
 
 	if (!room || !room.getGame())
 		return reply.send(JSON.stringify({type: "ERROR", message: "Room not found"}));
-	room.getGame()?.movePaddle(request.body);
+	room.getGame()?.movePaddle(request.body.P, request.body.key);
 };
 
 export const	getRooms = async (request: FastifyRequest, reply: FastifyReply) => {

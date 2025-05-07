@@ -1,3 +1,34 @@
+import {PongRoom} from "./game.ts";
+import {Tournament} from "./tournament.ts";
+
+export class   gameInformation {
+	private room: PongRoom | null;
+	private tournament: Tournament | null;
+	private matchType: "PONG" | "TOURNAMENT" | null;
+
+	constructor () {
+		this.room = null;
+		this.tournament = null;
+		this.matchType = null;
+	}
+
+	getRoom() { return this.room; }
+	getMatchType() { return this.matchType; }
+	getTournament() { return this.tournament; }
+
+	setRoom(room: PongRoom, classic: boolean = true) {
+		this.room = room;
+		if (classic)
+			this.matchType = "PONG";
+	}
+	setTournament(tournament: Tournament) { this.tournament = tournament; this.matchType = "TOURNAMENT"; }
+	resetRoom() {
+		this.room = null;
+		this.matchType = this.matchType === "TOURNAMENT" ? "TOURNAMENT" : null;
+	}
+	resetTournament() { this.resetRoom(); this.tournament = null; this.matchType = null; }
+}
+
 export interface responseFormat {
 	type: string;
 	data: any;

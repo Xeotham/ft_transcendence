@@ -1,14 +1,16 @@
 import Fastify from 'fastify';
-import pongRoutes from '../pong_app/api/routes';
-// import userRoutes from '../api/user_management/routes';
 import fastifyCors from '@fastify/cors';
 import fastifyWebsocket from '@fastify/websocket';
-import { fastifyStatic } from "@fastify/static";
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from 'ws';
 import { join } from "path";
 import { config } from "dotenv";
+import tetrisRoutes from "../tetris_app/api/routes";
+import pongRoutes from '../pong_app/api/routes';
+// import userRoutes from '../api/user_management/routes';
 
+
+export const userSockets: {[key: string]: WebSocket} = {};
 
 config();
 
@@ -25,16 +27,9 @@ fastify.register(fastifyCors, {
 // Register routes
 // TODO: Create the others API
 // fastify.register(userRoutes, { prefix: '/api/user' });
+fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 fastify.register(pongRoutes, { prefix: '/api/pong' });
-// fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 
-
-// Register fastify-static to serve static files
-// fastify.register(fastifyStatic, {
-// 	root: join(__dirname, '../../front/public'), // Path to the directory containing your static files
-// 	prefix: '/', // Serve files under the root URL
-// 	decorateReply: false,
-// });
 
 // TODO: Make it the rout to the SPA
 // fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -52,4 +47,3 @@ fastify.listen({ port: parseInt(process.env.BACK_PORT!), host: "0.0.0.0" }, (err
 	// });
 	console.log(`🚀 Server listening at ${address}`);
 });
-
