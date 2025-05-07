@@ -1,0 +1,57 @@
+services:
+  back:
+    build:
+      context: back
+    container_name: back
+    ports:
+      - "3000:3000"
+    volumes:
+        - database_volume:/app/database/transcendenceDb
+    env_file: ".env"
+    networks:
+      transcendence:
+    restart: always
+    init: true
+
+  front:
+    build:
+      context: front
+      args:
+        - VITE_API_ADDRESS=${VITE_API_ADDRESS}
+        - VITE_FRONT_PORT=${VITE_FRONT_PORT}
+    container_name: front
+    ports:
+      - "5000:5000"
+    env_file: ".env"
+    depends_on:
+      - back
+    volumes:
+      - ./front/transcendenceFront:/app
+    networks:
+      transcendence:
+    restart: always
+    init: true
+
+volumes:
+  back_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../.data/tmp_back
+      o: bind
+  front_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../.data/front
+      o: bind
+  database_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../.data/database
+      o: bind
+
+networks:
+  transcendence:
+    driver: bridge

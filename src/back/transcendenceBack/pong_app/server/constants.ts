@@ -1,0 +1,12 @@
+export const WIDTH = 800;
+export const HEIGHT = 400;
+export const PADDLE_WIDTH = 10;
+export const PADDLE_HEIGHT = 80;
+export const BALL_SIZE = 10;
+export const BALL_SPEED = 800;
+export const BALL_ACCELERATION_PER_BOUNCE = 10;
+export const PADDLE_SPEED = 9;
+export const PADDLE_MARGIN = 10;
+export const PADDLE1_X = PADDLE_MARGIN;
+export const PADDLE2_X = WIDTH - PADDLE_MARGIN - PADDLE_WIDTH;
+export const PADDLE_Y = HEIGHT / 2 - PADDLE_HEIGHT / 2;
