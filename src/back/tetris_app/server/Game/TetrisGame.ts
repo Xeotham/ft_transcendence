@@ -49,6 +49,11 @@ export class TetrisGame {
 	private	sendInterval:				number;
 	private readonly gameId:			number;
 
+	// multiplayer
+
+	private opponent:					TetrisGame | null;
+	private awaitingGarbage:			number[];
+
 	// statistics
 
 	private beginningTime:				number;
@@ -93,7 +98,6 @@ export class TetrisGame {
 		this.bags = [this.shuffleBag(), this.shuffleBag()];
 		this.hold = null;
 
-
 		this.level = tc.MIN_LEVEL;
 		this.dropType = "Normal";
 		this.lineClearGoal = tc.FIXED_GOAL_SYSTEM[this.level];
@@ -120,6 +124,10 @@ export class TetrisGame {
 		this.sendInterval = -1;
 		this.gameId = idGen.next().value;
 
+		// multiplayer
+
+		this.opponent = null;
+		this.awaitingGarbage = [];
 
 		// statistics
 
@@ -196,6 +204,7 @@ export class TetrisGame {
 	public isOver(): boolean { return this.over; }
 	public setOver(over: boolean): void { this.over = over; }
 	public getPlayer(): WebSocket { return this.player; }
+	public setOpponent(opponent: TetrisGame): void { this.opponent = opponent; }
 
 	public setSettings(settings: any): void {
 		if (!settings)
@@ -376,37 +385,7 @@ export class TetrisGame {
 			this.score += tc.SCORE_CALCULUS(this.dropType + " Drop", 0, false);
 
 		if (this.lockFrame) {
-			this.updateB2B();
-			if (this.lastClear.includes("Zero")) {
-				if (this.combo >= 1)
-					this.player.send(JSON.stringify({type: "COMBO", argument: "break"}))
-				this.combo = -1;
-			}
-			else
-				++this.combo;
-			if (this.combo > this.maxCombo)
-				this.maxCombo = this.combo;
-			if (this.combo > 0)
-				this.score += tc.STANDARD_COMBO_SCORING(this.combo, this.level);
-			if (this.lastClear !== "Zero") {
-				if (this.lastClear.includes("-Spin") && !this.lastClear.includes("T")) // Register T-Spin and Mini T-Spin uniquely
-					// remove the "Z-" / "L-" / "J-" / "S-" / "I-". Not "T-"
-					++this.allLinesClear[this.lastClear.substring(0, this.lastClear.indexOf("Spin") - 2) + this.lastClear.substring(this.lastClear.indexOf("Spin"))];
-				else
-					++this.allLinesClear[this.lastClear];
-				// console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
-				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: this.lastClear}));
-				if (this.combo > 0)
-					this.player.send(JSON.stringify({type: "COMBO", argument: this.combo}));
-			}
-			this.score += tc.SCORE_CALCULUS(this.lastClear, this.level, this.B2B > 0);
-			if (this.matrix.isEmpty()) {
-				++this.perfectClears;
-				this.score += tc.SCORE_CALCULUS("Perfect Clear", this.level, this.B2B > 0);
-				this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: "Perfect Clear"}));
-			}
-			if (this.lastClear !== "Zero" && this.B2B > 0)
-				this.player.send(JSON.stringify({type: "B2B", argument: this.B2B}));
+			this.lockFramePhase();
 			this.lockFrame = false;
 		}
 
@@ -420,6 +399,45 @@ export class TetrisGame {
 			// ^^^ restart the loop starting in fallPiece
 		}
 		this.placeShadow();
+	}
+
+	private lockFramePhase(): void {
+		this.updateB2B();
+		if (this.lastClear.includes("Zero")) {
+			if (this.combo >= 1)
+				this.player.send(JSON.stringify({type: "COMBO", argument: "break"}))
+			this.combo = -1;
+		}
+		else
+			++this.combo;
+		if (this.combo > this.maxCombo)
+			this.maxCombo = this.combo;
+		if (this.combo >= 1)
+			this.score += tc.STANDARD_COMBO_SCORING(this.combo, this.level);
+		if (this.lastClear !== "Zero") {
+			if (this.lastClear.includes("-Spin") && !this.lastClear.includes("T")) // Register T-Spin and Mini T-Spin uniquely
+				// remove the "Z-" / "L-" / "J-" / "S-" / "I-". Not "T-"
+				++this.allLinesClear[this.lastClear.substring(0, this.lastClear.indexOf("Spin") - 2) + this.lastClear.substring(this.lastClear.indexOf("Spin"))];
+			else
+				++this.allLinesClear[this.lastClear];
+			// console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
+			this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: this.lastClear}));
+			if (this.combo > 0)
+				this.player.send(JSON.stringify({type: "COMBO", argument: this.combo}));
+		}
+		this.sendGarbage(this.lastClear);
+		if (this.matrix.isEmpty()) {
+			++this.perfectClears;
+			this.sendGarbage("Perfect Clear");
+			this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: "Perfect Clear"}));
+		}
+		if (this.lastClear !== "Zero" && this.B2B > 0)
+			this.player.send(JSON.stringify({type: "B2B", argument: this.B2B}));
+		if (this.awaitingGarbage.length > 0) {
+			if (this.matrix.addGarbage(this.awaitingGarbage[0]) === "Top Out")
+				this.over = true;
+			this.awaitingGarbage.shift();
+		}
 	}
 
 	private placeShadow(): void {
@@ -475,6 +493,24 @@ export class TetrisGame {
 		}
 		if (this.B2B > this.maxB2B)
 			this.maxB2B = this.B2B;
+	}
+
+	private sendGarbage(clear: string): void {
+		const sending: number = tc.GARBAGE_CALCULUS(clear, this.combo, this.B2B, tc.MULTIPLIER_COMBO_GARBAGE_TABLE);
+		this.score += tc.SCORE_CALCULUS(clear, this.level, this.B2B > 0);
+		if (sending <= 0)
+			return ;
+		this.attacksSent += sending;
+		// console.log("Sending " + sending + " lines of garbage");
+		this.opponent?.receiveGarbage(sending);
+	}
+
+	private receiveGarbage(lines: number): void {
+		if (this.over)
+			return ;
+		// console.log("Received" + lines + " lines of Garbage");
+		this.attacksReceived += lines;
+		this.awaitingGarbage.push(lines);
 	}
 
 	public async swap() {
@@ -570,6 +606,8 @@ export class TetrisGame {
 				this.keysPerSecond = parseFloat((this.keysPressed / (this.gameTime / 1000)).toFixed(2));
 				this.keysPerPiece = parseFloat((this.keysPressed / this.piecesPlaced).toFixed(2));
 				this.linesPerMinute = parseFloat((this.linesCleared / (this.gameTime / 1000 / 60)).toFixed(2));
+				this.attacksSentPerMinute = parseFloat((this.attacksSent / (this.gameTime / 1000 / 60)).toFixed(2));
+				this.attacksReceivedPerMinute = parseFloat((this.attacksReceived / (this.gameTime / 1000 / 60)).toFixed(2));
 				resolve();
 			}
 			Iteration();

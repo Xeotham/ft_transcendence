@@ -121,5 +121,7 @@ export class MultiplayerRoom {
 			this.sockets[i]!.send(JSON.stringify({ type: "SOLO", game: this.games[i].toJSON() }));
 			this.games[i].gameLoop().then(() => endOfGame(i));
 		}
+		this.games[0].setOpponent(this.games[1]);
+		this.games[1].setOpponent(this.games[0]);
 	}
 }

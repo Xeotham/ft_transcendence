@@ -307,6 +307,9 @@ export const    getMinoColor = (texture: string): string => {
 		case "Z_LOCKED":
 		case "Z":
 			return "red";
+		case "GARBAGE":
+		case "GARBAGE_LOCKED":
+			return "pink";
 		default:
 			return "black";
 	}

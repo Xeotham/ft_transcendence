@@ -36,7 +36,7 @@ export class Matrix {
 		const matrix: Mino[][] = [[]];
 		for (let y = 0; y < this.size.getY(); y++) {
 			for (let x = 0; x < this.size.getX(); x++)
-				matrix[y].push(new Mino("Empty"));
+				matrix[y].push(new Mino("EMPTY"));
 			matrix.push([]);
 		}
 		return matrix;
@@ -99,6 +99,14 @@ export class Matrix {
 		return true;
 	}
 
+	public isRowEmpty(row: number): boolean {
+		for (let x = this.size.getX() - 1; x >= 0 ; --x) {
+			if (this.isMinoAt(x, row))
+				return false;
+		}
+		return true;
+	}
+
 	public markRow(row: number): void {
 		for (let x = this.size.getX() - 1; x >= 0 ; --x)
 			this.matrix[row][x].setShouldRemove(true);
@@ -112,12 +120,28 @@ export class Matrix {
 				for (let x = 0 ; x < this.size.getX(); ++x) {
 					for (let i = y; i > 0; --i)
 						this.matrix[i][x] = this.matrix[i - 1][x];
-					this.matrix[0][x] = new Mino("Empty");
+					this.matrix[0][x] = new Mino("EMPTY");
 				}
 				++lineRemoved;
 			}
 		}
 		return lineRemoved;
+	}
+
+	public shiftUp(lines: number = 1): string {
+		if (lines < 1)
+			return "";
+		console.log("Shifting up " + lines + " lines");
+		for (let i = 0; i < lines; ++i)
+			if (!this.isRowEmpty(i))
+				return "Top Out";
+		for (let x = 0; x < this.size.getX(); ++x) {
+			console.log("Shifting x " + x);
+			for (let y = lines; y < this.size.getY(); ++y) {
+				console.log("Shifting column [" + y + "][" + x + "] to [" + (y - lines) + "][" + x + "]");
+				this.matrix[y - lines][x] = this.matrix[y][x];
+			}
+		}		return "";
 	}
 
 	public isEmpty(): boolean {
@@ -130,4 +154,18 @@ export class Matrix {
 		return true;
 	}
 
+	public addGarbage(lines: number): string {
+		if (this.shiftUp(lines) === "Top Out")
+			return "Top Out";
+		const hole: number = Math.floor(Math.random() * this.size.getX());
+		for (let y = this.size.getY() - lines; y < this.size.getY(); ++y) {
+			for (let x = 0; x < this.size.getX(); ++x) {
+				if (x === hole)
+					this.matrix[y][x] = new Mino("EMPTY");
+				else
+					this.matrix[y][x] = new Mino("GARBAGE", true);
+			}
+		}
+		return "";
+	}
 }

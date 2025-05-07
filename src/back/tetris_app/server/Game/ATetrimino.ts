@@ -151,7 +151,7 @@ export abstract class ATetrimino {
 		for (let i = 0; i < block.nbBlocks; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
 			if (!isShadow || (isShadow && matrix.at(pos).getIsShadow()))
-				matrix.setAt(pos, new Mino("Empty", false));
+				matrix.setAt(pos, new Mino("EMPTY", false));
 		}
 	}
 

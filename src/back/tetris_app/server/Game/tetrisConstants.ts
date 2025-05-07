@@ -7,6 +7,11 @@ export const EAST = 1;
 export const SOUTH = 2;
 export const WEST = 3;
 
+export const TETRIS_WIDTH: number = 10;
+export const TETRIS_HEIGHT: number = 20;
+export const BUFFER_WIDTH: number = TETRIS_WIDTH;
+export const BUFFER_HEIGHT: number = 20;
+
 export const MAX_LEVEL: number = 15;
 export const MIN_LEVEL: number = 1;
 export const FALL_SPEED = (level: number): number => {
@@ -76,14 +81,49 @@ export const STANDARD_COMBO_TABLE: number[] = [
 	5
 ];
 
-export const 	EXTRA_GARBAGE_COMBO_CALCULUS = (combo: number, table: number[]) => {
-	return table[clamp(combo, 0, table.length)];
+export const B2B_EXTRA_GARBAGE = (B2B: number) => {
+	if (B2B < 2)
+		return 0;
+	if (B2B < 4)
+		return 1;
+	if (B2B < 9)
+		return 2;
+	if (B2B < 25)
+		return 3;
+	if (B2B < 68)
+		return 4;
+	if (B2B < 185)
+		return 5;
+	if (B2B < 505)
+		return 6;
+	if (B2B < 1371)
+		return 7;
+	return 8;
 }
 
-export const TETRIS_WIDTH: number = 10;
-export const TETRIS_HEIGHT: number = 20;
-export const BUFFER_WIDTH: number = TETRIS_WIDTH;
-export const BUFFER_HEIGHT: number = 20;
+export const MULTIPLIER_COMBO_GARBAGE_TABLE: {[key: string]: number[]} = {
+	"Single":				[0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3],
+	"Double":				[1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6],
+	"Triple":				[2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12],
+	"Quad":					[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+	"Mini Spin Double":		[1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6],
+	"Mini Spin Single":		[0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3],
+	"Mini Spin Triple":		[2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12],
+	"Mini Spin Quad":		[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+	"T-Spin Single":		[2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10 ,10 ,11, 11, 12],
+	"T-Spin Double":		[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+	"T-Spin Triple":		[6, 7, 9, 10, 12, 13, 15, 16, 18, 19, 21, 23, 24, 25, 27, 28, 30, 31, 33, 34, 36],
+}
+
+export const 	GARBAGE_CALCULUS = (clear: string, combo: number, B2B: number, table: {[key: string]: number[]}) => {
+	if (clear.includes("Zero") || combo < 0)
+		return 0;
+	if (clear === "Perfect Clear")
+		return 10;
+	if (clear.includes("Mini"))
+		clear = clear.substring(0, clear.indexOf("Spin") - 2) + clear.substring(clear.indexOf("Spin"));
+	return table[clear][clamp(combo, 0, table[clear].length - 1)] + B2B_EXTRA_GARBAGE(B2B);
+}
 
 export const VARIABLE_GOAL_SYSTEM: number[] = [
 	0, // start at level 1 so we can use 1 as the index
