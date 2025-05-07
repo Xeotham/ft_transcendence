@@ -3,18 +3,12 @@ import bcrypt from 'bcrypt';
 
 interface User 
 {
-    id?:             number;
+    id?:            number;
     username:       string;
     password:       string;
     avatar:         string;
     connected:      boolean;
-    created_at?:    string;
-}
-
-interface   Username_id
-{
-    key:        string;
-    username:   string;
+    createdAt?:     string;
 }
 
 export const createUser = (username:string, password:string, avatar:string): number => 
@@ -137,6 +131,6 @@ export const hashPassword = async (password:string, saltRounds = 10): Promise<st
     }
     catch (err)
     {
-        return null;
+        throw new Error('Error hashing password');
     }
 };

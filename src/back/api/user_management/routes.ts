@@ -11,19 +11,20 @@ import { create } from 'domain';
 export default async function userRoutes(fastify: FastifyInstance)
 {
     fastify.post('/register', registerUser);
-    fastify.post('/update_user', updateUser);
-    fastify.post('/login', loginUser);
-    fastify.post('/logout', logoutUser);
-    fastify.get('/get_user', getUserInfo);
-    fastify.post('/add_friend', addFriend);
-    fastify.get('/get_friend', getFriends);
-    fastify.post('/delete_friend', deleteFriend);
-    fastify.post('/block_contact', blockContact);
-    fastify.post('/unblock_contact', unblockContact);
-    fastify.post('/add_message', addMessage);
-    fastify.get('/get_message', getMessage);
-    fastify.post('/create_game', createGame);
-    fastify.get('/get_stat', getStat);
-    
-    
+    fastify.patch('/update-user', updateUser);
+    fastify.patch('/login', loginUser);
+    fastify.patch('/logout', logoutUser);
+    fastify.get('/get-user', getUserInfo);
+    fastify.post('/add-friend', addFriend);
+    fastify.get('/get-friend', getFriends);
+    fastify.post('/delete-friend', deleteFriend);
+    fastify.post('/block-contact', blockContact);
+    fastify.post('/unblock-contact', unblockContact);
+    fastify.post('/add-message', addMessage);
+    fastify.get('/get-message', getMessage);
+    fastify.post('/create-game', createGame);
+    fastify.get('/get-stat', getStat);
+    fastify.get('/get-parameter', getParameter);
+    fastify.patch('/update-parameter', updateParameter);
+    fastify.get('/get-game-history', getGameHistory);
 }
