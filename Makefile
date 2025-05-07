@@ -37,6 +37,7 @@ up:
 	@ echo "$(RED)Replacing IP addr in .env...$(BASE_COLOR)"
 	@ echo "URL: http://$(shell hostname -I | head -n 1 | awk '{print $$1}'):5000"
 	@ sed -i -E "s/(ADDR=\")[0-9]{1,3}(\.[0-9]{1,3}){3}(\")/\1$(shell hostname -I | head -n 1 | awk '{print $$1}')\3/g" ./src/.env
+	@# cp ./src/.env ./src/front/transcendenceFront/.env
 	@ echo "$(DARK_GREEN)IP addr replaced!$(BASE_COLOR)"
 	@ echo "$(RED)Building project...$(BASE_COLOR)"
 	@ docker compose -f ./src/docker-compose.yml --progress quiet build

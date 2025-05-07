@@ -6,7 +6,7 @@ import * as fs from "node:fs";
 
 dotenv.config();
 
-const dbPath = "./back/database/transcendence.sqlite";
+const dbPath = "./database/transcendenceDb/transcendence.sqlite";
 const dbDir = path.dirname(dbPath);
 
 // Ensure the directory exists

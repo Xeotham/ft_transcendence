@@ -240,31 +240,6 @@ export const    setKey = (keyType: string, value: string) => {
 	}
 }
 
-export const    postToApi = async (url: string, data: tetrisReq) => {
-	// console.log("Data: ", data);
-
-	const   response = await fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(data),
-	});
-	if (!response.ok) {
-		console.error("Error:", response.statusText);
-	}
-	// console.log(response.json().then((data) => console.log(data)));
-	// return response.json();
-}
-
-export const    getFromApi = async (url: string) => {
-	const   response = await fetch(url);
-	if (!response.ok) {
-		console.error("Error:", response.statusText);
-	}
-	return response.json();
-}
-
 export const    getMinoTexture = (texture: string): HTMLImageElement | null => {
 	switch (texture) {
 		case "I_SHADOW":

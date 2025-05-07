@@ -7,7 +7,7 @@ import { RoomInfo } from "./utils.ts";
 
 export const getRoomInfo = (id: number) => {
 
-	fetch(`http://${address}:3000/api/pong/get_room_info?id=${id}`, {
+	fetch(`http://${address}/api/pong/get_room_info?id=${id}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -38,7 +38,7 @@ export const getRoomInfo = (id: number) => {
 }
 
 export const listRoomsSpectator = () => {
-	fetch(`http://${address}:3000/api/pong/get_rooms`, {
+	fetch(`http://${address}/api/pong/get_rooms`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ export const listRoomsSpectator = () => {
 }
 
 export async function	joinSpectate(roomId: Number) {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/addSpectatorToRoom?id=${roomId}`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/addSpectatorToRoom?id=${roomId}`);
 
 	pongGameInfo.setRoom(new PongRoom(socket));
 	pongGameInfo.getRoom()?.setPlayer("SPEC");

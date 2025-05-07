@@ -1,12 +1,11 @@
 import {
 	bagWidth,
-	borderSize,
 	getMinoTexture, holdWidth, holdHeight,
 	keys,
 	loadTetrisArgs,
 	loadTetrisType,
 	minoInfo,
-	minoSize, postToApi, roomInfo,
+	postToApi, roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
 	tetrisGame
 } from "./utils.ts";
@@ -22,6 +21,9 @@ import {
 	searchGame,
 	startRoom
 } from "./gameManagement.ts";
+
+import {resetSocket} from "../utils.ts";
+
 import { address } from "../main.ts";
 
 export const userKeys: keys = new keys();
@@ -48,6 +50,7 @@ const   idlePage = () => {
 	loadTetrisHtml("idle");
 	tetrisGameInfo.setRoomOwner(false);
 
+	resetSocket();
 	document.getElementById("home")?.addEventListener("click", () => page.show("/"));
 	// document.getElementById("matchmaking")?.addEventListener("click", () => searchGame())
 	document.getElementById("arcade")?.addEventListener("click", () => arcadeGame());
@@ -156,7 +159,7 @@ const   drawMino = (ctx: CanvasRenderingContext2D, x: number, y: number, size: n
 		console.error(`Texture not found for ${texture}`);
 }
 
-const   drawMatrix = (ctx: CanvasRenderingContext2D, matrix: minoInfo[][], xCoord: number, yCoord: number, width: number, height: number, minoSize: number) => {
+const   drawMatrix = (ctx: CanvasRenderingContext2D, matrix: minoInfo[][], xCoord: number, yCoord: number, minoSize: number) => {
 	// ctx.clearRect(xCoord, yCoord, width, height);
 	ctx.beginPath();
 	for (let y = matrix.length - 1; y > 17; --y) {

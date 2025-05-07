@@ -1,4 +1,4 @@
-import { canvasHeight, canvasWidth, keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
+import { keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
 import { content } from "../main.ts";
 import {tetrisGameInfo} from "./tetris.ts";
 

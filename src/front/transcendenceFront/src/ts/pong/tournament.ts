@@ -105,7 +105,7 @@ export const   getTournamentName = async () => {
 }
 
 const   createTournament = async (name: string) => {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createTournament?name=${name}`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/createTournament?name=${name}`);
 
 	pongGameInfo.setTournament(new Tournament(socket, name, true));
 	pongGameInfo.getTournament()?.initSocket()
@@ -113,7 +113,7 @@ const   createTournament = async (name: string) => {
 }
 
 export const    listTournaments = () => {
-    fetch(`http://${address}:3000/api/pong/get_tournaments`, {
+    fetch(`http://${address}/api/pong/get_tournaments`, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
@@ -136,7 +136,7 @@ export const    listTournaments = () => {
 //
 export const getTournamentInfo = (id: number) => {
 	console.log("Id: " + id);
-    fetch(`http://${address}:3000/api/pong/get_tournament_info?id=${id}`, {
+    fetch(`http://${address}/api/pong/get_tournament_info?id=${id}`, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
@@ -169,7 +169,7 @@ export const getTournamentInfo = (id: number) => {
 }
 
 const joinTournament = (tournamentId: number/*, tourName: string*/) => {
-    const socket = new WebSocket(`ws://${address}:3000/api/pong/joinTournament?id=${tournamentId}`);
+    const socket = new WebSocket(`ws://${address}/api/pong/joinTournament?id=${tournamentId}`);
 
 	pongGameInfo.setTournament(new Tournament(socket, "tourName"))
 	pongGameInfo.getTournament()?.initSocket();
@@ -177,7 +177,7 @@ const joinTournament = (tournamentId: number/*, tourName: string*/) => {
 }
 
 const   shuffleTree = () => {
-    fetch(`http://${address}:3000/api/pong/shuffleTree`, {
+    fetch(`http://${address}/api/pong/shuffleTree`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -187,7 +187,7 @@ const   shuffleTree = () => {
 }
 
 const   startTournament = () => {
-	fetch(`http://${address}:3000/api/pong/startTournament`, {
+	fetch(`http://${address}/api/pong/startTournament`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -207,7 +207,7 @@ const   tournamentFound = () => {
 }
 
 export const    specTournament = async (tournamentId: number) => {
-	fetch(`http://${address}:3000/api/pong/get_tournament_round_rooms?id=${tournamentId}`, {
+	fetch(`http://${address}/api/pong/get_tournament_round_rooms?id=${tournamentId}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'
@@ -235,7 +235,7 @@ export const    specTournament = async (tournamentId: number) => {
 
 export const getTourRoomInfo = (roomId: number) => {
 
-	fetch(`http://${address}:3000/api/pong/get_tournament_room_info?roomId=${roomId}&id=${pongGameInfo.getTournament()?.getId()}`, {
+	fetch(`http://${address}/api/pong/get_tournament_room_info?roomId=${roomId}&id=${pongGameInfo.getTournament()?.getId()}`, {
 		method: "GET",
 		headers: {
 			'Content-Type': 'application/json'

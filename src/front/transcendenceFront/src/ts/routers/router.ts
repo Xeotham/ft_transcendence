@@ -5,7 +5,8 @@ import  page from 'page';
 import  { homePage } from "../main.ts";
 import  { pongRouter } from "./pongRouter.ts";
 import  { tetrisRouter } from "./tetrisRouter.ts";
-import {loadTetrisTextures} from "../tetris/tetris.ts";
+import  { loadTetrisTextures } from "../tetris/tetris.ts";
+import {loginUser, signUpUser} from "../userManagement/userManagement.ts";
 
 page('/', homePage);
 
@@ -14,11 +15,13 @@ pongRouter();
 tetrisRouter();
 
 page('/login', () => {
-	alert("Page under construction");
+	loginUser();
+	// alert("Page under construction");
 });
 
-page('/register', () => {
-	alert("Page under construction");
+page('/sign-up', () => {
+	signUpUser();
+	// alert("Page under construction");
 });
 
 // TODO: Change all the route to return to a more SPA work (Matchmaking, solo, private room, tournament)

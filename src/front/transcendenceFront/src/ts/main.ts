@@ -1,10 +1,18 @@
 // @ts-ignore
 import  page from 'page';
-import {loadTetrisTextures, tetrisTextures} from "./tetris/tetris.ts";
+import {resetSocket} from "./utils.ts";
 
 // @ts-ignore
-export const	address = "DUMMY_ADDRESS";
+export const	address = import.meta.env.VITE_API_ADDRESS;
 export const	content = document.getElementById("content");
+
+/**
+ * localStorage:
+ *  |    Key     |   Value  |
+ *  |------------|----------|
+ *  | "username" |  string  |
+ */
+
 
 export const	homePage = () => {
 	if (!content)
@@ -17,7 +25,9 @@ export const	homePage = () => {
 			<a href="/tetris">Tetris</a>
 			<a href="/pong">Pong</a>
 			<a href="/login">Login</a>
-			<a href="/register">Register</a>
+			<a href="/sign-up">Register</a>
 		</nav>
 	`;
+
+	resetSocket();
 }

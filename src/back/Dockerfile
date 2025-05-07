@@ -4,16 +4,16 @@ FROM node:18-alpine
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY    package*.json ./
+#COPY    ./transcendenceBack/package.json .
+#COPY    ./transcendenceBack/package-lock.json .
+#COPY    ./transcendenceBack/node_modules .
+COPY    ./transcendenceBack/ .
 
+RUN     rm -rf node_modules
 # Install dependencies
 RUN     npm install
 
-# Copy the rest of the application code
-COPY . .
 
-# Expose the port that BrowserSync will run on
 EXPOSE 3000
 
 # Run BrowserSync

@@ -155,7 +155,7 @@ export class PongRoom {
 }
 
 export const    createPrivateRoom = () => {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/createPrivateRoom`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/createPrivateRoom`);
 
 	pongGameInfo.setRoom(new PongRoom(socket));
 	pongGameInfo.getRoom()?.initSocket();
@@ -167,7 +167,7 @@ export const    joinPrivRoom = () => {
 
 	document.getElementById("submit")?.addEventListener("click", () => {
 		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
-		const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinPrivRoom?inviteCode=${inviteCode}`);
+		const   socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}`);
 
 		pongGameInfo.setRoom(new PongRoom(socket));
 		pongGameInfo.getRoom()?.initSocket();
@@ -175,7 +175,7 @@ export const    joinPrivRoom = () => {
 }
 
 export const   joinMatchmaking = async () => {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinMatchmaking`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/joinMatchmaking`);
 
 	pongGameInfo.setRoom(new PongRoom(socket));
 	pongGameInfo.getRoom()?.initSocket();
@@ -183,14 +183,14 @@ export const   joinMatchmaking = async () => {
 }
 
 export const   joinSolo = async () => {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinSolo`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/joinSolo`);
 
 	pongGameInfo.setRoom(new PongRoom(socket, true));
 	pongGameInfo.getRoom()?.initSocket();
 }
 
 export const   joinBot = async () => {
-	const   socket = new WebSocket(`ws://${address}:3000/api/pong/joinBot`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/joinBot`);
 
 	pongGameInfo.setRoom(new PongRoom(socket, false, true));
 	pongGameInfo.getRoom()?.initSocket();
@@ -223,7 +223,7 @@ const   quitRoom = (msg: string = "LEAVE") => {
 		msg = "LEAVE";
 	if (msg === "QUEUE_TIMEOUT")
 		console.log("You took too long to confirm the game. Back to the lobby");
-	fetch(`http://${address}:3000/api/pong/quitRoom`, {
+	fetch(`http://${address}/api/pong/quitRoom`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -248,7 +248,7 @@ const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 
 	console.log("Quiting tournament: " + tournamentId);
 
-	fetch(`http://${address}:3000/api/pong/quitRoom`, {
+	fetch(`http://${address}/api/pong/quitRoom`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -387,7 +387,7 @@ export const keyHandler = (event: KeyboardEvent) => {
 		// TODO : replace with Constants
 		if (direction === "" || (direction === "up" &&  paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
 			return;
-		fetch(`http://${address}:3000/api/pong/movePaddle`, {
+		fetch(`http://${address}/api/pong/movePaddle`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -428,7 +428,7 @@ const   confirmGame = () => {
 	document.getElementById("confirm-game")?.addEventListener("click", () => {
 		clearInterval(pongGameInfo.getRoom()?.getQueueInterval() as number);
 		document.getElementById("timer")!.innerText = "Confirmed! Awaiting opponent";
-		fetch(`http://${address}:3000/api/pong/startConfirm`, {
+		fetch(`http://${address}/api/pong/startConfirm`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
