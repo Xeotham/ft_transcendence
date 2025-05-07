@@ -1,21 +1,21 @@
 import db from '../db';
-import {createUserGameStats, getUserStatsGame} from '../../database/models/Games_users';
+import {createUserGameStatsPong, createUserGameStatsTetris, getUserStatsGame} from './GamesUsers';
 
 
 interface Stat
 {
 	id?:			number;
-	user_id:		number;
-	pong_win:		number;
-	pong_lose:		number;
-	tetris_win:		number;
-	tetris_lose:	number;
+	userId:			number;
+	pongWin:		number;
+	pongLose:		number;
+	tetrisWin:		number;
+	tetrisLose:		number;
 }
 
 export const createStats = (id: number): void =>
 {
 	const stmt = db.prepare('\
-		INSERT INTO stat (user_id) \
+		INSERT INTO stat (userId) \
 		VALUES (?) \
 		');
 
@@ -25,28 +25,28 @@ export const createStats = (id: number): void =>
 export const getStatsById = (id: number): Stat | undefined =>
 {
 	const stmt = db.prepare('\
-		SELECT u.username, s.pong_win, s.pong_lose, s.tetris_win, s.tetris_lose \
+		SELECT u.username, s.pongWin, s.pongLose, s.tetrisWin, s.tetrisLose \
 		FROM user u \
-		JOIN stat s  ON s.user_id = u.id \
+		JOIN stat s  ON s.userId = u.id \
 		WHERE u.id = ? \
 		');
 
 	return stmt.get(id) as Stat | undefined;
 };
 
-export const updateStats = (user_id: number): void =>
+export const updateStats = (userId: number): void =>
 {
 	
-	const pong_win = getUserStatsGame(user_id, "pong", true);
-	const pong_lose = getUserStatsGame(user_id, "pong", false);
-	const tetris_win = getUserStatsGame(user_id, "tetris", true);
-	const tetris_lose = getUserStatsGame(user_id, "tetris", false);
+	const pongWin = getUserStatsGame(userId, "pong", true);
+	const pongLose = getUserStatsGame(userId, "pong", false);
+	const tetrisWin = getUserStatsGame(userId, "tetris", true);
+	const tetrisLose = getUserStatsGame(userId, "tetris", false);
 
 	const stmt = db.prepare('\
         UPDATE stat \
-        SET pong_win = ?, pong_lose = ?, tetris_win = ?, tetris_lose = ?\
-        WHERE user_id = ?\
+        SET pongWin = ?, pongLose = ?, tetrisWin = ?, tetrisLose = ?\
+        WHERE userId = ?\
         ');
 
-	stmt.run(pong_win, pong_lose, tetris_win, tetris_lose, user_id);
+	stmt.run(pongWin, pongLose, tetrisWin, tetrisLose, userId);
 };

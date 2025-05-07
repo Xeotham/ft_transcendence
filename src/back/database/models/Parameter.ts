@@ -3,13 +3,13 @@ import db from '../db';
 interface Parameter
 {
 	id?:					number;
-	user_id:				number;
+	userId:					number;
 	left:					string;
 	right:					string;
-	clockwise_rot:			string;
-	count_clockwise_rot:	string;
-	hard_drop:				string;
-	soft_drop:				string;
+	clockwiseRot:			string;
+	countClockwiseRot:	string;
+	hardDrop:				string;
+	softDrop:				string;
 	hold:					string;
 	forfeit:				string;
 }
@@ -17,7 +17,7 @@ interface Parameter
 export const createParam = (id: number): void =>
 {
 	const stmt = db.prepare('\
-		INSERT INTO parameter (user_id) \
+		INSERT INTO parameter (userId) \
 		VALUES (?) \
 		');
 
@@ -27,9 +27,9 @@ export const createParam = (id: number): void =>
 export const getParamById = (id: number): Parameter | undefined =>
 {
 	const stmt = db.prepare('\
-		SELECT * \
+		SELECT p.left, p.right, p.clockwiseRot, p.countClockwiseRot, p.hardDrop, p.softDrop, p.hold, p.forfeit \
 		FROM user u \
-		JOIN parameter p  ON p.user_id = u.id \
+		JOIN parameter p  ON p.userId = u.id \
 		WHERE u.id = ? \
 		');
 
@@ -38,7 +38,7 @@ export const getParamById = (id: number): Parameter | undefined =>
 
 export const updateParam = (id: number, command: string, key: string ): void =>
 {
-    const comm = ["left", "right", "clockwise_rot", "count_clockwise_rot", "hard_drop", "soft_drop", "hold", "forfeit"];
+    const comm = ["left", "right", "clockwiseRot", "countClockwiseRot", "hardDrop", "softDrop", "hold", "forfeit"];
 	let i = 0;
 	let stmt;
 
@@ -69,7 +69,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 2:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET  clockwise_rot = ? \
+				SET  clockwiseRot = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -77,7 +77,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 3:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET count_clockwise_rot = ? \
+				SET countClockwiseRot = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -85,7 +85,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 4:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET hard_drop = ? \
+				SET hardDrop = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -93,7 +93,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 5:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET soft_drop = ? \
+				SET softDrop = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
