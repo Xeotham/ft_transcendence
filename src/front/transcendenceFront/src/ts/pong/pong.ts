@@ -5,7 +5,7 @@ import  { loadPongHtml } from "./htmlPage.ts";
 
 // @ts-ignore
 import  page from "page"
-import {resetSocket} from "../utils.ts";
+import {resetGamesSocket} from "../utils.ts";
 
 export const	pongGameInfo: gameInformation = new gameInformation();
 
@@ -48,7 +48,7 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 const   idlePage = () => {
 	loadPongHtml("idle");
 
-	resetSocket()
+	resetGamesSocket()
 	document.getElementById("home")?.addEventListener("click", () => { page.show("/"); });
 	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
 	document.getElementById("solo-game")?.addEventListener("click", joinSolo);

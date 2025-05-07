@@ -1,12 +1,13 @@
 import { loadTetrisHtml } from "./htmlPage.ts";
-import {generateUsername, postToApi, roomInfo, tetrisGame, tetrisRes, TimeoutKey} from "./utils.ts";
+import { roomInfo, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInfo, userKeys } from "./tetris.ts";
 import { address } from "../main.ts";
+import { postToApi } from "../utils.ts";
 // @ts-ignore
 import page from "page";
 
 let socket: WebSocket | null = null;
-export const username = generateUsername();
+export const username = localStorage.getItem("username");
 
 const socketInit = (socket: WebSocket) => {
 	tetrisGameInfo.setSocket(socket);
@@ -18,7 +19,7 @@ const socketInit = (socket: WebSocket) => {
 			console.log('WebSocket connection closed cleanly.');
 		else
 			console.error('WebSocket connection died. Code:', event.code, 'Reason:', event.reason);
-		postToApi(`http://${address}:3000/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInfo.getGameId(),
+		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInfo.getGameId(),
 			username: username, roomCode: tetrisGameInfo.getRoomCode() });
 		tetrisGameInfo.setGameId(-1);
 		tetrisGameInfo.setGame(null);

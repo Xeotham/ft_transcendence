@@ -44,7 +44,7 @@ export const    getFromApi = async (url: string) => {
 	return response.json();
 }
 
-export const    resetSocket = () => {
+export const    resetGamesSocket = () => {
 	if (tetrisGameInfo.getSocket()) {
 		tetrisGameInfo.getSocket()?.close();
 		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });

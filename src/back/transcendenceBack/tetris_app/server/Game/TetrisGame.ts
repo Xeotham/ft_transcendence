@@ -557,6 +557,7 @@ export class TetrisGame {
 	public rotate(direction: "clockwise" | "counter-clockwise" | "180"): void {
 		if (!this.currentPiece)
 			return ;
+		console.log("rotate received");
 		++this.keysPressed;
 		if (this.isInLockPhase) {
 			if (!this.infiniteMovement)

@@ -278,6 +278,9 @@ export const    getMinoTexture = (texture: string): HTMLImageElement | null => {
 		case "Z":
 			console.log("Z texture");
 			return tetrisTextures["Z"];
+		case "GARBAGE":
+			console.log("GARBAGE texture");
+			return tetrisTextures["GARBAGE"];
 			//TODO: Do garbage
 		default:
 			return null;

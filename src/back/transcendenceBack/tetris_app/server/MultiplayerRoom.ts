@@ -122,6 +122,6 @@ export class MultiplayerRoom {
 			this.games[i].gameLoop().then(() => endOfGame(i));
 		}
 		this.games[0].setOpponent(this.games[1]);
-		this.games[1].setOpponent(this.games[0]);
+		this.games[1].setOpponent(this.games[0]); // TODO : Make more flexible for more than 2 players
 	}
 }

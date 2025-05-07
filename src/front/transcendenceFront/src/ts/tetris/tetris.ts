@@ -5,7 +5,7 @@ import {
 	loadTetrisArgs,
 	loadTetrisType,
 	minoInfo,
-	postToApi, roomInfo,
+	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
 	tetrisGame
 } from "./utils.ts";
@@ -17,12 +17,10 @@ import {
 	createRoom,
 	getMultiplayerRooms,
 	joinRoom,
-	resetSocket,
-	searchGame,
 	startRoom
 } from "./gameManagement.ts";
 
-import {resetSocket} from "../utils.ts";
+import {postToApi, resetGamesSocket} from "../utils.ts";
 
 import { address } from "../main.ts";
 
@@ -50,7 +48,7 @@ const   idlePage = () => {
 	loadTetrisHtml("idle");
 	tetrisGameInfo.setRoomOwner(false);
 
-	resetSocket();
+	resetGamesSocket();
 	document.getElementById("home")?.addEventListener("click", () => page.show("/"));
 	// document.getElementById("matchmaking")?.addEventListener("click", () => searchGame())
 	document.getElementById("arcade")?.addEventListener("click", () => arcadeGame());
@@ -123,6 +121,7 @@ export const loadTetrisTextures = () => {
 		"MATRIX":   './src/textures/tetris/matrix.png',
 		"HOLD":     './src/textures/tetris/hold.png',
 		"BAGS":     './src/textures/tetris/bags.png',
+		"GARBAGE": './src/textures/tetris/garbage.png',
 	}
 
 	return Promise.all(
@@ -293,7 +292,7 @@ const   drawGame = () => {
 		return;
 	drawBackground(ctx, 0, 0, canvas.width, canvas.height);
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
-	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, matrixSize.width, matrixSize.height, minoSize);
+	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	if (tetrisGameInfo.getSettingsValue("showBags") && game.bags)
 		drawBag(ctx, game.bags, bagsCoord);
 	if (game.hold)
@@ -302,7 +301,7 @@ const   drawGame = () => {
 
 const multiplayerRoom = (arg: loadTetrisArgs) => {
 	loadTetrisHtml("multiplayer-room", arg);
-	document.getElementById("idle")?.addEventListener("click", () => { resetSocket(); loadTetrisPage("idle") });
+	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket(); loadTetrisPage("idle") });
 	if (!tetrisGameInfo.getRoomOwner())
 		return ;
 	document.getElementById("start")?.addEventListener("click", () => startRoom());
@@ -326,13 +325,13 @@ const multiplayerRoom = (arg: loadTetrisArgs) => {
 			"spawnARE": parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value)
 		});
 		tetrisGameInfo.setNeedSave(false);
-		postToApi(`http://${address}:3000/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInfo.getRoomCode(), prefix: tetrisGameInfo.getSettings() })});
+		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInfo.getRoomCode(), prefix: tetrisGameInfo.getSettings() })});
 
 }
 
 export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
 	loadTetrisHtml("display-multiplayer-room", { rooms: rooms });
-	document.getElementById("idle")?.addEventListener("click", () => { resetSocket(); loadTetrisPage("idle") });
+	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket(); loadTetrisPage("idle") });
 	document.getElementById("submit")?.addEventListener("click", () =>
 		joinRoom((document.getElementById("room-code") as HTMLInputElement).value));
 	document.getElementById("refresh")?.addEventListener("click", () => getMultiplayerRooms());

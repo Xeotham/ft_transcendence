@@ -1,6 +1,6 @@
 // @ts-ignore
 import  page from 'page';
-import {resetSocket} from "./utils.ts";
+import {resetGamesSocket} from "./utils.ts";
 
 // @ts-ignore
 export const	address = import.meta.env.VITE_API_ADDRESS;
@@ -29,5 +29,5 @@ export const	homePage = () => {
 		</nav>
 	`;
 
-	resetSocket();
+	resetGamesSocket();
 }
