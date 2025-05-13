@@ -106,6 +106,7 @@ export const startRoom = () => {
 }
 
 const   messageHandler = (event: MessageEvent)=> {
+	// console.log("Receiving: " + event.data)
 	let res: tetrisRes = JSON.parse(event.data);
 
 	if (!res)

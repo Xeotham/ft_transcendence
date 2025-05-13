@@ -108,6 +108,7 @@ const boardHtml = () => {
 
 	EL.contentTetris.innerHTML = `
 <!--		<p id="score">Score: 0</p>-->
+		<p id="awaitingGarbage">Incoming Garbage: 0</p>
 		<div id="board">
 		<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
 		</div>`
