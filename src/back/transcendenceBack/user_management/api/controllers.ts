@@ -423,7 +423,7 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 
 // createGame modified
 
-export const createPongGame = (players: any, score: any, winner: any, solo: boolean, bot: boolean) => 
+export const createPongGame = (players: any, score: any, winner: any, solo: boolean, bot: boolean) =>
 {
     console.log("solo game :", solo, "bot game :", bot);
     if (solo === true && bot === false)
@@ -443,7 +443,7 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
         {
             if (score.player1.score < 0)
                 return ;
-            
+
             const gameId = saveGame("");
 
             if (winner.player)
@@ -465,7 +465,7 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
         {
             if (score.player1.score < 0 && score.player2.score < 0)
                 return ;
-            
+
             const gameId = saveGame("");
 
             createUserGameStatsPong(player1.id, gameId, score.player1.score, players.player1.username === winner.player.username, "pong");
@@ -478,27 +478,27 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
     }
 };
 
-export const createTetrisGame = (username1: string, player2: any, score1: any, stats1: any) => 
+export const createTetrisGame = (username1: string, player2: any, score1: any, stats1: any) =>
 {
-    
+
         console.log(username1, "|", player2, "|", score1, "|", stats1);
         // if (solo === true)
         //     return ;
-    
+
         // if (bot === true)
         // {
         //     const   player1 = getUserByUsername(players.player1.username) as Users;
-    
+
         //     if (!player1)
         //         return ;
-    
+
         //     if (player1.id)
         //     {
         //         if (score.player1.score < 0)
         //             return ;
-                
+
         //         const gameId = saveGame("");
-    
+
         //         createUserGameStatsPong(player1.id, gameId, score.player1.score, players.player1.username === winner.player.username, "pong");
         //     }
         // }
@@ -506,20 +506,20 @@ export const createTetrisGame = (username1: string, player2: any, score1: any, s
         // {
         //     const   player1 = getUserByUsername(players.player1.username) as Users;
         //     const   player2 = getUserByUsername(players.player2.username) as Users;
-    
+
         //     if (!player1 || !player2)
         //         return ;
-    
+
         //     if (player1.id && player2.id)
         //     {
         //         if (score.player1.score < 0 && score.player2.score < 0)
         //             return ;
-                
+
         //         const gameId = saveGame("");
-    
+
         //         createUserGameStatsPong(player1.id, gameId, score.player1.score, players.player1.username === winner.player.username, "pong");
         //         createUserGameStatsPong(player2.id, gameId, score.player2.score, players.player2.username === winner.player.username, "pong");
-    
+
         //         updateStats(player1.id);
         //         updateStats(player2.id);
         //     }
@@ -557,7 +557,7 @@ export const createTetrisGame = (username1: string, player2: any, score1: any, s
     //     }
     // }
 
-// export const createGame = async (request: FastifyRequest, reply:FastifyReply) => 
+// export const createGame = async (request: FastifyRequest, reply:FastifyReply) =>
 //     {
 //         const   { username1, username2, date, scoreP1, scoreP2, winner, type, tetrisStatP1, tetrisStatP2
 //             } = request.body as {
@@ -625,7 +625,7 @@ export const    getStat = async (request: FastifyRequest, reply: FastifyReply) =
     if (user.id)
     {
         const stat = getStatsById(user.id);
-        // stats: added
+        // stats:: added
         return  reply.status(201).send({ message: 'Stat sended', stats:stat });
     }
 };
