@@ -5,7 +5,7 @@ import {
 	tetrisMatchmaking, tetrisCreateRoom,
 	tetrisJoinRoom, tetrisRoomCommand,
 	tetrisQuitRoom, tetrisArcade,
-	movePiece, rotatePiece, getMultiplayerRooms,
+	movePiece, rotatePiece, getMultiplayerRooms, retryGame,
 } from "./controllers";
 
 export default async function tetrisRoutes(fastify: FastifyInstance) {
@@ -16,6 +16,7 @@ export default async function tetrisRoutes(fastify: FastifyInstance) {
 	fastify.get('/joinRoom', {websocket: true}, tetrisJoinRoom);
 	fastify.post('/roomCommand', tetrisRoomCommand);
 	fastify.post('/quitRoom', tetrisQuitRoom);
+	fastify.post('/retry', retryGame);
 	fastify.post('/forfeit', forfeitGame);
 	fastify.post('/movePiece', movePiece);
 	fastify.post('/rotatePiece', rotatePiece);

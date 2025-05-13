@@ -17,9 +17,9 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "w";
-		this.hard_drop              = "ArrowUp";
-		this.soft_drop              = "ArrowDown";
+		this.rotate_180             = "ArrowUp";
+		this.hard_drop              = "w";
+		this.soft_drop              = "s";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 		this.retry                  = "r";
@@ -80,6 +80,7 @@ export interface        tetrisGameInfo {
 	gameId:             number;
 	canSwap:            boolean;
 	time:               number;
+	awaitingGarbage:	number;
 	linesCleared:       number,
 	lineClearGoal:      number,
 	piecesPlaced:       number,
@@ -252,34 +253,34 @@ export const    getMinoTexture = (texture: string): HTMLImageElement | null => {
 			return tetrisTextures["SHADOW"];
 		case "I_LOCKED":
 		case "I":
-			console.log("I texture");
+			// console.log("I texture");
 			return tetrisTextures["I"];
 		case "J_LOCKED":
 		case "J":
-			console.log("J texture");
+			// console.log("J texture");
 			return tetrisTextures["J"];
 		case "L_LOCKED":
 		case "L":
-			console.log("L texture");
+			// console.log("L texture");
 			return tetrisTextures["L"];
 		case "O_LOCKED":
 		case "O":
-			console.log("O texture");
+			// console.log("O texture");
 			return tetrisTextures["O"];
 		case "S_LOCKED":
 		case "S":
-			console.log("S texture");
+			// console.log("S texture");
 			return tetrisTextures["S"];
 		case "T_LOCKED":
 		case "T":
-			console.log("T texture");
+			// console.log("T texture");
 			return tetrisTextures["T"];
 		case "Z_LOCKED":
 		case "Z":
-			console.log("Z texture");
+			// console.log("Z texture");
 			return tetrisTextures["Z"];
 		case "GARBAGE":
-			console.log("GARBAGE texture");
+			// console.log("GARBAGE texture");
 			return tetrisTextures["GARBAGE"];
 			//TODO: Do garbage
 		default:
