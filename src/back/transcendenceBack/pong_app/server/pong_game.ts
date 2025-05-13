@@ -12,26 +12,20 @@ import {
 	PADDLE_SPEED
 } from "./constants"
 import { WebSocket } from "ws";
-import {requestBody, delay, getRoomById, player} from "../utils";
+import { requestBody, delay, getRoomById } from "../utils";
 import { botLogic, resetBot } from "./bot";
 import { Room } from "./Room";
-import { createPongGame } from "../../user_management/api/controllers";
 // impoer { Timeout } from
-
-interface   playerScore {
-	username: string;
-	score: number;
-}
 
 export class Game {
 	readonly id:number;
-	players:	{ player1: player | null, player2: player | null };
-	score:		{ player1: playerScore, player2: playerScore };
+	players:	{ player1: WebSocket | null, player2: WebSocket | null };
+	score:		{ player1: number, player2: number };
 	paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	paddle2:	{ x: number, y: number, x_size: number, y_size: number };
 	ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
 	over:		boolean;
-	winner:		player | null;
+	winner:		WebSocket | null;
 	isSolo:		boolean;
 	isBot:		boolean;
 	spectators:	WebSocket[];
@@ -40,12 +34,10 @@ export class Game {
 	private finishTime:	number;
 	private lastTime:	number;
 
-	constructor(id: number, player1: player | null, player2: player | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
+	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
 		this.id = id;
-		this.players = { player1: player1, player2: player2 };
-		this.score = {
-			player1: { username: player1?.username!, score: 0 },
-			player2: { username: player2?.username!, score: 0 } };
+		this.players = { player1, player2 };
+		this.score = { player1: 0, player2: 0 };
 		this.paddle1 = { x: PADDLE1_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
 		this.paddle2 = { x: PADDLE2_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
 		this.ball = { x: WIDTH / 2, y: HEIGHT / 2, size: BALL_SIZE, orientation: 0, speed: BALL_SPEED };
@@ -65,32 +57,29 @@ export class Game {
 			paddle1: { ...this.paddle1 },
 			paddle2: { ...this.paddle2 },
 			ball: { ...this.ball},
-			score: {
-				player1: { ...this.score.player1 },
-				player2: { ...this.score.player2 }
-			},}
 		};
+	}
 
 	public isOver()	{ return this.over; }
 	public addSpectator(spectator: WebSocket) { this.spectators.push(spectator); }
 	// getter
 
 	private sendData(data: any, toSpectators: boolean = true) {
-		this.players.player1?.socket.send(JSON.stringify(data));
+		this.players.player1?.send(JSON.stringify(data));
 		if (!this.isSolo)
-			this.players.player2?.socket.send(JSON.stringify(data));
+			this.players.player2?.send(JSON.stringify(data));
 		if (toSpectators)
 			for (let spectator of this.spectators)
 				spectator?.send(JSON.stringify(data));
 	}
 
-	// public sendScore() {
-	// 	this.sendData({ type: "GAME", data: this.score, message: "SCORE" }, true);
-	// }
+	public sendScore() {
+		this.sendData({ type: "GAME", data: this.score, message: "SCORE" }, true);
+	}
 
 	private async spawnBall(side: string | "P1" | "P2") {
 		resetBot(this.id, 0);
-		// this.sendScore();
+		this.sendScore();
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
@@ -101,7 +90,7 @@ export class Game {
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
-		if (this.score.player1.score < 10 && this.score.player2.score < 10)
+		if (this.score.player1 < 10 && this.score.player2 < 10)
 			await delay(1250);
 			// await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
@@ -118,12 +107,12 @@ export class Game {
 			let botInterval: number = 0;
 			if (this.isBot)
 				botInterval = setInterval(() => {
-			console.log("rotation in class Game is " + this.ball.orientation)
+			console.log("rotation in calss Game is " + this.ball.orientation)
 				botLogic(this.toJSON(), this.id);
 			}, 1000) as unknown as number; // once per second
 
 			const gameLoopIteration = async () => {
-				if (this.score.player1.score < 10 && this.score.player2.score < 10 && !this.over) {
+				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
 					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
 					return ;
@@ -133,17 +122,17 @@ export class Game {
 				clearInterval(botInterval);
 				this.finishTime = performance.now();
 				if (!this.over) // If the game didn't end because of a forfeit
-					this.winner = (this.score.player1.score >= 10) ? this.players.player1 : this.players.player2;
+					this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
 				this.over = true;
 				let winner = this.winner === this.players.player1 ? "P1" : "P2";
 				if (this.isSolo)
-					winner = this.score.player1.score >= 10 ? "P1" : "P2";
+					winner = this.score.player1 >= 10 ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
 				// HEERE
-				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
+				createGamePong(this);
 				resolve();
 			};
 
@@ -197,11 +186,11 @@ export class Game {
 		this.ball.y += speed * Math.sin(this.ball.orientation);
 
 		if (this.ball.x - this.ball.size < 0) {
-			this.score.player2.score++;
+			this.score.player2++;
 			await this.spawnBall("P1");
 		}
 		if (this.ball.x + this.ball.size >= WIDTH) {
-			this.score.player1.score++;
+			this.score.player1++;
 			await this.spawnBall("P2");
 		}
 	}
@@ -222,13 +211,13 @@ export class Game {
 		if (player === "P1")
 			this.winner = this.players.player2;
 		else
-			this.winner = this.players.player1!;
+			this.winner = this.players.player1;
 		// let winner = this.winner === this.players.player1 ? "P1" : "P2";
 		// console.log("Winner set to:", winner);
 		this.over = true;
 	}
 
-	public getWinner() : player | null {
+	public getWinner() : WebSocket | null {
 		return this.winner;
 	}
 }
