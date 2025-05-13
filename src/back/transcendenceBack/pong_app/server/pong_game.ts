@@ -62,6 +62,7 @@ export class Game {
 
 	public isOver()	{ return this.over; }
 	public addSpectator(spectator: WebSocket) { this.spectators.push(spectator); }
+	// getter
 
 	private sendData(data: any, toSpectators: boolean = true) {
 		this.players.player1?.send(JSON.stringify(data));
@@ -130,6 +131,8 @@ export class Game {
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
+				// HEERE
+				createGamePong(this);
 				resolve();
 			};
 
