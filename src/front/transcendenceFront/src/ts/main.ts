@@ -25,7 +25,9 @@ export const	homePage = () => {
 			<a href="/tetris">Tetris</a>
 			<a href="/pong">Pong</a>
 			<a href="/login">Login</a>
+			<a href="/logout">Logout</a>
 			<a href="/sign-up">Register</a>
+			${localStorage.getItem("username") !== null ? '<a href="/profil">Profile</a>' : '' }
 		</nav>
 	`;
 

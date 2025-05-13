@@ -6,7 +6,9 @@ import  { homePage } from "../main.ts";
 import  { pongRouter } from "./pongRouter.ts";
 import  { tetrisRouter } from "./tetrisRouter.ts";
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
-import {loginUser, signUpUser} from "../userManagement/userManagement.ts";
+import {loginUser, logoutUser,signUpUser} from "../userManagement/userManagement.ts";
+import { displayProfil } from '../dashboards/dasboards.ts';
+
 
 page('/', homePage);
 
@@ -19,8 +21,18 @@ page('/login', () => {
 	// alert("Page under construction");
 });
 
+page('/logout', () => {
+	logoutUser();
+	// alert("Page under construction");
+});
+
 page('/sign-up', () => {
 	signUpUser();
+	// alert("Page under construction");
+});
+
+page('/profil', () => {
+	displayProfil();
 	// alert("Page under construction");
 });
 

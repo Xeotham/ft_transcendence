@@ -29,6 +29,7 @@ export const   loginHtml = (error: string | null = null) => {
 			<input type="submit"/>
 		</form>
 		<a href="/sign-up">Register</a>
+		<a href="/">Home</a>
 	</div>`
 
 	const   errorDiv = document.getElementById("error") as HTMLDivElement;
@@ -39,6 +40,29 @@ export const   loginHtml = (error: string | null = null) => {
 		errorDiv.style.display = "none";
 
 }
+
+export const   logoutHtml = (error: string | null = null) => {
+	if (!content)
+		return;
+
+	content.innerHTML = `
+	<div class="logout">
+		<h1>Logout</h1>
+		<div id="error" >
+			<p>${error}</p>
+		</div>
+		<button id="logout">Logout</button>
+		<a href="/">Home</a>
+	</div>`
+
+	const   errorDiv = document.getElementById("error") as HTMLDivElement;
+
+	if (error)
+		errorDiv.style.display = "block";
+	else
+		errorDiv.style.display = "none";
+}
+
 
 export const   signUpHtml = (error: string | null = null) => {
 	if (!content)
@@ -61,6 +85,7 @@ export const   signUpHtml = (error: string | null = null) => {
 			<input type="text" id="avatar" name="avatar" required placeholder="avatar">
 			<input type="submit">Login</input>
 		</form>
+		<a href="/">Home</a>
 	</div>`
 
 	const   errorDiv = document.getElementById("error") as HTMLDivElement;
