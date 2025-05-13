@@ -3,7 +3,7 @@ import { WebSocket } from "ws";
 import {deleteTetrisGame, getTetrisGame, getTetrisRoom, tetrisReq} from "../utils";
 import { TetrisGame } from "../server/Game/TetrisGame";
 import { MultiplayerRoom } from "../server/MultiplayerRoom";
-import { delay } from "../server/Game/utils";
+import {delay} from "../server/Game/utils";
 
 
 // fastify.get('/joinMatchmaking', {websocket: true}, joinMatchmaking); TODO: Join a Random Room
@@ -11,7 +11,7 @@ import { delay } from "../server/Game/utils";
 export let   arcadeGamesLst: TetrisGame[] = [];
 export let   multiplayerRoomLst: MultiplayerRoom[] = [];
 
-export const tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
 export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {

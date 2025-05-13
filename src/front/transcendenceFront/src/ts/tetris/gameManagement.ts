@@ -204,6 +204,7 @@ const effectPlayer = (type: string, argument: string | null = null) => {
 }
 
 const   messageHandler = (event: MessageEvent)=> {
+	// console.log("Receiving: " + event.data)
 	let res: tetrisRes = JSON.parse(event.data);
 
 	if (!res)
