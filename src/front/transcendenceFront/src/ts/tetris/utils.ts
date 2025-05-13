@@ -17,9 +17,9 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "ArrowUp";
-		this.hard_drop              = "w";
-		this.soft_drop              = "s";
+		this.rotate_180             = "w";
+		this.hard_drop              = "ArrowUp";
+		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 		this.retry                  = "r";
@@ -52,9 +52,9 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "ArrowUp";
-		this.hard_drop              = "w";
-		this.soft_drop              = "s";
+		this.rotate_180             = "w";
+		this.hard_drop              = "ArrowUp";
+		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 		this.retry					= "r";
@@ -80,6 +80,7 @@ export interface        tetrisGameInfo {
 	gameId:             number;
 	canSwap:            boolean;
 	time:               number;
+	awaitingGarbage:	number;
 	linesCleared:       number,
 	lineClearGoal:      number,
 	piecesPlaced:       number,
