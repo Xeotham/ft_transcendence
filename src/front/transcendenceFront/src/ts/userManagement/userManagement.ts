@@ -1,4 +1,4 @@
-import  { loginHtml, signUpHtml } from "./htmlPage.ts";
+import  { loginHtml, logoutHtml,signUpHtml } from "./htmlPage.ts";
 import {postToApi} from "../utils.ts";
 import {address, user} from "../main.ts";
 // @ts-ignore
@@ -14,7 +14,6 @@ export const loginUser = (error: string | null = null) => {
 		const   password = (document.getElementById("password") as HTMLInputElement).value;
 
 		const   data = { username: username, password:  password };
-
 		postToApi(`http://${address}/api/user/login`, data)
 			.then(() => {
 				localStorage.setItem("username", username);
@@ -27,6 +26,35 @@ export const loginUser = (error: string | null = null) => {
 			});
 	})
 }
+
+export const logoutUser = (error: string | null = null) => {
+	logoutHtml(error);
+
+	document.getElementById("logout")!.addEventListener("click", async (event) => {
+		event.preventDefault();
+
+		const user = { username: localStorage.getItem("username")};
+		postToApi(`http://${address}/api/user/logout`, user)
+			.then(() => {
+				localStorage.clear();
+				page.show("/");
+			})
+			.catch((error) => {
+				console.error("Error logging out:", error.status, error.message);
+				logoutUser(error.message);
+			});
+	})
+}
+
+
+export const isLoggedIn = (): boolean => {
+	
+	if (localStorage.getItem("username"))
+		return true;
+	else
+		return false;
+}
+
 
 export const    signUpUser = (error: string | null = null) => {
 	signUpHtml(error);
