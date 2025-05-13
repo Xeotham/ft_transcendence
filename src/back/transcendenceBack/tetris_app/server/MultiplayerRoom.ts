@@ -12,7 +12,7 @@ export class MultiplayerRoom {
 	private private:			boolean;
 	private code:				string;
 	private playersRemaining:	number;
-	private settings:			any;
+	private settings:			any; // Object containing the settings of the game : {}
 
 	constructor(socket: WebSocket, isPrivate: boolean = false, codeName: string | undefined = undefined) {
 		this.sockets = [];
@@ -28,6 +28,7 @@ export class MultiplayerRoom {
 		console.log("The code of the new room is " + this.code);
 		this.playersRemaining = 0;
 		this.addPlayer(socket);
+		this.settings = {isLevelling: false, level: 4, canRetry: false};
 	}
 
 	public isPrivate(): boolean						{ return this.private; }
@@ -44,6 +45,7 @@ export class MultiplayerRoom {
 		this.sockets.push(socket);
 		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
 	}
+
 	public removePlayer(socket: WebSocket): void	{
 		this.games[this.sockets.indexOf(socket)]?.forfeit();
 		if (this.isInGame)
@@ -118,7 +120,6 @@ export class MultiplayerRoom {
 			const game = new TetrisGame(this.sockets[i]!);
 			game.setSettings(this.settings);
 			this.games.push(game);
-			this.sockets[i]!.send(JSON.stringify({ type: "SOLO", game: this.games[i].toJSON() }));
 			this.games[i].gameLoop().then(() => endOfGame(i));
 		}
 		this.games[0].setOpponent(this.games[1]);

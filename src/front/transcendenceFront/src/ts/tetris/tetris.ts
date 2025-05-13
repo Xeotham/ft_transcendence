@@ -288,6 +288,7 @@ const   drawGame = () => {
 	// document.getElementById("PPS")!.innerText = "Pieces: " + tetrisGameInfo.getGame()?.piecesPlaced +
 	// 	", " + tetrisGameInfo.getGame()?.piecesPerSecond + "/S"; // TODO : add this line
 	// document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
+	document.getElementById("awaitingGarbage")!.innerText = "Incoming Garbage: " + JSON.stringify(tetrisGameInfo.getGame()?.awaitingGarbage);
 	if (!ctx || !game)
 		return;
 	drawBackground(ctx, 0, 0, canvas.width, canvas.height);

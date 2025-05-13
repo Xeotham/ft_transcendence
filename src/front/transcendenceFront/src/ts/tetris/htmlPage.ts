@@ -96,6 +96,7 @@ const keyBindsHtml = (keys: keys) => {
 // 		<p id="PPS">Pieces: 0, 0.00/S</p>
 // <!--		<p id="level">Level: 1</p>-->
 // <!--		<p id="lines">Lines: 0/10</p>-->
+// <!--		<p id="awaitingGarbage">Incoming Garbage: 0</p>-->
 // 		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
 // 	`
 // }
@@ -107,6 +108,7 @@ const boardHtml = () => {
 
 	content.innerHTML = `
 <!--		<p id="score">Score: 0</p>-->
+		<p id="awaitingGarbage">Incoming Garbage: 0</p>
 		<div id="board">
 		<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
 		</div>`
