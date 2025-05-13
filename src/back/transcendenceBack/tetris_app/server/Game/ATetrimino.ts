@@ -60,7 +60,6 @@ export abstract class ATetrimino {
 	}
 
 	public rotate(direction: "clockwise" | "counter-clockwise" | "180", matrix: Matrix): string {
-		// TODO : Play the sounds, send animations, etc.
 		let rotationPointUsed: number = -1;
 		const struct = this.getStruct();
 		let start: tc.block = struct[tc.ROTATIONS[this.rotation]];

@@ -1,6 +1,6 @@
-import {tetrisGameInfo} from "./tetris/tetris.ts";
-import {pongGameInfo} from "./pong/pong.ts";
-import {address} from "./main.ts";
+import { tetrisGameInfo } from "./tetris/tetris.ts";
+import { pongGameInfo } from "./pong/pong.ts";
+import { address } from "./main.ts";
 
 export const    postToApi = async (url: string, data: any) => {
 	// console.log("Data: ", data);
@@ -12,16 +12,15 @@ export const    postToApi = async (url: string, data: any) => {
 		},
 		body: JSON.stringify(data), // Convert the data to a JSON string
 	})
-	.then(response => {
+	.then(async response => {
 		if (!response.ok) {
 			// Check if the response status is not OK (status code 200-299)
-			return response.json().then(errorData => {
-				// Parse the JSON response to extract the error message
-				throw {
-					status: response.status,
-					message: errorData.message || 'An error occurred',
-				};
-			});
+			let errorData = await response.json();
+			console.error('Error in post:', url);
+			throw {
+				status: response.status,
+				message: errorData.message || 'An error occurred',
+			};
 		}
 		return response.json(); // Parse the JSON response if successful
 	})
