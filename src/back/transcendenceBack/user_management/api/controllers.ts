@@ -480,7 +480,8 @@ export const    getStat = async (request: FastifyRequest, reply: FastifyReply) =
     if (user.id)
     {
         const stat = getStatsById(user.id);
-        return  reply.status(201).send({ message: 'Stat sended', stat });
+        // stats:: added
+        return  reply.status(201).send({ message: 'Stat sended', stats:stat });
     }
 };
 
