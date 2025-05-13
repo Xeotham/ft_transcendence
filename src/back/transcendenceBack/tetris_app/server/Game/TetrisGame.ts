@@ -55,7 +55,6 @@ export class TetrisGame {
 	private opponent:					TetrisGame | undefined;
 	private awaitingGarbage:			number[];
 	private garbageRespite:				boolean;
-
 	// statistics
 
 	private beginningTime:				number;
