@@ -191,14 +191,22 @@ const effectPlayer = (type: string, argument: string | null = null) => {
 		/* ==== COMBO ==== */
 		case "COMBO":
 			return comboEffect(argument!);
+		/* ==== GARBAGE ==== */
 		case "GARBAGE":
 			return garbageEffect(argument!);
+		/* ==== USER_EFFECT ==== */
 		case "USER_EFFECT":
 			return userEffect(argument!);
+		/* ==== LEVEL ==== */
 		case "LEVEL":
 			return levelEffect(argument!);
+		/* ==== LOCK ==== */
 		case "LOCK":
 			return lockEffect(argument!);
+		/* ==== SPIN ==== */
+		case "SPIN":
+			return sfxPlayer.play("spin");
+		/* ==== BOARD ==== */
 		case "BOARD":
 			return boardEffect(argument!);
 	}
@@ -274,7 +282,6 @@ const   movePiece = (direction: string) => {
 	}
 
 	const   repeat = async () => {
-
 		postToApi(`http://${address}/api/tetris/movePiece`, { argument: arg, gameId: tetrisGameInfo.getGameId() });
 		if (tetrisGameInfo.getKeyFirstMove(direction)) {
 			tetrisGameInfo.setKeyFirstMove(direction, false);
