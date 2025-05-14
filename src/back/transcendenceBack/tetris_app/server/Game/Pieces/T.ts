@@ -20,6 +20,7 @@ export class T extends ATetrimino {
 	protected static struct: tc.pieceStruct = (() => {
 		return {
 			size: TJson.size,
+			nbBlocks: TJson.nbBlocks,
 			north: this.convertBlock(TJson.north),
 			east: this.convertBlock(TJson.east),
 			south: this.convertBlock(TJson.south),
