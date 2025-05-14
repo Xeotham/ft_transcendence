@@ -181,7 +181,7 @@ const   drawMino = (ctx: CanvasRenderingContext2D, x: number, y: number, size: n
 const   drawMatrix = (ctx: CanvasRenderingContext2D, matrix: minoInfo[][], xCoord: number, yCoord: number, minoSize: number) => {
 	// ctx.clearRect(xCoord, yCoord, width, height);
 	ctx.beginPath();
-	for (let y = matrix.length - 1; y > 17; --y) {
+	for (let y = matrix.length - 1; y > 16; --y) {
 		for (let x = 0; x < matrix[y].length; ++x) {
 			const   newX = (x * minoSize) + xCoord;
 			const   newY = ((y - 17) * minoSize) + yCoord;
