@@ -9,8 +9,6 @@ import tetrisRoutes from "../tetris_app/api/routes";
 import pongRoutes from '../pong_app/api/routes';
 import userRoutes from '../user_management/api/routes';
 
-export const userSockets: {[key: string]: WebSocket} = {};
-
 config();
 
 export const fastify = Fastify(/*{ logger: true }*/);
