@@ -405,7 +405,7 @@ export class TetrisGame {
 		this.updateB2B();
 		if (this.lastClear.includes("Zero")) {
 			if (this.combo >= 1)
-				this.player.send(JSON.stringify({type: "COMBO", argument: "break"}))
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "COMBO", prefix: "break"}))
 			this.combo = -1;
 		}
 		else
@@ -421,18 +421,18 @@ export class TetrisGame {
 			else
 				++this.allLinesClear[this.lastClear];
 			// console.log("lastClear: " + this.lastClear + ", B2B: " + this.B2B);
-			this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: this.lastClear}));
+			this.player.send(JSON.stringify({type: "EFFECT", argument: "SPECIAL_LOCK", prefix: this.lastClear}));
 			if (this.combo > 0)
-				this.player.send(JSON.stringify({type: "COMBO", argument: this.combo}));
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "COMBO", prefix: this.combo}));
 		}
 		this.sendGarbage(this.lastClear);
 		if (this.matrix.isEmpty()) {
 			++this.perfectClears;
 			this.sendGarbage("Perfect Clear");
-			this.player.send(JSON.stringify({type: "SPECIAL_LOCK", argument: "Perfect Clear"}));
+			this.player.send(JSON.stringify({type: "EFFECT", argument: "SPECIAL_LOCK", prefix: "Perfect Clear"}));
 		}
 		if (this.lastClear !== "Zero" && this.B2B > 0)
-			this.player.send(JSON.stringify({type: "B2B", argument: this.B2B}));
+			this.player.send(JSON.stringify({type: "EFFECT", argument: "B2B", prefix: this.B2B}));
 		if (this.awaitingGarbage.length > 0) {
 			if (this.matrix.addGarbage(this.awaitingGarbage[0]) === "Top Out")
 				this.over = true;
@@ -488,8 +488,9 @@ export class TetrisGame {
 		if (this.lastClear.includes("Quad") || this.lastClear.includes("Spin"))
 			++this.B2B;
 		else {
+			if (this.B2B >= 1)
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "B2B", prefix: "break"}));
 			this.B2B = -1;
-			this.player.send(JSON.stringify({type: "B2B", argument: "break"}));
 		}
 		if (this.B2B > this.maxB2B)
 			this.maxB2B = this.B2B;
@@ -567,7 +568,7 @@ export class TetrisGame {
 		this.spinType = this.currentPiece.rotate(direction, this.matrix);
 		if (this.spinType !== "") {
 			console.log("Spin type: " + this.spinType);
-			this.player.send(JSON.stringify({type: "SPIN", argument: this.spinType}))
+			this.player.send(JSON.stringify({type: "EFFECT", argument: "SPIN", prefix: this.spinType}))
 		}
 		this.placeShadow();
 	}

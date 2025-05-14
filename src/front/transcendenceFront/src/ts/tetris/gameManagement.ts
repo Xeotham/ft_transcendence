@@ -1,5 +1,5 @@
 import { loadTetrisHtml } from "./htmlPage.ts";
-import { roomInfo, tetrisRes, TimeoutKey} from "./utils.ts";
+import {bgmPlayer, roomInfo, sfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInfo, userKeys } from "./tetris.ts";
 import { address } from "../main.ts";
 import { postToApi } from "../utils.ts";
@@ -105,6 +105,106 @@ export const startRoom = () => {
 	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "start", gameId: 0, roomCode: tetrisGameInfo.getRoomCode() });
 }
 
+const   btbEffect = (btb: string) => {
+	if (btb === "break")
+		return sfxPlayer.play("btb_break")
+	else if (Number(btb) <= 3 )
+		return sfxPlayer.play(`btb_${btb}`);
+	else
+		return sfxPlayer.play("btb_3");
+}
+
+const   clearEffect = (clear: string) => {
+	switch (clear) {
+		case "all":
+			return sfxPlayer.play("allclear");
+		case "btb":
+			return sfxPlayer.play("clearbtb");
+		case "line":
+			return sfxPlayer.play("clearline");
+		case "quad":
+			return sfxPlayer.play("clearquad");
+		case "spin":
+			return sfxPlayer.play("clearspin");
+		default:
+			return ;
+	}
+}
+
+const   comboEffect = (combo: string) => {
+	if (combo === "break")
+		return sfxPlayer.play("combobreak");
+	else if (Number(combo) <= 16)
+		return sfxPlayer.play(`combo_${combo}`);
+	else
+		return sfxPlayer.play("combo_16");
+}
+
+const   garbageEffect = (garbage: string) => {
+	return sfxPlayer.play(garbage);
+}
+
+const   userEffect = (user: string) => {
+	return sfxPlayer.play(user);
+}
+
+const   levelEffect = (level: string) => {
+	switch (level) {
+		case "up":
+			return sfxPlayer.play("levelup");
+		case "1":
+			return sfxPlayer.play("level1");
+		case "5":
+			return sfxPlayer.play("level5");
+		case "10":
+			return sfxPlayer.play("level10");
+		case "15":
+			return sfxPlayer.play("level15");
+		default:
+			return ;
+	}
+}
+
+const   lockEffect = (lock: string) => {
+	switch (lock) {
+		case "lock":
+			return sfxPlayer.play("lock");
+		case "spinend":
+			return sfxPlayer.play("spinend");
+		default:
+			return ;
+	}
+}
+
+const   boardEffect = (board: string) => {
+	return sfxPlayer.play(board);
+}
+
+const effectPlayer = (type: string, argument: string | null = null) => {
+	switch (type) {
+		/* ==== BTB ==== */
+		case "BTB":
+			return btbEffect(argument!);
+		/* ==== CLEAR ==== */
+		case "CLEAR":
+			return clearEffect(argument!);
+		/* ==== COMBO ==== */
+		case "COMBO":
+			return comboEffect(argument!);
+		case "GARBAGE":
+			return garbageEffect(argument!);
+		case "USER_EFFECT":
+			return userEffect(argument!);
+		case "LEVEL":
+			return levelEffect(argument!);
+		case "LOCK":
+			return lockEffect(argument!);
+		case "BOARD":
+			return boardEffect(argument!);
+	}
+
+}
+
 const   messageHandler = (event: MessageEvent)=> {
 	let res: tetrisRes = JSON.parse(event.data);
 
@@ -116,6 +216,8 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
+			bgmPlayer.choseBgm("bgm1");
+			// bgmPlayer.play();
 			loadTetrisHtml("board");
 			loadTetrisPage("board");
 			gameControllers();
@@ -140,24 +242,9 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			loadTetrisPage("board");
 			return ;
-		case "SPECIAL_LOCK":
-			console.log("Special Lock: " + res.argument);
+		case "EFFECT":
+			effectPlayer(res.argument, res.value);
 			return ;
-		case "SPIN":
-			console.log("Spin: " + res.argument);
-			return;
-		case "B2B":
-			if (res.argument === "break")
-				console.log("B2B Break");
-			else
-				console.log("B2B: " + res.argument);
-			return;
-		case "COMBO":
-			if (res.argument === "break")
-				console.log("Combo Break");
-			else
-				console.log("Combo: " + res.argument);
-			return;
 		case "STATS":
 			console.log("Stats: " + JSON.stringify(res.argument));
 			return;
@@ -168,6 +255,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("Game Over");
 			resetSocket();
 			gameControllers(true);
+			bgmPlayer.stop();
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);
@@ -185,7 +273,7 @@ const   movePiece = (direction: string) => {
 	}
 
 	const   repeat = async () => {
-
+		sfxPlayer.play("move");
 		postToApi(`http://${address}/api/tetris/movePiece`, { argument: arg, gameId: tetrisGameInfo.getGameId() });
 		if (tetrisGameInfo.getKeyFirstMove(direction)) {
 			tetrisGameInfo.setKeyFirstMove(direction, false);
@@ -246,12 +334,14 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "clockwise", gameId: tetrisGameInfo.getGameId() });
+				effectPlayer("ROTATE");
 				return ;
 			case userKeys.getCounterclockwise():
 			case userKeys.getCounterclockwise().toLowerCase():
 			case userKeys.getCounterclockwise().toUpperCase():
 				if (event.repeat)
 					return ;
+				effectPlayer("ROTATE");
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "counter-clockwise", gameId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getRotate180():
@@ -259,6 +349,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getRotate180().toUpperCase():
 				if (event.repeat)
 					return ;
+				effectPlayer("ROTATE");
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "180", gameId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getHardDrop():
@@ -266,6 +357,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getHardDrop().toUpperCase():
 				if (event.repeat)
 					return ;
+				effectPlayer("HARD_DROP");
 				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Hard", gameId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getSoftDrop():
@@ -282,6 +374,7 @@ const gameControllers = async (finish: boolean = false) => {
 				// console.log("holding Piece.");
 				if (event.repeat)
 					return ;
+				effectPlayer("HOLD");
 				postToApi(`http://${address}/api/tetris/holdPiece`, { argument: "hold", gameId: tetrisGameInfo.getGameId() });
 				loadTetrisPage("board");
 				return ;
@@ -293,6 +386,7 @@ const gameControllers = async (finish: boolean = false) => {
 				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
 				document.removeEventListener('keydown', keydownHandler);
 				document.removeEventListener('keyup', keyupHandler);
+				bgmPlayer.stop();
 				page.show("/tetris")
 				return;
 			case userKeys.getRetry():
