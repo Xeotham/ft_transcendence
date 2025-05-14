@@ -50,7 +50,7 @@ export const    searchGame = () => {
 
 export const    arcadeGame = () => {
 	// console.log("arcadeGame");
-	socket = new WebSocket(`ws://${address}/api/tetris/arcade`);
+	socket = new WebSocket(`ws://${address}/api/tetris/arcade?username=${username}`);
 
 	socketInit(socket);
 	tetrisGameInfo.setSocket(socket);

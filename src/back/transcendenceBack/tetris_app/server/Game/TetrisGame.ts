@@ -17,6 +17,7 @@ const   idGen = idGenerator()
 
 export class TetrisGame {
 	private readonly player:			WebSocket;
+	private username:					string;
 	private readonly size:				IPos;
 	private matrix:						Matrix;
 	private currentPiece:				ATetrimino | null;
@@ -51,9 +52,10 @@ export class TetrisGame {
 
 	// multiplayer
 
-	private opponent:					TetrisGame | null;
+	private opponent:					TetrisGame | undefined;
 	private awaitingGarbage:			number[];
 	private garbageRespite:				boolean;
+
 	// statistics
 
 	private beginningTime:				number;
@@ -92,8 +94,9 @@ export class TetrisGame {
 
 	private initialState:				TetrisGame;
 
-	constructor(player: WebSocket) {
+	constructor(player: WebSocket, username: string) {
 		this.player = player;
+		this.username = username;
 		this.size = new IPos(tc.TETRIS_WIDTH, tc.TETRIS_HEIGHT);
 		this.matrix = new Matrix(this.size.add(0, tc.BUFFER_HEIGHT));
 		this.currentPiece = null;
@@ -129,7 +132,7 @@ export class TetrisGame {
 
 		// multiplayer
 
-		this.opponent = null;
+		this.opponent = undefined;
 		this.awaitingGarbage = [];
 		this.garbageRespite = false;
 
@@ -215,6 +218,7 @@ export class TetrisGame {
 	public isOver(): boolean { return this.over; }
 	public getPlayer(): WebSocket { return this.player; }
 	public getCanRetry(): boolean { return this.canRetry; }
+	public getOpponent(): TetrisGame | undefined { return this.opponent; }
 
 	public setOver(over: boolean): void { this.over = over; }
 	public setOpponent(opponent: TetrisGame): void { this.opponent = opponent; }
@@ -418,7 +422,7 @@ export class TetrisGame {
 				else if (this.B2B > 0)
 					this.player.send(JSON.stringify({type: "EFFECT", argument: "CLEAR", value: "btb" }));
 				else
-					this.player.send(JSON.stringify({type: "EFFECT", argument: "CLEAR", value: this.lastClear}));
+ 					this.player.send(JSON.stringify({type: "EFFECT", argument: "CLEAR", value: "line"}));
 
 				if (this.combo >= 1) {
 					this.score += tc.STANDARD_COMBO_SCORING(this.combo, this.level);
