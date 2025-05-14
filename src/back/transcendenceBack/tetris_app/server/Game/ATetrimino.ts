@@ -35,7 +35,7 @@ export abstract class ATetrimino {
 
 	protected static convertBlock(jsonBlock: any): tc.block {
 		let blocks: IPos[] = [];
-		for (let i = 0; i < jsonBlock.nbBlocks; ++i)
+		for (let i = 0; i < jsonBlock.blocks.length; ++i)
 			blocks.push(new IPos(jsonBlock.blocks[i].x, jsonBlock.blocks[i].y));
 
 		let rotationPoints: IPos[] = [];
@@ -43,7 +43,6 @@ export abstract class ATetrimino {
 			rotationPoints.push(new IPos(jsonBlock.rotationPoints[i].x, jsonBlock.rotationPoints[i].y));
 
 		return ({
-			nbBlocks: jsonBlock.nbBlocks,
 			blocks: blocks,
 			nbRotationPoints: jsonBlock.nbRotationPoints,
 			rotationPoints: rotationPoints
@@ -81,10 +80,13 @@ export abstract class ATetrimino {
 			const endPos: IPos = end.rotationPoints[i];
 			const dist = startPos.distanceToIPos(endPos);
 
-			if (!matrix.isMinoAt(this.coordinates.add(end.blocks[0].add(dist))) &&
-				!matrix.isMinoAt(this.coordinates.add(end.blocks[1].add(dist))) &&
-				!matrix.isMinoAt(this.coordinates.add(end.blocks[2].add(dist))) &&
-				!matrix.isMinoAt(this.coordinates.add(end.blocks[3].add(dist)))) {
+			const collides = () => {
+				for (let j = 0; j < struct.nbBlocks; ++j)
+					if (matrix.isMinoAt(this.coordinates.add(end.blocks[j]).add(dist)))
+						return true;
+				return false;
+			}
+			if (!collides()) {
 				rotationPointUsed = i;
 				this.coordinates = this.coordinates.add(dist);
 				this.rotation = direction === "clockwise" ? mod(this.rotation + 1, 4) :
@@ -118,8 +120,10 @@ export abstract class ATetrimino {
 
 	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
 		const struct = this.getStruct();
+		// console.log("Struct: ", struct);
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
-		for (let i = 0; i < 4; ++i) {
+		// console.log("Block: ", block);
+		for (let i = 0; i < struct.nbBlocks; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]).add(offset);
 			if (matrix.isMinoAt(pos))
 				return true;
@@ -130,12 +134,10 @@ export abstract class ATetrimino {
 	public place(matrix: Matrix, isSolid: boolean = false, isShadow: boolean = false): void {
 		const struct = this.getStruct();
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
-		for (let i = 0; i < block.nbBlocks; ++i) {
+		for (let i = 0; i < struct.nbBlocks; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
-			if (pos.getY() < 0) {
-				// TODO : Top Out
+			if (pos.getY() < 0)
 				return ;
-			}
 			if (!isShadow || (isShadow && matrix.at(pos).isEmpty())) {
 				matrix.setAt(pos, new Mino(this.texture, isSolid));
 				if (isShadow)
@@ -147,7 +149,7 @@ export abstract class ATetrimino {
 	public remove(matrix: Matrix, isShadow: boolean = false): void {
 		const struct = this.getStruct();
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
-		for (let i = 0; i < block.nbBlocks; ++i) {
+		for (let i = 0; i < struct.nbBlocks; ++i) {
 			const pos: IPos = this.coordinates.add(block?.blocks[i]);
 			if (!isShadow || (isShadow && matrix.at(pos).getIsShadow()))
 				matrix.setAt(pos, new Mino("EMPTY", false));
