@@ -191,22 +191,14 @@ const effectPlayer = (type: string, argument: string | null = null) => {
 		/* ==== COMBO ==== */
 		case "COMBO":
 			return comboEffect(argument!);
-		/* ==== GARBAGE ==== */
 		case "GARBAGE":
 			return garbageEffect(argument!);
-		/* ==== USER_EFFECT ==== */
 		case "USER_EFFECT":
 			return userEffect(argument!);
-		/* ==== LEVEL ==== */
 		case "LEVEL":
 			return levelEffect(argument!);
-		/* ==== LOCK ==== */
 		case "LOCK":
 			return lockEffect(argument!);
-		/* ==== SPIN ==== */
-		case "SPIN":
-			return sfxPlayer.play("spin");
-		/* ==== BOARD ==== */
 		case "BOARD":
 			return boardEffect(argument!);
 	}
@@ -214,7 +206,6 @@ const effectPlayer = (type: string, argument: string | null = null) => {
 }
 
 const   messageHandler = (event: MessageEvent)=> {
-	// console.log("Receiving: " + event.data)
 	let res: tetrisRes = JSON.parse(event.data);
 
 	if (!res)
@@ -282,6 +273,7 @@ const   movePiece = (direction: string) => {
 	}
 
 	const   repeat = async () => {
+		sfxPlayer.play("move");
 		postToApi(`http://${address}/api/tetris/movePiece`, { argument: arg, gameId: tetrisGameInfo.getGameId() });
 		if (tetrisGameInfo.getKeyFirstMove(direction)) {
 			tetrisGameInfo.setKeyFirstMove(direction, false);
@@ -342,12 +334,14 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "clockwise", gameId: tetrisGameInfo.getGameId() });
+				effectPlayer("ROTATE");
 				return ;
 			case userKeys.getCounterclockwise():
 			case userKeys.getCounterclockwise().toLowerCase():
 			case userKeys.getCounterclockwise().toUpperCase():
 				if (event.repeat)
 					return ;
+				effectPlayer("ROTATE");
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "counter-clockwise", gameId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getRotate180():
@@ -355,6 +349,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getRotate180().toUpperCase():
 				if (event.repeat)
 					return ;
+				effectPlayer("ROTATE");
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "180", gameId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getHardDrop():
@@ -362,6 +357,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getHardDrop().toUpperCase():
 				if (event.repeat)
 					return ;
+				effectPlayer("HARD_DROP");
 				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Hard", gameId: tetrisGameInfo.getGameId() });
 				return ;
 			case userKeys.getSoftDrop():
@@ -378,6 +374,7 @@ const gameControllers = async (finish: boolean = false) => {
 				// console.log("holding Piece.");
 				if (event.repeat)
 					return ;
+				effectPlayer("HOLD");
 				postToApi(`http://${address}/api/tetris/holdPiece`, { argument: "hold", gameId: tetrisGameInfo.getGameId() });
 				loadTetrisPage("board");
 				return ;
