@@ -418,7 +418,7 @@ export class TetrisGame {
 				else if (this.B2B > 0)
 					this.player.send(JSON.stringify({type: "EFFECT", argument: "CLEAR", value: "btb" }));
 				else
-					this.player.send(JSON.stringify({type: "EFFECT", argument: "CLEAR", value: this.lastClear}));
+					this.player.send(JSON.stringify({type: "EFFECT", argument: "CLEAR", value: "line"}));
 
 				if (this.combo >= 1) {
 					this.score += tc.STANDARD_COMBO_SCORING(this.combo, this.level);

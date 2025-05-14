@@ -126,7 +126,6 @@ export class    TimeoutKey {
 
 class    sfxHandler {
 	private readonly sfx: {[key: string]: HTMLAudioElement};
-	private comboSfx: boolean;
 	constructor() {
 		this.sfx = {
 			/* ==== BTB ==== */
@@ -200,7 +199,6 @@ class    sfxHandler {
 			"sidehit": new Audio("./src/sfx/tetris/BejeweledSR/sidehit.ogg"),
 			"topout": new Audio("./src/sfx/tetris/BejeweledSR/topout.ogg"),
 		}
-		this.comboSfx = false;
 	}
 
 	async play(name: string) {
