@@ -17,9 +17,9 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "ArrowUp";
-		this.hard_drop              = "w";
-		this.soft_drop              = "s";
+		this.rotate_180             = "w";
+		this.hard_drop              = "ArrowUp";
+		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 		this.retry                  = "r";
@@ -80,14 +80,13 @@ export interface        tetrisGameInfo {
 	gameId:             number;
 	canSwap:            boolean;
 	time:               number;
-	awaitingGarbage:	number;
 	linesCleared:       number,
 	lineClearGoal:      number,
 	piecesPlaced:       number,
 	piecesPerSecond:    number,
 }
 
-export class   TimeoutKey {
+export class    TimeoutKey {
 	start:      number;
 	timer:      number;
 	delay:      number;
@@ -124,6 +123,137 @@ export class   TimeoutKey {
 		this.callback = () => {};
 	}
 }
+
+class    sfxHandler {
+	private readonly sfx: {[key: string]: HTMLAudioElement};
+	private comboSfx: boolean;
+	constructor() {
+		this.sfx = {
+			/* ==== BTB ==== */
+			"btb_1": new Audio("./src/sfx/tetris/BejeweledSR/btb_1.ogg"),
+			"btb_2": new Audio("./src/sfx/tetris/BejeweledSR/btb_2.ogg"),
+			"btb_3": new Audio("./src/sfx/tetris/BejeweledSR/btb_3.ogg"),
+			"btb_break": new Audio("./src/sfx/tetris/BejeweledSR/btb_break.ogg"),
+
+			/* ==== CLEAR ==== */
+			"allclear": new Audio("./src/sfx/tetris/BejeweledSR/allclear.ogg"),
+			"clearbtb": new Audio("./src/sfx/tetris/BejeweledSR/clearbtb.ogg"),
+			"clearline": new Audio("./src/sfx/tetris/BejeweledSR/clearline.ogg"),
+			"clearquad": new Audio("./src/sfx/tetris/BejeweledSR/clearquad.ogg"),
+			"clearspin": new Audio("./src/sfx/tetris/BejeweledSR/clearspin.ogg"),
+
+			/* ==== COMBO ==== */
+			"combo_1": new Audio("./src/sfx/tetris/BejeweledSR/combo_1.ogg"),
+			"combo_2": new Audio("./src/sfx/tetris/BejeweledSR/combo_2.ogg"),
+			"combo_3": new Audio("./src/sfx/tetris/BejeweledSR/combo_3.ogg"),
+			"combo_4": new Audio("./src/sfx/tetris/BejeweledSR/combo_4.ogg"),
+			"combo_5": new Audio("./src/sfx/tetris/BejeweledSR/combo_5.ogg"),
+			"combo_6": new Audio("./src/sfx/tetris/BejeweledSR/combo_6.ogg"),
+			"combo_7": new Audio("./src/sfx/tetris/BejeweledSR/combo_7.ogg"),
+			"combo_8": new Audio("./src/sfx/tetris/BejeweledSR/combo_8.ogg"),
+			"combo_9": new Audio("./src/sfx/tetris/BejeweledSR/combo_9.ogg"),
+			"combo_10": new Audio("./src/sfx/tetris/BejeweledSR/combo_10.ogg"),
+			"combo_11": new Audio("./src/sfx/tetris/BejeweledSR/combo_11.ogg"),
+			"combo_12": new Audio("./src/sfx/tetris/BejeweledSR/combo_12.ogg"),
+			"combo_13": new Audio("./src/sfx/tetris/BejeweledSR/combo_13.ogg"),
+			"combo_14": new Audio("./src/sfx/tetris/BejeweledSR/combo_14.ogg"),
+			"combo_15": new Audio("./src/sfx/tetris/BejeweledSR/combo_15.ogg"),
+			"combo_16": new Audio("./src/sfx/tetris/BejeweledSR/combo_16.ogg"),
+			"combobreak": new Audio("./src/sfx/tetris/BejeweledSR/combobreak.ogg"),
+
+			/* ==== GARBAGE ==== */
+			"counter": new Audio("./src/sfx/tetris/BejeweledSR/counter.ogg"),
+			"damage_alert": new Audio("./src/sfx/tetris/BejeweledSR/damage_alert.ogg"),
+			"damage_large": new Audio("./src/sfx/tetris/BejeweledSR/damage_large.ogg"),
+			"damage_medium": new Audio("./src/sfx/tetris/BejeweledSR/damage_medium.ogg"),
+			"damage_small": new Audio("./src/sfx/tetris/BejeweledSR/damage_small.ogg"),
+			"garbage_in_large": new Audio("./src/sfx/tetris/BejeweledSR/garbage_in_large.ogg"),
+			"garbage_in_medium": new Audio("./src/sfx/tetris/BejeweledSR/garbage_in_medium.ogg"),
+			"garbage_in_small": new Audio("./src/sfx/tetris/BejeweledSR/garbage_in_small.ogg"),
+			"garbage_out_large": new Audio("./src/sfx/tetris/BejeweledSR/garbage_out_large.ogg"),
+			"garbage_out_medium": new Audio("./src/sfx/tetris/BejeweledSR/garbage_out_medium.ogg"),
+			"garbage_out_small": new Audio("./src/sfx/tetris/BejeweledSR/garbage_out_small.ogg"),
+
+			/* ==== USER_EFFECT ==== */
+			"harddrop": new Audio("./src/sfx/tetris/BejeweledSR/harddrop.ogg"),
+			"softdrop": new Audio("./src/sfx/tetris/BejeweledSR/softdrop.ogg"),
+			"hold": new Audio("./src/sfx/tetris/BejeweledSR/hold.ogg"),
+			"move": new Audio("./src/sfx/tetris/BejeweledSR/move.ogg"),
+			"rotate": new Audio("./src/sfx/tetris/BejeweledSR/rotate.ogg"),
+
+			/* ==== LEVEL ==== */
+			"level1": new Audio("./src/sfx/tetris/BejeweledSR/level1.ogg"),
+			"level5": new Audio("./src/sfx/tetris/BejeweledSR/level5.ogg"),
+			"level10": new Audio("./src/sfx/tetris/BejeweledSR/level10.ogg"),
+			"level15": new Audio("./src/sfx/tetris/BejeweledSR/level15.ogg"),
+			"levelup": new Audio("./src/sfx/tetris/BejeweledSR/levelup.ogg"),
+
+			/* ==== LOCK ==== */
+			"spinend": new Audio("./src/sfx/tetris/BejeweledSR/spinend.ogg"),
+			"lock": new Audio("./src/sfx/tetris/BejeweledSR/lock.ogg"),
+
+			/* ==== SPIN ==== */
+			"spin": new Audio("./src/sfx/tetris/BejeweledSR/spin.ogg"),
+
+			/* ==== BOARD ==== */
+			"floor": new Audio("./src/sfx/tetris/BejeweledSR/floor.ogg"),
+			"sidehit": new Audio("./src/sfx/tetris/BejeweledSR/sidehit.ogg"),
+			"topout": new Audio("./src/sfx/tetris/BejeweledSR/topout.ogg"),
+		}
+		this.comboSfx = false;
+	}
+
+	async play(name: string) {
+		// this.actualSfx = name;
+		if (this.sfx[name]) {
+			const   sound = new Audio(this.sfx[name].src);
+			console.log("Play sound: ", name);
+			sound.play();
+		}
+	}
+}
+
+export const sfxPlayer = new sfxHandler();
+
+class   bgmHandler {
+	private readonly bgm: {[key: string]: HTMLAudioElement};
+	private actualBgm: string;
+	constructor() {
+		this.bgm = {
+			"bgm1": new Audio("./src/bgm/tetris/bgm1.mp3"),
+			"bgm2": new Audio("./src/bgm/tetris/bgm2.mp3"),
+			"bgm3": new Audio("./src/bgm/tetris/bgm3.mp3"),
+		}
+		this.actualBgm = "";
+	}
+
+	async choseBgm(name: string) {
+		if (this.bgm[name]) {
+			this.bgm[name].loop = true;
+			this.bgm[name].volume = 0.2;
+			this.actualBgm = name;
+		}
+		else {
+			console.error("BGM not found");
+		}
+	}
+
+	async play() {
+		if (this.bgm[this.actualBgm]) {
+			this.bgm[this.actualBgm].loop = true;
+			this.bgm[this.actualBgm].play();
+		}
+	}
+	async stop() {
+		if (this.bgm[this.actualBgm]) {
+			this.bgm[this.actualBgm].pause();
+			console.log("BGM paused: ", this.bgm[this.actualBgm].paused);
+			this.bgm[this.actualBgm].currentTime = 0;
+		}
+	}
+}
+
+export const bgmPlayer = new bgmHandler();
 
 export class    tetrisGame {
 	socket:			WebSocket | null;
@@ -211,6 +341,7 @@ export interface    tetrisReq {
 export interface    tetrisRes {
 	type:       string;
 	argument:   string;
+	value:     string;
 	game:	    tetrisGameInfo;
 }
 
@@ -253,77 +384,30 @@ export const    getMinoTexture = (texture: string): HTMLImageElement | null => {
 			return tetrisTextures["SHADOW"];
 		case "I_LOCKED":
 		case "I":
-			// console.log("I texture");
 			return tetrisTextures["I"];
 		case "J_LOCKED":
 		case "J":
-			// console.log("J texture");
 			return tetrisTextures["J"];
 		case "L_LOCKED":
 		case "L":
-			// console.log("L texture");
 			return tetrisTextures["L"];
 		case "O_LOCKED":
 		case "O":
-			// console.log("O texture");
 			return tetrisTextures["O"];
 		case "S_LOCKED":
 		case "S":
-			// console.log("S texture");
 			return tetrisTextures["S"];
 		case "T_LOCKED":
 		case "T":
-			// console.log("T texture");
 			return tetrisTextures["T"];
 		case "Z_LOCKED":
 		case "Z":
-			// console.log("Z texture");
 			return tetrisTextures["Z"];
 		case "GARBAGE":
-			// console.log("GARBAGE texture");
 			return tetrisTextures["GARBAGE"];
 			//TODO: Do garbage
 		default:
 			return null;
-	}
-}
-
-export const    getMinoColor = (texture: string): string => {
-	switch (texture) {
-		case "I_SHADOW":
-		case "J_SHADOW":
-		case "L_SHADOW":
-		case "O_SHADOW":
-		case "S_SHADOW":
-		case "T_SHADOW":
-		case "Z_SHADOW":
-			return "gray";
-		case "I_LOCKED":
-		case "I":
-			return "cyan";
-		case "J_LOCKED":
-		case "J":
-			return "blue";
-		case "L_LOCKED":
-		case "L":
-			return "orange";
-		case "O_LOCKED":
-		case "O":
-			return "yellow";
-		case "S_LOCKED":
-		case "S":
-			return "green";
-		case "T_LOCKED":
-		case "T":
-			return "purple";
-		case "Z_LOCKED":
-		case "Z":
-			return "red";
-		case "GARBAGE":
-		case "GARBAGE_LOCKED":
-			return "pink";
-		default:
-			return "black";
 	}
 }
 
