@@ -1,18 +1,12 @@
-
 import { FastifyRequest, FastifyReply } from "fastify";
 import { WebSocket } from "ws";
-import {deleteTetrisGame, getTetrisGame, tetrisReq} from "../utils";
+import {deleteTetrisGame, getTetrisGame, getTetrisRoom, tetrisReq} from "../utils";
 import { TetrisGame } from "../server/Game/TetrisGame";
 import { MultiplayerRoom } from "../server/MultiplayerRoom";
-import { userSockets } from "../../server/server";
-import {TournamentInfo} from "../../pong_app/utils";
-import {Tournaments} from "../../pong_app/api/tournament-controllers";
-import {delay} from "../server/Game/utils";
+import { delay } from "../server/Game/utils";
 
 
 // fastify.get('/joinMatchmaking', {websocket: true}, joinMatchmaking); TODO: Join a Random Room
-// fastify.get('/createPrivateRoom', {websocket: true}, createPrivateRoom); //TODO: Create a Private Room
-// fastify.get('/joinPrivRoom', {websocket: true}, joinPrivateRoom); //TODO: Join a Private Room
 
 export let   arcadeGamesLst: TetrisGame[] = [];
 export let   multiplayerRoomLst: MultiplayerRoom[] = [];
@@ -20,10 +14,9 @@ export let   multiplayerRoomLst: MultiplayerRoom[] = [];
 export const tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
-export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest) => {
+export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
 	try {
-		console.log("New Tetris Arcade connection");
-		const tetrisGame = new TetrisGame(socket, username);
+		const tetrisGame = new TetrisGame(socket, req.query.username);
 		arcadeGamesLst.push(tetrisGame);
 
 		tetrisGame.gameLoop();
@@ -39,11 +32,7 @@ export const    tetrisCreateRoom = async (socket: WebSocket, req: FastifyRequest
 		return;
 
 	console.log("Creating a new room");
-	// if (request.code)
-	// 	console.log("code: " + request.code);
-	const room = new MultiplayerRoom(socket, false, request.code);
-
-	userSockets[request.username] = socket;
+	const room = new MultiplayerRoom(socket, request.username, false, request.code);
 	multiplayerRoomLst.push(room);
 }
 
@@ -55,7 +44,6 @@ export const	getMultiplayerRooms = async (request: FastifyRequest, reply: Fastif
 			continue ;
 		rooms.push({roomCode: room.getCode()});
 	}
-	// console.log("Sending Rooms for room list: ", rooms);
 	return reply.send(rooms);
 }
 
@@ -64,23 +52,23 @@ export const    tetrisJoinRoom = async (socket: WebSocket, req: FastifyRequest<{
 	const request = req.query;
 	if (!request)
 		return ;
-	const room = multiplayerRoomLst.find((room) => room.getCode() === request.code);
+	const room = getTetrisRoom(request.code);
 	// console.log("Room found: " + JSON.stringify(room));
 	if (!room)
 		return tetrisCreateRoom(socket, req);
 
 	// console.log("Room found");
-	userSockets[request.username] = socket;
-	room.addPlayer(socket);
+	// userSockets[request.username] = socket;
+	room.addPlayer(socket, request.username);
 }
 
 export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
 	console.log("Tetris Room Command");
-	const request = req.body;
+	const request: tetrisReq = req.body;
 	if (!request)
 		return reply.status(400).send({message: "No body"});
 
-	const room = multiplayerRoomLst.find((room) => room.getCode() === request.roomCode);
+	const room = getTetrisRoom(request.roomCode);
 	if (!room)
 		return reply.status(400).send({message: "Room not found"});
 
@@ -99,21 +87,19 @@ export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, 
 	try {
 		const   request: tetrisReq = req.body;
 		console.log("Request: " + request + ", username: " + request?.username);
-
 		if (!request)
 			return reply.status(400).send({message: "No body"});
 		if (!request.username)
 			return reply.status(400).send({message: "No username"});
+
 		deleteTetrisGame(request.gameId);
-		const room = multiplayerRoomLst.find((room) => room.getCode() === request.roomCode);
+		const room = getTetrisRoom(request.roomCode);
 		if (room) {
 			console.log("Tetris QuitRoom with code : " + request?.roomCode);
-			room.removePlayer(userSockets[request.username]);
+			room.removePlayer(request.username);
 			if (room.isEmpty())
 				multiplayerRoomLst.splice(multiplayerRoomLst.indexOf(room), 1);
 		}
-		if (userSockets[request.username])
-			delete userSockets[request.username];
 		reply.status(200).send({message: "Quitting the room"});
 	}
 	catch (error) {

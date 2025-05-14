@@ -1,33 +1,29 @@
-import WebSocket from "ws";
+import { WebSocket } from "ws";
 import { TetrisGame } from "./Game/TetrisGame";
 import { multiplayerRoomLst } from "../api/controllers";
-import {codeNameExists} from "../utils";
+import { codeNameExists, isUpperCase } from "../utils";
+import { MultiplayerRoomPlayer } from "./MultiplayerRoomPlayer";
 
 
 export class MultiplayerRoom {
-	private sockets:			(WebSocket | undefined)[];
-	private owner:				WebSocket;
-	private games:				TetrisGame[];
+	private players:			MultiplayerRoomPlayer[];
 	private isInGame:			boolean;
 	private private:			boolean;
 	private code:				string;
 	private playersRemaining:	number;
 	private settings:			any; // Object containing the settings of the game : {}
 
-	constructor(socket: WebSocket, isPrivate: boolean = false, codeName: string | undefined = undefined) {
-		this.sockets = [];
-		this.owner = socket;
-		this.games = [];
+	constructor(socket: WebSocket, username: string, isPrivate: boolean = false, codeName: string | undefined = undefined) {
+		this.players = [];
 		this.isInGame = false;
 		this.private = isPrivate;
-		// console.log("Creating a new room with code: " + codeName);
-		if (codeName && !codeNameExists(codeName))
+		if (codeName && codeName.length === 4 && isUpperCase(codeName) && !codeNameExists(codeName))
 			this.code = codeName;
 		else
 			this.code = this.generateInviteCode();
 		console.log("The code of the new room is " + this.code);
 		this.playersRemaining = 0;
-		this.addPlayer(socket);
+		this.addPlayer(socket, username);
 		this.settings = {isLevelling: false, level: 4, canRetry: false};
 	}
 
@@ -39,43 +35,35 @@ export class MultiplayerRoom {
 	public setSettings(settings: any): void			{ this.settings = settings; }
 
 
-	public addPlayer(socket: WebSocket): void		{
-		if (this.sockets.length <= 0)
+	public addPlayer(socket: WebSocket, username: string): void		{
+		if (this.players.length <= 0) {
 			socket.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: "OWNER"}));
-		this.sockets.push(socket);
+			this.players.push(new MultiplayerRoomPlayer(socket, username, true));
+		}
+		else
+			this.players.push(new MultiplayerRoomPlayer(socket, username));
 		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
 	}
 
-	public removePlayer(socket: WebSocket): void	{
-		this.games[this.sockets.indexOf(socket)]?.forfeit();
-		if (this.isInGame)
-			return this.sockets[this.sockets.indexOf(socket)] = undefined;
-		else
-			this.sockets.splice(this.sockets.indexOf(socket), 1);
-		const nonOwner: WebSocket | undefined = this.sockets.find((socket => socket !== undefined));
-		if (socket === this.owner && nonOwner !== undefined) {
-			this.owner = nonOwner;
-			this.owner.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "OWNER" }));
+	public removePlayer(username: string): void	{
+		const player: MultiplayerRoomPlayer | undefined = this.players.find((player) => player.getUsername() === username);
+		if (!player)
+			return ;
+		player.getGame()?.forfeit();
+		this.players.splice(this.players.indexOf(player), 1);
+		const nonOwner: MultiplayerRoomPlayer | undefined = this.players.find((aPlayer => !aPlayer.isOwner()));
+		if (player.isOwner() && nonOwner !== undefined) {
+			nonOwner.setOwner(true);
+			nonOwner.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "OWNER" }))
 		}
-		if (nonOwner === undefined) // Nobody remaining in the room
-			this.removeLeavers();
 	}
 
 	public isEmpty(): boolean {
-		return this.sockets.length <= 0;
+		return this.players.length <= 0;
 	}
 
 	public getGameById(id: number): TetrisGame | undefined {
-		return this.games.find((game) => game.getGameId() === id);
-	}
-
-	private removeLeavers(){
-		for (let i = 0; i < this.sockets.length; ++i) {
-			if (this.sockets[i] === undefined) {
-				this.sockets.splice(i, 1);
-				--i;
-			}
-		}
+		return this.players.find((player) => player.getGame()?.getGameId() === id)?.getGame();
 	}
 
 	generateInviteCode(): string {
@@ -88,43 +76,50 @@ export class MultiplayerRoom {
 
 		if (codeNameExists(result))
 			return this.generateInviteCode();
-		// console.log(this.sockets + " length: " + this.sockets.length);
-		for (let i = 0; i < this.sockets.length; ++i) {
-			// console.log("Sending code to socket " + i);
-			this.sockets[i]?.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: result}));
+		for (const player of this.players) {
+			// console.log("Sending code to player " + player.getUsername());
+			player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: result }));
 		}
 		return result;
 	}
 
 	public startGames(): void {
-		this.removeLeavers();
-		this.playersRemaining = this.sockets.length;
+		if (this.isInGame)
+			return ;
+		this.playersRemaining = this.players.length;
+		this.isInGame = true;
 
-		const endOfGame = (pos: number) => {
-			// console.log("Player at pos " + pos + " has finished the game. The player is at place " + this.playersRemaining);
-			this.sockets[pos]?.send(JSON.stringify({ type: "MULTIPLAYER_FINISH", argument: this.playersRemaining }));
+		for (const player of this.players)
+			player.setupGame(this.settings);
+		this.assignOpponents();
+		for (const player of this.players)
+			player.getGame()?.gameLoop().then(() => endOfGame(player))
+
+		const endOfGame = (player: MultiplayerRoomPlayer) => {
+			player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_FINISH", argument: this.playersRemaining }));
 			--this.playersRemaining;
-			// console.log("Players remaining: " + this.playersRemaining);
 			if (this.playersRemaining === 1)
-				this.games.find((game) => !game.isOver())?.setOver(true);
+				this.players.find((player) => !player.getGame()?.isOver())?.getGame()?.setOver(true);
 			if (this.playersRemaining >= 1)
 				return ;
-			for (let i = 0; i < this.sockets.length; ++i)
-				this.sockets[i]?.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
-			// HEERE
-			createGameTetris(this.games);
-			this.games = [];
+			this.players.forEach((player) => {
+				player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
+				player.setGame(undefined);
+			});
 			this.isInGame = false;
-			this.removeLeavers();
 		};
+	}
 
-		for (let i = 0; i < this.sockets.length; ++i) {
-			const game = new TetrisGame(this.sockets[i]!);
-			game.setSettings(this.settings);
-			this.games.push(game);
-			this.games[i].gameLoop().then(() => endOfGame(i));
+	private assignOpponents(): void {
+		if (this.players.length <= 1)
+			return ;
+
+		let opponent: MultiplayerRoomPlayer;
+		for (const player of this.players) {
+			do {
+				opponent = this.players[Math.floor(Math.random() * this.players.length)];
+			} while (opponent === player || opponent === undefined);
+			player.getGame()?.setOpponent(opponent.getGame()!);
 		}
-		this.games[0].setOpponent(this.games[1]);
-		this.games[1].setOpponent(this.games[0]); // TODO : Make more flexible for more than 2 players
 	}
 }

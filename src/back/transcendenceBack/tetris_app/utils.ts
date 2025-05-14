@@ -20,6 +20,16 @@ export const deleteTetrisGame = (gameId: number) => {
 		arcadeGamesLst.splice(arcadeGamesLst.indexOf(arcadeGamesLst.find((game) => game.getGameId() === gameId)!), 1);
 }
 
+export const getTetrisRoom = (roomCode: string | undefined) => {
+	if (!roomCode)
+		return undefined;
+	return multiplayerRoomLst.find((room) => room.getCode() === roomCode);
+}
+
 export const codeNameExists = (code: string) => {
 	return multiplayerRoomLst.find((room) => { return room.getCode() === code; });
+}
+
+export const isUpperCase = (str: string): boolean => {
+	return /^[A-Z]+$/.test(str);
 }
