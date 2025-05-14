@@ -192,14 +192,22 @@ const effectPlayer = (type: string, argument: string | null = null) => {
 		/* ==== COMBO ==== */
 		case "COMBO":
 			return comboEffect(argument!);
+		/* ==== GARBAGE ==== */
 		case "GARBAGE":
 			return garbageEffect(argument!);
+		/* ==== USER_EFFECT ==== */
 		case "USER_EFFECT":
 			return userEffect(argument!);
+		/* ==== LEVEL ==== */
 		case "LEVEL":
 			return levelEffect(argument!);
+		/* ==== LOCK ==== */
 		case "LOCK":
 			return lockEffect(argument!);
+		/* ==== SPIN ==== */
+		case "SPIN":
+			return sfxPlayer.play("spin");
+		/* ==== BOARD ==== */
 		case "BOARD":
 			return boardEffect(argument!);
 	}
@@ -218,8 +226,8 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
-			bgmPlayer.choseBgm("bgm1");
-			// bgmPlayer.play();
+			bgmPlayer.choseBgm("bgm3");
+			bgmPlayer.play();
 			loadTetrisHtml("board");
 			loadTetrisPage("board");
 			gameControllers();
