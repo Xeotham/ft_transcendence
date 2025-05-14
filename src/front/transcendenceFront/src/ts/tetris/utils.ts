@@ -80,7 +80,6 @@ export interface        tetrisGameInfo {
 	gameId:             number;
 	canSwap:            boolean;
 	time:               number;
-	awaitingGarbage:	number;
 	linesCleared:       number,
 	lineClearGoal:      number,
 	piecesPlaced:       number,
