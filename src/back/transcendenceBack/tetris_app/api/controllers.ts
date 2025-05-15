@@ -171,15 +171,21 @@ export const    rotatePiece = async (req: FastifyRequest<{Body: tetrisReq}>, rep
 	if (!game)
 		return reply.status(400).send({message: "Game not found"});
 
-	switch (request.argument) {
-		case "clockwise":
-		case "counter-clockwise":
-		case "180":
-			// console.log("Rotating piece " + request.argument);
-			reply.status(200).send({message: "Rotating piece " + request.argument});
-			return game?.rotate(request.argument);
-		default:
-			return reply.status(400).send({message: "Invalid argument"});
+	try {
+		switch (request.argument) {
+			case "clockwise":
+			case "counter-clockwise":
+			case "180":
+				// console.log("Rotating piece " + request.argument);
+				reply.status(200).send({message: "Rotating piece " + request.argument});
+				return game?.rotate(request.argument);
+			default:
+				return reply.status(400).send({message: "Invalid argument"});
+		}
+	}
+	catch (error) {
+		console.error("Error in rotatePiece:", error);
+		return reply.status(500).send({message: "Error in rotatePiece"});
 	}
 }
 
