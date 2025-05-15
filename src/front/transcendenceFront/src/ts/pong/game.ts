@@ -315,10 +315,11 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  pongGameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
+			console.log("Starting game");
+			loadPongHtml("board");
 			loadPongPage("board");
 			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
-			document.getElementById("quit")?.addEventListener("click", () => quit());
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
 			return ;
@@ -358,7 +359,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		default:
 			pongGameInfo?.getRoom()?.setGame(res.data);
-			loadPongPage("draw-game", { game: res.data });
+			loadPongPage("board", { game: res.data });
 	}
 }
 
@@ -370,6 +371,11 @@ export const keyHandler = (event: KeyboardEvent) => {
 
 	if (!game || roomNumber < 0 || !player || event.repeat)
 		return ;
+
+	if (event.code === "Escape") {
+		quit();
+	}
+
 
 	async function sendPaddleMovement(key: string, p: string) {
 		if (!game)
