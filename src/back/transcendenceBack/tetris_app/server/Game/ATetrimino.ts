@@ -282,6 +282,7 @@ export abstract class ATetrimino {
 			rotationPoints180.push(new IPos(jsonBlock.rotationPoints180[i].x, jsonBlock.rotationPoints180[i].y));
 
 		return ({
+			nbBlocks: jsonBlock.nbBlocks,
 			blocks: blocks,
 			rotationPoints: rotationPoints,
 			rotationPoints180: rotationPoints180
@@ -341,7 +342,6 @@ export abstract class ATetrimino {
 	}
 
 	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
-		console.log("Rotation point used: ", rotationPointUsed);
 		if (rotationPointUsed === -1)
 			return "-1";
 		if (this.canFall(matrix))
