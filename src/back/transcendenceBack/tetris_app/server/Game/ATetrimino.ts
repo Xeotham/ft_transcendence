@@ -99,7 +99,6 @@ export abstract class ATetrimino {
 	}
 
 	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
-		console.log("Rotation point used: ", rotationPointUsed);
 		if (rotationPointUsed === -1)
 			return "-1";
 		if (this.canFall(matrix))
