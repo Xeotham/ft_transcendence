@@ -65,8 +65,6 @@ export const    arcadeGame = () => {
 }
 
 export const createRoom = () => {
-	console.log("createRoom");
-
 	socket = new WebSocket(`ws://${address}/api/tetris/createRoom?username=${username}`);
 	socketInit(socket);
 	tetrisGameInfo.setRoomOwner(true);
@@ -92,7 +90,6 @@ export const getMultiplayerRooms = () => {
 }
 
 export const joinRoom = (roomCode: string) => {
-	console.log("Joining room: " + roomCode);
 	socket = new WebSocket(`ws://${address}/api/tetris/joinRoom?code=${roomCode}&username=${username}`);
 	socketInit(socket);
 }
@@ -223,7 +220,7 @@ const   messageHandler = (event: MessageEvent)=> {
 		case 'SOLO':
 			console.log("SOLO");
 			tetrisGameInfo.setGame(res.game);
-			console.log("Game: ", res.game);
+			// console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
 			bgmPlayer.choseBgm("bgm3");
 			bgmPlayer.play();
@@ -239,10 +236,10 @@ const   messageHandler = (event: MessageEvent)=> {
 			else {
 				console.log("MULTIPLAYER_JOIN");
 				tetrisGameInfo.setRoomCode(res.argument);
-				page.show(`/tetris/room:${res.argument}`);
+				page.show("/tetris");
+				console.log("Joining room: " + res.argument);
 			}
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInfo.getRoomCode()}]});
-			// loadTetrisPage("multiplayer-room");
 			return ;
 		case 'INFO':
 			console.log("INFO: " + res.argument);
