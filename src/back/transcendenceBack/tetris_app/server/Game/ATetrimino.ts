@@ -43,6 +43,7 @@ export abstract class ATetrimino {
 			rotationPoints.push(new IPos(jsonBlock.rotationPoints[i].x, jsonBlock.rotationPoints[i].y));
 
 		return ({
+			nbBlocks: jsonBlock.nbBlocks,
 			blocks: blocks,
 			nbRotationPoints: jsonBlock.nbRotationPoints,
 			rotationPoints: rotationPoints
@@ -99,14 +100,14 @@ export abstract class ATetrimino {
 	}
 
 	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
-		console.log("Rotation point used: ", rotationPointUsed);
 		if (rotationPointUsed === -1)
 			return "-1";
 		if (this.canFall(matrix))
 			return "";
 		let checks: number[][] = this.getSpinCheck();
-		for (let i = 0; i < this.rotation; ++i)
-			checks = checks[0].map((val, index) => checks.map(row => row[index]).reverse())
+		if (checks.length > 1)
+			for (let i = 0; i < this.rotation; ++i)
+				checks = checks[0].map((val, index) => checks.map(row => row[index]).reverse())
 
 		let major: number = 0;
 		let minor: number = 0;
