@@ -1,4 +1,4 @@
-import {Game, loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo} from "./utils.ts";
+import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo} from "./utils.ts";
 import {content} from "../main.ts";
 import {pongGameInfo} from "./pong.ts";
 
@@ -26,8 +26,6 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return tourRoomListHtml(arg?.roomLst!);
 		case "list-tournaments":
 			return tournamentListHtml(arg?.tourLst!);
-		case "draw-game":
-			return drawGame(arg?.game!);
 		case "tournament-end":
 			return tournamentEndPage(arg?.winner!);
 		case "priv-room-create":
@@ -232,10 +230,8 @@ const   drawBoard = () => {
 		return
 
 	content.innerHTML = `
-                <button id="quit">Quit</button>
-                <h1>Pong Game</h1>
-                <p id="score" >Score: 0 | 0</p>
-				<canvas id="gameCanvas" width="800" height="400"></canvas>
+				<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}></canvas>
+<!--                <p id="score" >Score: 0 | 0</p>-->
 			`;
 }
 
@@ -250,24 +246,4 @@ const   confirmPage = () => {
     <button id="confirm-game">Confirm Game</button>
     <p id="timer">Time remaining: 10s</p>
 	`;
-	console.log("LAAAAAAA");
-}
-
-function drawGame(game: Game) {
-	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
-	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
-
-	if (!c || !game)
-		return;
-	c.clearRect(0, 0, canvas.width, canvas.height);
-
-	// Draw ball
-	c.fillStyle = "white";
-	c.beginPath();
-	c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
-	c.fill();
-
-	// Draw paddles
-	c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
-	c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
 }

@@ -7,6 +7,7 @@ import  { pongRouter } from "./pongRouter.ts";
 import  { tetrisRouter } from "./tetrisRouter.ts";
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
 import {loginUser, signUpUser} from "../userManagement/userManagement.ts";
+import {loadPongTextures} from "../pong/pong.ts";
 
 page('/', homePage);
 
@@ -32,7 +33,7 @@ page('*', () => {
 });
 
 
-await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
-
+await loadTetrisTextures().then(() => {console.log("Tetris Textures Loaded");}).catch( (error) => (console.error(error)));
+await loadPongTextures  ().then(() => {console.log("Pong Textures Loaded");}).catch( (error) => (console.error(error)));
 // Start the router
 page();

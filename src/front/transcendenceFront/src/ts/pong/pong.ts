@@ -1,4 +1,13 @@
-import {Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInformation} from "./utils.ts";
+import {
+	Game,
+	RoomInfo,
+	TournamentInfo,
+	loadPongHtmlType,
+	loadHtmlArg,
+	gameInformation,
+	boardWidth,
+	boardHeight
+} from "./utils.ts";
 import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
 import  { loadPongHtml } from "./htmlPage.ts";
@@ -18,8 +27,6 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return matchFoundPage();
 		case "tournament-found":
 			return tournamentFoundPage();
-		case "board":
-			return drawBoard();
 		case "confirm":
 			return confirmPage();
 		case "tournament-name":
@@ -34,7 +41,7 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return tourRoomListPage(arg?.roomLst!);
 		case "list-tournaments":
 			return tournamentListPage(arg?.tourLst!);
-		case "draw-game":
+		case "board":
 			return drawGame(arg?.game!);
 		case "tournament-end":
 			return tournamentEndPage(arg?.winner!);
@@ -127,30 +134,86 @@ const   tournamentFoundPage = () => {
 
 // TODO: Add spec tournament board
 
-const   drawBoard = () => {
-	loadPongHtml("board");
-	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
-}
-
 const   confirmPage = () => {
 	loadPongHtml("confirm");
 }
 
-function drawGame(game: Game) {
-	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
-	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 
-	if (!c || !game)
+
+
+export const pongTextures: { [key: string]: HTMLImageElement } = {};
+
+export const loadPongTextures = () => {
+
+	const   texturePaths = {
+		"BACKGROUND": './src/textures/pong/background.jpg',
+		"BOARD": './src/textures/pong/pongBoard.png',
+		"PADDLE": './src/textures/pong/pongPaddle.png',
+	}
+
+	return Promise.all(
+		Object.entries(texturePaths).map(([key, path]) => {
+			return new Promise<void>((resolve, reject) => {
+				const img = new Image();
+				// console.log(`Loading texture: ${key} from ${path}`);
+				img.src = path;
+				img.onload = () => {
+					pongTextures[key] = img;
+					resolve();
+				};
+				img.onerror = (err) => {
+					console.error(`Failed to load texture: ${key} from ${path}`, err);
+					reject(err)
+				};
+				// console.log(tetrisTextures[key]);
+			});
+		})
+	);
+};
+
+
+const   drawBackground = (ctx: CanvasRenderingContext2D, width: number, height: number ) => {
+	ctx.clearRect(0, 0, width, height);
+	ctx.drawImage(pongTextures["BACKGROUND"], 0, 0, width, height);
+}
+
+const   drawBoard = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
+	// console.log(coord);
+	ctx.drawImage(pongTextures["BOARD"], coord.x, coord.y - 3, boardWidth, boardHeight + 6);
+}
+
+const   drawPaddle = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
+	ctx.drawImage(pongTextures["PADDLE"], coord.x, coord.y, pongTextures["PADDLE"].width, pongTextures["PADDLE"].height);
+}
+
+const drawGame =  (game: Game) => {
+	const   canvas = document.getElementById("pongCanvas")  as HTMLCanvasElement;
+	const   ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
+
+	const   boardCoord = { x: (canvas.width / 2) - (boardWidth / 2), y: (canvas.height / 2) - (boardHeight / 2) };
+	let     paddle1Coord;
+	let     paddle2Coord;
+
+	if (game) {
+		paddle1Coord = { x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y };
+		paddle2Coord = { x: game.paddle2.x + boardCoord.x, y: game.paddle2.y + boardCoord.y };
+	}
+
+	if (!ctx || !game)
 		return;
-	c.clearRect(0, 0, canvas.width, canvas.height);
 
+	drawBackground(ctx, canvas.width, canvas.height);
+	// Draw board
+	drawBoard(ctx, boardCoord)
+	// c.fillStyle = "black";
+	// c.fillRect(0, 0, canvas.width, canvas.height);
 	// Draw ball
-	c.fillStyle = "white";
-	c.beginPath();
-	c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
-	c.fill();
+	ctx.fillStyle = "white";
+	ctx.beginPath();
+	ctx.arc(game.ball.x + boardCoord.x, game.ball.y + boardCoord.y, game.ball.size, 0, Math.PI * 2);
+	ctx.fill();
 
 	// Draw paddles
-	c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
-	c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
+	drawPaddle(ctx, paddle1Coord);
+	drawPaddle(ctx, paddle2Coord);
 }
