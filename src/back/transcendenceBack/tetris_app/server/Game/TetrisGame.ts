@@ -610,7 +610,7 @@ export class TetrisGame {
 			this.msSinceLockPhase = 0;
 		}
 		let rotation: string = this.currentPiece.rotate(direction, this.matrix);
-		console.log("rotation: " + rotation);
+		// console.log("rotation: " + rotation);
 		if (rotation !== "-1") {
 			this.spinType = rotation;
 			if (this.spinType !== "") {
