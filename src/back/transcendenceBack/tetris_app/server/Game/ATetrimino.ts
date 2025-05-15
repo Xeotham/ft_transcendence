@@ -35,7 +35,7 @@ export abstract class ATetrimino {
 
 	protected static convertBlock(jsonBlock: any): tc.block {
 		let blocks: IPos[] = [];
-		for (let i = 0; i < jsonBlock.blocks.length; ++i)
+		for (let i = 0; i < jsonBlock.nbBlocks; ++i)
 			blocks.push(new IPos(jsonBlock.blocks[i].x, jsonBlock.blocks[i].y));
 
 		let rotationPoints: IPos[] = [];
@@ -43,6 +43,7 @@ export abstract class ATetrimino {
 			rotationPoints.push(new IPos(jsonBlock.rotationPoints[i].x, jsonBlock.rotationPoints[i].y));
 
 		return ({
+			nbBlocks: jsonBlock.nbBlocks,
 			blocks: blocks,
 			nbRotationPoints: jsonBlock.nbRotationPoints,
 			rotationPoints: rotationPoints
