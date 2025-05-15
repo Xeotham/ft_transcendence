@@ -67,13 +67,13 @@ export const    getFromApi = async (url: string) => {
 	return response.json();
 }
 
-export const    resetGamesSocket = () => {
-	if (tetrisGameInfo.getSocket()) {
+export const    resetGamesSocket = (type: string) => {
+	if (tetrisGameInfo.getSocket() && type !== "tetris") {
 		tetrisGameInfo.getSocket()?.close();
 		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
 	}
-	if (pongGameInfo.getRoom()?.getSocket())
+	if (pongGameInfo.getRoom()?.getSocket() && type !== "pong")
 		pongGameInfo.getRoom()?.getSocket()?.close();
-	if (pongGameInfo.getTournament()?.getSocket())
+	if (pongGameInfo.getTournament()?.getSocket() && type !== "pong")
 		pongGameInfo.getTournament()?.getSocket()?.close();
 }

@@ -32,5 +32,5 @@ export const	homePage = () => {
 		</nav>
 	`;
 
-	resetGamesSocket();
+	resetGamesSocket("home");
 }

@@ -99,6 +99,8 @@ export abstract class ATetrimino {
 	}
 
 	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
+		if (rotationPointUsed === -1)
+			return "-1";
 		if (this.canFall(matrix))
 			return "";
 		let checks: number[][] = this.getSpinCheck();
