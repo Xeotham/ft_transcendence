@@ -52,7 +52,6 @@ export const    tetrisJoinRoom = async (socket: WebSocket, req: FastifyRequest<{
 	if (!request)
 		return ;
 	const room = getTetrisRoom(request.code);
-	// console.log("Room found: " + JSON.stringify(room));
 	if (!room)
 		return tetrisCreateRoom(socket, req);
 
