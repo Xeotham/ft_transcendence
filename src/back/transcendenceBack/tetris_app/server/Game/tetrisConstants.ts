@@ -120,9 +120,12 @@ export const 	GARBAGE_CALCULUS = (clear: string, combo: number, B2B: number, tab
 		return 0;
 	if (clear === "Perfect Clear")
 		return 10;
-	// remove the "Z-" / "L-" / "J-" / "S-" / "I-", not "T-"
-	if (clear.includes("Mini") && !clear.includes("T-"))
+	// remove the "Z-" / "L-" / "J-" / "S-" / "I-" / "Mini T-", not "T-Spin"
+	if ((clear.includes("Mini") && !clear.includes("T-")) || clear.includes("Mini T-"))
 		clear = clear.substring(0, clear.indexOf("Spin") - 2) + clear.substring(clear.indexOf("Spin"));
+	// console.log("clear name in garbage calculus: " + clear);
+	if (!table[clear])
+		return 0;
 	return table[clear][clamp(combo, 0, table[clear].length - 1)] + B2B_EXTRA_GARBAGE(B2B);
 }
 
