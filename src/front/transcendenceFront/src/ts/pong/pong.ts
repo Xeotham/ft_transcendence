@@ -61,7 +61,7 @@ const   logoPage = () => {
 const   idlePage = () => {
 	loadPongHtml("idle");
 
-	resetGamesSocket()
+	resetGamesSocket("pong")
 	document.getElementById("Join-game")?.addEventListener("click", joinMatchmaking);
 	document.getElementById("Solo-game")?.addEventListener("click", joinSolo);
 	document.getElementById("Bot-game")?.addEventListener("click", joinBot);

@@ -27,7 +27,7 @@ import { address } from "../immanence.ts";
 export const userKeys: keys = new keys();
 export const tetrisGameInfo: tetrisGame = new tetrisGame();
 
-export const loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
+export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
 		case "empty":
 			return emptyPage();
@@ -62,9 +62,8 @@ const   logoPage = () => {
 
 const   idlePage = () => {
 	loadTetrisHtml("idle");
-	tetrisGameInfo.setRoomOwner(false);
 
-	resetGamesSocket();
+	resetGamesSocket("home");
 	document.getElementById("home")?.addEventListener("click", (e) => {
 		e.stopPropagation();
 		page.show("/");
@@ -287,6 +286,9 @@ const   drawGame = () => {
 	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
 	const game = tetrisGameInfo.getGame();
 
+	if (!canvas || !ctx || !game)
+		return ;
+
 	const   minoSize = 32;
 	const   boardCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (tetrisTextures["MATRIX"].width / 2)), y: ((canvas.height / 2) - (tetrisTextures["MATRIX"].height / 2)) };
 	const   matrixCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (5 * minoSize)), y: ((canvas.height / 2) - (11.5 * minoSize)) };
@@ -311,7 +313,7 @@ const   drawGame = () => {
 	// document.getElementById("awaitingGarbage")!.innerText = "Incoming Garbage: " + JSON.stringify(tetrisGameInfo.getGame()?.awaitingGarbage);
 	if (!ctx || !game)
 		return;
-	// drawBackground(ctx, 0, 0, canvas.width, canvas.height);
+	drawBackground(ctx, 0, 0, canvas.width, canvas.height);
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	if (tetrisGameInfo.getSettingsValue("showBags") && game.bags)
@@ -322,7 +324,7 @@ const   drawGame = () => {
 
 const multiplayerRoom = (arg: loadTetrisArgs) => {
 	loadTetrisHtml("multiplayer-room", arg);
-	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket(); loadTetrisPage("idle") });
+	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
 	if (!tetrisGameInfo.getRoomOwner())
 		return ;
 	document.getElementById("start")?.addEventListener("click", () => startRoom());
@@ -352,7 +354,7 @@ const multiplayerRoom = (arg: loadTetrisArgs) => {
 
 export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
 	loadTetrisHtml("display-multiplayer-room", { rooms: rooms });
-	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket(); loadTetrisPage("idle") });
+	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
 	document.getElementById("submit")?.addEventListener("click", () =>
 		joinRoom((document.getElementById("room-code") as HTMLInputElement).value));
 	document.getElementById("refresh")?.addEventListener("click", () => getMultiplayerRooms());

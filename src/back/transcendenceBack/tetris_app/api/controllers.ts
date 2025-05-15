@@ -48,17 +48,13 @@ export const	getMultiplayerRooms = async (request: FastifyRequest, reply: Fastif
 }
 
 export const    tetrisJoinRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string, code: string}}>) => {
-	// console.log("Joining a room");
 	const request = req.query;
 	if (!request)
 		return ;
 	const room = getTetrisRoom(request.code);
-	// console.log("Room found: " + JSON.stringify(room));
 	if (!room)
 		return tetrisCreateRoom(socket, req);
 
-	// console.log("Room found");
-	// userSockets[request.username] = socket;
 	room.addPlayer(socket, request.username);
 }
 
@@ -75,12 +71,13 @@ export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}
 	switch (request.argument) {
 		case "start":
 			room.startGames();
-			return;
+			break ;
 		case "settings":
 			console.log("Settings: ", JSON.stringify(request.prefix));
 			room.setSettings(request.prefix);
-			return;
+			break ;
 	}
+	reply.status(200).send({message: "Command received"});
 }
 
 export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
@@ -123,6 +120,7 @@ export const    retryGame = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 	// console.log("Game found: " + game.getGameId());
 
 	game.retry();
+	reply.status(200).send({message: "Retrying the game"});
 }
 
 export const    forfeitGame = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
@@ -138,6 +136,7 @@ export const    forfeitGame = async (req: FastifyRequest<{Body: tetrisReq}>, rep
 		return reply.status(400).send({message: "Game not found"});
 
 	game.forfeit();
+	reply.status(200).send({message: "Forfeiting the game"});
 }
 
 export const    movePiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
