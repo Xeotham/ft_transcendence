@@ -609,10 +609,13 @@ export class TetrisGame {
 				++this.nbMoves;
 			this.msSinceLockPhase = 0;
 		}
-		this.spinType = this.currentPiece.rotate(direction, this.matrix);
-		if (this.spinType !== "") {
-			console.log("Spin type: " + this.spinType);
-			this.player.send(JSON.stringify({type: "EFFECT", argument: "SPIN", value: this.spinType }))
+		let rotation: string = this.currentPiece.rotate(direction, this.matrix);
+		if (rotation !== "-1") {
+			this.spinType = rotation;
+			if (this.spinType !== "") {
+				console.log("Spin type: " + this.spinType);
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "SPIN", value: this.spinType}))
+			}
 		}
 		else
 			this.player.send(JSON.stringify({type: "EFFECT", argument: "USER_EFFECT", value: "rotate" }));
