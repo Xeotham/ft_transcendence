@@ -98,3 +98,11 @@ export interface    loadHtmlArg {
 export type loadPongHtmlType = "empty" | "logo" | "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name"
 	| "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game" | "tournament-end"
 	| "tour-rooms-list" | "priv-room-create" | "priv-room-code";
+
+
+
+export const    boardWidth = 800;
+export const    boardHeight = 400;
+export const    paddleWidth = 10;
+export const    paddleHeight = 80;
+export const    ballSize = 10;
