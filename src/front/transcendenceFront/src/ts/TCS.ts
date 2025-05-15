@@ -1,17 +1,24 @@
+import '../style/style.css'
+
 ///////////////////////////////////////////
 //  Tailwind Class Strings 
-
 export const TCS = {
 
+    // body
+    //html_body : "m-0 h-full overflow-x-hidden",
+
     // zoneTop
-    zoneTop : "fixed top-0 w-full h-[30px] z-42 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
+    zoneTop : "absolute fixed left-0 top-0 w-full h-[30px] z-42 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
     immanenceLogo : "h-full w-auto ml-[10px] float-left",
 
+    // logoTest
+    logoTest : "text-[80px] font-bold flex items-center justify-center h-full w-full",
+    
     // zonePong 
-    zonePong : "bg-gradient-to-b from-amber-400 to-yellow-600 h-full",
+    zonePong : "relative flex justify-end top-[30px]  w-full h-full bg-gradient-to-b from-amber-400 to-yellow-600",
     
     // zoneTetris   
-    zoneTetris : "bg-gradient-to-t from-lime-50 to-slate-200 h-full ml-auto",   
+    zoneTetris : "relative flex justify-start top-[30px] bg-gradient-to-t from-lime-50 to-slate-200 h-full ml-auto",   
     
     // zoneModale
     modale : "fixed z-40 w-[680px] shadow-xl/30 bg-gradient-to-b from-slate-50 to-stone-200 px-8 py-5 top-16 left-1/2 -translate-x-1/2 rounded-lg",
@@ -28,5 +35,3 @@ export const TCS = {
     formLabel : "peer-focus:font-medium absolute font-fontsonaQ text-[12px] text-gray-500 duration-300 transform -translate-y-3 scale-75 top-0 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-3",
     formButton : "font-fontsona4 text-[12px] text-lime-50 bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 me-2 mb-2",
 }
-
-

@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Fontsona3';
+    src: url('/medias/typos/woff/Fontsona3FES.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-fontsona3 { font-family: 'Fontsona3', sans-serif; }
+
+@font-face {
+    font-family: 'Fontsona4';
+    src: url('/medias/typos/woff/Fontsona4Golden.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-fontsona4 { font-family: 'Fontsona4', sans-serif; }
+
+@font-face {
+    font-family: 'FontsonaQ';
+    src: url('/medias/typos/woff/FontsonaQ.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-fontsonaQ { font-family: 'FontsonaQ', sans-serif; }
+
+.custom-selection::selection {
+    background: #fbbf24; /* Couleur de fond de la sélection */
+    /*color: #18181b; */    /* Couleur du texte sélectionné */
+}

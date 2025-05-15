@@ -1,6 +1,6 @@
-import { TCS } from './style/TCS.ts';
+import { TCS } from '../TCS.ts';
 
-import closeIconImg from '/src/medias/images/front/croixSlate200.png';
+import closeIconImg from '../../medias/images/modales/croixSlate200.png';
 
 export const modale_signin = `
 

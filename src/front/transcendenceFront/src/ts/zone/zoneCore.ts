@@ -1,5 +1,13 @@
 ///////////////////////////////////////////
 // Imports
+// @ts-ignore
+import  page from "page"
+// HTML
+import { EL } from './zoneHTML.ts';
+import { loadPongPage } from '../pong/pong.ts';
+import { loadTetrisPage } from '../tetris/tetris.ts';
+
+// Events
 import {  
   evAdOutDocument,
   evRemOutDocument,
@@ -13,11 +21,10 @@ import {
   evRemOverTetris,
   evAdClickLogoHome,
   evRemClickLogoHome,
- } from './frontZonesEvents.ts'
-
-import { showModale, hideModale, ModaleType } from './frontModales.ts';
-import { modale_signin, modale_signup } from './frontModalesHTML.ts';
-
+ } from './zoneEvents.ts'
+// Modales
+import { modaleDisplay, modaleHide, ModaleType } from '../modales/modalesCore.ts';
+import { modale_signin, modale_signup } from '../modales/modalesHTML.ts';
 
 ///////////////////////////////////////////
 // Variables
@@ -51,11 +58,11 @@ const stateProxy = new Proxy<Zone>(zone, {
       target[property] = value as never;
       // console.log(`${String(property)} a changé: ${value}`);
       if (property === 'separatorPos') {
-        resizeZones();
+        zoneResize();
       }
       if (property === 'separatorPosTogo') {
         const intervalId = setInterval(() => {
-          if (animGhost(1.2)) {
+          if (zoneAnimGhost(1.2)) {
             clearInterval(intervalId);
           }
         }, 16);
@@ -66,33 +73,30 @@ const stateProxy = new Proxy<Zone>(zone, {
   }
 });
 
-const animGhost = (dec: number = 1.3) => {
+const zoneAnimGhost = (dec: number = 1.3) => {
   zone.separatorPos = zone.separatorPosTogo - (zone.separatorPosTogo - zone.separatorPos) / dec;
-  resizeZones();
+  zoneResize();
   if (Math.abs(zone.separatorPos - zone.separatorPosTogo) < 1) {
     zone.separatorPosTogo = zone.separatorPos;
-    resizeZones();
+    zoneResize();
     return true;
   }
   return false;
 }
 
-const resizeZones = () => {
-  const zonePong = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
-  if (zonePong) {
-    zonePong.style.width = `${zone.separatorPos}px`;
+const zoneResize = () => {
+  if (EL.zonePong) {
+    EL.zonePong.style.width = `${zone.separatorPos}px`;
   }
-  const zoneTetris = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
-  if (zoneTetris) {
-    zoneTetris.style.width = `${document.documentElement.clientWidth - zone.separatorPos}px`;
+  if (EL.zoneTetris) {
+    EL.zoneTetris.style.width = `${document.documentElement.clientWidth - zone.separatorPos}px`;
   }
-  /*const modale = document.querySelector<HTMLDivElement>('div[name="zoneModale"]');
-  if (modale) {
-    modale.style.left = `${zone.separatorPos}px`;
-  }*/
+  // if (EL.zoneModale) {
+  //   EL.zoneModale.style.left = `${zone.separatorPos}px`;
+  // }
 }
 
-export const resizeDocument = () => {
+export const documentResize = () => {
   if (zone.state === 'HOME') {
       zone.separatorCenter = Math.floor(document.documentElement.clientWidth / 2);
       stateProxy.separatorPos = zone.separatorCenter; // a verifier quand fd clique
@@ -104,17 +108,16 @@ export const resizeDocument = () => {
 ///////////////////////////////////////////
 // App Query selector
 
-export const setZone = (state: string) => {
-  //console.log(state);
+export const zoneSet = (state: string) => {
   if (!zone) {
-    console.error('setZone: Unknown state');
+    console.error('zoneSet: Unknown state');
     return;
   }
   if (zone.state === state) {
     return;
   }
   zone.state = state;
-  console.log(zone.state);
+  //console.log(zone.state);
   switch (zone.state) {
     case 'HOME':        { zoneSetHOME(); break; }
     case 'OVER_PONG':   { zoneSetOVER_PONG(); break; }
@@ -123,7 +126,7 @@ export const setZone = (state: string) => {
     case 'TETRIS':      { zoneSetTETRIS(); break; }
     case 'MODALE':      { zoneSetHOME(); break; }         
     default: {
-      console.error('setZone: Unknown state');
+      console.error('zoneSet: Unknown state');
     }
   }
 }
@@ -135,8 +138,14 @@ const zoneSetHOME = () => {
   evAdOverTetris();
   evAdClickPong();
   evAdClickTetris();
+
+  modaleHide();
+  
   stateProxy.separatorPosTogo = zone.separatorCenter;
-  hideModale();
+  zone.state = "HOME";
+  loadPongPage("logo");
+  loadTetrisPage("logo");
+  page.show("/");
 }
 
 const zoneSetOVER_PONG = () => {
@@ -148,8 +157,6 @@ const zoneSetOVER_TETRIS = () => {
 }
 
 const zoneSetPONG = () => {
-  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.97);
-
   evRemOutDocument();
   evAdClickLogoHome();
   evRemOverPong();
@@ -157,12 +164,16 @@ const zoneSetPONG = () => {
   evRemOverTetris();
   evAdClickTetris();
 
-  showModale(ModaleType.SIGNIN, modale_signin);
+  modaleHide();
+  // modaleDisplay(ModaleType.SIGNIN, modale_signin);
+
+  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.97);
+  zone.state = "PONG";
+  loadTetrisPage("empty");
+  page.show("/PONG");
 }
 
 const zoneSetTETRIS = () => {
-  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.03);
-
   evRemOutDocument();
   evAdClickLogoHome();
   evRemOverPong();
@@ -170,5 +181,11 @@ const zoneSetTETRIS = () => {
   evRemOverTetris();
   evRemClickTetris();
 
-  showModale(ModaleType.SIGNUP, modale_signup);
+  modaleHide();
+  // modaleDisplay(ModaleType.SIGNUP, modale_signup);
+
+  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.03);
+  zone.state = "TETRIS";
+  loadPongPage("empty");
+  page.show("/TETRIS");
 }

@@ -1,4 +1,4 @@
-import { loadTetrisHtml } from "./htmlPage.ts";
+import { loadTetrisHtml } from "./tetrisHTML.ts";
 import { roomInfo, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInfo, userKeys } from "./tetris.ts";
 import { address } from "../main.ts";

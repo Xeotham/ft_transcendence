@@ -24,14 +24,14 @@ export let modale = {
 ///////////////////////////////////////////
 // Functions
 
-export const initModale = () => {
+export const modaleInit = () => {
   modale.type = ModaleType.NONE;
   modale.show = false;
   modale.element = document.querySelector<HTMLDivElement>('div[name="zoneModale"]');
-  hideModale();
+  modaleHide();
 }
 
-export const showModale = (modaleType: ModaleType, modaleContent: string) => {
+export const modaleDisplay = (modaleType: ModaleType, modaleContent: string) => {
   if (modale.element) {
     modale.type = modaleType;
     modale.element.innerHTML = modaleContent;
@@ -41,11 +41,11 @@ export const showModale = (modaleType: ModaleType, modaleContent: string) => {
     modale.element.classList.add('block');
     modale.show = true;
 
-    closeIconAdd(); // a tester
+    modaleAddCloseIcon(); // a tester
   }
 }
 
-export const hideModale = () => {
+export const modaleHide = () => {
   if (modale.element) {
     modale.type = ModaleType.NONE;
     modale.element.innerHTML = '';
@@ -57,7 +57,7 @@ export const hideModale = () => {
   }
 }
 
-export const closeIconAdd = () => {
+export const modaleAddCloseIcon = () => {
   const closeIcon = document.querySelector<HTMLDivElement>('div[id="closeIcon"]');
   if (!closeIcon) return;
 
@@ -67,11 +67,11 @@ export const closeIconAdd = () => {
   closeIcon.classList.add('block');
 
   closeIcon.addEventListener('click', () => {
-    hideModale();
+    modaleHide();
   });
 }
 
-export const closeIconRemove = () => {
+export const modaleRemoveCloseIcon = () => {
   const closeIcon = document.querySelector<HTMLDivElement>('div[id="closeIcon"]');
   if (!closeIcon) return;
 

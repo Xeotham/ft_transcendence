@@ -1,7 +1,7 @@
 import {Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInformation} from "./utils.ts";
 import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
-import  { loadPongHtml } from "./htmlPage.ts";
+import  { loadPongHtml } from "./pongHTML.ts";
 
 // @ts-ignore
 import  page from "page"
@@ -12,6 +12,10 @@ export const	pongGameInfo: gameInformation = new gameInformation();
 
 export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
+		case "empty":
+			return emptyPage();
+		case "logo":
+			return logoPage();
 		case "idle":
 			return idlePage();
 		case "match-found":
@@ -43,6 +47,14 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 		case "priv-room-code":
 			return privRoomCode();
 	}
+}
+
+const   emptyPage = () => {
+	loadPongHtml("empty");
+}
+
+const   logoPage = () => {
+	loadPongHtml("logo");
 }
 
 const   idlePage = () => {

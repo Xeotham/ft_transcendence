@@ -1,7 +1,7 @@
 import { 
-  setZone, 
-  resizeDocument
-} from './frontZones.ts'
+  zoneSet, 
+  documentResize
+} from './zoneCore.ts'
 
 let outDocumentHandler: EventListener | null = null;
 let overzoneTopHandler: EventListener | null = null;
@@ -18,7 +18,7 @@ export const evAdOutDocument = () => {
     outDocumentHandler = (event: Event) => {
       const mouseEvent = event as MouseEvent;
       if (!mouseEvent.relatedTarget) {
-        setZone('HOME');
+        zoneSet('HOME');
       }
     };
     window.addEventListener('mouseout', outDocumentHandler);
@@ -31,14 +31,14 @@ export const evAdOutDocument = () => {
       const mouseEvent = event as MouseEvent;
       if (mouseEvent.relatedTarget) {
         console.log('over');
-        setZone('HOME');
+        zoneSet('HOME');
       }
     };
     */
     overzoneTopHandler = (event: Event) => {
       const mouseEvent = event as MouseEvent;
       if (mouseEvent.relatedTarget !== target) {
-        setZone('HOME');
+        zoneSet('HOME');
       }
     };
       
@@ -64,7 +64,7 @@ export const evAdClickPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
   if (target && !clickPongHandler) {
     clickPongHandler = () => {
-      setZone('PONG');
+      zoneSet('PONG');
     };
     target.addEventListener('click', clickPongHandler);    
   }
@@ -83,7 +83,7 @@ export const evAdClickTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
   if (target && !clickTetrisHandler) {
     clickTetrisHandler = () => {
-      setZone('TETRIS');
+      zoneSet('TETRIS');
     };
     target.addEventListener('click', clickTetrisHandler);    
   }
@@ -102,7 +102,7 @@ export const evAdOverPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
   if (target && !overPongHandler) {
     overPongHandler = () => {
-      setZone('OVER_PONG');
+      zoneSet('OVER_PONG');
     };
     target.addEventListener('mouseover', overPongHandler);
   }
@@ -121,7 +121,7 @@ export const evAdOverTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
   if (target && !overTetrisHandler) {
     overTetrisHandler = () => {
-      setZone('OVER_TETRIS');
+      zoneSet('OVER_TETRIS');
     };
     target.addEventListener('mouseover', overTetrisHandler);
   }
@@ -140,7 +140,7 @@ export const evAdClickLogoHome = () => {
   const target = document.querySelector<HTMLImageElement>('#logoImmanence');
   if (target && !clickLogoHomeHandler) {
     clickLogoHomeHandler = () => {
-      setZone('HOME');
+      zoneSet('HOME');
     };
     target.addEventListener('click', clickLogoHomeHandler);
   }
@@ -155,5 +155,5 @@ export const evRemClickLogoHome = () => {
 
 // Écouteur d'événement pour redimensionner
 export const evAddDocResize = () => {
-  window.addEventListener('resize', resizeDocument);
+  window.addEventListener('resize', documentResize);
 }

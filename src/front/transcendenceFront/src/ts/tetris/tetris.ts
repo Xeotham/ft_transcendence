@@ -9,7 +9,7 @@ import {
 	setKey, tetriminoInfo, tetriminoPatterns,
 	tetrisGame
 } from "./utils.ts";
-import { loadTetrisHtml } from "./htmlPage.ts";
+import { loadTetrisHtml } from "./tetrisHTML.ts";
 // @ts-ignore
 import page from "page"
 import {
@@ -22,13 +22,17 @@ import {
 
 import {postToApi, resetGamesSocket} from "../utils.ts";
 
-import { address } from "../main.ts";
+import { address } from "../immanence.ts";
 
 export const userKeys: keys = new keys();
 export const tetrisGameInfo: tetrisGame = new tetrisGame();
 
-export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
+export const loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
+		case "empty":
+			return emptyPage();
+		case "logo":
+			return logoPage();
 		case "idle":
 			return idlePage();
 		case "setting":
@@ -42,6 +46,18 @@ export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | nul
 		case "display-multiplayer-room":
 			return displayMultiplayerRooms(arg?.rooms!);
 	}
+}
+
+const   emptyPage = () => {
+	loadTetrisHtml("empty");
+	//tetrisGameInfo.setRoomOwner(false);
+	//resetGamesSocket();
+}
+
+const   logoPage = () => {
+	loadTetrisHtml("logo");
+	//tetrisGameInfo.setRoomOwner(false);
+	//resetGamesSocket();
 }
 
 const   idlePage = () => {
