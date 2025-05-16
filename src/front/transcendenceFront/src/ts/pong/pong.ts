@@ -154,7 +154,6 @@ const   confirmPage = () => {
 
 
 
-
 export const pongTextures: { [key: string]: HTMLImageElement } = {};
 
 export const loadPongTextures = () => {
