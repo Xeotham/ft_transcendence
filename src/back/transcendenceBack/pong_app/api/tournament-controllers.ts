@@ -26,6 +26,7 @@ const idGenTour = idGenerator();
 export const createTournament = async (socket: WebSocket, req: FastifyRequest< { Querystring: TournamentInfo } >) => {
 
 	const	tournamentName = req.query.name;
+	const   username = req.query.username!;
 	// console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
 
 	console.log(tournamentName);
@@ -36,7 +37,7 @@ export const createTournament = async (socket: WebSocket, req: FastifyRequest< {
 	}
 
 	console.log("New Player creating tournament");
-	const newTour = new Tournament(idGenTour.next().value, socket, tournamentName);
+	const newTour = new Tournament(idGenTour.next().value, { username: username, socket: socket }, tournamentName);
 	Tournaments.push(newTour);
 
 	socket.send(JSON.stringify({ type: "INFO", message: "Tournament created, awaiting players" }));
@@ -46,6 +47,7 @@ export const createTournament = async (socket: WebSocket, req: FastifyRequest< {
 export const joinTournament = async (socket: WebSocket, req: FastifyRequest< { Querystring: TournamentInfo } >) => {
 	const	id: number = req.query.id === null ? -1 : Number(req.query.id);
 	let 	tournament: Tournament | null = null;
+	const	username: string = req.query.username!;
 
 	// Check if player is already in a room
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
@@ -66,7 +68,7 @@ export const joinTournament = async (socket: WebSocket, req: FastifyRequest< { Q
 	else
 		return socket.send(JSON.stringify({ type: "INFO", message: "Tournament not found" }));
 	if (!tournament?.hasStarted()) {
-		tournament?.addPlayer(socket);
+		tournament?.addPlayer({ username: username, socket: socket });
 		return;
 	}
 	socket.send(JSON.stringify({ type: "ALERT", message: "No tournament found. Disconnecting" }));

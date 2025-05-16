@@ -1,6 +1,6 @@
 import  { loginHtml, signUpHtml } from "./htmlPage.ts";
 import {postToApi} from "../utils.ts";
-import {address} from "../main.ts";
+import {address, user} from "../main.ts";
 // @ts-ignore
 import page from "page";
 
@@ -18,6 +18,7 @@ export const loginUser = (error: string | null = null) => {
 		postToApi(`http://${address}/api/user/login`, data)
 			.then(() => {
 				localStorage.setItem("username", username);
+				user.setUsername(username);
 				page.show("/");
 			})
 			.catch((error) => {
