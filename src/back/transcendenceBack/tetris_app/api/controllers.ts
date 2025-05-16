@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { WebSocket } from "ws";
-import {deleteTetrisGame, getTetrisGame, getTetrisRoom, tetrisReq} from "../utils";
+import { deleteTetrisGame, getTetrisGame, getTetrisRoom, tetrisReq } from "../utils";
 import { TetrisGame } from "../server/Game/TetrisGame";
 import { MultiplayerRoom } from "../server/MultiplayerRoom";
 import {delay} from "../server/Game/utils";
@@ -31,7 +31,7 @@ export const    tetrisCreateRoom = async (socket: WebSocket, req: FastifyRequest
 	if (!request)
 		return;
 
-	console.log("Creating a new room");
+	// console.log("Creating a new room");
 	const room = new MultiplayerRoom(socket, request.username, false, request.code);
 	multiplayerRoomLst.push(room);
 }
@@ -59,7 +59,7 @@ export const    tetrisJoinRoom = async (socket: WebSocket, req: FastifyRequest<{
 }
 
 export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
-	console.log("Tetris Room Command");
+	// console.log("Tetris Room Command");
 	const request: tetrisReq = req.body;
 	if (!request)
 		return reply.status(400).send({message: "No body"});
@@ -83,7 +83,7 @@ export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}
 export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
 	try {
 		const   request: tetrisReq = req.body;
-		console.log("Request: " + request + ", username: " + request?.username);
+		// console.log("Request: " + request + ", username: " + request?.username);
 		if (!request)
 			return reply.status(400).send({message: "No body"});
 		if (!request.username)
