@@ -471,7 +471,7 @@ export class TetrisGame {
 			++this.level;
 			this.lineClearGoal = tc.FIXED_GOAL_SYSTEM[this.level];
 			if (this.level % 5 === 0)
-				this.player.send(JSON.stringify({type: "EFFECT", argument: "LEVEL", value: this.level}));
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "LEVEL", value: this.level.toString()}));
 			else
 				this.player.send(JSON.stringify({type: "EFFECT", argument: "LEVEL", value: "up"}));
 		}

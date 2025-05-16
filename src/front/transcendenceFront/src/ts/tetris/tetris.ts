@@ -7,7 +7,7 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame
+	tetrisGame, tetrisGoalInfo
 } from "./utils.ts";
 import { loadTetrisHtml } from "./htmlPage.ts";
 // @ts-ignore
@@ -23,7 +23,6 @@ import {
 import {postToApi, resetGamesSocket} from "../utils.ts";
 
 import { address } from "../main.ts";
-import {c} from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 
 export const userKeys: keys = new keys();
 export const tetrisGameInfo: tetrisGame = new tetrisGame();
@@ -245,22 +244,23 @@ const   drawBoard = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
 
 }
 
-//
-// export const    borderSize = 2;
-// // export const    minoSize = 32;
-// // export const    boardWidth = minoSize * 10;
-// // export const    boardHeight = minoSize * 23;
-// // export const    boardCoord = {x: 4 * minoSize + borderSize, y: 0}
-// export const    holdWidth = (minoSize * 4) + 8;
-// // export const    holdHeight = (minoSize * 4) + 8;
-// // export const    holdCoord = {x: 0, y: 0}
-// export const    bagWidth = minoSize * 4;
-// export const    bagHeight = boardHeight;
-// export const    bagCoord = {x: (14 * minoSize) + (borderSize * 2), y: 0}
-//
-// // export const    canvasWidth = boardWidth + bagWidth + holdWidth + (borderSize * 2);
-// // export const    canvasHeight = boardHeight;
+const drawInfo = (ctx: CanvasRenderingContext2D, x: number, y: number, gameInfo: tetrisGoalInfo) => {
 
+	const   spacing = 50;
+	ctx.textAlign = "right";
+	const   writeText = (text: string, x: number, y: number) => {
+		ctx.font = "25px Arial";
+		ctx.fillStyle = "black";
+		ctx.strokeText(text, x, y);
+		ctx.fillStyle = "white";
+		ctx.fillText(text, x, y);
+	}
+	writeText("Score: " + gameInfo.score, x, y);
+	writeText("Level: " + gameInfo.level, x, y + spacing);
+	writeText("Time: " + (new Date(tetrisGameInfo.getGame()?.time || 0).toISOString().substring(14, 23)), x, y + (spacing * 2));
+	writeText(`Goal: ${gameInfo.linesCleared} / ${gameInfo.lineClearGoal}`, x, y + (spacing * 3));
+	writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
+}
 
 const   drawGame = () => {
 	const canvas = document.getElementById("tetrisCanvas")  as HTMLCanvasElement;
@@ -276,27 +276,21 @@ const   drawGame = () => {
 	const   matrixSize: { width: number, height: number } = { width: (10 * minoSize), height: (23 * minoSize) };
 	const   holdCoord: { x: number, y: number } = { x: (matrixCoord.x - tetrisTextures["HOLD"].width - 20) + 10, y: (matrixCoord.y + 20) + 10 }
 	const   bagsCoord: { x: number, y: number } = { x: (matrixCoord.x + matrixSize.width + 20) + 30, y: (matrixCoord.y + 20) + 10 }
+	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x - 10), y: (boardCoord.y + 400)}
+	const   gameInfo: tetrisGoalInfo = {score: game.score, level: game.level, time: game.time, lineClearGoal: game.lineClearGoal, linesCleared: game.linesCleared, piecesPerSecond: game.piecesPerSecond, piecesPlaced: game.piecesPlaced };
 
-	// console.log("Matrix Size: ", matrixSize); // height: 736 width: 320
 
 	window.addEventListener('resize', () => {
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
-		// setTimeout(drawBoard, 100);
 	});
-	//
-	// document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
-	// // document.getElementById("time")!.innerText = "Time: " +
-	// // 	(new Date(tetrisGameInfo.getGame()?.time || 0).toISOString().substring(11, 23)); // TODO : add this line
-	// document.getElementById("PPS")!.innerText = "Pieces: " + tetrisGameInfo.getGame()?.piecesPlaced +
-	// 	", " + tetrisGameInfo.getGame()?.piecesPerSecond + "/S"; // TODO : add this line
-	// document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
-	// document.getElementById("awaitingGarbage")!.innerText = "Incoming Garbage: " + JSON.stringify(tetrisGameInfo.getGame()?.awaitingGarbage);
 	if (!ctx || !game)
 		return;
 	drawBackground(ctx, 0, 0, canvas.width, canvas.height);
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
+	drawInfo(ctx, infoCoord.x, infoCoord.y, gameInfo);
+
 	if (tetrisGameInfo.getSettingsValue("showBags") && game.bags)
 		drawBag(ctx, game.bags, bagsCoord);
 	if (game.hold)
