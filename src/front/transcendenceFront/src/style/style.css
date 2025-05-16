@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: 'Fontsona3';
-    src: url('/medias/typos/woff/Fontsona3FES.woff') format('woff');
+    src: url('../medias/fonts/ttf/Fontsona3FES.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -10,19 +10,75 @@
 
 @font-face {
     font-family: 'Fontsona4';
-    src: url('/medias/typos/woff/Fontsona4Golden.woff') format('woff');
+    src: url('../medias/fonts/ttf/Fontsona4Golden.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .font-fontsona4 { font-family: 'Fontsona4', sans-serif; }
 
 @font-face {
+    font-family: 'Fontsona5';
+    src: url('../medias/fonts/ttf/Fontsona5JP.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-fontsona5 { font-family: 'Fontsona5', sans-serif; }
+
+@font-face {
     font-family: 'FontsonaQ';
-    src: url('/medias/typos/woff/FontsonaQ.woff') format('woff');
+    src: url('../medias/fonts/ttf/FontsonaQ.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .font-fontsonaQ { font-family: 'FontsonaQ', sans-serif; }
+
+@font-face {
+    font-family: 'PressStart2P';
+    src: url('../medias/fonts/ttf/PressStart2P-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-pressStart2P { font-family: 'PressStart2P', cursive; }
+
+@font-face {
+    font-family: 'Doto';
+    src: url('../medias/fonts/ttf/Doto-VariableFont_ROND_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-doto { font-family: 'Doto', sans-serif; }
+
+@font-face {
+    font-family: 'PixelifySans';
+    src: url('../medias/fonts/ttf/PixelifySans-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-pixelify { font-family: 'PixelifySans', sans-serif; }
+
+@font-face {
+    font-family: 'Sixtyfour';
+    src: url('../medias/fonts/ttf/Sixtyfour-Regular-VariableFont_BLED_SCAN.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-sixtyfour { font-family: 'Sixtyfour', sans-serif; }
+
+@font-face {
+    font-family: 'C64Pro';
+    src: url('../medias/fonts/ttf/C64_Pro-STYLE.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-c64pro { font-family: 'C64Pro', sans-serif; }
+
+@font-face {
+    font-family: 'PixelCode';
+    src: url('../medias/fonts/ttf/PixelCode.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-pixelcode { font-family: 'PixelCode', sans-serif; }
 
 .custom-selection::selection {
     background: #fbbf24; /* Couleur de fond de la sélection */

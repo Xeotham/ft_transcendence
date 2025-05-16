@@ -306,7 +306,7 @@ const   drawGame = () => {
 	// document.getElementById("score")!.innerText = "Score: " + tetrisGameInfo.getGame()?.score;
 	if (!ctx || !game)
 		return;
-	drawBackground(ctx, 0, 0, canvas.width, canvas.height);
+	// drawBackground(ctx, 0, 0, canvas.width, canvas.height);
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	if (tetrisGameInfo.getSettingsValue("showBags") && game.bags)

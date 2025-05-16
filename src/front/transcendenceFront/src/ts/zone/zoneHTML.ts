@@ -69,16 +69,16 @@ export const setHtmlFront = () => {
 </div>
 
 <div name="zonePong" id="zonePong" class="${TCS.zonePong}">
-    <div id="contentPong" class="w-full h-full absolute z-10"></div>
-    <div id="bkgPong" class="w-full h-full absolute z-0">
-        <img src="${img_pong_bkg}" class="absolute right-0 w-[1024px] h-[1024px] object-none" />
+    <div id="contentPong" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
+    <div id="bkgPong" class="w-full h-full absolute z-0 flex items-start justify-center">
+        <img src="${img_pong_bkg}" class="w-[1024px] h-[1024px] object-none" />
     </div>
 </div>
 
 <div name="zoneTetris" id="zoneTetris" class="${TCS.zoneTetris}">
-    <div id="contentTetris" class="w-full h-full absolute z-10"></div>
-    <div id="bkgTetris" class="w-full h-full absolute z-0">
-        <img src="${img_tetris_bkg}" class="absolute left-0 w-[1024px] h-[1024px] object-none" />
+    <div id="contentTetris" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
+    <div id="bkgTetris" class="w-full h-full absolute z-0 flex items-start justify-center">
+        <img src="${img_tetris_bkg}" class="w-[1024px] h-[1024px] object-none" />
     </div>
 </div>
 

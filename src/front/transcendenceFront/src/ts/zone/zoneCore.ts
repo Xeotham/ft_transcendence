@@ -44,7 +44,7 @@ let zone: Zone = {
   separatorCenter: Math.floor(document.documentElement.clientWidth / 2),
   separatorPos: Math.floor(document.documentElement.clientWidth / 2),
   separatorPosTogo: Math.floor(document.documentElement.clientWidth / 2),
-  separatorShift: Math.floor(document.documentElement.clientWidth / 42),
+  separatorShift: Math.floor(document.documentElement.clientWidth / 24),
   sepRatioCenter: 50,
   sepRatio: 50,
   sepRatioTogo: 50,
@@ -139,8 +139,11 @@ const zoneSetHOME = () => {
   evAdClickPong();
   evAdClickTetris();
 
-  modaleHide();
-  
+  // modaleHide();
+  modaleDisplay(ModaleType.SIGNIN, modale_signin);
+  // modaleDisplay(ModaleType.SIGNUP, modale_signup);
+
+
   stateProxy.separatorPosTogo = zone.separatorCenter;
   zone.state = "HOME";
   loadPongPage("logo");
@@ -165,9 +168,8 @@ const zoneSetPONG = () => {
   evAdClickTetris();
 
   modaleHide();
-  // modaleDisplay(ModaleType.SIGNIN, modale_signin);
 
-  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.97);
+  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.91);
   zone.state = "PONG";
   loadTetrisPage("empty");
   page.show("/PONG");
@@ -182,9 +184,8 @@ const zoneSetTETRIS = () => {
   evRemClickTetris();
 
   modaleHide();
-  // modaleDisplay(ModaleType.SIGNUP, modale_signup);
 
-  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.03);
+  stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.09);
   zone.state = "TETRIS";
   loadPongPage("empty");
   page.show("/TETRIS");

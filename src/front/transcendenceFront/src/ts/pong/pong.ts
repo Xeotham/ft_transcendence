@@ -2,6 +2,7 @@ import {Game, RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInfor
 import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
 import  { loadPongHtml } from "./pongHTML.ts";
+import {zoneSet} from "../zone/zoneCore.ts";
 
 // @ts-ignore
 import  page from "page"
@@ -61,15 +62,16 @@ const   idlePage = () => {
 	loadPongHtml("idle");
 
 	resetGamesSocket()
-	document.getElementById("home")?.addEventListener("click", () => { page.show("/"); });
-	document.getElementById("join-game")?.addEventListener("click", joinMatchmaking);
-	document.getElementById("solo-game")?.addEventListener("click", joinSolo);
-	document.getElementById("bot-game")?.addEventListener("click", joinBot);
-	document.getElementById("private-room")?.addEventListener("click", createPrivateRoom);
-	document.getElementById("join-priv-room")?.addEventListener("click", joinPrivRoom);
-	document.getElementById("create-tournament")?.addEventListener("click", getTournamentName);
-	document.getElementById("tournaments")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
-	document.getElementById("rooms-spectator")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
+	document.getElementById("Join-game")?.addEventListener("click", joinMatchmaking);
+	document.getElementById("Solo-game")?.addEventListener("click", joinSolo);
+	document.getElementById("Bot-game")?.addEventListener("click", joinBot);
+	document.getElementById("Private-room")?.addEventListener("click", createPrivateRoom);
+	document.getElementById("Join-priv-room")?.addEventListener("click", joinPrivRoom);
+	document.getElementById("Create-tournament")?.addEventListener("click", getTournamentName);
+	document.getElementById("Tournaments")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
+	document.getElementById("Rooms-spectator")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
+	document.getElementById("Home")?.addEventListener("click", () => { page.show("/"); //zoneSet("HOME");   
+	});
 }
 
 const   matchFoundPage = () => {

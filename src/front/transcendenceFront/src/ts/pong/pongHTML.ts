@@ -51,36 +51,36 @@ const   emptyHtml = () => {
 const   logoHtml = () => {
 	if (!EL.contentPong)
 		return ;
-	EL.contentPong.innerHTML = `<div id="logoPong" class="${TCS.logoTest}">Pong</div>`;
+	EL.contentPong.innerHTML = `<div id="logoPong" class="${TCS.pongLogo}">Pong</div>`;
 }
 
 const   idleHtml = () => {
 	if (!EL.contentPong)
 		return ;
 	EL.contentPong.innerHTML = `
-        <h1>Pong</h1>
-        <nav>
-	        <button id="home">Home Page</button>
-			<button id="join-game">Join a Game</button>
-			<button id="solo-game">Create a solo Game</button>
-			<button id="bot-game">Create a bot Game</button>
-			<button id="private-room">Create a Private Room</button>
-			<button id="join-priv-room">Join a Private Room</button>
-			<button id="create-tournament">Create a tournament</button>
-			<button id="tournaments">Join a tournament</button>
-			<button id="rooms-spectator">Spectate a room</button>
-		</nav>	
-	`;
+	<nav class="${TCS.pongNav0}">
+		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
+		<div class="flex-1"><button id="Solo-game" class="${TCS.pongNavButton}">play vs offline</button></div>
+		<div class="flex-1"><button id="Bot-game" class="${TCS.pongNavButton}">play vs bot</button></div>
+		<div class="flex-1"><button id="Join-game" class="${TCS.pongNavButton}">play vs online</button></div>
+		<div class="flex-1"><button id="Private-room" class="${TCS.pongNavButton}">Create a Room</button></div>
+		<div class="flex-1"><button id="Join-priv-room" class="${TCS.pongNavButton}">Join a Room</button></div>
+		<div class="flex-1"><button id="Rooms-spectator" class="${TCS.pongNavButton}">Spectate a Room</button></div>
+		<div class="flex-1"><button id="Create-tournament" class="${TCS.pongNavButton}">Create a tournament</button></div>
+		<div class="flex-1"><button id="Tournaments" class="${TCS.pongNavButton}">Join a tournament</button></div>
+		<div class="flex-1"><button id="Home" class="${TCS.pongNavButton}">Return Home</button></div>
+	</nav>`;
 }
 
 const   matchFoundHtml = () => {
 	if (!EL.contentPong)
 		return ;
 
-	EL.contentPong.innerHTML= `
-		<p>Room found!</p>
-		<button id="quit">Quit Room</button>
-	`;
+	EL.contentPong.innerHTML =`
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><p class="${TCS.pongText}">Room found!</p></div>
+		<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Room</button></div>
+	</div>`;
 }
 
 const   specRoomInfoHtml = (roomId: number) => {
@@ -88,11 +88,12 @@ const   specRoomInfoHtml = (roomId: number) => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-			<button id="return">Return to Room List</button>
-			<h1>Room Info:</h1>
-			<h2>Room Number: ${roomId}</h2>
-			<button id="spectate">Spectate Room</button>
-			`
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><button id="return" class="${TCS.pongButton}">Return to Room List</button></div>
+		<div class="flex-1"><h1 class="${TCS.pongText}">Room Info:</h1></div>
+		<div class="flex-1"><h2 class="${TCS.pongText}">Room Number: ${roomId}</h2></div>
+		<div class="flex-1"><button id="spectate" class="${TCS.pongButton}">Spectate Room</button></div>
+	</div>`;
 }
 
 const   tourInfoHtml = (tourId: number, started: boolean, name: string) => {
@@ -100,34 +101,37 @@ const   tourInfoHtml = (tourId: number, started: boolean, name: string) => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-			<button id="return">Return to Tournament List</button>
-			<h1>Tournament Info:</h1>
-			<h2>Tournament name: ${name}</h2>
-			<h2>Tournament Number: ${tourId}</h2>
-		`
-	EL.contentPong.innerHTML += started?
-		`<p>The tournament as already started.</p>`:
-		`<p>The tournament hasn't started yet </p>
-			<p>Do you want to join ?</p>
-			<button id="joinTournament">Join the tournament</button>`
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><h1 class="${TCS.pongText}">Tournament Info:</h1></div>
+		<div class="flex-1"><h2 class="${TCS.pongText}">Tournament name: ${name}</h2></div>
+		<div class="flex-1"><h2 class="${TCS.pongText}">Tournament Number: ${tourId}</h2></div>`;
+	EL.contentPong.innerHTML += started?`
+	<div class="flex-1"><p class="${TCS.pongText}">The tournament as already started.</p></div>`
+	:`
+	<div class="flex-1"><p class="${TCS.pongText}">The tournament hasn't started yet </p>
+	<div class="flex-1"><p class="${TCS.pongText}">Do you want to join ?</p></div>
+	<div class="flex-1">
+		<button id="joinTournament" class="${TCS.pongButton}">Join the tournament</button>
+		<button id="return" class="${TCS.pongButton}">Return to Tournament List</button>
+	</div>`;
+	EL.contentPong.innerHTML += `</div>`;
 }
 
 const   tourRoomListHtml = (rooms: RoomInfo[]) => {
 	if (!EL.contentPong)
 		return ;
 
-	let listHTML = `<ul>`;
+	let listHTML = `<div class="${TCS.pongNav1}"><ul>`;
 
 	rooms.forEach((room: RoomInfo) => {
 		listHTML += `
-		  		<li>
-					<a href="/pong/tournament/room/${room.id}">
-					  Id: ${room.id} Full: ${room.full} Solo: ${room.isSolo} Bot: ${room.isBot}
-					</a>
-		  		</li>
-			`;
+		<li class="flex-1" class="${TCS.pongButton}">
+			<a href="/pong/tournament/room/${room.id}" class="${TCS.pongButton}">
+				Id: ${room.id} Full: ${room.full} Solo: ${room.isSolo} Bot: ${room.isBot}
+			</a>
+		</li>`;
 	});
-	listHTML += '</ul>';
+	listHTML += '</ul></div>';
 	EL.contentPong.innerHTML = listHTML;
 }
 
@@ -136,10 +140,11 @@ const   privRoomCreate = (inviteCode: string) => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-	<button id="quit">Quit Room</button>
-	<h1>Private Room</h1>
-	<h2>Here is your Invite Code: ${inviteCode}</h2>
-	`
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><h1 class="${TCS.pongText}">Private Room</h1></div>
+		<div class="flex-1"><h2 class="${TCS.pongText}">Here is your Invite Code: ${inviteCode}</h2></div>
+		<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Room</button></div>
+	</div>`;
 }
 
 const   privRoomCode = () => {
@@ -147,13 +152,14 @@ const   privRoomCode = () => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-	<button id="back" >Back</button>
-	<h1>Please enter your invite code:</h1>
-	<form id="inviteForm">
-		<input type="text" id="inviteCode" placeholder="Invite Code">
-	</form>
-	<button id="submit">Submit</button>
-	`
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><h1 class="${TCS.pongText}">Please enter your invite code:</h1></div>
+		<form id="inviteForm" class="flex-1">
+			<input type="text" id="inviteCode" placeholder="Invite Code" class="${TCS.pongButton}">
+			<button id="submit" class="${TCS.pongButton}">Submit</button>
+		</form>
+		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
+	</div>`;
 }
 
 const roomListHtml = (rooms: RoomInfo[]) => {
@@ -161,20 +167,20 @@ const roomListHtml = (rooms: RoomInfo[]) => {
 		return ;
 
 	let listHTML = `
-		<button id="back">Back</button>
-		<ul>`;
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
+		<div class="flex-1"><ul>`;
 
 	rooms.forEach((room: RoomInfo) => {
 		if (!room.privRoom && !room.isSolo) {
 			listHTML += `
-                <li>
-					<a href="/pong/room/${room.id}">
-					  Id: ${room.id}
-					</a>
-		        </li>
-			`};
+			<li class="flex-1" class="${TCS.pongButton}">
+				<a href="/pong/room/${room.id}" class="${TCS.pongButton}">
+				Id: ${room.id}
+				</a>
+		    </li>`};
 	});
-	listHTML += '</ul>';
+	listHTML += '</ul></div>';
 	EL.contentPong.innerHTML = listHTML;
 }
 
@@ -183,18 +189,20 @@ const tournamentListHtml = (tournaments: TournamentInfo[]) => {
 		return ;
 
 	let listHTML = `
-		<button id="back">Back</button>
+	<div class="${TCS.pongNav1}">
 		<ul>`;
 	tournaments.forEach((tournament: TournamentInfo) => {
 		listHTML += `
-		  <li>
-			<a href="/pong/tournament/${tournament.id}">
+		  <li class="flex-1" class="${TCS.pongButton}">
+			<a href="/pong/tournament/${tournament.id}" class="${TCS.pongButton}">
 			  Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}
 			</a>
-		  </li>
-		`;
+		  </li>`;
 	});
-	listHTML += '</ul>';
+	listHTML += `
+		</ul>
+		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
+	</div>`;
 	EL.contentPong.innerHTML = listHTML;
 }
 
@@ -203,13 +211,14 @@ const   tournamentNameHtml = () => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-		<button id="back">Back</button>
-		<p>Enter the name of the tournament</p>
-		<form>
-			<input type="text" id="tournamentName" placeholder="Tournament Name">
-			<button id="submit">Submit</button>
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><p class="${TCS.pongText}">Enter the name of the tournament</p></div>
+		<form class="flex-1">
+			<input type="text" id="tournamentName" placeholder="Tournament Name" class="${TCS.pongButton}">
+			<button id="submit" class="${TCS.pongButton}">Submit</button>
 		</form>
-	`
+		<div class="flex-1"><button id="back" class="${TCS.pongButton} pb-[30px]">Back</button></div>
+	</div>`;
 }
 
 const   tournamentEndPage = (winner: number) => {
@@ -217,10 +226,11 @@ const   tournamentEndPage = (winner: number) => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-	<button id="home">Home</button>
-	<h1>Tournament Over</h1>
-	<p>Winner: Player ${winner}</p>
-	`
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><button id="home" class="${TCS.pongButton}">Home</button></div>
+		<div class="flex-1"><h1 class="${TCS.pongText}">Tournament Over</h1></div>
+		<div class="flex-1"><p class="${TCS.pongText}">Winner: Player ${winner}</p></div>
+	</div>`;
 }
 
 const   tournamentFoundHtml = () => {
@@ -230,17 +240,17 @@ const   tournamentFoundHtml = () => {
 		return ;
 
 	EL.contentPong.innerHTML= `
-		<p>Tournament found!</p>
-		<button id="quit">Quit Tournament</button>
-	`;
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><p class="${TCS.pongText}">Tournament found!</p></div>
+		<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Tournament</button></div>`;
 	if (pongGameInfo.getTournament()?.getIsOwner()) {
 		EL.contentPong.innerHTML += `
-			<button id="start-tournament">Start Tournament</button>
-			<button id="shuffle-tree">Shuffle Tree</button>
-		`;
-
+		<div class="flex-1"><button id="start-tournament" class="${TCS.pongButton}">Start Tournament</button></div>
+		<div class="flex-1"><button id="shuffle-tree" class="${TCS.pongButton}">Shuffle Tree</button></div>`;
 	}
+	EL.contentPong.innerHTML += `</div>`;
 }
+
 
 // TODO: Add spec tournament board
 
@@ -248,12 +258,14 @@ const   drawBoard = () => {
 	if (!EL.contentPong)
 		return
 
+	// TODO quid du quit
 	EL.contentPong.innerHTML = `
-                <button id="quit">Quit</button>
-                <h1>Pong Game</h1>
-                <p id="score" >Score: 0 | 0</p>
-				<canvas id="gameCanvas" width="800" height="400"></canvas>
-			`;
+	<div class="flex flex-col">
+		<div class="flex justify-end mb-4">
+			<button id="quit" class="${TCS.pongButton}">Quit</button>
+		</div>
+		<canvas id="gameCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
+	</div>`;
 }
 
 const   confirmPage = () => {
@@ -263,11 +275,11 @@ const   confirmPage = () => {
 	// TODO: Add quit button
 
 	EL.contentPong.innerHTML = `
-    <p>Game Found, Confirm?</p>
-    <button id="confirm-game">Confirm Game</button>
-    <p id="timer">Time remaining: 10s</p>
-	`;
-	console.log("LAAAAAAA");
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><p>Game Found, Confirm?</p></div>
+		<div class="flex-1"><button id="confirm-game" class="${TCS.pongButton}">Confirm Game</button></div>
+		<div class="flex-1"><p id="timer">Time remaining: 10s</p></div>
+	</div>`;
 }
 
 function drawGame(game: Game) {

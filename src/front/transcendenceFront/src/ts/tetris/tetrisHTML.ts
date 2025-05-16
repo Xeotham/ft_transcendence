@@ -31,11 +31,10 @@ const   emptyHtml = () => {
 }
 
 const logoHtml = () => {
-	console.log("logoHtml");
 	if (!EL.contentTetris)
 		return;
 	EL.contentTetris.innerHTML = `
-		<div id="logoPong" class="${TCS.logoTest}">Tetris</div>
+		<div id="logoTetris" class="${TCS.tetrisLogo}">Tetris</div>
 	`
 }
 
@@ -45,14 +44,14 @@ const idleHtml = () => {
 
 	EL.contentTetris.innerHTML = `
 	<div class="tetris">
-		<h1>Tetris</h1>
-		<nav>
-			<button id="home">Home Page</button>
-<!--			<button id="matchmaking">Matchmaking</button>-->
-			<button id="arcade">Arcade Mod</button>
-			<button id="create-room">Create room</button>
-			<button id="get-multiplayer-rooms">Join a room</button>
-			<button id="setting">Settings</button>
+		<nav class="${TCS.tetrisNav0}">
+			<div id="tetris" class="${TCS.tetrisTitre} flex-1">Tetris</div>
+			<div class="flex-1"><button id="arcade" class="${TCS.tetrisNavButton}">Play solo mode</button></div>
+			<div class="flex-1"><button id="matchmaking" class="${TCS.tetrisNavButton}">Play vs mode</button></div>
+			<div class="flex-1"><button id="get-multiplayer-rooms" class="${TCS.tetrisNavButton}">Join a Room</button></div>
+			<div class="flex-1"><button id="create-room" class="${TCS.tetrisNavButton}">Create Room</button></div>
+			<div class="flex-1"><button id="setting" class="${TCS.tetrisNavButton}">Settings</button></div>
+			<div class="flex-1"><button id="home" class="${TCS.tetrisNavButton}">Return Home</button></div>
 		</nav>
 	</div>`
 }

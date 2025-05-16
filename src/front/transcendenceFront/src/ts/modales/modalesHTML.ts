@@ -8,35 +8,36 @@ export const modale_signin = `
       <img src="${closeIconImg}" class="w-[10px] h-[10px]" />
   </div>
 
-  <div id="signinTitre" class="${TCS.modaleTitre}">
-    Bienvenue dans Immanence<br>
+  <div id="signinTitre" class="${TCS.modaleTitre} pb-[30px]">
+    Immanence<br>
   </div>
         
-  <div id="signinTexte" class="${TCS.modaleTexte}">
+  <div id="signinTexte" class="${TCS.modaleTexte} pb-[30px]">
     Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>
     À droite Pong pour jouer en solo contre notre IA, en multijoueur ou en tournoi. <br>
-    À gauche Tetris est disponible en solo, en multijoueur ou en tournoi.<br><br>
+    À gauche Tetris est disponible en solo, en multijoueur ou en tournoi.
   </div>
 
-  <form id="signinForm" class="${TCS.form} w-5/6">
-    <div id="signinUsernameDiv" class="${TCS.formDivInput}">
+  <form id="signinForm" class="${TCS.form} w-full">
+    <div id="signinUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
         <input type="text" name="signinUsername" id="signinUsername" class="${TCS.formInput}" placeholder=" " required />
         <label for="signinUsername" name="signinUsernameLabel" id="signinUsernameLabel" class="${TCS.formLabel}">Email address</label>
     </div>
-    <div id="signinPasswordDiv" class="${TCS.formDivInput}">
+    <div id="signinPasswordDiv" class="${TCS.formDivInput} pb-[0px]">
         <input type="password" name="signinPassword" id="signinPassword" class="${TCS.formInput}" placeholder=" " required />
         <label for="signinPassword" name="signinPasswordLabel" id="signinPasswordLabel" class="${TCS.formLabel}">Password</label>
     </div>
-    <button type="button" id="signinButton" class="${TCS.formButton}">
-      Continuer
-    </button>
-  </form>
 
-  <div id="to_register" class="${TCS.modaleToRegister} ${TCS.modaleTexte}">
-    <span id="to_register_texte">Tu n'as pas de compte ? </span>
-    <a id="to_register_link" href="#" class="${TCS.modaleLink}">Enregistre-toi.</a>
+    <button type="button" id="signinButton" class="${TCS.modaleLink} flex justify-left w-full pb-[10px] y-[-200px]">Continuer</button>
+
+    <div id="to_register_text" class="${TCS.modaleToRegister} pt-[20px] pb-[6px]">
+      Tu n'as pas de compte ?
+    </div>
+    <a id="to_register_link" href="#" class="${TCS.modaleLink} flex justify-left w-full pb-[10px]">Enregistre-toi !</a>
     <br><br>
-  </div>
+
+    </form>
+
 `;
 
 export const modale_signup = `
