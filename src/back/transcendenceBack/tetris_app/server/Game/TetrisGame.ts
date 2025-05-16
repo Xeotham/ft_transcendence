@@ -11,13 +11,13 @@ import { J } from "./Pieces/J";
 import { O } from "./Pieces/O";
 import { I } from "./Pieces/I";
 import { clamp, delay, mod } from "./utils";
-import { getRoomById, idGenerator } from "../../../pong_app/utils";
+import { idGenerator } from "../../../pong_app/utils";
 
 const   idGen = idGenerator()
 
 export class TetrisGame {
 	private readonly player:			WebSocket;
-	private username:					string;
+	private readonly username:			string;
 	private readonly size:				IPos;
 	private matrix:						Matrix;
 	private currentPiece:				ATetrimino | null;
@@ -37,6 +37,7 @@ export class TetrisGame {
 	private shouldSpawn:				boolean;
 	private	fallSpeed:					number;
 	private	over:						boolean;
+	private hasForfeit:					boolean;
 
 	private shouldLock:					boolean;
 	private isInLockPhase:				boolean;
@@ -87,8 +88,9 @@ export class TetrisGame {
 	private showHold:					boolean;
 	private infiniteHold:				boolean;
 	private infiniteMovement:			boolean;
-	private ARE:						number;
+	private lockTime:					number;
 	private spawnARE:					number;
+	private softDropAmp:				number;
 	private isLevelling:				boolean;
 	private canRetry:					boolean;
 
@@ -117,6 +119,7 @@ export class TetrisGame {
 		this.shouldSpawn = false;
 		this.fallSpeed = tc.FALL_SPEED(this.level);
 		this.over = false;
+		this.hasForfeit = false;
 
 		this.shouldLock = false;
 		this.isInLockPhase = false;
@@ -181,11 +184,11 @@ export class TetrisGame {
 		this.showBags = true;
 		this.holdAllowed = true;
 		this.showHold = true;
-		this.infiniteHold = true; // TODO : set to false for real games
-		this.infiniteMovement = true; // TODO : set to false for real games
-		this.canRetry = true;
-		this.ARE = -1; // Amount of time in ms in between a piece reaching the ground and locking down // TODO : set to 500 for real games
+		this.infiniteHold = false;
+		this.infiniteMovement = false;
+		this.lockTime = 500; // Amount of time in ms in between a piece reaching the ground and locking down
 		this.spawnARE = 0; // Amount of time in ms in between the piece spawning and starting to move // 250 in the guideline
+		this.softDropAmp = 1;
 		this.isLevelling = true;
 		this.canRetry = true;
 
@@ -216,6 +219,7 @@ export class TetrisGame {
 
 	public getGameId(): number { return this.gameId; }
 	public isOver(): boolean { return this.over; }
+	public getHasForfeit(): boolean { return this.hasForfeit; }
 	public getPlayer(): WebSocket { return this.player; }
 	public getCanRetry(): boolean { return this.canRetry; }
 	public getOpponent(): TetrisGame | undefined { return this.opponent; }
@@ -223,7 +227,7 @@ export class TetrisGame {
 	public setOver(over: boolean): void { this.over = over; }
 	public setOpponent(opponent: TetrisGame): void { this.opponent = opponent; }
 	public setSettings(settings: any): void {
-		if (!settings)
+		if (!settings || this.fallInterval !== -1)
 			return ;
 		Object.keys(settings).forEach((key) => {
 			// console.log("Setting " + key + " to " + settings[key]);
@@ -231,6 +235,7 @@ export class TetrisGame {
 				(this as any)[key] = settings[key];
 			}
 		});
+		this.initialState = JSON.parse(JSON.stringify(this));
 	}
 
 	private shuffleBag(): ATetrimino[] {
@@ -320,7 +325,7 @@ export class TetrisGame {
 		if (lowestReached < this.lowestReached)
 			return this.resetLockPhase();
 		if ((!this.infiniteMovement && this.nbMoves > 14) ||
-			(this.ARE >= 0 && this.msSinceLockPhase >= this.ARE)) {
+			(this.lockTime >= 0 && this.msSinceLockPhase >= this.lockTime)) {
 			// console.log("Lock phase reached, locking piece at " + this.msSinceLockPhase + " ms");
 			// this.nbMoves >= 500 ? console.log("Max time reached") : console.log("Max moves reached");
 			this.shouldLock = true;
@@ -590,7 +595,7 @@ export class TetrisGame {
 				this.fallSpeed = tc.FALL_SPEED(this.level);
 				break;
 			case "Soft":
-				this.fallSpeed = tc.SOFT_DROP_SPEED(this.level);
+				this.fallSpeed = tc.SOFT_DROP_SPEED(this.level) / this.softDropAmp;
 				break;
 			case "Hard":
 				this.fallSpeed = tc.HARD_DROP_SPEED;
@@ -617,9 +622,9 @@ export class TetrisGame {
 				console.log("Spin type: '" + this.spinType + "'");
 				this.player.send(JSON.stringify({type: "EFFECT", argument: "SPIN", value: this.spinType}))
 			}
+			else
+				this.player.send(JSON.stringify({type: "EFFECT", argument: "USER_EFFECT", value: "rotate" }));
 		}
-		else
-			this.player.send(JSON.stringify({type: "EFFECT", argument: "USER_EFFECT", value: "rotate" }));
 		this.placeShadow();
 	}
 
@@ -690,9 +695,9 @@ export class TetrisGame {
 
 	public async gameLoop() {
 		// console.log("Starting game loop");
-		this.player.send(JSON.stringify({type: "SOLO", game: this.toJSON()}));
+		this.player.send(JSON.stringify({type: "GAME_START", game: this.toJSON()}));
 		this.sendInterval = setInterval(() => {
-			this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}))
+			this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}));
 		}, 1000 / 60) as unknown as number; // 60 times per second
 
 		await this.spawnPiece();
@@ -707,7 +712,7 @@ export class TetrisGame {
 		this.player.send(JSON.stringify({type: "EFFECT", argument: "BOARD", value: "gameover"}));
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}));
 		this.sendStats();
-		this.player.send(JSON.stringify({type: "FINISH"}));
+		this.player.send(JSON.stringify({type: "GAME_FINISH"}));
 	}
 
 	private sendStats() {
@@ -734,6 +739,7 @@ export class TetrisGame {
 
 	public forfeit() {
 		this.over = true;
+		this.hasForfeit = true;
 	}
 
 	public async retry() {
@@ -756,5 +762,6 @@ export class TetrisGame {
 		this.placeShadow();
 		this.trySetInterval();
 		this.hold = null;
+		this.beginningTime = Date.now();
 	}
 }

@@ -333,8 +333,11 @@ const multiplayerRoom = (arg: loadTetrisArgs) => {
 	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
 	document.getElementById("infinite-hold")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
 	document.getElementById("infinite-movement")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("ARE")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
+	document.getElementById("lock-time")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
 	document.getElementById("spawn-ARE")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
+	document.getElementById("soft-drop-amp")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
+	document.getElementById("level")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
+	document.getElementById("is-leveling")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
 
 	document.getElementById("save")?.addEventListener("click", () => {
 		tetrisGameInfo.setSettings({
@@ -344,8 +347,11 @@ const multiplayerRoom = (arg: loadTetrisArgs) => {
 			"showHold": (document.getElementById("show-hold") as HTMLInputElement)?.checked,
 			"infiniteHold": (document.getElementById("infinite-hold") as HTMLInputElement)?.checked,
 			"infiniteMovement": (document.getElementById("infinite-movement") as HTMLInputElement)?.checked,
-			"ARE": parseInt((document.getElementById("ARE") as HTMLInputElement).value),
-			"spawnARE": parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value)
+			"lockTime": parseInt((document.getElementById("lock-time") as HTMLInputElement).value),
+			"spawnARE": parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value),
+			"softDropAmp": parseInt((document.getElementById("soft-drop-amp") as HTMLInputElement).value),
+			"level": parseInt((document.getElementById("level") as HTMLInputElement).value),
+			"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
 		});
 		tetrisGameInfo.setNeedSave(false);
 		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInfo.getRoomCode(), prefix: tetrisGameInfo.getSettings() })});
