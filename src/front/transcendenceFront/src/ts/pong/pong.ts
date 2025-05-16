@@ -204,12 +204,27 @@ const   drawBall = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number
 	ctx.drawImage(pongTextures["BALL"], coord.x, coord.y, ballSize * 2, ballSize * 2)
 }
 
-const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }) => {
-	ctx.fillStyle = "white";
-	ctx.font = "30px Arial";
+const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }, canvas: HTMLCanvasElement) => {
 	ctx.textAlign = "center";
-	ctx.fillText(player1.username + ": " + player1.score, boardWidth / 4, 30);
-	ctx.fillText(player2.username + ": " + player2.score, (boardWidth * 3) / 4, 30);
+
+	const   writeText = (text: string, x: number, y: number) => {
+		ctx.font = "30px Arial";
+		ctx.fillStyle = "black";
+		ctx.strokeText(text, x, y);
+		ctx.fillStyle = "white";
+		ctx.fillText(text, x, y);
+	}
+	const   player1Coord = { x: (canvas.width / 2) - 200, y: (canvas.height / 2) - (boardHeight / 2) - 30 };
+	const   player2Coord = { x: (canvas.width / 2) + 200, y: (canvas.height / 2) - (boardHeight / 2) - 30 };
+
+	if (pongGameInfo.getRoom()?.getPlayer() == "P2") {
+		writeText(`${player1.username}: ${player1.score}`, player2Coord.x, player2Coord.y);
+		writeText(`${player2.username}: ${player2.score}`, player1Coord.x, player1Coord.y);
+	}
+	else {
+		writeText(`${player1.username}: ${player1.score}`, player1Coord.x, player1Coord.y);
+		writeText(`${player2.username}: ${player2.score}`, player2Coord.x, player2Coord.y);
+	}
 }
 
 const drawGame =  (game: Game) => {
@@ -222,9 +237,14 @@ const drawGame =  (game: Game) => {
 	let     ballCoord;
 
 	if (game) {
-		paddle1Coord = { x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y };
-		paddle2Coord = { x: game.paddle2.x + boardCoord.x, y: game.paddle2.y + boardCoord.y };
-		ballCoord = { x: game.ball.x + boardCoord.x - ballSize, y: game.ball.y + boardCoord.y - ballSize };
+		paddle1Coord = {x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y};
+		paddle2Coord = {x: game.paddle2.x + boardCoord.x, y: game.paddle2.y + boardCoord.y};
+		ballCoord = {x: game.ball.x + boardCoord.x - ballSize, y: game.ball.y + boardCoord.y - ballSize};
+		if (pongGameInfo.getRoom()?.getPlayer() == "P2") {
+			paddle1Coord = { x: canvas.width - paddle1Coord.x - 10, y: paddle1Coord.y };
+			paddle2Coord = { x: canvas.width - paddle2Coord.x - 10, y: paddle2Coord.y };
+			ballCoord = { x: canvas.width - ballCoord.x - 20, y: ballCoord.y };
+		}
 	}
 
 	if (!ctx || !game)
@@ -235,7 +255,7 @@ const drawGame =  (game: Game) => {
 	drawBoard(ctx, boardCoord)
 
 	// Draw score
-	drawScore(ctx, game.score.player1, game.score.player2);
+	drawScore(ctx, game.score.player1, game.score.player2, canvas);
 	// c.fillStyle = "black";
 	// c.fillRect(0, 0, canvas.width, canvas.height);
 	// Draw ball

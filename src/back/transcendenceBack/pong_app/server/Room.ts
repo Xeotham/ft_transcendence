@@ -101,7 +101,7 @@ export class Room {
 
 	soloSetup(socket: WebSocket) {
 		this.P1 = { username: "Player 1", socket: socket };
-		this.P2 = { username: "Player 1", socket: socket };
+		this.P2 = { username: "Player 2", socket: socket };
 		this.full = true;
 		this.isSolo = true;
 		this.sendData({ type: "INFO", message: "Solo room created, starting game" });
