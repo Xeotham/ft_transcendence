@@ -1,11 +1,11 @@
 import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
-import  { address } from "../immanence.ts";
+import {address, content, user} from "../main.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore
-import { loadPongHtml } from "./pongHTML.ts";
+import { loadPongHtml } from "./htmlPage.ts";
 
 
 export class PongRoom {
@@ -155,7 +155,7 @@ export class PongRoom {
 }
 
 export const    createPrivateRoom = () => {
-	const   socket = new WebSocket(`ws://${address}/api/pong/createPrivateRoom`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/createPrivateRoom?username=${user.getUsername()}`);
 
 	pongGameInfo.setRoom(new PongRoom(socket));
 	pongGameInfo.getRoom()?.initSocket();
@@ -167,7 +167,7 @@ export const    joinPrivRoom = () => {
 
 	document.getElementById("submit")?.addEventListener("click", () => {
 		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
-		const   socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}`);
+		const   socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}&username=${user.getUsername()}`);
 
 		pongGameInfo.setRoom(new PongRoom(socket));
 		pongGameInfo.getRoom()?.initSocket();
@@ -175,7 +175,7 @@ export const    joinPrivRoom = () => {
 }
 
 export const   joinMatchmaking = async () => {
-	const   socket = new WebSocket(`ws://${address}/api/pong/joinMatchmaking`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/joinMatchmaking?username=${user.getUsername()}`);
 
 	pongGameInfo.setRoom(new PongRoom(socket));
 	pongGameInfo.getRoom()?.initSocket();
@@ -190,7 +190,7 @@ export const   joinSolo = async () => {
 }
 
 export const   joinBot = async () => {
-	const   socket = new WebSocket(`ws://${address}/api/pong/joinBot`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/joinBot?username=${user.getUsername()}`);
 
 	pongGameInfo.setRoom(new PongRoom(socket, false, true));
 	pongGameInfo.getRoom()?.initSocket();
@@ -305,8 +305,8 @@ export const   messageHandler = (event: MessageEvent)=> {
 }
 
 const	gameMessageHandler = (res: responseFormat) => {
-	// if (!content)
-	// 	return ;
+	if (!content)
+		return ;
 
 	switch (res.message) {
 		case "PREP":

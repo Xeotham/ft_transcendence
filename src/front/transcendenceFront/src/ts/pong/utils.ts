@@ -45,6 +45,7 @@ export interface Game {
 	paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	paddle2:	{ x: number, y: number, x_size: number, y_size: number };
 	ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
+	score:      { player1: { username: string, score: number }, player2: { username: string, score: number } };
 }
 
 export interface	RoomInfo {

@@ -6,7 +6,7 @@ import {
 	loadHtmlArg,
 	gameInformation,
 	boardWidth,
-	boardHeight
+	boardHeight, ballSize
 } from "./utils.ts";
 import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
@@ -162,6 +162,7 @@ export const loadPongTextures = () => {
 		"BACKGROUND": './src/textures/pong/background.jpg',
 		"BOARD": './src/textures/pong/pongBoard.png',
 		"PADDLE": './src/textures/pong/pongPaddle.png',
+		"BALL": './src/textures/pong/pongBall.png',
 	}
 
 	return Promise.all(
@@ -199,6 +200,18 @@ const   drawPaddle = (ctx: CanvasRenderingContext2D, coord: { x: number, y: numb
 	ctx.drawImage(pongTextures["PADDLE"], coord.x, coord.y, pongTextures["PADDLE"].width, pongTextures["PADDLE"].height);
 }
 
+const   drawBall = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
+	ctx.drawImage(pongTextures["BALL"], coord.x, coord.y, ballSize * 2, ballSize * 2)
+}
+
+const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }) => {
+	ctx.fillStyle = "white";
+	ctx.font = "30px Arial";
+	ctx.textAlign = "center";
+	ctx.fillText(player1.username + ": " + player1.score, boardWidth / 4, 30);
+	ctx.fillText(player2.username + ": " + player2.score, (boardWidth * 3) / 4, 30);
+}
+
 const drawGame =  (game: Game) => {
 	const   canvas = document.getElementById("pongCanvas")  as HTMLCanvasElement;
 	const   ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
@@ -206,10 +219,12 @@ const drawGame =  (game: Game) => {
 	const   boardCoord = { x: (canvas.width / 2) - (boardWidth / 2), y: (canvas.height / 2) - (boardHeight / 2) };
 	let     paddle1Coord;
 	let     paddle2Coord;
+	let     ballCoord;
 
 	if (game) {
 		paddle1Coord = { x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y };
 		paddle2Coord = { x: game.paddle2.x + boardCoord.x, y: game.paddle2.y + boardCoord.y };
+		ballCoord = { x: game.ball.x + boardCoord.x - ballSize, y: game.ball.y + boardCoord.y - ballSize };
 	}
 
 	if (!ctx || !game)
@@ -218,15 +233,19 @@ const drawGame =  (game: Game) => {
 	drawBackground(ctx, canvas.width, canvas.height);
 	// Draw board
 	drawBoard(ctx, boardCoord)
+
+	// Draw score
+	drawScore(ctx, game.score.player1, game.score.player2);
 	// c.fillStyle = "black";
 	// c.fillRect(0, 0, canvas.width, canvas.height);
 	// Draw ball
-	ctx.fillStyle = "white";
-	ctx.beginPath();
-	ctx.arc(game.ball.x + boardCoord.x, game.ball.y + boardCoord.y, game.ball.size, 0, Math.PI * 2);
-	ctx.fill();
+	drawBall(ctx, ballCoord!);
+	// ctx.fillStyle = "white";
+	// ctx.beginPath();
+	// ctx.arc(game.ball.x + boardCoord.x, game.ball.y + boardCoord.y, game.ball.size, 0, Math.PI * 2);
+	// ctx.fill();
 
 	// Draw paddles
-	drawPaddle(ctx, paddle1Coord);
-	drawPaddle(ctx, paddle2Coord);
+	drawPaddle(ctx, paddle1Coord!);
+	drawPaddle(ctx, paddle2Coord!);
 }

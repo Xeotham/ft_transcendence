@@ -1,10 +1,11 @@
 // @ts-ignore
 import  page from 'page';
-import {resetGamesSocket} from "./utils.ts";
+import {resetGamesSocket, UserInfo} from "./utils.ts";
 
 // @ts-ignore
 export const	address = import.meta.env.VITE_API_ADDRESS;
 export const	content = document.getElementById("content");
+export const	user = new UserInfo();
 
 /**
  * localStorage:
