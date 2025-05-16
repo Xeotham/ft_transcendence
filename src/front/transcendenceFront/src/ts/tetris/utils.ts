@@ -17,9 +17,9 @@ export class   keys {
 		this.moveRight              = "d";
 		this.clockwise_rotate       = "ArrowRight";
 		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "ArrowUp";
-		this.hard_drop              = "w";
-		this.soft_drop              = "s";
+		this.rotate_180             = "w";
+		this.hard_drop              = "ArrowUp";
+		this.soft_drop              = "ArrowDown";
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 		this.retry                  = "r";
@@ -71,14 +71,24 @@ export interface minoInfo {
 	texture: string;
 }
 
+export interface    tetrisGoalInfo {
+	score:              number;
+	level:              number;
+	time:               number;
+	linesCleared:       number,
+	lineClearGoal:      number,
+	piecesPlaced:       number,
+	piecesPerSecond:    number,
+}
+
 export interface        tetrisGameInfo {
 	matrix:             minoInfo[][];
 	bags:               tetriminoInfo[][];
 	hold:               tetriminoInfo;
-	score:              number;
-	level:              number;
 	gameId:             number;
 	canSwap:            boolean;
+	score:              number;
+	level:              number;
 	time:               number;
 	linesCleared:       number,
 	lineClearGoal:      number,
