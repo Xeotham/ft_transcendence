@@ -82,24 +82,6 @@ const keyBindsHtml = (keys: keys) => {
 	`
 }
 
-
-// const boardHtml = () => {
-// 	if (!content) {
-// 		return;
-// 	}
-//
-// 	content.innerHTML = `
-// 		<h1>Tetris</h1>
-// 		<p id="score">Score: 0</p>
-// <!--TODO : add theses line-->
-// <!--		<p id="time">Time: 00:00.000</p>-->
-// 		<p id="PPS">Pieces: 0, 0.00/S</p>
-// <!--		<p id="level">Level: 1</p>-->
-// <!--		<p id="lines">Lines: 0/10</p>-->
-// 		<canvas id="gameCanvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
-// 	`
-// }
-
 const boardHtml = () => {
 	if (!content) {
 		return;
@@ -132,18 +114,23 @@ const multiplayerRoomHtml = (code: string) => {
 	`
 	if (!tetrisGameInfo.getRoomOwner())
 		return ;
+	const s = tetrisGameInfo.getSettings();
+	// console.log("Settings: ", s);
 	// TODO : Make the non owner able to see but not change the settings (like transparent)
 	content.innerHTML += `
 		<button id="start">Start</button>
-		<input type="checkbox" id="show-shadow" checked="checked">Show Shadow</input>
-		<input type="checkbox" id="show-bags" checked="checked">Show bags</input>
-		<input type="checkbox" id="hold-allowed" checked="checked">Hold allowed</input>
-		<input type="checkbox" id="show-hold" checked="checked">Show hold</input>
-		<input type="checkbox" id="infinite-hold">Infinite hold</input>
-		<input type="checkbox" id="infinite-movement">Infinite movement</input>
-		<input type="number" id="ARE" value="500">ARE</input>
-		<input type="number" id="spawn-ARE" min="0" value="0">Spawn ARE</button>
-		<button id="save">Save settings</button>		
+		<input type="checkbox" id="show-shadow" ${s.showShadowPiece ? "checked" : ""}>Show Shadow</input>
+		<input type="checkbox" id="show-bags" ${s.showBags ? "checked" : ""}>Show bags</input>
+		<input type="checkbox" id="hold-allowed" ${s.holdAllowed ? "checked" : ""}>Hold allowed</input>
+		<input type="checkbox" id="show-hold" ${s.showHold ? "checked" : ""}>Show hold</input>
+		<input type="checkbox" id="infinite-hold" ${s.infiniteHold ? "checked" : ""}>Infinite hold</input>
+		<input type="checkbox" id="infinite-movement" ${s.infiniteMovement ? "checked" : ""}>Infinite movement</input>
+		<input type="number" id="lock-time" value="${s.lockTime !== undefined ? s.lockTime : "500"}">Lock time</input>
+		<input type="number" id="spawn-ARE" min="0" value="${s.spawnARE !== undefined ? s.spawnARE : "0"}">Spawn ARE</input>
+		<input type="number" id="soft-drop-amp" min="0" value="${s.sofDropAmp !== undefined ? s.softDropAmp : "1.5"}">Soft drop multiplier</input>
+		<input type="number" id="level" min="1" max="15" value="${s.level ? s.level : "4"}">Starting level</input>
+		<input type="checkbox" id="is-leveling" ${s.isLevelling ? "checked" : ""}>Is leveling</input>
+		<button id="save">Save settings</button>
 	</nav>
 	`
 

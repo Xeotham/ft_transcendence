@@ -205,7 +205,7 @@ class    sfxHandler {
 		// this.actualSfx = name;
 		if (this.sfx[name]) {
 			const   sound = new Audio(this.sfx[name].src);
-			console.log("Play sound: ", name);
+			// console.log("Play sound: ", name);
 			sound.play();
 		}
 	}
@@ -281,15 +281,8 @@ export class    tetrisGame {
 			"moveRight": true,
 		};
 		this.needSave = false;
-		this.settings = {
-			"showShadowPiece":			true,
-			"showBags":					true,
-			"swapAllowed":				true,
-			"infiniteHold":				false,
-			"infiniteMovement":			false,
-			"ARE":						500,
-			"spawnARE":					0,
-		};
+		this.settings = {};
+		this.resetSettings();
 	}
 	getSocket(): WebSocket | null { return this.socket; }
 	getRoomCode(): string { return this.roomCode; }
@@ -316,6 +309,21 @@ export class    tetrisGame {
 		this.socket = null;
 		this.gameId = -1;
 		this.game   = null;
+	}
+	resetSettings() {
+		this.settings = {
+			"showShadowPiece":			true,
+			"showBags":					true,
+			"holdAllowed":				true,
+			"showHold":					true,
+			"infiniteHold":				false,
+			"infiniteMovement":			false,
+			"lockTime":					500,
+			"spawnARE":					0,
+			"softDropAmp":				1.5,
+			"level":					4,
+			"isLevelling":				false,
+		};
 	}
 }
 

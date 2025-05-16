@@ -11,7 +11,7 @@ export class MultiplayerRoomPlayer {
 	constructor(socket: WebSocket, username: string, owner: boolean = false) {
 		this.socket = socket;
 		this.username = username;
-		this.owner = false;
+		this.owner = owner;
 		this.left = false;
 		this.game = undefined;
 	}
