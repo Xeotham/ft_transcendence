@@ -1,5 +1,5 @@
 import { deleteTournament } from "../api/tournament-controllers";
-import {delay, idGenerator, requestBody} from "../utils";
+import {delay, idGenerator, player, requestBody} from "../utils";
 import * as Constants from "./constants"
 import { WebSocket } from "ws";
 import { Room } from "./Room";
@@ -21,7 +21,7 @@ export class Tournament {
 	private started:			boolean;
 	private rooms:				Room[][]; // tree structure
 	private nbRoomsTop:			number;
-	private players:			WebSocket[];
+	private players:			player[];
 	private positions:			number[];
 	private needShuffle:		boolean;
 	private round:				number;
@@ -34,7 +34,7 @@ export class Tournament {
 		};
 	}
 
-	constructor(id: number, player: WebSocket, name: string) {
+	constructor(id: number, player: player, name: string) {
 		this.id = id;
 		this.started = false;
 		this.rooms = [];
@@ -66,15 +66,15 @@ export class Tournament {
 
 	sendToAll(data: any) {
 		this.players.forEach(player => {
-			player.send(JSON.stringify(data));
+			player.socket.send(JSON.stringify(data));
 		});
 	}
 
-	addPlayer(player: WebSocket) {
+	addPlayer(player: player) {
 		this.needShuffle = true;
 		this.players.push(player);
-		player.send(JSON.stringify({ type: "INFO", message: "You have joined the tournament" }));
-		player.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: this.id, tourPlacement: this.players.length - 1 }));
+		player.socket.send(JSON.stringify({ type: "INFO", message: "You have joined the tournament" }));
+		player.socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", tourId: this.id, tourPlacement: this.players.length - 1 }));
 	}
 
 	removePlayer(placementId: number) {
@@ -82,13 +82,13 @@ export class Tournament {
 
 		this.sendToAll({ type: "WARNING", message: "Player " + placementId + " has left the tournament" })
 		for (let i = placementId + 1; i < this.players.length; ++i)
-			this.players[i].send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", data: "CHANGE_PLACEMENT", tourId: this.id, tourPlacement: i - 1 }));
+			this.players[i].socket.send(JSON.stringify({ type: "TOURNAMENT", message: "PREP", data: "CHANGE_PLACEMENT", tourId: this.id, tourPlacement: i - 1 }));
 		if (!this.started) {
 			this.players.splice(placementId, 1);
 			if (this.players.length <= 0)
 				return deleteTournament(this.id);
 			if (placementId === 0)
-				this.players[0].send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
+				this.players[0].socket.send(JSON.stringify({ type: "TOURNAMENT", message: "OWNER" }));
 		}
 
 		// Find the room where the player is
@@ -120,7 +120,7 @@ export class Tournament {
 
 	shuffleTree() {
 		if (this.started)
-			return this.players[0]?.send(JSON.stringify({ type: "ERROR", message: "Tournament already started, cannot shuffle right now" }));
+			return this.players[0]?.socket.send(JSON.stringify({ type: "ERROR", message: "Tournament already started, cannot shuffle right now" }));
 
 		this.updateTree();
 
@@ -136,7 +136,7 @@ export class Tournament {
 			// this.positions[j] = temp;
 		}
 		for (let i = 0; i < this.positions.length; ++i)
-			this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in position " + i }));
+			this.players[this.positions[i]].socket.send(JSON.stringify({ type: "INFO", message: "You are in position " + i }));
 		console.log("\x1b[38;5;82mTournament shuffled\x1b[0m");
 		this.needShuffle = false;
 		this.printTree();
@@ -201,9 +201,9 @@ export class Tournament {
 
 		for (let i = 0; i < this.positions.length; ++i) {
 			const room = this.rooms[0][Math.floor(i / 2)];
-			this.players[this.positions[i]].send(JSON.stringify({ type: "INFO", message: "You are in room " + room.getId() }));
-			this.players[this.positions[i]].send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: room.getId() }));
-			room.addPlayer(this.players[this.positions[i]]);
+			this.players[this.positions[i]].socket.send(JSON.stringify({ type: "INFO", message: "You are in room " + room.getId() }));
+			this.players[this.positions[i]].socket.send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: room.getId() }));
+			room.addPlayer(this.players[this.positions[i]].socket, this.players[this.positions[i]].username);
 		}
 		if (this.players.length % 2 === 1) {
 			const room = this.rooms[0][this.nbRoomsTop - 1];
@@ -227,18 +227,16 @@ export class Tournament {
 		if (this.round + 1 === this.rooms.length) {
 			console.log("Tournament ended");
 
-			const	winner = this.rooms[this.rooms.length - 1][0].getGame()?.getWinner()
+			const	winner = this.rooms[this.rooms.length - 1][0].getGame()?.getWinner();
 
-			console.log("\x1b[38;5;204mThe Grand winner is player number: " +
-				(winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody") + "\x1b[0m");
+			console.log("\x1b[38;5;204mThe Grand winner is " + winner?.username + "\x1b[0m");
 			this.sendToAll({type: "INFO", message: "Tournament ended"});
 			this.sendToAll({
-				type: "ALERT", message: "The Grand winner is player number: " +
-					(winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody")
+				type: "ALERT", message: "The Grand winner is " + winner?.username,
 			});
 			// TODO : Change players to name
 			// TODO : Special screen for the end of the tournament
-			this.sendToAll({type: "LEAVE", data: "TOURNAMENT", winner: (winner !== undefined ? this.players.indexOf(winner as WebSocket) : "Nobody")});
+			this.sendToAll({type: "LEAVE", data: "TOURNAMENT", winner: (winner !== undefined ? winner?.username : "Nobody")});
 			deleteTournament(this.id);
 			return;
 		}
@@ -246,20 +244,20 @@ export class Tournament {
 		await delay(1000);
 
 		for (let i = 0; i < this.rooms[this.round].length; ++i) {
-			const	winner = this.rooms[this.round][i].getGame()?.getWinner();
+			const	winner: player = this.rooms[this.round][i].getGame()?.getWinner()!;
 
 			if (!winner) {
 				console.log("No winner found for room " + this.rooms[this.round][i].getId());
 				continue ;
 			}
-			winner.send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: this.rooms[this.round + 1][Math.floor(i / 2)].getId() }));
+			winner.socket.send(JSON.stringify({ type: "TOURNAMENT", message: "CREATE", roomId: this.rooms[this.round + 1][Math.floor(i / 2)].getId() }));
 			// Don't add player if already left the tournament, it will check later if a player is alone in a room
-			if (winner.readyState !== WebSocket.CLOSED)
-				this.rooms[this.round + 1][Math.floor(i / 2)].addPlayer(winner as WebSocket);
+			if (winner.socket.readyState !== WebSocket.CLOSED)
+				this.rooms[this.round + 1][Math.floor(i / 2)].addPlayer(winner);
 			if (i % 2 === 1) {
 				const room = this.rooms[this.round + 1][Math.floor(i / 2)];
-				console.log("Player " + this.players.indexOf(room.getP1() as WebSocket) +
-					" will face player " + this.players.indexOf(room.getP2() as WebSocket));
+				console.log("Player " + room.getP1()?.username +
+					" will face player " + room.getP2()?.username);
 			}
 		}
 		// If only one player in the room, automatically win

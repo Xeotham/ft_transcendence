@@ -1,5 +1,5 @@
 import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
-import { address } from "../main.ts";
+import {address, user} from "../main.ts";
 import { loadPongPage, pongGameInfo } from "./pong.ts";
 import {quit, messageHandler, PongRoom} from "./game.ts";
 // @ts-ignore
@@ -105,7 +105,7 @@ export const   getTournamentName = async () => {
 }
 
 const   createTournament = async (name: string) => {
-	const   socket = new WebSocket(`ws://${address}/api/pong/createTournament?name=${name}`);
+	const   socket = new WebSocket(`ws://${address}/api/pong/createTournament?name=${name}&username=${user.getUsername()}`);
 
 	pongGameInfo.setTournament(new Tournament(socket, name, true));
 	pongGameInfo.getTournament()?.initSocket()
@@ -169,7 +169,7 @@ export const getTournamentInfo = (id: number) => {
 }
 
 const joinTournament = (tournamentId: number/*, tourName: string*/) => {
-    const socket = new WebSocket(`ws://${address}/api/pong/joinTournament?id=${tournamentId}`);
+    const socket = new WebSocket(`ws://${address}/api/pong/joinTournament?id=${tournamentId}&username=${user.getUsername()}`);
 
 	pongGameInfo.setTournament(new Tournament(socket, "tourName"))
 	pongGameInfo.getTournament()?.initSocket();

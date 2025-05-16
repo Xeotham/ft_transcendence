@@ -30,10 +30,12 @@ export const	Rooms: Room[] = [];
 const idGenRoom = idGenerator();
 
 export function isPlayerInRoom(socket: WebSocket): boolean {
-	return Rooms.find((room) => { return room.getP1() === socket || room.getP2() === socket; }) !== undefined;
+	return Rooms.find((room) => { return room.getP1()?.socket === socket || room.getP2()?.socket === socket; }) !== undefined;
 }
 
-export const    createPrivateRoom = async (socket: WebSocket, req: FastifyRequest) => {
+export const    createPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
+	const   username = req.query.username;
+
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
 		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
 		return socket.send(JSON.stringify({type: "LEAVE"}));
@@ -41,13 +43,14 @@ export const    createPrivateRoom = async (socket: WebSocket, req: FastifyReques
 
 	const newRoom = new Room(idGenRoom.next().value, false, false, -1, true);
 
-	newRoom.addPlayer(socket);
+	newRoom.addPlayer(socket, username);
 	Rooms.push(newRoom);
 	socket.send(JSON.stringify( { type: "GAME", message: "PRIVOWNER", inviteCode: newRoom.getInviteCode() }));
 }
 
-export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: { inviteCode: string }}>) => {
+export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: { inviteCode: string, username: string }}>) => {
 	const   inviteCode = req.query.inviteCode;
+	const   username = req.query.username;
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
 		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
@@ -63,10 +66,12 @@ export const    joinPrivateRoom = async (socket: WebSocket, req: FastifyRequest<
 		socket.send(JSON.stringify({type: "INFO", message: "Room is full"}));
 		return socket.send(JSON.stringify({type: "LEAVE"}));
 	}
-	room.addPlayer(socket);
+	room.addPlayer(socket, username);
 }
 
-export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest<{ Querystring: { username: string } }>) => {
+
+	const username = req.query.username;
 
 	if (isPlayerInRoom(socket) || isPlayerInTournament(socket)) {
 		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
@@ -77,7 +82,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 	// Check existing rooms for an available spot
 	for (const room of Rooms) {
 		if (!room.isFull() && !room.getIsPrivate()) {
-			room.addPlayer(socket);
+			room.addPlayer(socket, username);
 			return ;
 		}
 	}
@@ -85,7 +90,7 @@ export const joinMatchmaking = async (socket: WebSocket, req: FastifyRequest) =>
 	// If no available room is found, create a new one
 	const newRoom = new Room(idGenRoom.next().value);
 
-	newRoom.addPlayer(socket);
+	newRoom.addPlayer(socket, username);
 	Rooms.push(newRoom);
 	return ;
 };
@@ -103,7 +108,9 @@ export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
 	newRoom.startGame();
 }
 
-export const joinBot = async (socket: WebSocket, req: FastifyRequest) => {
+export const joinBot = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
+	const   username = req.query.username;
+
 	console.log("ok");
 	if (isPlayerInRoom(socket)) {
 		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
@@ -113,7 +120,7 @@ export const joinBot = async (socket: WebSocket, req: FastifyRequest) => {
 	console.log("New Player creating bot room");
 	const newRoom = new Room(idGenRoom.next().value, true);
 	Rooms.push(newRoom);
-	newRoom.botSetup(socket);
+	newRoom.botSetup(socket, username);
 	newRoom.startGame();
 }
 
@@ -126,7 +133,7 @@ export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }
 
 	if (!room)
 		return;
-	const	playerSocket: WebSocket | null = player === "P1" ? room.getP1() : room.getP2();
+	const	playerSocket: WebSocket = player === "P1" ? room.getP1()?.socket! : room.getP2()?.socket!;
 	if (player === "P1")
 		room.setP1Ready(true);
 	else

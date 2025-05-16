@@ -2,6 +2,30 @@ import {tetrisGameInfo} from "./tetris/tetris.ts";
 import {pongGameInfo} from "./pong/pong.ts";
 import {address} from "./main.ts";
 
+export class UserInfo {
+	username: string;
+	constructor() {
+		this.username = UserInfo.generateUsername();
+	}
+
+	static generateUsername() {
+		const   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const   length = 8;
+		let     result: string = "";
+
+		for (let i = 0; i < length; i++)
+			result += characters.charAt(Math.floor(Math.random() * characters.length));
+		return result;
+	}
+
+	getUsername() {
+		return this.username;
+	}
+	setUsername(username: string) {
+		this.username = username;
+	}
+}
+
 export const    postToApi = async (url: string, data: any) => {
 	// console.log("Data: ", data);
 
