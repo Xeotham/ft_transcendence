@@ -71,14 +71,24 @@ export interface minoInfo {
 	texture: string;
 }
 
+export interface    tetrisGoalInfo {
+	score:              number;
+	level:              number;
+	time:               number;
+	linesCleared:       number,
+	lineClearGoal:      number,
+	piecesPlaced:       number,
+	piecesPerSecond:    number,
+}
+
 export interface        tetrisGameInfo {
 	matrix:             minoInfo[][];
 	bags:               tetriminoInfo[][];
 	hold:               tetriminoInfo;
-	score:              number;
-	level:              number;
 	gameId:             number;
 	canSwap:            boolean;
+	score:              number;
+	level:              number;
 	time:               number;
 	linesCleared:       number,
 	lineClearGoal:      number,
