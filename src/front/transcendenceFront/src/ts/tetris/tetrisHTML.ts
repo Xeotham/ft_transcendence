@@ -108,14 +108,7 @@ const boardHtml = () => {
 
 	EL.contentTetris.innerHTML = `
 <!--		<p id="score">Score: 0</p>-->
-		<div id="sfx">
-		<audio id="sfxplayer"/>
-<!--		<audio id="allclear" src="./src/sfx/tetris/Tetrio_retro_pack/allclear.wav" />-->
-<!--		<audio id="applause" src="./src/sfx/tetris/Tetrio_retro_pack/applause.wav" />-->
-<!--		<audio id="boardappear" src="./src/sfx/tetris/Tetrio_retro_pack/boardappear.wav" />-->
-<!--		<audio id="btb_1" src="./src/sfx/tetris/Tetrio_retro_pack/btb_1.wav" />-->
-<!--		<audio id="btb_2" src="./src/sfx/tetris/Tetrio_retro_pack/btb_2.wav" />-->
-		</div>
+		<p id="awaitingGarbage">Incoming Garbage: 0</p>
 		<div id="board">
 		<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
 		</div>`
