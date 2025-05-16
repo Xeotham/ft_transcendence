@@ -227,7 +227,7 @@ const effectPlayer = (type: string, argument: string | null = null) => {
 			return lockEffect(argument!);
 		/* ==== SPIN ==== */
 		case "SPIN":
-			return sfxPlayer.play("spin");
+			return spinEffect(argument!);
 		/* ==== BOARD ==== */
 		case "BOARD":
 			return boardEffect(argument!);
@@ -247,8 +247,8 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			// console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
-			// bgmPlayer.choseBgm("bgm3");
-			bgmPlayer.play();
+			bgmPlayer.choseBgm("bgm1");
+			// bgmPlayer.play();
 			loadTetrisHtml("board");
 			loadTetrisPage("board");
 			gameControllers();
@@ -268,6 +268,10 @@ const   messageHandler = (event: MessageEvent)=> {
 				console.log("Joining room: " + res.argument);
 			}
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInfo.getRoomCode()}]});
+			return ;
+		case 'MULTIPLAYER_LEAVE':
+			console.log("MULTIPLAYER_LEAVE");
+			resetSocket("room");
 			return ;
 		case 'MULTIPLAYER_LEAVE':
 			console.log("MULTIPLAYER_LEAVE");
