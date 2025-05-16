@@ -7,7 +7,19 @@ import { postToApi } from "../utils.ts";
 import page from "page";
 
 let socket: WebSocket | null = null;
-export const username = localStorage.getItem("username");
+const generateUserName = () => {
+	const   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const   length = 8;
+	let     result: string = "";
+
+	for (let i = 0; i < length; i++)
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	console.log("Generated username: " + result);
+	return result;
+}
+
+
+export const username = /*localStorage.getItem("username");*/ generateUserName(); // TODO: Change this to use the username from the local storage
 
 const socketInit = (socket: WebSocket) => {
 	tetrisGameInfo.setSocket(socket);
@@ -27,13 +39,19 @@ const socketInit = (socket: WebSocket) => {
 		tetrisGameInfo.setRoomOwner(false);
 		console.log("Leaving room : " + tetrisGameInfo.getRoomCode());
 		tetrisGameInfo.setRoomCode("");
+		loadTetrisPage("idle");
 	};
 }
 
-export const resetSocket = () => {
+export const resetSocket = (leaveType: string = "game") => {
 
-	tetrisGameInfo.getSocket()?.close();
-	tetrisGameInfo.setSocket(null);
+	if ((leaveType === "game" && tetrisGameInfo.getRoomCode() === "") ||
+		leaveType === "room") {
+		console.log("Closing socket");
+		tetrisGameInfo.getSocket()?.close();
+		tetrisGameInfo.setSocket(null);
+		tetrisGameInfo.resetSettings();
+	}
 	tetrisGameInfo.setGameId(-1);
 	tetrisGameInfo.setGame(null);
 	tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
@@ -173,6 +191,13 @@ const   lockEffect = (lock: string) => {
 	}
 }
 
+const   spinEffect = (spin: string) => {
+	switch (spin) {
+		default:
+			return sfxPlayer.play("spin");
+	}
+}
+
 const   boardEffect = (board: string) => {
 	return sfxPlayer.play(board);
 }
@@ -217,13 +242,13 @@ const   messageHandler = (event: MessageEvent)=> {
 	if (!res)
 		return;
 	switch (res.type) {
-		case 'SOLO':
-			console.log("SOLO");
+		case 'GAME_START':
+			console.log("GAME_START");
 			tetrisGameInfo.setGame(res.game);
 			// console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
-			bgmPlayer.choseBgm("bgm1");
-			// bgmPlayer.play();
+			bgmPlayer.choseBgm("bgm3");
+			bgmPlayer.play();
 			loadTetrisHtml("board");
 			loadTetrisPage("board");
 			gameControllers();
@@ -233,6 +258,9 @@ const   messageHandler = (event: MessageEvent)=> {
 				console.log("MULTIPLAYER_OWNER");
 				tetrisGameInfo.setRoomOwner(true);
 			}
+			else if(res.argument === "SETTINGS") {
+				tetrisGameInfo.setSettings(res.value);
+			}
 			else {
 				console.log("MULTIPLAYER_JOIN");
 				tetrisGameInfo.setRoomCode(res.argument);
@@ -240,6 +268,10 @@ const   messageHandler = (event: MessageEvent)=> {
 				console.log("Joining room: " + res.argument);
 			}
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInfo.getRoomCode()}]});
+			return ;
+		case 'MULTIPLAYER_LEAVE':
+			console.log("MULTIPLAYER_LEAVE");
+			resetSocket("room");
 			return ;
 		case 'INFO':
 			console.log("INFO: " + res.argument);
@@ -257,10 +289,9 @@ const   messageHandler = (event: MessageEvent)=> {
 		case "MULTIPLAYER_FINISH":
 			console.log("The multiplayer game has finished. You ended up at place " + res.argument);
 			return ;
-		case "FINISH":
+		case "GAME_FINISH":
 			console.log("Game Over");
 			resetSocket();
-			gameControllers(true);
 			bgmPlayer.stop();
 			return ;
 		default:
@@ -294,6 +325,8 @@ const   movePiece = (direction: string) => {
 	repeat();
 }
 
+let abortController: AbortController | null = null;
+
 const gameControllers = async (finish: boolean = false) => {
 	const keyStates = {
 		moveLeft: false,
@@ -307,8 +340,7 @@ const gameControllers = async (finish: boolean = false) => {
 		if (tetrisGameInfo.getGameId() === -1) {
 			tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
 			tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
-			document.removeEventListener('keydown', keydownHandler);
-			document.removeEventListener('keyup', keyupHandler);
+			abortController?.abort(); // Remove all listeners
 			return ;
 		}
 
@@ -382,11 +414,12 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getForfeit().toLowerCase():
 			case userKeys.getForfeit().toUpperCase():
 				postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInfo.getGameId() });
-				tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
-				tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
-				document.removeEventListener('keydown', keydownHandler);
-				document.removeEventListener('keyup', keyupHandler);
-				page.show("/tetris")
+				// tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+				// tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+				// document.removeEventListener('keydown', keydownHandler);
+				// document.removeEventListener('keyup', keyupHandler);
+				// bgmPlayer.stop();
+				// page.show("/tetris")
 				return;
 			case userKeys.getRetry():
 			case userKeys.getRetry().toLowerCase():
@@ -437,11 +470,16 @@ const gameControllers = async (finish: boolean = false) => {
 	if (finish) {
 		tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
 		tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
-		document.removeEventListener('keydown', keydownHandler);
-		document.removeEventListener('keyup', keyupHandler);
-		return loadTetrisPage("idle");
+		abortController?.abort(); // Abort all listeners
+		abortController = null;
+		return ;
 	}
 
-	document.addEventListener("keydown", keydownHandler);
-	document.addEventListener("keyup", keyupHandler);
+	if (!abortController) {
+		abortController = new AbortController();
+		const signal = abortController.signal;
+
+		document.addEventListener("keydown", keydownHandler, { signal });
+		document.addEventListener("keyup", keyupHandler, { signal });
+	}
 }
