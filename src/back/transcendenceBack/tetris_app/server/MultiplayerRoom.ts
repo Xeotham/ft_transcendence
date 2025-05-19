@@ -109,6 +109,8 @@ export class MultiplayerRoom {
 				return ;
 			for (let i = 0; i < this.sockets.length; ++i)
 				this.sockets[i]?.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
+			// HEERE
+			createGameTetris(this.games);
 			this.games = [];
 			this.isInGame = false;
 			this.removeLeavers();
