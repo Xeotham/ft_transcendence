@@ -190,8 +190,8 @@ export interface linesCleared {
 export interface block {
 	[key: string]: any;
 	"blocks" : IPos[];
-	"nbRotationPoints": number,
 	"rotationPoints": IPos[];
+	"rotationPoints180": IPos[];
 }
 
 export interface pieceStruct {
