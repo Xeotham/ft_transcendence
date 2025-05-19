@@ -33,8 +33,6 @@ export class MultiplayerRoom {
 	public setPrivate(isPrivate: boolean): void		{ this.private = isPrivate; }
 	public setSettings(settings: any): void			{ this.settings = settings; }
 
-	// git commit -m "Added a bunch of settings in rooms, Made settings be persistent through multiple room games, able to restart a room when  being alone in it. Fixed ownership passage when an owner leaves the room. Sending the games of the opponents to the player in rooms so he can print them"
-
 	public addPlayer(socket: WebSocket, username: string): void		{
 		if (this.players.length <= 0) {
 			socket.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: "OWNER"}));
