@@ -1,4 +1,4 @@
-import { tetrisGameInfo } from "./tetris/tetris.ts";
+import { tetrisGameInformation } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
 import { address } from "./immanence.ts";
 
@@ -68,9 +68,9 @@ export const    getFromApi = async (url: string) => {
 }
 
 export const    resetGamesSocket = (type: string) => {
-	if (tetrisGameInfo.getSocket() && type !== "tetris") {
-		tetrisGameInfo.getSocket()?.close();
-		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInfo.getGameId() });
+	if (tetrisGameInformation.getSocket() && type !== "tetris") {
+		tetrisGameInformation.getSocket()?.close();
+		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInformation.getGameId() });
 	}
 	if (pongGameInfo.getRoom()?.getSocket() && type !== "pong")
 		pongGameInfo.getRoom()?.getSocket()?.close();
