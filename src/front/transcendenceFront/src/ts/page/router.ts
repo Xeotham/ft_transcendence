@@ -34,7 +34,6 @@ export const startRouter = () => {
 const tetrisRouter = () => {
 	// TETRIS IDLE
 	page("/tetris", () => {
-		loadTetrisPage("idle");
 		zoneSet("TETRIS");
 	});
 	// TETRIS MULTIPLAYER ROOM LIST
@@ -56,7 +55,6 @@ const tetrisRouter = () => {
 const pongRouter = () => {
 	// PONG IDLE
 	page('/pong', () => {
-		loadPongPage("idle");
 		zoneSet("PONG");
 	});
 	// PONG TOURNAMENT LIST
@@ -79,14 +77,12 @@ const pongRouter = () => {
 	// @ts-ignore PONG ROOM INFO	
 	page("/pong/room/:id", ({ params } ) => {
 		const   roomId = Number(params.id);
-		//console.log("Type: " + typeof roomId + " Value: " + roomId);
 		getRoomInfo(roomId);
 		zoneSet("PONG");
 	})
 	// @ts-ignore PONG TOURNAMENT ROOM INFO
 	page("/pong/tournament/room/:id", ({ params } ) => {
 		const   roomId = Number(params.id);
-		//console.log("Type: " + typeof roomId + " Value: " + roomId);
 		getTourRoomInfo(roomId);
 		zoneSet("PONG");
 	})

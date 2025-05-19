@@ -4,9 +4,9 @@
 // Syles
 import { TCS } from '../TCS.ts';
 // Images
-import img_logo_immanence from '../../medias/images/zones/flamingtext_3.png';
-import img_pong_bkg from '../../medias/images/zones/fond_test_pong.png';
-import img_tetris_bkg from '../../medias/images/zones/fond_test_tetris.png';
+import img_logo_immanence from '/src/medias/images/zones/flamingtext_3.png';
+import img_pong_bkg from '/src/medias/images/zones/fond_test_pong.png';
+import img_tetris_bkg from '/src/medias/images/zones/fond_test_tetris.png';
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
 
 ///////////////////////////////////////////

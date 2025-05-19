@@ -19,7 +19,7 @@ const main = () => {
     EL.init();
     if (EL.check()) {
       modaleInit();
-      zoneSet('HOME');
+      //zoneSet('HOME');
     }
     awaitMedias();
     startRouter();

@@ -70,8 +70,7 @@ const   idlePage = () => {
 	document.getElementById("Create-tournament")?.addEventListener("click", getTournamentName);
 	document.getElementById("Tournaments")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
 	document.getElementById("Rooms-spectator")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
-	document.getElementById("Home")?.addEventListener("click", () => { page.show("/"); //zoneSet("HOME");   
-	});
+	document.getElementById("Home")?.addEventListener("click", (e) => { e.stopPropagation(); page.show("/"); });
 }
 
 const   matchFoundPage = () => {

@@ -1,7 +1,7 @@
 import {TCS} from "../TCS.ts";
 import {EL} from "../zone/zoneHTML.ts";
 import { keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
-import {tetrisGameInfo} from "./tetris.ts";
+import { tetrisGameInfo } from "./tetris.ts";
 
 export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {

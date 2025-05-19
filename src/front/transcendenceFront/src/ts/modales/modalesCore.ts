@@ -21,6 +21,8 @@ export let modale = {
   element: <HTMLDivElement|null>null,
 };
 
+let closeIconHandler: (() => void) | null = null;
+
 ///////////////////////////////////////////
 // Functions
 
@@ -66,9 +68,17 @@ export const modaleAddCloseIcon = () => {
   }
   closeIcon.classList.add('block');
 
-  closeIcon.addEventListener('click', () => {
+  // Supprimer l'ancien écouteur s'il existe
+  if (closeIconHandler) {
+    closeIcon.removeEventListener('click', closeIconHandler);
+  }
+
+  // Créer et stocker le nouveau gestionnaire
+  closeIconHandler = () => {
     modaleHide();
-  });
+  };
+
+  closeIcon.addEventListener('click', closeIconHandler);
 }
 
 export const modaleRemoveCloseIcon = () => {
@@ -80,7 +90,10 @@ export const modaleRemoveCloseIcon = () => {
   }
   closeIcon.classList.add('hidden');
 
-  closeIcon.removeEventListener('click', () => {
-  });
+  // Supprimer l'écouteur s'il existe
+  if (closeIconHandler) {
+    closeIcon.removeEventListener('click', closeIconHandler);
+    closeIconHandler = null;
+  }
 }
 

@@ -56,7 +56,6 @@ const stateProxy = new Proxy<Zone>(zone, {
   set(target, property: keyof Zone, value: any) {
     if (property in target) {
       target[property] = value as never;
-      // console.log(`${String(property)} a changé: ${value}`);
       if (property === 'separatorPos') {
         zoneResize();
       }
@@ -117,7 +116,6 @@ export const zoneSet = (state: string) => {
     return;
   }
   zone.state = state;
-  //console.log(zone.state);
   switch (zone.state) {
     case 'HOME':        { zoneSetHOME(); break; }
     case 'OVER_PONG':   { zoneSetOVER_PONG(); break; }
@@ -148,7 +146,7 @@ const zoneSetHOME = () => {
   zone.state = "HOME";
   loadPongPage("logo");
   loadTetrisPage("logo");
-  page.show("/");
+  //page.show("/"); 
 }
 
 const zoneSetOVER_PONG = () => {
@@ -172,7 +170,8 @@ const zoneSetPONG = () => {
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.91);
   zone.state = "PONG";
   loadTetrisPage("empty");
-  page.show("/PONG");
+  //page.show("/PONG");
+  loadPongPage("idle");
 }
 
 const zoneSetTETRIS = () => {
@@ -188,5 +187,6 @@ const zoneSetTETRIS = () => {
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.09);
   zone.state = "TETRIS";
   loadPongPage("empty");
-  page.show("/TETRIS");
+  //page.show("/TETRIS");
+  loadTetrisPage("idle");
 }

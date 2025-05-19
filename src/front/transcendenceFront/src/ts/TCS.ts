@@ -18,7 +18,7 @@ export const TCS = {
     zoneTetris : "relative flex top-[30px] w-full h-full bg-gradient-to-t from-lime-50 to-slate-200",
     
     // zoneModale
-    modale : "fixed z-40 w-[680px] shadow-xl/30 bg-black/80 px-8 py-5 top-16 left-1/2 -translate-x-1/2",
+    modale : "fixed z-40 w-[680px] shadow-xl/30 bg-black/80 px-8 py-5 top-16 left-1/2 -translate-x-1/2 backdrop-blur-sm",
     modaleClose : "fixed z-50 w-[20px] h-[20px] shadow-xl/30 rounded-xs bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none flex items-center justify-center absolute top-[10px] right-[10px]",
     modaleTitre : "font-sixtyfour text-[28px] text-amber-400",
     modaleTexte : "font-sixtyfour text-[14px] relative text-lime-50",
@@ -38,7 +38,7 @@ export const TCS = {
     pongCanvas : "bg-black/80 block",
 
     pongLogo :   "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-lime-50",
-    pongTitre : "font-sixtyfour text-[80px] flex items-center justify-center h-full w-full text-lime-50",
+    pongTitre : "font-sixtyfour text-[42px] flex items-center justify-center h-full w-full text-lime-50",
     pongNav0 : "flex flex-col items-center justify-center",
     pongNav1 : "flex flex-col items-center justify-center bg-lime-50 px-[28px] py-[28px] shadow-xl/50",
     pongButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30",

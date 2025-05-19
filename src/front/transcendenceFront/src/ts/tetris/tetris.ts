@@ -21,7 +21,7 @@ import {
 } from "./gameManagement.ts";
 
 import {postToApi, resetGamesSocket} from "../utils.ts";
-
+import { zoneSet } from "../zone/zoneCore.ts";
 import { address } from "../immanence.ts";
 
 export const userKeys: keys = new keys();
@@ -65,7 +65,11 @@ const   idlePage = () => {
 	tetrisGameInfo.setRoomOwner(false);
 
 	resetGamesSocket();
-	document.getElementById("home")?.addEventListener("click", () => page.show("/"));
+	document.getElementById("home")?.addEventListener("click", (e) => {
+		e.stopPropagation();
+		page.show("/");
+		// zoneSet("HOME");
+	});
 	// document.getElementById("matchmaking")?.addEventListener("click", () => searchGame())
 	document.getElementById("arcade")?.addEventListener("click", () => arcadeGame());
 	document.getElementById("create-room")?.addEventListener("click", () => createRoom());
@@ -125,19 +129,19 @@ export const tetrisTextures: { [key: string]: HTMLImageElement } = {};
 export const loadTetrisTextures = () => {
 
 	const   texturePaths = {
-		"I":        './src/textures/tetris/I.png',
-		"J":        './src/textures/tetris/J.png',
-		"L":        './src/textures/tetris/L.png',
-		"O":        './src/textures/tetris/O.png',
-		"S":        './src/textures/tetris/S.png',
-		"T":        './src/textures/tetris/T.png',
-		"Z":        './src/textures/tetris/Z.png',
-		"SHADOW":   './src/textures/tetris/shadow.png',
-		"BACKGROUND": './src/textures/tetris/background.jpg',
-		"MATRIX":   './src/textures/tetris/matrix.png',
-		"HOLD":     './src/textures/tetris/hold.png',
-		"BAGS":     './src/textures/tetris/bags.png',
-		"GARBAGE": './src/textures/tetris/garbage.png',
+		"I":        '/src/medias/textures/tetris/I.png',
+		"J":        '/src/medias/textures/tetris/J.png',
+		"L":        '/src/medias/textures/tetris/L.png',
+		"O":        '/src/medias/textures/tetris/O.png',
+		"S":        '/src/medias/textures/tetris/S.png',
+		"T":        '/src/medias/textures/tetris/T.png',
+		"Z":        '/src/medias/textures/tetris/Z.png',
+		"SHADOW":   '/src/medias/textures/tetris/shadow.png',
+		"BACKGROUND": '/src/medias/textures/tetris/background.jpg',
+		"MATRIX":   '/src/medias/textures/tetris/matrix.png',
+		"HOLD":     '/src/medias/textures/tetris/hold.png',
+		"BAGS":     '/src/medias/textures/tetris/bags.png',
+		"GARBAGE": '/src/medias/textures/tetris/garbage.png',
 	}
 
 	return Promise.all(

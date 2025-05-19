@@ -3,6 +3,9 @@ import {
   documentResize
 } from './zoneCore.ts'
 
+// @ts-ignore
+import  page from "page"
+
 let outDocumentHandler: EventListener | null = null;
 let overzoneTopHandler: EventListener | null = null;
 let overPongHandler: EventListener | null = null;
@@ -26,19 +29,10 @@ export const evAdOutDocument = () => {
 
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTop"]');
   if (target && !overzoneTopHandler) {
-    /*
-    overzoneTopHandler = (event: Event) => {
-      const mouseEvent = event as MouseEvent;
-      if (mouseEvent.relatedTarget) {
-        console.log('over');
-        zoneSet('HOME');
-      }
-    };
-    */
     overzoneTopHandler = (event: Event) => {
       const mouseEvent = event as MouseEvent;
       if (mouseEvent.relatedTarget !== target) {
-        zoneSet('HOME');
+        page.show("/");
       }
     };
       
@@ -64,7 +58,7 @@ export const evAdClickPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
   if (target && !clickPongHandler) {
     clickPongHandler = () => {
-      zoneSet('PONG');
+      page.show("/pong");
     };
     target.addEventListener('click', clickPongHandler);    
   }
@@ -83,7 +77,7 @@ export const evAdClickTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
   if (target && !clickTetrisHandler) {
     clickTetrisHandler = () => {
-      zoneSet('TETRIS');
+      page.show("/tetris");
     };
     target.addEventListener('click', clickTetrisHandler);    
   }
