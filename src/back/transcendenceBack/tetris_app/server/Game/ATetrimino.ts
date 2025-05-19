@@ -282,7 +282,6 @@ export abstract class ATetrimino {
 			rotationPoints180.push(new IPos(jsonBlock.rotationPoints180[i].x, jsonBlock.rotationPoints180[i].y));
 
 		return ({
-			nbBlocks: jsonBlock.nbBlocks,
 			blocks: blocks,
 			rotationPoints: rotationPoints,
 			rotationPoints180: rotationPoints180
