@@ -21,7 +21,7 @@ export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyReques
 export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest) => {
 	try {
 		console.log("New Tetris Arcade connection");
-		const tetrisGame = new TetrisGame(socket);
+		const tetrisGame = new TetrisGame(socket, username);
 		arcadeGamesLst.push(tetrisGame);
 
 		// console.log(tetrisGame.toJSON());
