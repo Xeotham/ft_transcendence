@@ -632,7 +632,12 @@ export class TetrisGame {
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}));
 		this.sendStats();
 		// console.log("Game Over");
-		this.player.send(JSON.stringify({type: "FINISH"}));
+		if (!this.isInRoom) {
+			// HEERE
+			createGameTetris(this);
+		}
+		else
+			this.player.send(JSON.stringify({type: "FINISH"}));
 	}
 
 	private sendStats() {
