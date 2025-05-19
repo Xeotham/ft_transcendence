@@ -74,6 +74,7 @@ export class Game {
 	public isOver()	{ return this.over; }
 	public addSpectator(spectator: WebSocket) { this.spectators.push(spectator); }
 	// getter
+	// getter
 
 	private sendData(data: any, toSpectators: boolean = true) {
 		this.players.player1?.socket.send(JSON.stringify(data));

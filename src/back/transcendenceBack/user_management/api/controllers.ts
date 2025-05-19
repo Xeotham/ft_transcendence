@@ -627,6 +627,8 @@ export const    getStat = async (request: FastifyRequest, reply: FastifyReply) =
         const stat = getStatsById(user.id);
         // stats: added
         return  reply.status(201).send({ message: 'Stat sended', stats:stat });
+        // stats: added
+        return  reply.status(201).send({ message: 'Stat sended', stats:stat });
     }
 };
 
@@ -649,6 +651,8 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
             const gameDetails = await getGameDetailsById(id); // Pass individual ID
             return { gameId: id, players: gameDetails };
         }));
+        // history: added
+        return  reply.status(201).send({ message: 'Game History sended', history:fullGameHistory });
         // history: added
         return  reply.status(201).send({ message: 'Game History sended', history:fullGameHistory });
     }

@@ -26,8 +26,18 @@ page('/logout', () => {
 	// alert("Page under construction");
 });
 
+page('/logout', () => {
+	logoutUser();
+	// alert("Page under construction");
+});
+
 page('/sign-up', () => {
 	signUpUser();
+	// alert("Page under construction");
+});
+
+page('/profil', () => {
+	displayProfil();
 	// alert("Page under construction");
 });
 
