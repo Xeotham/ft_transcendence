@@ -264,15 +264,16 @@ class   bgmHandler {
 export const bgmPlayer = new bgmHandler();
 
 export class    tetrisGame {
-	socket:			WebSocket | null;
-	roomCode:		string;
-	roomOwner:		boolean;
-	gameId:			number;
-	game:			tetrisGameInfo | null;
-	keyTimeout:		{[key: string]: TimeoutKey | null};
-	keyFirstMove:	{[key: string]: boolean};
-	needSave:		boolean;
-	settings:		{[key: string]: any};
+	private socket:			WebSocket | null;
+	private roomCode:		string;
+	private roomOwner:		boolean;
+	private gameId:			number;
+	private game:			tetrisGameInfo | null;
+	private readonly keyTimeout:		{[key: string]: TimeoutKey | null};
+	private readonly keyFirstMove:	{[key: string]: boolean};
+	private needSave:		boolean;
+	private settings:		{[key: string]: any};
+	private opponentsGames:  tetrisGameInfo[] | null;
 
 	// TODO: Add interval for key
 
@@ -293,6 +294,7 @@ export class    tetrisGame {
 		this.needSave = false;
 		this.settings = {};
 		this.resetSettings();
+		this.opponentsGames = null;
 	}
 	getSocket(): WebSocket | null { return this.socket; }
 	getRoomCode(): string { return this.roomCode; }
@@ -304,6 +306,7 @@ export class    tetrisGame {
 	getSettings(): any { return this.settings; }
 	getNeedSave(): boolean { return this.needSave; }
 	getSettingsValue(arg: string): any { return this.settings[arg]; }
+	getOpponentsGames(): tetrisGameInfo[] | null { return this.opponentsGames; }
 
 	setSocket(socket: WebSocket | null): void { this.socket = socket; }
 	setRoomCode(roomCode: string): void { this.roomCode = roomCode; }
@@ -314,6 +317,7 @@ export class    tetrisGame {
 	setKeyFirstMove(arg: string, value: boolean): void { this.keyFirstMove[arg] = value; }
 	setNeedSave(needSave: boolean): void { this.needSave = needSave; }
 	setSettings(settings: any): void { this.settings = settings; }
+	setOpponentsGames(opponentGames: tetrisGameInfo[] | null): void { this.opponentsGames = opponentGames; }
 
 	reset() {
 		this.socket = null;
@@ -356,8 +360,8 @@ export interface    tetrisReq {
 
 export interface    tetrisRes {
 	type:       string;
-	argument:   string;
-	value:     string;
+	argument:   string | tetrisGameInfo[];
+	value:      string;
 	game:	    tetrisGameInfo;
 }
 

@@ -7,8 +7,9 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame, tetrisGoalInfo
+	tetrisGame, tetrisGoalInfo, tetrisGameInfo
 } from "./utils.ts";
+
 import { loadTetrisHtml } from "./htmlPage.ts";
 // @ts-ignore
 import page from "page"
@@ -25,7 +26,7 @@ import {postToApi, resetGamesSocket} from "../utils.ts";
 import { address } from "../main.ts";
 
 export const userKeys: keys = new keys();
-export const tetrisGameInfo: tetrisGame = new tetrisGame();
+export const tetrisGameInformation: tetrisGame = new tetrisGame();
 
 export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
@@ -147,7 +148,6 @@ export const loadTetrisTextures = () => {
 const   drawMino = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, texture: string) => {
 	const   minoTexture = getMinoTexture(texture);
 
-	// console.log("Mino texture: ", minoTexture);
 	if (minoTexture === null)
 		return ;
 	if (minoTexture) {
@@ -158,21 +158,17 @@ const   drawMino = (ctx: CanvasRenderingContext2D, x: number, y: number, size: n
 }
 
 const   drawMatrix = (ctx: CanvasRenderingContext2D, matrix: minoInfo[][], xCoord: number, yCoord: number, minoSize: number) => {
-	// ctx.clearRect(xCoord, yCoord, width, height);
 	ctx.beginPath();
 	for (let y = matrix.length - 1; y > 16; --y) {
 		for (let x = 0; x < matrix[y].length; ++x) {
 			const   newX = (x * minoSize) + xCoord;
 			const   newY = ((y - 17) * minoSize) + yCoord;
 			drawMino(ctx, newX, newY, minoSize, matrix[y][x].texture);
-			// ctx.fillStyle = getMinoColor(matrix[y][x].texture);
-			// ctx.fillRect((x * minoSize) + boardCoord.x, ((y - 15) * minoSize) + boardCoord.y , minoSize, minoSize);
 		}
 	}
 }
 
 const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coord: {x: number, y: number}, minoLength: number, colors: string[]) => {
-	// ctx.clearRect(coord.x, coord.y, height, width);
 	ctx.beginPath();
 	for (let y = 0; y < pattern.length; ++y) {
 		for (let x = 0; x < pattern[y].length; ++x) {
@@ -181,13 +177,7 @@ const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coo
 			if (pattern[y][x] !== 0) {
 
 				drawMino(ctx, newX, newY, minoLength, colors[pattern[y][x]]);
-				// ctx.fillStyle = colors[pattern[y][x]];
-				// ctx.fillRect(newX, newY, minoLength, minoLength);
 			}
-			// else {
-			// 	ctx.fillStyle = "gray";
-			// 	ctx.fillRect(newX, newY, minoLength, minoLength);
-			// }
 		}
 	}
 }
@@ -198,7 +188,7 @@ const   drawHold = (ctx: CanvasRenderingContext2D, hold: tetriminoInfo, holdCoor
 	const   pattern = tetriminoPatterns[hold.name];
 	const   margin = 10;
 	const   holdMinoSize = ((holdWidth - (2 * margin)) / (pattern.length));
-	const   colors: string[] = [ "black", tetrisGameInfo.getGame()?.canSwap ? hold.name : hold.name + "_SHADOW" ];
+	const   colors: string[] = [ "black", tetrisGameInformation.getGame()?.canSwap ? hold.name : hold.name + "_SHADOW" ];
 
 	drawTetrimino(ctx, pattern, holdCoord, holdMinoSize, colors);
 }
@@ -257,15 +247,28 @@ const drawInfo = (ctx: CanvasRenderingContext2D, x: number, y: number, gameInfo:
 	}
 	writeText("Score: " + gameInfo.score, x, y);
 	writeText("Level: " + gameInfo.level, x, y + spacing);
-	writeText("Time: " + (new Date(tetrisGameInfo.getGame()?.time || 0).toISOString().substring(14, 23)), x, y + (spacing * 2));
+	writeText("Time: " + (new Date(tetrisGameInformation.getGame()?.time || 0).toISOString().substring(14, 23)), x, y + (spacing * 2));
 	writeText(`Goal: ${gameInfo.linesCleared} / ${gameInfo.lineClearGoal}`, x, y + (spacing * 3));
 	writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
+}
+
+const   drawOpponents = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {
+	// const   opponentNumber = opponents.length;
+	const   matrixTexture = tetrisTextures["MATRIX"];
+
+	ctx.fillStyle = "black";
+
+	ctx.fillRect(x, y, 300, 756);
+
+	ctx.drawImage(matrixTexture, x, y, 300, matrixTexture.height * (300 / matrixTexture.width));
+
 }
 
 const   drawGame = () => {
 	const canvas = document.getElementById("tetrisCanvas")  as HTMLCanvasElement;
 	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
-	const game = tetrisGameInfo.getGame();
+	const game = tetrisGameInformation.getGame();
+	const opponents = tetrisGameInformation.getOpponentsGames();
 
 	if (!canvas || !ctx || !game)
 		return ;
@@ -278,6 +281,7 @@ const   drawGame = () => {
 	const   bagsCoord: { x: number, y: number } = { x: (matrixCoord.x + matrixSize.width + 20) + 30, y: (matrixCoord.y + 20) + 10 }
 	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x - 10), y: (boardCoord.y + 400)}
 	const   gameInfo: tetrisGoalInfo = {score: game.score, level: game.level, time: game.time, lineClearGoal: game.lineClearGoal, linesCleared: game.linesCleared, piecesPerSecond: game.piecesPerSecond, piecesPlaced: game.piecesPlaced };
+	const   opponentsCoord: { x: number, y: number } = { x: (boardCoord.x + matrixSize.width + bagWidth + 100), y: (boardCoord.y)}
 
 
 	window.addEventListener('resize', () => {
@@ -290,8 +294,10 @@ const   drawGame = () => {
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	drawInfo(ctx, infoCoord.x, infoCoord.y, gameInfo);
+	// if (opponents && opponents.length > 0)
+	drawOpponents(ctx, opponentsCoord.x, opponentsCoord.y, opponents);
 
-	if (tetrisGameInfo.getSettingsValue("showBags") && game.bags)
+	if (tetrisGameInformation.getSettingsValue("showBags") && game.bags)
 		drawBag(ctx, game.bags, bagsCoord);
 	if (game.hold)
 		drawHold(ctx, game.hold, holdCoord);
@@ -300,22 +306,22 @@ const   drawGame = () => {
 const multiplayerRoom = (arg: loadTetrisArgs) => {
 	loadTetrisHtml("multiplayer-room", arg);
 	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
-	if (!tetrisGameInfo.getRoomOwner())
+	if (!tetrisGameInformation.getRoomOwner())
 		return ;
 	document.getElementById("start")?.addEventListener("click", () => startRoom());
-	document.getElementById("show-shadow")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("show-bags")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("infinite-hold")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("infinite-movement")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("lock-time")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("spawn-ARE")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("soft-drop-amp")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("level")?.addEventListener("change", () => tetrisGameInfo.setNeedSave(true));
-	document.getElementById("is-leveling")?.addEventListener("click", () => tetrisGameInfo.setNeedSave(true));
+	document.getElementById("show-shadow")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("show-bags")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("infinite-hold")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("infinite-movement")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("lock-time")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("spawn-ARE")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("soft-drop-amp")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("level")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+	document.getElementById("is-leveling")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
 
 	document.getElementById("save")?.addEventListener("click", () => {
-		tetrisGameInfo.setSettings({
+		tetrisGameInformation.setSettings({
 			"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
 			"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
 			"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,
@@ -328,8 +334,8 @@ const multiplayerRoom = (arg: loadTetrisArgs) => {
 			"level": parseInt((document.getElementById("level") as HTMLInputElement).value),
 			"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
 		});
-		tetrisGameInfo.setNeedSave(false);
-		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInfo.getRoomCode(), prefix: tetrisGameInfo.getSettings() })});
+		tetrisGameInformation.setNeedSave(false);
+		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() })});
 
 }
 

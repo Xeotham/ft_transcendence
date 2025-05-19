@@ -1,6 +1,6 @@
 // @ts-ignore
 import page from 'page';
-import { loadTetrisPage, tetrisGameInfo } from "../tetris/tetris.ts";
+import { loadTetrisPage, tetrisGameInformation } from "../tetris/tetris.ts";
 import { getMultiplayerRooms, joinRoom } from "../tetris/gameManagement.ts";
 
 export const tetrisRouter = () => {
@@ -15,7 +15,7 @@ export const tetrisRouter = () => {
 
 		await n();
 		// console.log("In the router. Room code: " + roomCode);
-		if (tetrisGameInfo.getRoomCode() === "")
+		if (tetrisGameInformation.getRoomCode() === "")
 			joinRoom(roomCode);
 		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
 	})
