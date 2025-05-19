@@ -15,6 +15,7 @@ import { WebSocket } from "ws";
 import {requestBody, delay, getRoomById, player} from "../utils";
 import { botLogic, resetBot } from "./bot";
 import { Room } from "./Room";
+import { createPongGame } from "../../user_management/api/controllers";
 // impoer { Timeout } from
 
 interface   playerScore {
@@ -142,7 +143,7 @@ export class Game {
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
 				// HEERE
-				createGamePong(this);
+				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
 				resolve();
 			};
 
