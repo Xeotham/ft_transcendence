@@ -1,7 +1,8 @@
 import {TCS} from "../TCS.ts";
 import {EL} from "../zone/zoneHTML.ts";
 import { keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
-import { tetrisGameInfo } from "./tetris.ts";
+import { content } from "../main.ts";
+import {tetrisGameInformation} from "./tetris.ts";
 
 export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
@@ -124,9 +125,9 @@ const multiplayerRoomHtml = (code: string) => {
 	<nav>
 		<button id="idle">Back</button>
 	`
-	if (!tetrisGameInfo.getRoomOwner())
+	if (!tetrisGameInformation.getRoomOwner())
 		return ;
-	const s = tetrisGameInfo.getSettings();
+	const s = tetrisGameInformation.getSettings();
 	// console.log("Settings: ", s);
 	// TODO : Make the non owner able to see but not change the settings (like transparent)
 	EL.contentTetris.innerHTML += `
