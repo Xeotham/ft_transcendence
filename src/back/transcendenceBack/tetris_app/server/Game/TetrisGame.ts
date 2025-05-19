@@ -184,9 +184,9 @@ export class TetrisGame {
 		this.showBags = true;
 		this.holdAllowed = true;
 		this.showHold = true;
-		this.infiniteHold = false;
-		this.infiniteMovement = false;
-		this.lockTime = 500; // Amount of time in ms in between a piece reaching the ground and locking down
+		this.infiniteHold = true; // TODO : reset values : false, false, 500
+		this.infiniteMovement = true;
+		this.lockTime = -1; // Amount of time in ms in between a piece reaching the ground and locking down
 		this.spawnARE = 0; // Amount of time in ms in between the piece spawning and starting to move // 250 in the guideline
 		this.softDropAmp = 1;
 		this.isLevelling = true;
@@ -608,15 +608,16 @@ export class TetrisGame {
 	public rotate(direction: "clockwise" | "counter-clockwise" | "180"): void {
 		if (!this.currentPiece)
 			return ;
-		++this.keysPressed;
-		if (this.isInLockPhase) {
-			if (!this.infiniteMovement)
-				++this.nbMoves;
-			this.msSinceLockPhase = 0;
-		}
 		let rotation: string = this.currentPiece.rotate(direction, this.matrix);
 		// console.log("rotation: " + rotation);
 		if (rotation !== "-1") {
+			++this.keysPressed;
+			if (this.isInLockPhase) {
+				if (!this.infiniteMovement)
+					++this.nbMoves;
+				// console.log("nbMoves: " + this.nbMoves);
+				this.msSinceLockPhase = 0;
+			}
 			this.spinType = rotation;
 			if (this.spinType !== "") {
 				console.log("Spin type: '" + this.spinType + "'");
@@ -639,6 +640,7 @@ export class TetrisGame {
 		if (this.isInLockPhase) {
 			if (!this.infiniteMovement)
 				++this.nbMoves;
+			// console.log("nbMoves: " + this.nbMoves);
 			this.msSinceLockPhase = 0;
 		}
 		this.currentPiece.remove(this.matrix);
@@ -750,7 +752,7 @@ export class TetrisGame {
 		clearInterval(this.lockInterval);
 		this.lockInterval = -1;
 
-		console.log("Retrying game");
+		// console.log("Retrying game");
 
 		const matrix = this.matrix;
 		const restoredState: TetrisGame = JSON.parse(JSON.stringify(this.initialState));

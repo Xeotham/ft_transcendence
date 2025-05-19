@@ -240,7 +240,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInfo.setGame(res.game);
 			// console.log("Game: ", res.game);
 			tetrisGameInfo.setGameId(res.game.gameId);
-			bgmPlayer.choseBgm("bgm3");
+			// bgmPlayer.choseBgm("bgm3");
 			bgmPlayer.play();
 			loadTetrisHtml("board");
 			loadTetrisPage("board");

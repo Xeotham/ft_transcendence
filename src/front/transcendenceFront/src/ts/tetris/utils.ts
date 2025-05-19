@@ -316,9 +316,9 @@ export class    tetrisGame {
 			"showBags":					true,
 			"holdAllowed":				true,
 			"showHold":					true,
-			"infiniteHold":				false,
-			"infiniteMovement":			false,
-			"lockTime":					500,
+			"infiniteHold":				true, // TODO : change to false
+			"infiniteMovement":			true,
+			"lockTime":					-1, // TODO : change to 500
 			"spawnARE":					0,
 			"softDropAmp":				1.5,
 			"level":					4,

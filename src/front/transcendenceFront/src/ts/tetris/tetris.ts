@@ -23,7 +23,6 @@ import {
 import {postToApi, resetGamesSocket} from "../utils.ts";
 
 import { address } from "../main.ts";
-import {c} from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 
 export const userKeys: keys = new keys();
 export const tetrisGameInfo: tetrisGame = new tetrisGame();

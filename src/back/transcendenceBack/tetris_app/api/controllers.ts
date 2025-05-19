@@ -73,7 +73,7 @@ export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}
 			room.startGames();
 			break ;
 		case "settings":
-			console.log("Settings: ", JSON.stringify(request.prefix));
+			// console.log("Settings: ", JSON.stringify(request.prefix));
 			room.setSettings(request.prefix);
 			break ;
 	}
