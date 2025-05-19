@@ -267,7 +267,7 @@ const   messageHandler = (event: MessageEvent)=> {
 				page.show("/tetris");
 				console.log("Joining room: " + res.argument);
 			}
-			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInfo.getRoomCode()}]});
+			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInformation.getRoomCode()}]});
 			return ;
 		case 'MULTIPLAYER_LEAVE':
 			console.log("MULTIPLAYER_LEAVE");
