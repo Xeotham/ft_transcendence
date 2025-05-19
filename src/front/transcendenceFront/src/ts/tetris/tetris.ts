@@ -7,7 +7,7 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame, tetrisGoalInfo, tetrisGameInfo
+	tetrisGame, tetrisGoalInfo, tetrisGameInfo, boardHeight
 } from "./utils.ts";
 
 import { loadTetrisHtml } from "./tetrisHTML.ts";
@@ -268,16 +268,48 @@ const drawInfo = (ctx: CanvasRenderingContext2D, x: number, y: number, gameInfo:
 	writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
 }
 
+const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: number) => {
+	const   opponentsSize = {width: 300, height: 756};
+	const   opponentsNumber = opponents;
+	const   opponentsBoardInfo: {x: number, y: number, width: number, height: number}[] = [];
+	const   matrixTexture = tetrisTextures["MATRIX"];
+	let     boardSize = {width: 0, height: 0};
+
+
+	switch (opponentsNumber) {
+		case 1:
+			boardSize.width = opponentsSize.width;
+			boardSize.height = matrixTexture.height * (opponentsSize.width / matrixTexture.width);
+			opponentsBoardInfo.push({x: x, y: y + ((opponentsSize.height) / 2) - (boardSize.height / 2), width: boardSize.width, height: boardSize.height});
+	}
+	opponentsBoardInfo.forEach((boardInfo) => {
+		ctx.drawImage(matrixTexture, boardInfo.x, boardInfo.y, boardInfo.width, boardInfo.height);
+	});
+}
+
 const   drawOpponents = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {
 	// const   opponentNumber = opponents.length;
 	const   matrixTexture = tetrisTextures["MATRIX"];
+	const   rightListCoord: {x: number, y: number} = { x: x, y: y };
+	const   leftListCoord: {x: number, y: number} = { x: x - 1075, y: y };
+	const   leftList: tetrisGameInfo[] = [];
+	const   rightList: tetrisGameInfo[] = [];
+
+	// opponents.forEach((opponent, index) => {
+	// 	if (index % 2 === 0)
+	// 		rightList.push(opponent);
+	// 	else
+	// 		leftList.push(opponent);
+	// });
+
 
 	ctx.fillStyle = "black";
 
-	ctx.fillRect(x, y, 300, 756);
-
-	ctx.drawImage(matrixTexture, x, y, 300, matrixTexture.height * (300 / matrixTexture.width));
-
+	ctx.fillRect(rightListCoord.x, rightListCoord.y, 300, 756);
+	ctx.fillRect(leftListCoord.x, leftListCoord.y, 300, 756);
+	//
+	// ctx.drawImage(matrixTexture, x, y, 300, matrixTexture.height * (300 / matrixTexture.width));
+	drawOpponentsList(ctx, rightListCoord.x, rightListCoord.y, 1);
 }
 
 const   drawGame = () => {

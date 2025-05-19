@@ -470,8 +470,6 @@ export const    tetriminoPatterns: {[key: string]: number[][]} = {
 	],
 }
 
-
-export const    borderSize = 2;
 export const    minoSize = 32;
 // export const    boardWidth = minoSize * 10;
 // export const    boardHeight = minoSize * 23;
