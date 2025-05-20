@@ -1,27 +1,33 @@
 ///////////////////////////////////////////
 // Imports
 
+import { EL } from '../zone/zoneHTML.ts';
+
+import { modaleSignInHTML } from './modalesSignInHTML.ts';
+import { modaleSignUpHTML } from './modalesSignUpHTML.ts';
+import { modaleProfileHTML } from './modalesProfileHTML.ts';
+import { modalePongStatHTML } from './modalesPongStatHTML.ts';
+import { modaleTetrisStatHTML } from './modalesTetrisStatHTML.ts';
+import { modaleTetrisStatDetailHTML } from './modalesTetrisStatDetailHTML.ts';
+
 ///////////////////////////////////////////
 // Variables
-
 export enum ModaleType {
   NONE = 'NONE',
   SIGNIN = 'SIGNIN',
   SIGNUP = 'SIGNUP',
-  FORGOT_PASSWORD = 'FORGOT_PASSWORD',
-  RESET_PASSWORD = 'RESET_PASSWORD',
-  VERIFY_EMAIL = 'VERIFY_EMAIL',
-  VERIFY_EMAIL_SUCCESS = 'VERIFY_EMAIL_SUCCESS',
-  VERIFY_EMAIL_ERROR = 'VERIFY_EMAIL_ERROR',
+  PROFILE = 'PROFILE',
+  PONG_STATS = 'PONG_STATS',
+  TETRIS_STATS = 'TETRIS_STATS',
+  TETRIS_STATS_DETAIL = 'TETRIS_STATS_DETAIL',
 }
 
 export let modale = {
   type: ModaleType.SIGNIN,
   show: false,
-  element: <HTMLDivElement|null>null,
+  zone: <HTMLDivElement|null>null,
+  content: <HTMLDivElement|null>null,
 };
-
-let closeIconHandler: (() => void) | null = null;
 
 ///////////////////////////////////////////
 // Functions
@@ -29,34 +35,51 @@ let closeIconHandler: (() => void) | null = null;
 export const modaleInit = () => {
   modale.type = ModaleType.NONE;
   modale.show = false;
-  modale.element = document.querySelector<HTMLDivElement>('div[name="zoneModale"]');
+  modale.zone = EL.zoneModale as HTMLDivElement;
+  modale.content = EL.contentModale as HTMLDivElement;
   modaleHide();
 }
 
-export const modaleDisplay = (modaleType: ModaleType, modaleContent: string) => {
-  if (modale.element) {
-    modale.type = modaleType;
-    modale.element.innerHTML = modaleContent;
-    while (modale.element.classList.contains('hidden')) {
-      modale.element.classList.remove('hidden');
-    }
-    modale.element.classList.add('block');
-    modale.show = true;
+export const modaleDisplay = (modaleType: ModaleType) => {
+  if (!modale.content || !modale.zone || modale.type === modaleType) { return; }
 
-    modaleAddCloseIcon(); // a tester
+  modale.type = modaleType;
+  switch (modaleType) {
+    case ModaleType.SIGNIN:
+      modale.content.innerHTML = modaleSignInHTML; break;
+    case ModaleType.SIGNUP:
+      modale.content.innerHTML = modaleSignUpHTML; break;
+    case ModaleType.PROFILE:
+      modale.content.innerHTML = modaleProfileHTML; break;
+    case ModaleType.PONG_STATS:
+      modale.content.innerHTML = modalePongStatHTML; break;
+    case ModaleType.TETRIS_STATS:
+      modale.content.innerHTML = modaleTetrisStatHTML; break;
+    case ModaleType.TETRIS_STATS_DETAIL:
+      modale.content.innerHTML = modaleTetrisStatDetailHTML; break;
+    default:
+      modale.content.innerHTML = '';
   }
+
+  // Afficher la modale
+  while (modale.zone.classList.contains('hidden')) {
+    modale.zone.classList.remove('hidden');
+  }
+  modale.zone.classList.add('block');
+  modale.show = true;
+  modaleAddCloseIcon(); // a tester
 }
 
 export const modaleHide = () => {
-  if (modale.element) {
-    modale.type = ModaleType.NONE;
-    modale.element.innerHTML = '';
-    while (modale.element.classList.contains('block')) {
-      modale.element.classList.remove('block');
-    }
-    modale.element.classList.add('hidden');
-    modale.show = false;
+  if (!modale.zone || !modale.content)
+    return;
+  modale.type = ModaleType.NONE;
+  modale.content.innerHTML = '';
+  while (modale.zone.classList.contains('block')) {
+    modale.zone.classList.remove('block');
   }
+  modale.zone.classList.add('hidden');
+  modale.show = false;
 }
 
 export const modaleAddCloseIcon = () => {
@@ -68,17 +91,21 @@ export const modaleAddCloseIcon = () => {
   }
   closeIcon.classList.add('block');
 
-  // Supprimer l'ancien écouteur s'il existe
-  if (closeIconHandler) {
-    closeIcon.removeEventListener('click', closeIconHandler);
-  }
-
-  // Créer et stocker le nouveau gestionnaire
-  closeIconHandler = () => {
+  closeIcon.addEventListener('click', () => {
     modaleHide();
-  };
+  });
+  document.getElementById('bkgModale')?.addEventListener('click', () => {
+    modaleHide();
+  });
 
-  closeIcon.addEventListener('click', closeIconHandler);
+  // Ajouter les gestionnaires d'événements pour les liens
+  const toRegisterLink = document.querySelector<HTMLAnchorElement>('#to_register_link');
+  if (toRegisterLink) {
+    toRegisterLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      modaleDisplay(ModaleType.SIGNUP);
+    });
+  }
 }
 
 export const modaleRemoveCloseIcon = () => {
@@ -90,10 +117,7 @@ export const modaleRemoveCloseIcon = () => {
   }
   closeIcon.classList.add('hidden');
 
-  // Supprimer l'écouteur s'il existe
-  if (closeIconHandler) {
-    closeIcon.removeEventListener('click', closeIconHandler);
-    closeIconHandler = null;
-  }
+  closeIcon.removeEventListener('click', () => { });
+  document.getElementById('bkgModale')?.removeEventListener('click', () => { });
 }
 

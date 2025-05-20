@@ -23,8 +23,8 @@ import {
   evRemClickLogoHome,
  } from './zoneEvents.ts'
 // Modales
-import { modaleDisplay, modaleHide, ModaleType } from '../modales/modalesCore.ts';
-import { modale_signin, modale_signup } from '../modales/modalesHTML.ts';
+import { modaleHide } from '../modales/modalesCore.ts';
+//import { modale_signin, modale_signup } from '../modales/modalesHTML.ts';
 
 ///////////////////////////////////////////
 // Variables
@@ -138,9 +138,8 @@ const zoneSetHOME = () => {
   evAdClickTetris();
 
   // modaleHide();
-  modaleDisplay(ModaleType.SIGNIN, modale_signin);
+  // modaleDisplay(ModaleType.SIGNIN, modale_signin);
   // modaleDisplay(ModaleType.SIGNUP, modale_signup);
-
 
   stateProxy.separatorPosTogo = zone.separatorCenter;
   zone.state = "HOME";

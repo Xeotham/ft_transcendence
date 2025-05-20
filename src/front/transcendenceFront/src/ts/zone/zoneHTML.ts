@@ -10,6 +10,9 @@ import img_tetris_bkg from '/src/medias/images/zones/fond_test_tetris.png';
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
 import {loadPongTextures} from "../pong/pong.ts";
 
+//TMP
+import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
+
 ///////////////////////////////////////////
 // Exports
 //
@@ -54,6 +57,12 @@ export const	EL = {
   }
 }
 
+// definir une palce pour le chargement des medias
+export const awaitMedias = async () => {
+	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
+    await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
+}
+
 export const setHtmlFront = () => {
   // html & body
   document.querySelectorAll('html, body').forEach((el) => {
@@ -83,17 +92,44 @@ export const setHtmlFront = () => {
     </div>
 </div>
 
-<div name="zoneModale" id="zoneModale" class="${TCS.modale} hidden">
-    <div id="contentModale" class="w-full h-full absolute"></div>
+<div name="zoneModale" id="zoneModale" class="${TCS.zoneModale} hidden">
+    <div id="bkgModale" class="${TCS.bkgModale}"></div>
+    <div id="contentModale" class="${TCS.contentModale}"></div>
 </div>
 
   `
   }
+
+  setZoneTopTMP(); //TODO: remove
+
 }
 
-// definir une palce pour le chargement des medias
-export const awaitMedias = async () => {
-	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
-    await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
-}
+// TODO: remove
+export const setZoneTopTMP = () => {
+  const app = document.getElementById('zoneTop'); if (!app) return;
 
+  app.innerHTML = `
+  <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
+  <span class="font-sixtyfour text-[14px] cursor-pointer hover:cursor-pointer">
+  &nbsp&nbsp&nbsp     
+  <a id="SIGNIN" class="hover:text-yellow-600">SIGNIN</a>&nbsp|
+  <a id="SIGNUP" class="hover:text-yellow-600">SIGNUP</a>&nbsp|
+  <a id="PROFILE" class="hover:text-yellow-600">PROFILE</a>&nbsp|
+  <a id="PONG_STATS" class="hover:text-yellow-600">PONG_STATS</a>&nbsp|
+  <a id="TETRIS_STATS" class="hover:text-yellow-600">TETRIS_STATS</a>&nbsp|
+  <a id="TETRIS_STATS_DETAIL" class="hover:text-yellow-600">TETRIS_STATS_DETAIL</a>
+  </span>
+  `;
+  document.getElementById('SIGNIN')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.SIGNIN);});
+  document.getElementById('SIGNUP')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.SIGNUP);});
+  document.getElementById('PROFILE')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.PROFILE);});
+  document.getElementById('PONG_STATS')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.PONG_STATS);});
+  document.getElementById('TETRIS_STATS')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.TETRIS_STATS);});
+  document.getElementById('TETRIS_STATS_DETAIL')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);}); 
+}
