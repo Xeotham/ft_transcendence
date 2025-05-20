@@ -25,7 +25,7 @@ COPY transcendenceFront .
 #RUN npm run build
 
 #RUN sed -i "s/DUMMY_FRONT_PORT/${FRONT_PORT}/g" /app/vite.config.js
-#RUN sed -i "s/DUMMY_ADDRESS/${ADDR}/g" /app/src/ts/main.ts
+#RUN sed -i "s/DUMMY_ADDRESS/${ADDR}/g" /app/src/ts/immanence.ts
 
 # Expose the port that BrowserSync will run on
 EXPOSE 5000

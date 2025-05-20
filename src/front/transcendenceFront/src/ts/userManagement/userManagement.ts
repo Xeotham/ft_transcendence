@@ -1,6 +1,6 @@
-import  { loginHtml, logoutHtml,signUpHtml } from "./htmlPage.ts";
+// import  { loginHtml, logoutHtml,signUpHtml } from "./htmlPage.ts";
 import {postToApi} from "../utils.ts";
-import {address, user} from "../main.ts";
+import {address, user} from "../immanence.ts";
 // @ts-ignore
 import page from "page";
 
@@ -48,7 +48,7 @@ export const logoutUser = (error: string | null = null) => {
 
 
 export const isLoggedIn = (): boolean => {
-	
+
 	if (localStorage.getItem("username"))
 		return true;
 	else

@@ -1,7 +1,7 @@
 import { loadTetrisHtml } from "./tetrisHTML.ts";
 import {bgmPlayer, roomInfo, sfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInfo, userKeys } from "./tetris.ts";
-import { address } from "../main.ts";
+import { address } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
 // @ts-ignore
 import page from "page";

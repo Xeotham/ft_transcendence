@@ -264,7 +264,7 @@ const   drawBoard = () => {
 		<div class="flex justify-end mb-4">
 			<button id="quit" class="${TCS.pongButton}">Quit</button>
 		</div>
-		<canvas id="gameCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
+		<canvas id="pongCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
 	</div>`;
 }
 

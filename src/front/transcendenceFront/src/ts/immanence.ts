@@ -1,5 +1,5 @@
 // Events & core
-import {resetGamesSocket} from "./utils.ts";
+import {resetGamesSocket, UserInfo} from "./utils.ts";
 import { evAddDocResize } from './zone/zoneEvents.ts'
 import { EL, setHtmlFront, awaitMedias } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'
@@ -7,6 +7,8 @@ import { zoneSet } from './zone/zoneCore.ts'
 import {startRouter} from "./page/router.ts";
 // adress
 export const	address = import.meta.env.VITE_API_ADDRESS;
+export const	user = new UserInfo();
+
 // @ts-ignore page
 import page from 'page';
 

@@ -1,6 +1,6 @@
 // @ts-ignore
 import  page from "page";
-import  { address } from "../main.ts";
+import  { address } from "../immanence.ts";
 import  { pongGameInfo, loadPongPage } from "./pong.ts";
 import  { PongRoom, messageHandler } from "./game.ts";
 import { RoomInfo } from "./utils.ts";

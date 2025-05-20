@@ -255,7 +255,8 @@ const drawGame =  (game: Game) => {
 	drawBoard(ctx, boardCoord)
 
 	// Draw score
-	drawScore(ctx, game.score.player1, game.score.player2, canvas);
+	if (game.score)
+		drawScore(ctx, game.score.player1, game.score.player2, canvas);
 	// c.fillStyle = "black";
 	// c.fillRect(0, 0, canvas.width, canvas.height);
 	// Draw ball

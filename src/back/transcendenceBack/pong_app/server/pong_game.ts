@@ -12,20 +12,21 @@ import {
 	PADDLE_SPEED
 } from "./constants"
 import { WebSocket } from "ws";
-import { requestBody, delay, getRoomById } from "../utils";
+import {requestBody, delay, getRoomById, player} from "../utils";
 import { botLogic, resetBot } from "./bot";
 import { Room } from "./Room";
+import {createPongGame} from "../../user_management/api/controllers";
 // impoer { Timeout } from
 
 export class Game {
 	readonly id:number;
-	players:	{ player1: WebSocket | null, player2: WebSocket | null };
+	players:	{ player1: player | null, player2: player | null };
 	score:		{ player1: number, player2: number };
 	paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	paddle2:	{ x: number, y: number, x_size: number, y_size: number };
 	ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
 	over:		boolean;
-	winner:		WebSocket | null;
+	winner:		player | null;
 	isSolo:		boolean;
 	isBot:		boolean;
 	spectators:	WebSocket[];
@@ -34,7 +35,7 @@ export class Game {
 	private finishTime:	number;
 	private lastTime:	number;
 
-	constructor(id: number, player1: WebSocket | null, player2: WebSocket | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
+	constructor(id: number, player1: player | null, player2: player | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
 		this.id = id;
 		this.players = { player1, player2 };
 		this.score = { player1: 0, player2: 0 };
@@ -65,9 +66,9 @@ export class Game {
 	// getter
 
 	private sendData(data: any, toSpectators: boolean = true) {
-		this.players.player1?.send(JSON.stringify(data));
+		this.players.player1?.socket.send(JSON.stringify(data));
 		if (!this.isSolo)
-			this.players.player2?.send(JSON.stringify(data));
+			this.players.player2?.socket.send(JSON.stringify(data));
 		if (toSpectators)
 			for (let spectator of this.spectators)
 				spectator?.send(JSON.stringify(data));
@@ -124,7 +125,7 @@ export class Game {
 				if (!this.over) // If the game didn't end because of a forfeit
 					this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
 				this.over = true;
-				let winner = this.winner === this.players.player1 ? "P1" : "P2";
+				let winner = this.winner?.username;
 				if (this.isSolo)
 					winner = this.score.player1 >= 10 ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
@@ -132,7 +133,7 @@ export class Game {
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
 				// HEERE
-				createGamePong(this);
+				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
 				resolve();
 			};
 
@@ -217,7 +218,7 @@ export class Game {
 		this.over = true;
 	}
 
-	public getWinner() : WebSocket | null {
+	public getWinner() : player | null {
 		return this.winner;
 	}
 }

@@ -1,11 +1,11 @@
 import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
-import {address, content, user} from "../main.ts";
+import {address, user} from "../immanence.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore
-import { loadPongHtml } from "./htmlPage.ts";
+import { loadPongHtml } from "./pongHTML.ts";
 
 
 export class PongRoom {
@@ -305,9 +305,6 @@ export const   messageHandler = (event: MessageEvent)=> {
 }
 
 const	gameMessageHandler = (res: responseFormat) => {
-	if (!content)
-		return ;
-
 	switch (res.message) {
 		case "PREP":
 			const   roomNumber: number = typeof res.roomId === "number" ? res.roomId : -1;

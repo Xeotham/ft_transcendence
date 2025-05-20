@@ -413,51 +413,57 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 /* Game */
 
 // createGame modified
-
-export const createGame = (request: FastifyRequest, reply:FastifyReply) => 
+export const createPongGame = (players: any, score: any, winner: any, solo: boolean, bot: boolean) =>
 {
-    const   { username1, username2, date, scoreP1, scoreP2, winner, type, tetrisStatP1, tetrisStatP2
-        } = request.body as {
-        username1: string, username2: string, date: string, scoreP1: number, scoreP2: number, winner: string, type: string,  tetrisStatP1: any, tetrisStatP2: any}
-
-
-    const   player1 = getUserByUsername(username1) as Users;
-    const   player2 = getUserByUsername(username2) as Users;
-
-    console.log(username1, "|", username2);
-    if (!player1 || !player2)
-        return reply.status(401).send({ message: 'Invalid username'});
-
-    if (player1.id && player2.id)
+    console.log("solo game :", solo, "bot game :", bot);
+    if (solo === true && bot === false)
     {
-        if (scoreP1 < 0 || scoreP2 < 0)
-            return reply.status(401).send({ message: 'Invalid score'});
+        console.log("return solo game");
+        return ;
+    }
 
-        const gameId = saveGame(date);
+    if (bot === true)
+    {
+        const   player1 = getUserByUsername(players.player1.username) as Users;
 
-        if (type === 'pong')
+        if (!player1)
+            return ;
+
+        if (player1.id)
         {
-            createUserGameStatsPong(player1.id, gameId, scoreP1, username1 === winner, type);
-            createUserGameStatsPong(player2.id, gameId, scoreP2, username2 === winner, type);
-            updateStats(player1.id);
-            updateStats(player2.id);
-            return reply.status(401).send({ message: 'Pong game saved'});
+            if (score.player1.score < 0)
+                return ;
+
+            const gameId = saveGame("");
+
+            if (winner.player)
+                createUserGameStatsPong(player1.id, gameId, score.player1.score, true, "pong");
+            else
+                createUserGameStatsPong(player1.id, gameId, score.player1.score, false, "pong");
+            console.log("return bot game");
         }
-        else
+    }
+    else
+    {
+        const   player1 = getUserByUsername(players.player1.username) as Users;
+        const   player2 = getUserByUsername(players.player2.username) as Users;
+
+        if (!player1 || !player2)
+            return ;
+
+        if (player1.id && player2.id)
         {
-            const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
-            const tetrisStatP1J = JSON.parse(validJsonString);
-            const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
-            const tetrisStatP2J = JSON.parse(validJsonString2);
-            const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
-            const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
-            console.log(StatP1);
-            console.log(StatP2);
-            createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
-            createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
+            if (score.player1.score < 0 && score.player2.score < 0)
+                return ;
+
+            const gameId = saveGame("");
+
+            createUserGameStatsPong(player1.id, gameId, score.player1.score, players.player1.username === winner.player.username, "pong");
+            createUserGameStatsPong(player2.id, gameId, score.player2.score, players.player2.username === winner.player.username, "pong");
+
             updateStats(player1.id);
             updateStats(player2.id);
-            return reply.status(401).send({ message: 'Tetris game saved'});
+            console.log("return multiplayer game");
         }
     }
 };

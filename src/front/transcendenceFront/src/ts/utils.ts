@@ -1,6 +1,6 @@
 import { tetrisGameInfo } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
-import { address } from "./main.ts";
+import { address } from "./immanence.ts";
 
 export class UserInfo {
 	username: string;
