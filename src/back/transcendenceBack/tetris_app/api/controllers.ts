@@ -11,7 +11,7 @@ import { delay } from "../server/Game/utils";
 export let   arcadeGamesLst: TetrisGame[] = [];
 export let   multiplayerRoomLst: MultiplayerRoom[] = [];
 
-export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
 }
 
 export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
