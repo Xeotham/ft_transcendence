@@ -4,7 +4,7 @@ import  page from 'page';
 // ZONE
 import { zoneSet } from "../zone/zoneCore.ts";
 // TETRIS
-import { loadTetrisPage, tetrisGameInfo } from "../tetris/tetris.ts";
+import { loadTetrisPage, tetrisGameInformation } from "../tetris/tetris.ts";
 import { getMultiplayerRooms, joinRoom } from "../tetris/gameManagement.ts";
 // PONG
 import  { loadPongPage } from "../pong/pong.ts";
@@ -45,7 +45,7 @@ const tetrisRouter = () => {
 	page("/tetris/room:code", ({params}) => {
 		let roomCode: string = params.code.toString().substring(1);
 		// console.log("In the router. Room code: " + roomCode);
-		if (tetrisGameInfo.getRoomCode() === "")
+		if (tetrisGameInformation.getRoomCode() === "")
 			joinRoom(roomCode);
 		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
 		zoneSet("TETRIS");
