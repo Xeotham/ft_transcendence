@@ -333,8 +333,6 @@ const   drawGame = () => {
 	const   bagsCoord: { x: number, y: number } = { x: (matrixCoord.x + matrixSize.width + 20) + 30, y: (matrixCoord.y + 20) + 10 }
 	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x - 10), y: (boardCoord.y + 400)}
 	const   gameInfo: tetrisGoalInfo = {score: game.score, level: game.level, time: game.time, lineClearGoal: game.lineClearGoal, linesCleared: game.linesCleared, piecesPerSecond: game.piecesPerSecond, piecesPlaced: game.piecesPlaced };
-	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x - 10), y: (boardCoord.y + 400)}
-	const   gameInfo: tetrisGoalInfo = {score: game.score, level: game.level, time: game.time, lineClearGoal: game.lineClearGoal, linesCleared: game.linesCleared, piecesPerSecond: game.piecesPerSecond, piecesPlaced: game.piecesPlaced };
 	const   opponentsCoord: { x: number, y: number } = { x: (boardCoord.x + matrixSize.width + bagWidth + 100), y: (boardCoord.y)}
 
 
