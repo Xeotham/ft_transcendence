@@ -32,7 +32,7 @@ export const evAdOutDocument = () => {
     overzoneTopHandler = (event: Event) => {
       const mouseEvent = event as MouseEvent;
       if (mouseEvent.relatedTarget !== target) {
-        page.show("/");
+        zoneSet('HOME');
       }
     };
       
@@ -134,7 +134,7 @@ export const evAdClickLogoHome = () => {
   const target = document.querySelector<HTMLImageElement>('#logoImmanence');
   if (target && !clickLogoHomeHandler) {
     clickLogoHomeHandler = () => {
-      zoneSet('HOME');
+      page.show("/");
     };
     target.addEventListener('click', clickLogoHomeHandler);
   }

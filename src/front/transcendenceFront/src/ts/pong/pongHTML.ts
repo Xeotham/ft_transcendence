@@ -2,6 +2,7 @@ import {TCS} from "../TCS.ts";
 import {EL} from "../zone/zoneHTML.ts";
 import {Game, loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo} from "./utils.ts";
 import {pongGameInfo} from "./pong.ts";
+import {imTexts} from "../imTexts/imTexts.ts";
 
 export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
@@ -11,6 +12,14 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return logoHtml();
 		case "idle":
 			return idleHtml();
+		case "nav-offline":
+			return navOffline();
+		case "nav-online":
+			return navOnline();
+		case "nav-tournament":
+			return navTournament();
+		case "nav-setting":
+			return navSetting();
 		case "match-found":
 			return matchFoundHtml();
 		case "tournament-found":
@@ -60,17 +69,80 @@ const   idleHtml = () => {
 	EL.contentPong.innerHTML = `
 	<nav class="${TCS.pongNav0}">
 		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
-		<div class="flex-1"><button id="Solo-game" class="${TCS.pongNavButton}">play vs offline</button></div>
-		<div class="flex-1"><button id="Bot-game" class="${TCS.pongNavButton}">play vs bot</button></div>
-		<div class="flex-1"><button id="Join-game" class="${TCS.pongNavButton}">play vs online</button></div>
-		<div class="flex-1"><button id="Private-room" class="${TCS.pongNavButton}">Create a Room</button></div>
-		<div class="flex-1"><button id="Join-priv-room" class="${TCS.pongNavButton}">Join a Room</button></div>
-		<div class="flex-1"><button id="Rooms-spectator" class="${TCS.pongNavButton}">Spectate a Room</button></div>
-		<div class="flex-1"><button id="Create-tournament" class="${TCS.pongNavButton}">Create a tournament</button></div>
-		<div class="flex-1"><button id="Tournaments" class="${TCS.pongNavButton}">Join a tournament</button></div>
-		<div class="flex-1"><button id="Home" class="${TCS.pongNavButton}">Return Home</button></div>
+		<div class="flex-1"><button id="offline" class="${TCS.pongNavButton}">${imTexts.pongIdleOffline}</button></div>
+		<div class="flex-1"><button id="online" class="${TCS.pongNavButton}">${imTexts.pongIdleOnline}</button></div>
+		<div class="flex-1"><button id="tournament" class="${TCS.pongNavButton}">${imTexts.pongIdleTournament}</button></div>
+		<div class="flex-1"><button id="setting" class="${TCS.pongNavButton}">${imTexts.pongIdleSetting}</button></div>
+		<div class="flex-1"><button id="home" class="${TCS.pongNavButton}">${imTexts.pongIdleHome}</button></div>
 	</nav>`;
 }
+
+// const   idleHtml = () => {
+// 	if (!EL.contentPong)
+// 		return ;
+// 	EL.contentPong.innerHTML = `
+// 	<nav class="${TCS.pongNav0}">
+// 		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
+// 		<div class="flex-1"><button id="Solo-game" class="${TCS.pongNavButton}">${imTexts.pongSolo}</button></div>
+// 		<div class="flex-1"><button id="Bot-game" class="${TCS.pongNavButton}">${imTexts.pongBot}</button></div>
+// 		<div class="flex-1"><button id="Join-game" class="${TCS.pongNavButton}">${imTexts.pongOnline}</button></div>
+// 		<div class="flex-1"><button id="Private-room" class="${TCS.pongNavButton}">${imTexts.pongPrivate}</button></div>
+// 		<div class="flex-1"><button id="Join-priv-room" class="${TCS.pongNavButton}">${imTexts.pongJoin}</button></div>
+// 		<div class="flex-1"><button id="Rooms-spectator" class="${TCS.pongNavButton}">${imTexts.pongSpectate}</button></div>
+// 		<div class="flex-1"><button id="Create-tournament" class="${TCS.pongNavButton}">${imTexts.pongTournament}</button></div>
+// 		<div class="flex-1"><button id="Tournaments" class="${TCS.pongNavButton}">${imTexts.pongTournament}</button></div>
+// 		<div class="flex-1"><button id="Home" class="${TCS.pongNavButton}">${imTexts.pongHome}</button></div>
+// 	</nav>`;
+// }
+
+const   navOffline = () => {
+	if (!EL.contentPong)
+		return ;
+	EL.contentPong.innerHTML = `
+	<nav class="${TCS.pongNav0}">
+		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
+		<div class="flex-1"><button id="solo" class="${TCS.pongNavButton}">${imTexts.pongOfflineSolo}</button></div>
+		<div class="flex-1"><button id="bot" class="${TCS.pongNavButton}">${imTexts.pongOfflineBot}</button></div>
+		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.pongOfflineReturn}</button></div>
+	</nav>`;
+}
+
+const   navOnline = () => {
+	if (!EL.contentPong)
+		return ;
+	EL.contentPong.innerHTML = `
+	<nav class="${TCS.pongNav0}">
+		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
+		<div class="flex-1"><button id="join" class="${TCS.pongNavButton}">${imTexts.pongOnlineJoin}</button></div>
+		<div class="flex-1"><button id="private" class="${TCS.pongNavButton}">${imTexts.pongOnlinePrivate}</button></div>
+		<div class="flex-1"><button id="join-priv-room" class="${TCS.pongNavButton}">${imTexts.pongOnlineJoinPriv}</button></div>
+		<div class="flex-1"><button id="spectate" class="${TCS.pongNavButton}">${imTexts.pongOnlineSpectate}</button></div>
+		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.pongOnlineReturn}</button></div>
+	</nav>`;
+}
+
+const   navTournament = () => {
+	if (!EL.contentPong)
+		return ;
+	EL.contentPong.innerHTML = `
+	<nav class="${TCS.pongNav0}">
+		<div class="flex-1"><button id="create" class="${TCS.pongNavButton}">${imTexts.pongTournamentCreate}</button></div>
+		<div class="flex-1"><button id="play" class="${TCS.pongNavButton}">${imTexts.pongTournamentPlay}</button></div>
+		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.navTournamentReturn}</button></div>
+	</nav>`;
+}
+
+const   navSetting = () => {
+	if (!EL.contentPong)
+		return ;
+	EL.contentPong.innerHTML = `
+	<div class="${TCS.pongNav1}">
+		<div class="flex-1"><h1 class="${TCS.pongText}">AAAA</h1></div>
+		<div class="flex-1"><h2 class="${TCS.pongText}">BBBBB</h2></div>
+		<div class="flex-1"><button id="ok" class="${TCS.pongButton}">CCCCC</button></div>
+	</div>`;
+}
+	
 
 const   matchFoundHtml = () => {
 	if (!EL.contentPong)

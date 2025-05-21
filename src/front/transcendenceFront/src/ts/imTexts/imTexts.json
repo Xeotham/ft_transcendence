@@ -1,0 +1,542 @@
+{
+  "fr": {
+    "modales": {
+      "signin": {
+        "titre": "Immanence",
+        "texte": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.\nÀ droite Pong pour jouer en solo contre notre IA, en multijoueur ou en tournoi.\nÀ gauche Tetris est disponible en solo, en multijoueur ou en tournoi.",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "continue": "Continuer",
+        "noAccount": "Tu n'as pas de compte ?",
+        "register": "Enregistre-toi !"
+      },
+      "signup": {
+        "titre": "Inscription",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "continue": "Continuer"
+      },
+      "profile": {
+        "titre": "Profil",
+        "username": "Nom d'utilisateur",
+        "avatar": "Avatar",
+        "save": "Sauvegarder",
+        "cancel": "Annuler"
+      }
+    },
+    "tetris": {
+      "empty": {
+        "titre": "Tetris",
+        "sousTitre": "Chargement..."
+      },
+      "logo": {
+        "titre": "Tetris",
+        "sousTitre": "Le jeu de puzzle légendaire"
+      },
+      "idle": {
+        "solo": "Solo",
+        "multi": "Multijoueur",
+        "tournoi": "Tournoi",
+        "stats": "Statistiques",
+        "classement": "Classement"
+      },
+      "settings": {
+        "titre": "Paramètres",
+        "son": "Son",
+        "musique": "Musique",
+        "effets": "Effets",
+        "volume": "Volume",
+        "graphismes": "Graphismes",
+        "pleinEcran": "Plein écran",
+        "appliquer": "Appliquer",
+        "annuler": "Annuler"
+      },
+      "keybindings": {
+        "titre": "Touches",
+        "gauche": "Gauche",
+        "droite": "Droite",
+        "rotation": "Rotation",
+        "descente": "Descente rapide",
+        "pause": "Pause",
+        "reinitialiser": "Réinitialiser"
+      },
+      "board": {
+        "score": "Score",
+        "niveau": "Niveau",
+        "lignes": "Lignes",
+        "suivant": "Suivant",
+        "pause": "Pause",
+        "reprendre": "Reprendre",
+        "quitter": "Quitter",
+        "gameOver": "Game over",
+        "nouvellePartie": "Nouvelle partie"
+      },
+      "multiplayerRoom": {
+        "titre": "Salle multijoueur",
+        "creer": "Créer une salle",
+        "rejoindre": "Rejoindre",
+        "liste": "Liste des salles",
+        "joueurs": "Joueurs",
+        "pret": "Prêt",
+        "attente": "En attente",
+        "commencer": "Commencer"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "Salle multijoueur",
+        "joueurs": "Joueurs",
+        "statut": "Statut",
+        "quitter": "Quitter la salle",
+        "chat": "Chat",
+        "envoyer": "Envoyer"
+      }
+    },
+    "pong": {
+      "empty": {
+        "titre": "Pong",
+        "sousTitre": "Chargement..."
+      },
+      "logo": {
+        "titre": "Pong",
+        "sousTitre": "Le classique du tennis de table"
+      },
+      "idle": {
+        "offline": "Hors ligne",
+        "online": "En ligne",
+        "tournament": "Tournoi",
+        "setting": "Réglages",
+        "home": "Retour"
+      },
+      "offline": {
+        "solo": "Solo",
+        "bot": "Bot",
+        "return": "Retour"
+      },
+      "online": {
+        "join": "Rejoindre",
+        "private": "Privé",
+        "join-priv-room": "Rejoindre privé",
+        "spectate": "Spectateur",
+        "return": "Retour"
+      },
+      "tournament": {
+        "create": "Créer",
+        "play": "Jouer",
+        "return": "Retour"
+      },
+      "setting": {
+        "titre": "Réglages",
+        "ok": "Ok"
+      },
+      "matchfound": {
+        "titre": "Match trouvé",
+        "quit": "Quitter"
+      }
+    }
+  },
+  "en": {
+    "modales": {
+      "signin": {
+        "titre": "Immanence",
+        "texte": "We offer you two games, in two rooms, with two different atmospheres.\nOn the right, Pong for solo play against our AI, multiplayer or tournament.\nOn the left, Tetris is available in solo, multiplayer or tournament.",
+        "username": "Username",
+        "password": "Password",
+        "continue": "Continue",
+        "noAccount": "Don't have an account?",
+        "register": "Register!"
+      },
+      "signup": {
+        "titre": "Sign up",
+        "username": "Username",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "continue": "Continue"
+      },
+      "profile": {
+        "titre": "Profile",
+        "username": "Username",
+        "avatar": "Avatar",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "tetris": {
+      "empty": {
+        "titre": "Tetris",
+        "sousTitre": "Loading..."
+      },
+      "logo": {
+        "titre": "Tetris",
+        "sousTitre": "The legendary puzzle game"
+      },
+      "idle": {
+        "solo": "Solo",
+        "multi": "Multiplayer",
+        "tournoi": "Tournament",
+        "stats": "Statistics",
+        "classement": "Ranking"
+      },
+      "settings": {
+        "titre": "Settings",
+        "son": "Sound",
+        "musique": "Music",
+        "effets": "Effects",
+        "volume": "Volume",
+        "graphismes": "Graphics",
+        "pleinEcran": "Fullscreen",
+        "appliquer": "Apply",
+        "annuler": "Cancel"
+      },
+      "keybindings": {
+        "titre": "Controls",
+        "gauche": "Left",
+        "droite": "Right",
+        "rotation": "Rotate",
+        "descente": "Hard drop",
+        "pause": "Pause",
+        "reinitialiser": "Reset"
+      },
+      "board": {
+        "score": "Score",
+        "niveau": "Level",
+        "lignes": "Lines",
+        "suivant": "Next",
+        "pause": "Pause",
+        "reprendre": "Resume",
+        "quitter": "Quit",
+        "gameOver": "Game over",
+        "nouvellePartie": "New game"
+      },
+      "multiplayerRoom": {
+        "titre": "Multiplayer room",
+        "creer": "Create room",
+        "rejoindre": "Join",
+        "liste": "Room list",
+        "joueurs": "Players",
+        "pret": "Ready",
+        "attente": "Waiting",
+        "commencer": "Start"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "Multiplayer room",
+        "joueurs": "Players",
+        "statut": "Status",
+        "quitter": "Leave room",
+        "chat": "Chat",
+        "envoyer": "Send"
+      }
+    },
+    "pong": {
+      "empty": {
+        "titre": "Pong",
+        "sousTitre": "Loading..."
+      },
+      "logo": {
+        "titre": "Pong",
+        "sousTitre": "The classic table tennis game"
+      },
+      "idle": {
+        "offline": "Offline",
+        "online": "Online",
+        "tournament": "Tournament",
+        "setting": "Settings",
+        "home": "Home"
+      },
+      "offline": {
+        "solo": "Solo",
+        "bot": "Bot",
+        "return": "Return"
+      },
+      "online": {
+        "join": "Join",
+        "private": "Private",
+        "join-priv-room": "Join private",
+        "spectate": "Spectate",
+        "return": "Return"
+      },
+      "tournament": {
+        "create": "Create",
+        "play": "Play",
+        "return": "Return"
+      },
+      "setting": {
+        "titre": "Settings",
+        "ok": "Ok"
+      },
+      "matchfound": {
+        "titre": "Match found",
+        "quit": "Quit"
+      }
+    }
+  },
+  "de": {
+    "modales": {
+      "signin": {
+        "titre": "Immanenz",
+        "texte": "Wir bieten Ihnen zwei Spiele in zwei Räumen mit zwei verschiedenen Atmosphären.\nRechts Pong für Einzelspieler gegen unsere KI, Mehrspieler oder Turnier.\nLinks ist Tetris im Einzelspieler-, Mehrspieler- oder Turniermodus verfügbar.",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "continue": "Weiter",
+        "noAccount": "Noch kein Konto?",
+        "register": "Registrieren!"
+      },
+      "signup": {
+        "titre": "Registrierung",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "continue": "Weiter"
+      },
+      "profile": {
+        "titre": "Profil",
+        "username": "Benutzername",
+        "avatar": "Avatar",
+        "save": "Speichern",
+        "cancel": "Abbrechen"
+      }
+    },
+    "tetris": {
+      "empty": {
+        "titre": "Tetris",
+        "sousTitre": "Laden..."
+      },
+      "logo": {
+        "titre": "Tetris",
+        "sousTitre": "Das legendäre Puzzle-Spiel"
+      },
+      "idle": {
+        "solo": "Einzelspieler",
+        "multi": "Mehrspieler",
+        "tournoi": "Turnier",
+        "stats": "Statistiken",
+        "classement": "Rangliste"
+      },
+      "settings": {
+        "titre": "Einstellungen",
+        "son": "Ton",
+        "musique": "Musik",
+        "effets": "Effekte",
+        "volume": "Lautstärke",
+        "graphismes": "Grafik",
+        "pleinEcran": "Vollbild",
+        "appliquer": "Anwenden",
+        "annuler": "Abbrechen"
+      },
+      "keybindings": {
+        "titre": "Steuerung",
+        "gauche": "Links",
+        "droite": "Rechts",
+        "rotation": "Rotieren",
+        "descente": "Schnellfall",
+        "pause": "Pause",
+        "reinitialiser": "Zurücksetzen"
+      },
+      "board": {
+        "score": "Punktzahl",
+        "niveau": "Niveau",
+        "lignes": "Linien",
+        "suivant": "Nächster",
+        "pause": "Pause",
+        "reprendre": "Fortfahren",
+        "quitter": "Beenden",
+        "gameOver": "Spiel vorbei",
+        "nouvellePartie": "Neues Spiel"
+      },
+      "multiplayerRoom": {
+        "titre": "Mehrspieler-Raum",
+        "creer": "Raum erstellen",
+        "rejoindre": "Beitreten",
+        "liste": "Raumliste",
+        "joueurs": "Spieler",
+        "pret": "Bereit",
+        "attente": "Warten",
+        "commencer": "Starten"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "Mehrspieler-Raum",
+        "joueurs": "Spieler",
+        "statut": "Status",
+        "quitter": "Raum verlassen",
+        "chat": "Chat",
+        "envoyer": "Senden"
+      }
+    },
+    "pong": {
+      "empty": {
+        "titre": "Pong",
+        "sousTitre": "Laden..."
+      },
+      "logo": {
+        "titre": "Pong",
+        "sousTitre": "Das klassische Tischtennis-Spiel"
+      },
+      "idle": {
+        "offline": "Offline",
+        "online": "Online",
+        "tournament": "Turnier",
+        "setting": "Einstellungen",
+        "home": "Zurück"
+      },
+      "offline": {
+        "solo": "Solo",
+        "bot": "Bot",
+        "return": "Zurück"
+      },
+      "online": {
+        "join": "Beitreten",
+        "private": "Privat",
+        "join-priv-room": "Privaten Raum beitreten",
+        "spectate": "Zuschauen",
+        "return": "Zurück"
+      },
+      "tournament": {
+        "create": "Erstellen",
+        "play": "Spielen",
+        "return": "Zurück"
+      },
+      "setting": {
+        "titre": "Einstellungen",
+        "ok": "Ok"
+      },
+      "matchfound": {
+        "titre": "Spiel gefunden",
+        "quit": "Beenden"
+      }
+    }
+  },
+  "ja": {
+    "modales": {
+      "signin": {
+        "titre": "イマネンス",
+        "texte": "2つのゲーム、2つの部屋、2つの異なる雰囲気を提供します。\n右側はAIとのソロプレイ、マルチプレイヤー、トーナメント用のPong。\n左側はソロ、マルチプレイヤー、トーナメントで利用可能なテトリスです。",
+        "username": "ユーザー名",
+        "password": "パスワード",
+        "continue": "続ける",
+        "noAccount": "アカウントをお持ちでないですか？",
+        "register": "登録する！"
+      },
+      "signup": {
+        "titre": "新規登録",
+        "username": "ユーザー名",
+        "password": "パスワード",
+        "confirmPassword": "パスワード確認",
+        "continue": "続ける"
+      },
+      "profile": {
+        "titre": "プロフィール",
+        "username": "ユーザー名",
+        "avatar": "アバター",
+        "save": "保存",
+        "cancel": "キャンセル"
+      }
+    },
+    "tetris": {
+      "empty": {
+        "titre": "テトリス",
+        "sousTitre": "読み込み中..."
+      },
+      "logo": {
+        "titre": "テトリス",
+        "sousTitre": "伝説のパズルゲーム"
+      },
+      "idle": {
+        "solo": "ソロ",
+        "multi": "マルチプレイヤー",
+        "tournoi": "トーナメント",
+        "stats": "統計",
+        "classement": "ランキング"
+      },
+      "settings": {
+        "titre": "設定",
+        "son": "サウンド",
+        "musique": "音楽",
+        "effets": "エフェクト",
+        "volume": "音量",
+        "graphismes": "グラフィックス",
+        "pleinEcran": "全画面表示",
+        "appliquer": "適用",
+        "annuler": "キャンセル"
+      },
+      "keybindings": {
+        "titre": "コントロール",
+        "gauche": "左",
+        "droite": "右",
+        "rotation": "回転",
+        "descente": "ハードドロップ",
+        "pause": "一時停止",
+        "reinitialiser": "リセット"
+      },
+      "board": {
+        "score": "スコア",
+        "niveau": "レベル",
+        "lignes": "ライン",
+        "suivant": "次",
+        "pause": "一時停止",
+        "reprendre": "再開",
+        "quitter": "終了",
+        "gameOver": "ゲームオーバー",
+        "nouvellePartie": "新しいゲーム"
+      },
+      "multiplayerRoom": {
+        "titre": "マルチプレイヤールーム",
+        "creer": "ルーム作成",
+        "rejoindre": "参加",
+        "liste": "ルーム一覧",
+        "joueurs": "プレイヤー",
+        "pret": "準備完了",
+        "attente": "待機中",
+        "commencer": "開始"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "マルチプレイヤールーム",
+        "joueurs": "プレイヤー",
+        "statut": "ステータス",
+        "quitter": "ルームを退出",
+        "chat": "チャット",
+        "envoyer": "送信"
+      }
+    },
+    "pong": {
+      "empty": {
+        "titre": "ポン",
+        "sousTitre": "読み込み中..."
+      },
+      "logo": {
+        "titre": "ポン",
+        "sousTitre": "クラシックな卓球ゲーム"
+      },
+      "idle": {
+        "offline": "オフライン",
+        "online": "オンライン",
+        "tournament": "トーナメント",
+        "setting": "設定",
+        "home": "ホーム"
+      },
+      "offline": {
+        "solo": "ソロ",
+        "bot": "ボット",
+        "return": "戻る"
+      },
+      "online": {
+        "join": "参加",
+        "private": "プライベート",
+        "join-priv-room": "プライベートに参加",
+        "spectate": "観戦",
+        "return": "戻る"
+      },
+      "tournament": {
+        "create": "作成",
+        "play": "プレイ",
+        "return": "戻る"
+      },
+      "setting": {
+        "titre": "設定",
+        "ok": "Ok"
+      },
+      "matchfound": {
+        "titre": "対戦相手が見つかりました",
+        "quit": "退出"
+      }
+    }
+  }
+}
