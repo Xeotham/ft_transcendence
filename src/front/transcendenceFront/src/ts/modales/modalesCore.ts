@@ -83,6 +83,8 @@ export const modaleHide = () => {
 }
 
 export const modaleAddCloseIcon = () => {
+
+  /*
   const closeIcon = document.querySelector<HTMLDivElement>('div[id="closeIcon"]');
   if (!closeIcon) return;
 
@@ -94,11 +96,14 @@ export const modaleAddCloseIcon = () => {
   closeIcon.addEventListener('click', () => {
     modaleHide();
   });
+  */
   document.getElementById('bkgModale')?.addEventListener('click', () => {
+    //document.getElementById('bkgModale')?.removeEventListener('click', () => { });
     modaleHide();
   });
 
   // Ajouter les gestionnaires d'événements pour les liens
+  /*
   const toRegisterLink = document.querySelector<HTMLAnchorElement>('#to_register_link');
   if (toRegisterLink) {
     toRegisterLink.addEventListener('click', (e) => {
@@ -106,9 +111,11 @@ export const modaleAddCloseIcon = () => {
       modaleDisplay(ModaleType.SIGNUP);
     });
   }
+  */
 }
 
 export const modaleRemoveCloseIcon = () => {
+  /*
   const closeIcon = document.querySelector<HTMLDivElement>('div[id="closeIcon"]');
   if (!closeIcon) return;
 
@@ -116,8 +123,9 @@ export const modaleRemoveCloseIcon = () => {
     closeIcon.classList.remove('block');
   }
   closeIcon.classList.add('hidden');
-
+  
   closeIcon.removeEventListener('click', () => { });
+  */
   document.getElementById('bkgModale')?.removeEventListener('click', () => { });
 }
 

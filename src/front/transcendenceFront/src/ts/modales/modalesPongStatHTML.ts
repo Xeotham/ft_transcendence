@@ -1,44 +1,54 @@
 import { TCS } from '../TCS.ts';
-
+import { imTexts } from '../imTexts/imTexts.ts';
 import closeIconImg from '../../medias/images/modales/croixSlate200.png';
 
 export const modalePongStatHTML = `
 
+  <!-- 
   <div id="closeIcon" class="${TCS.modaleClose} hidden">
-      <img src="${closeIconImg}" class="w-[10px] h-[10px]"/>
+  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
+  -->
+
+  <div id="titre_pong_stats" class="${TCS.modaleTitre}">
+  ${imTexts.modalesPongStatsTitre}</div>
+
+  <div id="back_pong_stats" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsBack}</div>
+
+  <div class="h-[30px]"></div>
+
+
+  <div id="line0_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine0}</div>
+  <div id="line1_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine1}</div>
+  <div id="line2_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine2}</div>
+  <div id="line3_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine3}</div>
+  <div id="line4_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine4}</div>
+  <div id="line5_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine5}</div>
+  <div id="line6_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine6}</div>
+  <div id="line7_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine7}</div>
+  <div id="line8_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine8}</div>
+  <div id="line9_pong_stats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesPongStatsLine9}</div>
+
+  <div class="h-[10px]"></div>
+
+  <div id="back_pong_stats" class="${TCS.modaleTexte}">
+    <a id="back_pong_stats_link" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsPrev}</a>
+    /
+    <a id="next_pong_stats_link" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsNext}</a>
   </div>
 
-  <div id="titre_signin" class="${TCS.modaleTitre}">
-    Pong Stats<br>
-  </div>
-        
-  <div id="texte_signin" class="${TCS.modaleTexte}">
-    Texte signup<br>
-    Texte signup<br>
-    Texte signup<br><br>
-  </div>
-
-  <form id="form_signup" class="${TCS.form} w-5/6">
-    <div id="username_div" class="${TCS.formDivInput}">
-        <input type="email" name="username" id="username" class="${TCS.formInput}" placeholder=" " required />
-        <label for="username" name="username_label" id="username_label" class="${TCS.formLabel}">Email address</label>
-    </div>
-
-    <div id="password_div" class="${TCS.formDivInput}">
-        <input type="password" name="password" id="password" class="${TCS.formInput}" placeholder=" " required />
-        <label for="password" name="password_label" id="password_label" class="${TCS.formLabel}">Password</label>
-    </div>
-
-    <div id="password_confirm_div" class="${TCS.formDivInput}">
-        <input type="password" name="password_confirm" id="password_confirm" class="${TCS.formInput}" placeholder=" " required />
-        <label for="password_confirm" name="password_confirm_label" id="password_confirm_label" class="${TCS.formLabel}">Password confirm</label>
-    </div>
-
-    <button type="button" id="signin_button" class="${TCS.formButton}">
-      Continuer
-    </button>
-    <div id='h_space' class='h-4'/>
-
-  </form>
+    <div class="h-[30px]"></div>
 
 `;

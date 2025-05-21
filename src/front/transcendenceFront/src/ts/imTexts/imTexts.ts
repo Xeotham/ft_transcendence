@@ -2,7 +2,7 @@ type SupportedLanguages = 'fr' | 'en' | 'de' | 'ja';
 
 import imTextsJson from './imTexts.json';
 export const imTexts: {[key: string]: string} = {};
-export let language: SupportedLanguages = 'fr';
+export let language: SupportedLanguages = 'de';
 
 function imTextsSet(obj: any, prefix: string = '') {
     for (const key in obj) {

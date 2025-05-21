@@ -4,9 +4,10 @@ import closeIconImg from '../../medias/images/modales/croixSlate200.png';
 
 export const modale_signin = `
 
+  <!-- 
   <div id="closeIcon" class="${TCS.modaleClose} hidden">
-      <img src="${closeIconImg}" class="w-[10px] h-[10px]" />
-  </div>
+  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
+  -->
 
   <div id="signinTitre" class="${TCS.modaleTitre} pb-[30px]">
     Immanence<br>
@@ -28,12 +29,12 @@ export const modale_signin = `
         <label for="signinPassword" name="signinPasswordLabel" id="signinPasswordLabel" class="${TCS.formLabel}">Password</label>
     </div>
 
-    <button type="button" id="signinButton" class="${TCS.modaleLink} flex justify-left w-full pb-[10px] y-[-200px]">Continuer</button>
+    <button type="button" id="signinButton" class="${TCS.formButton} flex justify-left w-full pb-[10px] y-[-200px]">Continuer</button>
 
     <div id="to_register_text" class="${TCS.modaleToRegister} pt-[20px] pb-[6px]">
       Tu n'as pas de compte ?
     </div>
-    <a id="to_register_link" href="#" class="${TCS.modaleLink} flex justify-left w-full pb-[10px]">Enregistre-toi !</a>
+    <a id="to_register_link" href="#" class="${TCS.formButton} flex justify-left w-full pb-[10px]">Enregistre-toi !</a>
     <br><br>
 
     </form>

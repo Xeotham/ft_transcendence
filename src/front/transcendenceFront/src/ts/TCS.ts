@@ -25,17 +25,24 @@ export const TCS = {
     
     
     modaleClose : "fixed z-50 w-[20px] h-[20px] shadow-xl/30 rounded-xs bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none flex items-center justify-center absolute top-[10px] right-[10px] cursor-pointer hover:cursor-pointer",
-    modaleTitre : "font-sixtyfour text-[28px] text-amber-400",
+    modaleTitre : "font-sixtyfour text-[28px] relative text-amber-400",
     modaleTexte : "font-sixtyfour text-[14px] relative text-lime-50",
-    modaleLink : "text-yellow-600 hover:bg-yellow-600 hover:text-lime-50 hover:decoration-none decoration-yellow-600 underline cursor-pointer hover:cursor-pointer",
+    modaleTexteLink : "font-sixtyfour text-[14px] text-yellow-600 hover:text-amber-400 cursor-pointer hover:cursor-pointer underline decoration-yellow-600 hover:decoration-amber-400",
     modaleToRegister : "font-sixtyfour text-[14px] relative text-lime-50",
+    modaleAvatar : "w-[100px] h-[100px] border-0 hover:border-5 border-yellow-600 cursor-pointer hover:cursor-pointer",
+    modaleStatsLine : "font-sixtyfour text-[14px] text-lime-50 grid grid-cols-[120px_1fr_80px] gap-4 items-center",
 
     // formulaire
     form : "font-sixtyfour text-[14px] relative",
     formDivInput : "relative z-0 w-full mb-5 group",
-    formInput : "block py-0 px-0 w-full font-sixtyfour text-[14px] text-amber-400 bg-transparent border-0 border-b-1 border-amber-400 appearance-none focus:outline-none focus:ring-0 focus:border-lime-50 peer [&:not(:placeholder-shown)]:border-lime-50 cursor-text",
-    formLabel : "absolute font-sixtyfour text-[14px] text-amber-400 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50",
-    formButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 me-2 mb-2 cursor-pointer hover:cursor-pointer",
+    formInput : "block py-0 px-0 w-full font-sixtyfour text-[14px] text-amber-400 bg-transparent border-0 border-b-1 border-yellow-600 appearance-none focus:outline-none focus:ring-0 focus:border-lime-50 peer [&:not(:placeholder-shown)]:border-lime-50 cursor-text",
+    formLabel : "absolute font-sixtyfour text-[14px] text-yellow-600 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50",
+    formButton : "flex justify-left w-full pt-[20px] text-lime-50 bg-yellow-600 hover:bg-amber-400 hover:text-black  cursor-pointer hover:cursor-pointer",
+    //formButton : "flex justify-left w-full pt-[20px] text-yellow-600 hover:bg-yellow-600 hover:text-lime-50 cursor-pointer hover:cursor-pointer border-b-1 border-yellow-600 hover:borded-b-0",
+    
+    // formButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 me-2 mb-2 cursor-pointer hover:cursor-pointer",
+    // formLink : "flex justify-left w-full pt-[20px] text-yellow-600 hover:bg-yellow-600 hover:text-lime-50 cursor-pointer hover:cursor-pointer border-b-1 border-yellow-600 hover:borded-b-0",
+
 
   // Fontsona3, Fontsona4, Fontsona5, FontsonaQ, PressStart2P, Sixtyfour, PixelifySans, Doto
 
@@ -44,7 +51,7 @@ export const TCS = {
 
     pongLogo :   "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-lime-50",
     pongTitre : "font-sixtyfour text-[42px] flex items-center justify-center h-full w-full text-lime-50",
-    pongNav0 : "flex flex-col items-center justify-center",
+    pongNav0 : "flex flex-col items-center justify-center fade-in-up",
     pongNav1 : "flex flex-col items-center justify-center bg-lime-50 px-[28px] py-[28px] shadow-xl/50",
     pongButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 cursor-pointer hover:cursor-pointer",
     pongText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",

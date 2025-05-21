@@ -1,44 +1,49 @@
 import { TCS } from '../TCS.ts';
+import { imTexts } from '../imTexts/imTexts.ts';
 
 import closeIconImg from '../../medias/images/modales/croixSlate200.png';
+import avatarImg from '../../medias/avatars/avatar00.png';
 
 export const modaleProfileHTML = `
 
+  <!-- 
   <div id="closeIcon" class="${TCS.modaleClose} hidden">
-      <img src="${closeIconImg}" class="w-[10px] h-[10px]"/>
-  </div>
-
-  <div id="titre_signin" class="${TCS.modaleTitre}">
-    Profile<br>
-  </div>
+  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
+  -->
         
-  <div id="texte_signin" class="${TCS.modaleTexte}">
-    Texte signup<br>
-    Texte signup<br>
-    Texte signup<br><br>
+  <div class="flex flex-row items-start justify-start gap-4">
+    <div id="profileAvatar" class="${TCS.modaleAvatar} ">
+      <img src="${avatarImg}"/>
+    </div>
+    <div>
+      <div id="profileUsername" class="${TCS.modaleTitre}">${imTexts.modalesProfileUsername}</div>
+      <div id="profileUserEdit" class="${TCS.modaleTexte}">
+        <a id="profileUserEditLink" class="${TCS.modaleTexteLink}">
+        ${imTexts.modalesProfileUserEdit}</a>
+        /
+        <a id="profileDeconectLink" class="${TCS.modaleTexteLink}">
+        ${imTexts.modalesProfileDeconect}</a>
+      </div>
+    </div>
   </div>
 
-  <form id="form_signup" class="${TCS.form} w-5/6">
-    <div id="username_div" class="${TCS.formDivInput}">
-        <input type="email" name="username" id="username" class="${TCS.formInput}" placeholder=" " required />
-        <label for="username" name="username_label" id="username_label" class="${TCS.formLabel}">Email address</label>
-    </div>
+  <div class="h-[30px]"></div>
+  
+  <span class="${TCS.modaleTexte} text-[24px]">Pong</span>
+  <div id="modalePongStats" class="${TCS.modaleTexte}">
+  ${imTexts.modalesProfilePongStats}</div>
+  <div id="modalePongStatsLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfilePongStatsLink}</div>
 
-    <div id="password_div" class="${TCS.formDivInput}">
-        <input type="password" name="password" id="password" class="${TCS.formInput}" placeholder=" " required />
-        <label for="password" name="password_label" id="password_label" class="${TCS.formLabel}">Password</label>
-    </div>
+    <div class="h-[30px]"></div>
 
-    <div id="password_confirm_div" class="${TCS.formDivInput}">
-        <input type="password" name="password_confirm" id="password_confirm" class="${TCS.formInput}" placeholder=" " required />
-        <label for="password_confirm" name="password_confirm_label" id="password_confirm_label" class="${TCS.formLabel}">Password confirm</label>
-    </div>
+  <span class="${TCS.modaleTexte} text-[24px]">Tetris</span>
+  <div id="modaleTetrisStats" class="${TCS.modaleTexte}">
+    ${imTexts.modalesProfileTetrisStats}
+  </div>
+  <div id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfileTetrisStatsLink}</div>
 
-    <button type="button" id="signin_button" class="${TCS.formButton}">
-      Continuer
-    </button>
-    <div id='h_space' class='h-4'/>
-
-  </form>
+  <div class="h-[30px]"></div>
 
 `;
