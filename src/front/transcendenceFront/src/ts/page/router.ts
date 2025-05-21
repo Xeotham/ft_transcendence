@@ -56,6 +56,27 @@ const pongRouter = () => {
 	// PONG IDLE
 	page('/pong', () => {
 		zoneSet("PONG");
+		loadPongPage("idle");
+	});
+	// PONG OFFLINE
+	page("/pong/offline", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-offline");
+	});
+	// PONG ONLINE
+	page("/pong/online", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-online");
+	});
+	// PONG TOURNAMENT
+	page("/pong/tournament", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-tournament");
+	});
+	// PONG SETTING
+	page("/pong/setting", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-setting");
 	});
 	// PONG TOURNAMENT LIST
 	page("/pong/list/tournaments", () => {

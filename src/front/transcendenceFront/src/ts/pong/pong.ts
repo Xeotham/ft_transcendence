@@ -28,6 +28,14 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return logoPage();
 		case "idle":
 			return idlePage();
+		case "nav-offline":
+			return navOffline();
+		case "nav-online":
+			return navOnline();
+		case "nav-tournament":
+			return navTournament();
+		case "nav-setting":
+			return navSetting();
 		case "match-found":
 			return matchFoundPage();
 		case "tournament-found":
@@ -84,10 +92,10 @@ const   idlePage = () => {
 	loadPongHtml("idle");
 
 	resetGamesSocket("pong")
-	document.getElementById("offline")?.addEventListener("click", navOffline);
-	document.getElementById("online")?.addEventListener("click", navOnline);
-	document.getElementById("tournament")?.addEventListener("click", navTournament);
-	document.getElementById("setting")?.addEventListener("click", navSetting);
+	document.getElementById("offline")?.addEventListener("click", () => { page.show("/pong/offline"); });
+	document.getElementById("online")?.addEventListener("click", () => { page.show("/pong/online"); });
+	document.getElementById("tournament")?.addEventListener("click", () => { page.show("/pong/tournament"); });
+	document.getElementById("setting")?.addEventListener("click", () => { page.show("/pong/setting"); });
 	document.getElementById("home")?.addEventListener("click", (e) => { e.stopPropagation(); page.show("/"); });
 }
 
