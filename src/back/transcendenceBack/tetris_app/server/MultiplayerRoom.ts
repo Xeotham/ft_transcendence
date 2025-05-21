@@ -26,6 +26,7 @@ export class MultiplayerRoom {
 		this.settings = {isLevelling: false, level: 4, canRetry: true};
 	}
 
+	public getIsInGame(): boolean					{ return this.isInGame; }
 	public isPrivate(): boolean						{ return this.private; }
 	public getCode(): string						{ return this.code; }
 

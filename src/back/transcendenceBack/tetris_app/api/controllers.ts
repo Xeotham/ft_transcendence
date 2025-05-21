@@ -11,7 +11,16 @@ import {delay} from "../server/Game/utils";
 export let   arcadeGamesLst: TetrisGame[] = [];
 export let   multiplayerRoomLst: MultiplayerRoom[] = [];
 
-export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
+	if (!req.query.username)
+		return socket.close(4000, "No username");
+
+	for (const room of multiplayerRoomLst) {
+		if (room.getIsInGame() || room.isPrivate())
+			continue ;
+		room.addPlayer(socket, req.query.username);
+		break ;
+	}
 }
 
 export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
