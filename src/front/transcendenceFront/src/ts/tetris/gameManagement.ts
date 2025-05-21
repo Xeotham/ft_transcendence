@@ -248,7 +248,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			// console.log("Game: ", res.game);
 			tetrisGameInformation.setGameId(res.game.gameId);
 			bgmPlayer.choseBgm("bgm1");
-			// bgmPlayer.play();
+			bgmPlayer.play();
 			loadTetrisHtml("board");
 			loadTetrisPage("board");
 			gameControllers();
