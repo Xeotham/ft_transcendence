@@ -5,7 +5,7 @@ import { address } from "./immanence.ts";
 export class UserInfo {
 	username: string;
 	constructor() {
-		this.username = UserInfo.generateUsername();
+		this.username = localStorage.getItem("username") || UserInfo.generateUsername();
 	}
 
 	static generateUsername() {

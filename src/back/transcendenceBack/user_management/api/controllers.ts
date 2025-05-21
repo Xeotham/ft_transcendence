@@ -36,14 +36,13 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     const existingUser = getUserByUsername(username);
     if (existingUser)
         return reply.status(400).send({ message: 'Username already exists' });
-
     try
     {
         const hashedPassword = await hashPassword(password);
 
-        const base64Avatar = avatar.split(',')[1];
+        // const base64Avatar = avatar.split(',')[1];
 
-        const id = createUser( username, hashedPassword as string, base64Avatar );
+        const id = createUser( username, hashedPassword as string, avatar );
 
         createStats(id);
 
@@ -415,7 +414,7 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 // createGame modified
 export const createPongGame = (players: any, score: any, winner: any, solo: boolean, bot: boolean) =>
 {
-    console.log("solo game :", solo, "bot game :", bot);
+    console.log(players.player1.username, score.player1.score, winner.player.username, solo);
     if (solo === true && bot === false)
     {
         console.log("return solo game");
@@ -427,7 +426,11 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
         const   player1 = getUserByUsername(players.player1.username) as Users;
 
         if (!player1)
+        {
+            console.log("Invalid User");
             return ;
+        }
+
 
         if (player1.id)
         {
@@ -437,9 +440,9 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
             const gameId = saveGame("");
 
             if (winner.player)
-                createUserGameStatsPong(player1.id, gameId, score.player1.score, true, "pong");
+                createUserGameStatsPong(player1.id, gameId, score.player1, true, "pong");
             else
-                createUserGameStatsPong(player1.id, gameId, score.player1.score, false, "pong");
+                createUserGameStatsPong(player1.id, gameId, score.player1, false, "pong");
             console.log("return bot game");
         }
     }
@@ -458,8 +461,8 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
 
             const gameId = saveGame("");
 
-            createUserGameStatsPong(player1.id, gameId, score.player1.score, players.player1.username === winner.player.username, "pong");
-            createUserGameStatsPong(player2.id, gameId, score.player2.score, players.player2.username === winner.player.username, "pong");
+            createUserGameStatsPong(player1.id, gameId, score.player1, players.player1.username === winner.player.username, "pong");
+            createUserGameStatsPong(player2.id, gameId, score.player2, players.player2.username === winner.player.username, "pong");
 
             updateStats(player1.id);
             updateStats(player2.id);

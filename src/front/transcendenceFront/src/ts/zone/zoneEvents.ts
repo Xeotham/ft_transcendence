@@ -5,6 +5,7 @@ import {
 
 // @ts-ignore
 import  page from "page"
+import {signUpUser, signInUser} from "../userManagement/userManagement.ts";
 
 let outDocumentHandler: EventListener | null = null;
 let overzoneTopHandler: EventListener | null = null;
@@ -13,6 +14,8 @@ let overTetrisHandler: EventListener | null = null;
 let clickPongHandler: EventListener | null = null;
 let clickTetrisHandler: EventListener | null = null;
 let clickLogoHomeHandler: EventListener | null = null;
+let clickSignUpHandler: EventListener | null = null;
+let clickSignInHandler: EventListener | null = null;
 
 ///////////////////////////////////////////
 // mouseout - HOME
@@ -150,4 +153,30 @@ export const evRemClickLogoHome = () => {
 // Écouteur d'événement pour redimensionner
 export const evAddDocResize = () => {
   window.addEventListener('resize', documentResize);
+}
+
+///////////////////////////////////////////
+// click - SignUp
+
+export const  evAdClickSignUp = () => {
+  const target = document.querySelector<HTMLButtonElement>('#signup_button');
+  if (target && !clickSignUpHandler) {
+    clickSignUpHandler = () => {
+      signUpUser();
+    };
+    target.addEventListener('click', clickSignUpHandler);
+  }
+}
+
+///////////////////////////////////////////
+// click - SigIn
+
+export const evAdClickSignIn = () => {
+  const target = document.querySelector<HTMLButtonElement>('#signin_button');
+  if (target && !clickSignInHandler) {
+    clickSignInHandler = () => {
+      signInUser();
+    }
+    target.addEventListener('click', clickSignInHandler);
+  }
 }

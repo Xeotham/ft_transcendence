@@ -28,7 +28,7 @@ export const modaleSignInHTML = `
         <label for="signinPassword" name="signinPasswordLabel" id="signinPasswordLabel" class="${TCS.formLabel}">Password</label>
     </div>
 
-    <button type="button" id="signinButton" class="${TCS.modaleLink} flex justify-left w-full pb-[10px] y-[-200px]">Continuer</button>
+    <button type="submit" id="signin_button" class="${TCS.formButton} flex justify-left w-full pb-[10px] y-[-200px]">Continuer</button>
 
     <div id="to_register_text" class="${TCS.modaleToRegister} pt-[20px] pb-[6px]">
       Tu n'as pas de compte ?

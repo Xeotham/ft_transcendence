@@ -4,31 +4,31 @@ import {address, user} from "../immanence.ts";
 // @ts-ignore
 import page from "page";
 
-export const loginUser = (error: string | null = null) => {
-	loginHtml(error);
+export const signInUser = () => {
 
-	document.getElementById("login-form")!.addEventListener("submit", async (event) => {
+	document.getElementById("signinForm")!.addEventListener("submit", async (event) => {
 		event.preventDefault();
 
-		const   username = (document.getElementById("username") as HTMLInputElement).value;
-		const   password = (document.getElementById("password") as HTMLInputElement).value;
+		const   username = (document.getElementById("signinUsername") as HTMLInputElement).value;
+		const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
 
 		const   data = { username: username, password:  password };
+		console.log(data);
 		postToApi(`http://${address}/api/user/login`, data)
 			.then(() => {
 				localStorage.setItem("username", username);
 				user.setUsername(username);
+				alert("User signed in successfully!");
 				page.show("/");
 			})
 			.catch((error) => {
 				console.error("Error logging in:", error.status, error.message);
-				loginUser(error.message);
+				alert(error.message);
 			});
 	})
 }
 
-export const logoutUser = (error: string | null = null) => {
-	logoutHtml(error);
+export const signOutUser = () => {
 
 	document.getElementById("logout")!.addEventListener("click", async (event) => {
 		event.preventDefault();
@@ -37,11 +37,12 @@ export const logoutUser = (error: string | null = null) => {
 		postToApi(`http://${address}/api/user/logout`, user)
 			.then(() => {
 				localStorage.clear();
+				alert("User signed out successfully!");
 				page.show("/");
 			})
 			.catch((error) => {
 				console.error("Error logging out:", error.status, error.message);
-				logoutUser(error.message);
+				alert(error.message);
 			});
 	})
 }
@@ -56,31 +57,34 @@ export const isLoggedIn = (): boolean => {
 }
 
 
-export const    signUpUser = (error: string | null = null) => {
-	signUpHtml(error);
-	document.getElementById("sign-up-form")!.addEventListener("submit", async (event) => {
+export const    signUpUser = () => {
+	document.getElementById("form_signup")!.addEventListener("submit", async (event) => {
 		event.preventDefault();
 
 		const username = (document.getElementById("username") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
-		const confirmPassword = (document.getElementById("confirm-password") as HTMLInputElement).value;
-		const avatar = (document.getElementById("avatar") as HTMLInputElement).value;
+		const confirmPassword = (document.getElementById("password_confirm") as HTMLInputElement).value;
+		// const avatar = (document.getElementById("avatar") as HTMLInputElement).value;
+		const avatar = "sss";
+		console.log(username, password, confirmPassword, avatar);
 
 		if (password !== confirmPassword) {
-			signUpUser("Passwords do not match");
+			alert("Passwords do not match");
 			return;
 		}
 
 		const data = {username: username, password: password, avatar: avatar};
 
+		console.log(data);
 		postToApi(`http://${address}/api/user/register`, data)
 		.then(() => {
-			console.log("User registered successfully");
-			page.show("/login");
+			// console.log("User registered successfully");
+			alert("Registered successfully!");
+			// page.show("/login");
 		})
 		.catch((error) => {
 			console.error("Error signing up:", error.status, error.message);
-			signUpUser(error.message);
+			alert(error.message);
 		});
 	});
 }

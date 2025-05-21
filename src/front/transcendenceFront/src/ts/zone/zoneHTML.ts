@@ -12,6 +12,7 @@ import {loadPongTextures} from "../pong/pong.ts";
 
 //TMP
 import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
+import {evAdClickSignIn, evAdClickSignUp} from "./zoneEvents.ts";
 
 ///////////////////////////////////////////
 // Exports
@@ -121,9 +122,11 @@ export const setZoneTopTMP = () => {
   </span>
   `;
   document.getElementById('SIGNIN')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.SIGNIN);});
+    modaleDisplay(ModaleType.SIGNIN)
+    evAdClickSignIn();});
   document.getElementById('SIGNUP')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.SIGNUP);});
+    modaleDisplay(ModaleType.SIGNUP);
+    evAdClickSignUp()});
   document.getElementById('PROFILE')?.addEventListener('click', () => {
     modaleDisplay(ModaleType.PROFILE);});
   document.getElementById('PONG_STATS')?.addEventListener('click', () => {

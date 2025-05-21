@@ -1,4 +1,5 @@
 import db from '../db';
+// @ts-ignore
 import bcrypt from 'bcrypt';
 
 interface User
@@ -13,6 +14,7 @@ interface User
 
 export const createUser = (username:string, password:string, avatar:string): number =>
 {
+    console.log("createUser", username, password, avatar);
     let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\

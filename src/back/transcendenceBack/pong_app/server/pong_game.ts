@@ -133,6 +133,7 @@ export class Game {
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
 				// HEERE
+				console.log(this.players.player1?.username);
 				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
 				resolve();
 			};

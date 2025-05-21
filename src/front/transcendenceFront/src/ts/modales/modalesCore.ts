@@ -121,3 +121,5 @@ export const modaleRemoveCloseIcon = () => {
   document.getElementById('bkgModale')?.removeEventListener('click', () => { });
 }
 
+
+
