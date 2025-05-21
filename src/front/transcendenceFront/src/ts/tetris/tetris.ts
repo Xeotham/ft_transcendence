@@ -7,7 +7,7 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame, tetrisGoalInfo, tetrisGameInfo
+	tetrisGame, tetrisGoalInfo, tetrisGameInfo, minoSize
 } from "./utils.ts";
 
 import { tetrisDisplayMultiplayerRoom } from "./tetrisMultiplayerDisplayHTML.ts";
@@ -292,48 +292,50 @@ const drawInfo = (ctx: CanvasRenderingContext2D, x: number, y: number, gameInfo:
 	writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
 }
 
-const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: number) => {
-	const   opponentsSize = {width: 300, height: 756};
-	const   opponentsNumber = opponents;
+const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {
+	const   margin = 10;
+	const   opponentsSize = {width: 340, height: 756};
+	const   opponentsNumber = opponents.length;
 	const   opponentsBoardInfo: {x: number, y: number, width: number, height: number}[] = [];
 	const   matrixTexture = tetrisTextures["MATRIX"];
 	let     boardSize = {width: 0, height: 0};
 
+	if (opponents.length === 0)
+		return ;
+	boardSize.height = (opponentsSize.height - (margin * (opponentsNumber - 1))) / opponentsNumber;
+	boardSize.width = opponentsSize.width * (boardSize.height / matrixTexture.height);
 
-	switch (opponentsNumber) {
-		case 1:
-			boardSize.width = opponentsSize.width;
-			boardSize.height = matrixTexture.height * (opponentsSize.width / matrixTexture.width);
-			opponentsBoardInfo.push({x: x, y: y + ((opponentsSize.height) / 2) - (boardSize.height / 2), width: boardSize.width, height: boardSize.height});
+	for (let i = 0; i < opponentsNumber; ++i) {
+		opponentsBoardInfo.push({
+			x: x + ((opponentsSize.width / 2) - (boardSize.width / 2)),
+			y: y + (i * (boardSize.height + margin)),
+			width: boardSize.width,
+			height: boardSize.height});
 	}
-	opponentsBoardInfo.forEach((boardInfo) => {
-		ctx.drawImage(matrixTexture, boardInfo.x, boardInfo.y, boardInfo.width, boardInfo.height);
+
+	opponentsBoardInfo.forEach((boardInfo, index) => {
+		ctx.drawImage(matrixTexture, boardInfo.x - (margin / opponentsNumber), boardInfo.y - (margin / opponentsNumber), boardInfo.width, boardInfo.height);
+		drawMatrix(ctx, opponents[index].matrix, boardInfo.x, boardInfo.y, (minoSize * boardInfo.width) / matrixTexture.width);
 	});
 }
 
 const   drawOpponents = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {
-	// const   opponentNumber = opponents.length;
-	const   matrixTexture = tetrisTextures["MATRIX"];
 	const   rightListCoord: {x: number, y: number} = { x: x, y: y };
 	const   leftListCoord: {x: number, y: number} = { x: x - 1075, y: y };
 	const   leftList: tetrisGameInfo[] = [];
 	const   rightList: tetrisGameInfo[] = [];
 
-	// opponents.forEach((opponent, index) => {
-	// 	if (index % 2 === 0)
-	// 		rightList.push(opponent);
-	// 	else
-	// 		leftList.push(opponent);
-	// });
+	if (!opponents)
+		return ;
+	opponents.forEach((opponent, index) => {
+		if (index % 2 === 0)
+			rightList.push(opponent);
+		else
+			leftList.push(opponent);
+	});
 
-
-	ctx.fillStyle = "black";
-
-	ctx.fillRect(rightListCoord.x, rightListCoord.y, 300, 756);
-	ctx.fillRect(leftListCoord.x, leftListCoord.y, 300, 756);
-	//
-	// ctx.drawImage(matrixTexture, x, y, 300, matrixTexture.height * (300 / matrixTexture.width));
-	drawOpponentsList(ctx, rightListCoord.x, rightListCoord.y, 1);
+	drawOpponentsList(ctx, rightListCoord.x, rightListCoord.y, rightList);
+	drawOpponentsList(ctx, leftListCoord.x, leftListCoord.y, leftList);
 }
 
 const   drawGame = () => {
@@ -367,7 +369,7 @@ const   drawGame = () => {
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	drawInfo(ctx, infoCoord.x, infoCoord.y, gameInfo);
 	if (opponents && opponents.length > 0)
-	drawOpponents(ctx, opponentsCoord.x, opponentsCoord.y, opponents);
+		drawOpponents(ctx, opponentsCoord.x, opponentsCoord.y, opponents);
 
 	if (tetrisGameInformation.getSettingsValue("showBags") && game.bags)
 		drawBag(ctx, game.bags, bagsCoord);
@@ -377,7 +379,7 @@ const   drawGame = () => {
 
 // const multiplayerRoom = (arg: loadTetrisArgs) => {
 // 	loadTetrisHtml("multiplayer-room", arg);
-	
+
 // 	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
 // 	if (!tetrisGameInformation.getRoomOwner())
 // 		return ;
@@ -415,7 +417,7 @@ const   drawGame = () => {
 
 // export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
 // 	loadTetrisHtml("display-multiplayer-room", { rooms: rooms });
-	
+
 // 	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
 // 	document.getElementById("submit")?.addEventListener("click", () =>
 // 		joinRoom((document.getElementById("room-code") as HTMLInputElement).value));
