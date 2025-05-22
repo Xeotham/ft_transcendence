@@ -10,11 +10,11 @@ export const modaleSignUpHTML = `
   <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
   -->
 
-  <div id="signupTitre" class="${TCS.modaleTitre} pb-[30px]">
-  ${imTexts.modalesSignupTitre}</div>
+  <div id="signupTitle" class="${TCS.modaleTitre} pb-[30px]">
+  ${imTexts.modalesSignupTitle}</div>
         
-  <div id="signupTexte" class="${TCS.modaleTexte} pb-[40px]">
-  ${imTexts.modalesSignupTexte}</div>
+  <div id="signupText" class="${TCS.modaleTexte} pb-[40px]">
+  ${imTexts.modalesSignupText}</div>
 
   <form id="signinForm" class="${TCS.form} w-full">
     <div id="signinUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
@@ -23,13 +23,13 @@ export const modaleSignUpHTML = `
         ${imTexts.modalesSignupUsername}</label>
     </div>
     <div id="signinPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
-        <input type="password" name="signinPassword" id="signinPassword" class="${TCS.formInput}" placeholder=" " required />
-        <label for="signinPassword" name="signinPasswordLabel" id="signinPasswordLabel" class="${TCS.formLabel}">
+        <input type="password" name="signupPassword" id="signupPassword" class="${TCS.formInput}" placeholder=" " required />
+        <label for="signupPassword" name="signupPasswordLabel" id="signupPasswordLabel" class="${TCS.formLabel}">
         ${imTexts.modalesSignupPassword}</label>
     </div>
     <div id="signinPasswordConfirmDiv" class="${TCS.formDivInput} pb-[0px]">
-        <input type="password" name="signinPasswordConfirm" id="signinPasswordConfirm" class="${TCS.formInput}" placeholder=" " required />
-        <label for="signinPasswordConfirm" name="signinPasswordConfirmLabel" id="signinPasswordConfirmLabel" class="${TCS.formLabel}">
+        <input type="password" name="signupPasswordConfirm" id="signupPasswordConfirm" class="${TCS.formInput}" placeholder=" " required />
+        <label for="signupPasswordConfirm" name="signupPasswordConfirmLabel" id="signupPasswordConfirmLabel" class="${TCS.formLabel}">
         ${imTexts.modalesSignupPasswordConfirm}</label>
     </div>
 

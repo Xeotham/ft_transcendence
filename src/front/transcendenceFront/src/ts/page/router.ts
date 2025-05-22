@@ -59,12 +59,12 @@ const pongRouter = () => {
 		loadPongPage("idle");
 	});
 	// PONG OFFLINE
-	page("/pong/offline", () => {
+	page("/pong/solo", () => {
 		zoneSet("PONG");
 		loadPongPage("nav-offline");
 	});
 	// PONG ONLINE
-	page("/pong/online", () => {
+	page("/pong/versus", () => {
 		zoneSet("PONG");
 		loadPongPage("nav-online");
 	});
@@ -74,7 +74,7 @@ const pongRouter = () => {
 		loadPongPage("nav-tournament");
 	});
 	// PONG SETTING
-	page("/pong/setting", () => {
+	page("/pong/settings", () => {
 		zoneSet("PONG");
 		loadPongPage("nav-setting");
 	});

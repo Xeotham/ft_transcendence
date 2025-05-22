@@ -1,8 +1,9 @@
-import {TCS} from "../TCS.ts";
-import {EL} from "../zone/zoneHTML.ts";
+import { EL } from "../zone/zoneHTML.ts";
+import { TCS } from "../TCS.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
+import { tetrisGameInformation } from "./tetris.ts";
+
 import { keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
-// import { content } from "../main.ts";
-import {tetrisGameInformation} from "./tetris.ts";
 
 export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
 	switch (page) {
@@ -61,6 +62,7 @@ const settingHtml = () => {
 	if (!EL.contentTetris)
 		return;
 
+	console.log("settingHtml");
 	EL.contentTetris.innerHTML = `
 	<h1>Tetris</h1>
 	<nav>
@@ -72,6 +74,115 @@ const settingHtml = () => {
 }
 
 const keyBindsHtml = (keys: keys) => {
+	if (!EL.contentTetris)
+		return;
+
+	EL.contentTetris.innerHTML = `
+	<div class="${TCS.pongNav1}">
+	
+		<div id="tetrisSettingsTitle" class="${TCS.tetrisSettingTitle}">
+		${imTexts.tetrisSettingsTitle}</div> 
+		
+		<div class="h-[30px]"></div>
+
+		<div class="grid grid-cols-2 gap-x-[20px] gap-y-[2px]">
+
+<!-- Mino -->
+			<div id="minoName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsMinoTitle}</div>
+			<div id="minoKey" class="${TCS.tetrisSelect}">
+				<select id="minoSelect" class="w-full">
+					<option value="1">${imTexts.tetrisSettingsMino1}</option>
+					<option value="2">${imTexts.tetrisSettingsMino2}</option>
+					<option value="3">${imTexts.tetrisSettingsMino3}</option>
+					<option value="4">${imTexts.tetrisSettingsMino4}</option>
+					<option value="5">${imTexts.tetrisSettingsMino5}</option>
+					<option value="6">${imTexts.tetrisSettingsMino6}</option>
+				</select>
+			</div>
+			<div class="col-span-2 h-[20px]"></div>
+
+<!-- Background -->
+			<div id="bkgName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsBkgTitle}</div>
+			<div id="bkgKey" class="${TCS.tetrisSelect}">
+				<select id="bkgSelect" class="w-full">
+					<option value="1">${imTexts.tetrisSettingsBkg1}</option>
+					<option value="2">${imTexts.tetrisSettingsBkg2}</option>
+					<option value="3">${imTexts.tetrisSettingsBkg3}</option>
+					<option value="4">${imTexts.tetrisSettingsBkg4}</option>
+					<option value="5">${imTexts.tetrisSettingsBkg5}</option>
+					<option value="6">${imTexts.tetrisSettingsBkg6}</option>
+				</select>
+			</div>
+			<div class="col-span-2 h-[20px]"></div>
+
+<!-- Music -->
+			<div id="musicName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsMusicTitle}</div>
+			<div id="musicKey" class="${TCS.tetrisSelect}">
+				<select id="musicSelect" class="w-full">
+					<option value="1">${imTexts.tetrisSettingsMusic1}</option>
+					<option value="2">${imTexts.tetrisSettingsMusic2}</option>
+					<option value="3">${imTexts.tetrisSettingsMusic3}</option>
+					<option value="4">${imTexts.tetrisSettingsMusic4}</option>
+					<option value="5">${imTexts.tetrisSettingsMusic5}</option>
+					<option value="6">${imTexts.tetrisSettingsMusic6}</option>
+				</select>
+			</div>
+			<div class="col-span-2 h-[20px]"></div>
+
+<!-- Avatar -->
+			<div id="avatarName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsAvatarTitle}</div>
+			<div id="avatarKey" class="${TCS.tetrisSelect}">
+				<select id="avatarSelect" class="w-full">
+					<option value="1">${imTexts.tetrisSettingsAvatar1}</option>
+					<option value="2">${imTexts.tetrisSettingsAvatar2}</option>
+					<option value="3">${imTexts.tetrisSettingsAvatar3}</option>
+					<option value="4">${imTexts.tetrisSettingsAvatar4}</option>
+					<option value="5">${imTexts.tetrisSettingsAvatar5}</option>
+					<option value="6">${imTexts.tetrisSettingsAvatar6}</option>
+				</select>
+			</div>
+			<div class="col-span-2 h-[20px]"></div>
+
+<!-- Keybindings -->
+			<div id="moveLeftName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyMoveLeft}</div>
+			<div id="moveLeftKey" class="${TCS.tetrisKeybindingsKey}">${keys.getMoveLeft()}</div>
+			
+			<div id="moveRightName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyMoveRight}</div>
+			<div id="moveRightKey" class="${TCS.tetrisKeybindingsKey}">${keys.getMoveRight()}</div>
+			
+			<div id="rotClockName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyRotateClockwise}</div>
+			<div id="rotClockKey" class="${TCS.tetrisKeybindingsKey}">${keys.getClockwiseRotate()}</div>
+			
+			<div id="rotCountClockName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyRotateCounterclockwise}</div>
+			<div id="rotCountClockKey" class="${TCS.tetrisKeybindingsKey}">${keys.getCounterclockwise()}</div>
+			
+			<div id="rot180Name" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyRotate180}</div>
+			<div id="rot180Key" class="${TCS.tetrisKeybindingsKey}">${keys.getRotate180()}</div>
+			
+			<div id="hardDropName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyHardDrop}</div>
+			<div id="hardDropKey" class="${TCS.tetrisKeybindingsKey}">${keys.getHardDrop()}</div>
+			
+			<div id="softDropName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeySoftDrop}</div>
+			<div id="softDropKey" class="${TCS.tetrisKeybindingsKey}">${keys.getSoftDrop()}</div>
+			
+			<div id="holdName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyHold}</div>
+			<div id="holdKey" class="${TCS.tetrisKeybindingsKey}">${keys.getHold()}</div>
+			
+			<div id="forfeitName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyForfeit}</div>
+			<div id="forfeitKey" class="${TCS.tetrisKeybindingsKey}">${keys.getForfeit()}</div>
+
+			<div class="col-span-2 h-[30px]"></div>
+
+			<div class="col-span-2"><button id="back" class="${TCS.form}${TCS.formButton}">Back</button></div>
+
+		</div>
+
+		<div class="h-[10px]"></div>
+
+	</div>`;
+}
+
+const keyBindsHtmlOLD = (keys: keys) => {
 	if (!EL.contentTetris)
 		return;
 

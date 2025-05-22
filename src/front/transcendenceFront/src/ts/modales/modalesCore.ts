@@ -9,6 +9,7 @@ import { modaleProfileHTML } from './modalesProfileHTML.ts';
 import { modalePongStatHTML } from './modalesPongStatHTML.ts';
 import { modaleTetrisStatHTML } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML } from './modalesTetrisStatDetailHTML.ts';
+import { modaleAvatarHTML } from './modalesAvatarHTML.ts';
 
 ///////////////////////////////////////////
 // Variables
@@ -20,6 +21,7 @@ export enum ModaleType {
   PONG_STATS = 'PONG_STATS',
   TETRIS_STATS = 'TETRIS_STATS',
   TETRIS_STATS_DETAIL = 'TETRIS_STATS_DETAIL',
+  AVATAR = 'AVATAR',
 }
 
 export let modale = {
@@ -57,6 +59,8 @@ export const modaleDisplay = (modaleType: ModaleType) => {
       modale.content.innerHTML = modaleTetrisStatHTML; break;
     case ModaleType.TETRIS_STATS_DETAIL:
       modale.content.innerHTML = modaleTetrisStatDetailHTML; break;
+    case ModaleType.AVATAR:
+      modale.content.innerHTML = modaleAvatarHTML; break;
     default:
       modale.content.innerHTML = '';
   }

@@ -11,14 +11,13 @@ import {
 import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
 import  { loadPongHtml } from "./pongHTML.ts";
-import {zoneSet} from "../zone/zoneCore.ts";
+// import {zoneSet} from "../zone/zoneCore.ts";
 
 // @ts-ignore
 import  page from "page"
 import {resetGamesSocket} from "../utils.ts";
 
 export const	pongGameInfo: gameInformation = new gameInformation();
-
 
 export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
@@ -73,61 +72,48 @@ const   logoPage = () => {
 	loadPongHtml("logo");
 }
 
-// const   idlePage = () => {
-// 	loadPongHtml("idle");
-
-// 	resetGamesSocket("pong")
-// 	document.getElementById("Join-game")?.addEventListener("click", joinMatchmaking);
-// 	document.getElementById("Solo-game")?.addEventListener("click", joinSolo);
-// 	document.getElementById("Bot-game")?.addEventListener("click", joinBot);
-// 	document.getElementById("Private-room")?.addEventListener("click", createPrivateRoom);
-// 	document.getElementById("Join-priv-room")?.addEventListener("click", joinPrivRoom);
-// 	document.getElementById("Create-tournament")?.addEventListener("click", getTournamentName);
-// 	document.getElementById("Tournaments")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
-// 	document.getElementById("Rooms-spectator")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
-// 	document.getElementById("Home")?.addEventListener("click", (e) => { e.stopPropagation(); page.show("/"); });
-// }
-
 const   idlePage = () => {
 	loadPongHtml("idle");
+	resetGamesSocket("pong");
 
-	resetGamesSocket("pong")
-	document.getElementById("offline")?.addEventListener("click", () => { page.show("/pong/offline"); });
-	document.getElementById("online")?.addEventListener("click", () => { page.show("/pong/online"); });
-	document.getElementById("tournament")?.addEventListener("click", () => { page.show("/pong/tournament"); });
-	document.getElementById("setting")?.addEventListener("click", () => { page.show("/pong/setting"); });
-	document.getElementById("home")?.addEventListener("click", (e) => { e.stopPropagation(); page.show("/"); });
+	document.getElementById("pongSolo")?.addEventListener("click", () => { page.show("/pong/solo"); });
+	document.getElementById("pongVersus")?.addEventListener("click", () => { page.show("/pong/versus"); });
+	document.getElementById("pongTournament")?.addEventListener("click", () => { page.show("/pong/tournament"); });
+	document.getElementById("pongSettings")?.addEventListener("click", () => { page.show("/pong/settings"); });
+	document.getElementById("pongBack")?.addEventListener("click", (e) => { e.stopPropagation(); page.show("/"); });
 }
 
 const   navOffline = () => {
 	loadPongHtml("nav-offline");
 
-	document.getElementById("Solo-game")?.addEventListener("click", joinSolo);
-	document.getElementById("Bot-game")?.addEventListener("click", joinBot);
-	//document.getElementById("return")?.addEventListener("click", () => page.show("/pong"));
-	document.getElementById("return")?.addEventListener("click", idlePage);
+	document.getElementById("pongSoloSolo")?.addEventListener("click", joinSolo);
+	document.getElementById("pongSoloBot")?.addEventListener("click", joinBot);
+	document.getElementById("pongSoloBack")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
 const   navOnline = () => {
 	loadPongHtml("nav-online");
-	document.getElementById("join")?.addEventListener("click", joinMatchmaking);
-	document.getElementById("private")?.addEventListener("click", createPrivateRoom);
-	document.getElementById("join-priv-room")?.addEventListener("click", joinPrivRoom);
-	document.getElementById("spectate")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
-	document.getElementById("return")?.addEventListener("click", idlePage);
+
+	document.getElementById("pongVersusJoin")?.addEventListener("click", joinMatchmaking);
+	document.getElementById("pongVersusPrivate")?.addEventListener("click", createPrivateRoom);
+	document.getElementById("pongVersusJoinPrivRoom")?.addEventListener("click", joinPrivRoom);
+	document.getElementById("pongVersusSpectate")?.addEventListener("click", () => { page.show("/pong/list/rooms-spectator"); });
+	document.getElementById("pongVersusBack")?.addEventListener("click", () => { page.show("/pong"); });
 }	
 
 const   navTournament = () => {
 	loadPongHtml("nav-tournament");
-	document.getElementById("create")?.addEventListener("click", getTournamentName);
-	document.getElementById("play")?.addEventListener("click", () => { page.show("/pong/list/tournament-info"); });
-	document.getElementById("return")?.addEventListener("click", idlePage);
+
+	document.getElementById("pongTournamentCreate")?.addEventListener("click", getTournamentName);
+	document.getElementById("pongTournamentPlay")?.addEventListener("click", () => { page.show("/pong/list/tournament-info"); });
+	document.getElementById("pongTournamentBack")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
 const   navSetting = () => {
 	loadPongHtml("nav-setting");
+
 	document.getElementById("ok")?.addEventListener("click", () => { page.show("/pong"); });
-	document.getElementById("return")?.addEventListener("click", idlePage);
+	document.getElementById("return")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
 
@@ -139,6 +125,7 @@ const   matchFoundPage = () => {
 
 const   specRoomInfoPage = (roomId: number) => {
 	loadPongHtml("spec-room-info", { roomId: roomId });
+
 	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/list/rooms-spectator"));
 }
 
@@ -201,9 +188,6 @@ const   tournamentFoundPage = () => {
 const   confirmPage = () => {
 	loadPongHtml("confirm");
 }
-
-
-
 
 export const pongTextures: { [key: string]: HTMLImageElement } = {};
 
