@@ -10,7 +10,7 @@ export const modalePongStatHTML = `
   -->
 
   <div id="titre_pong_stats" class="${TCS.modaleTitre}">
-  ${imTexts.modalesPongStatsTitre}</div>
+  ${imTexts.modalesPongStatsTitle}</div>
 
   <div id="back_pong_stats" class="${TCS.modaleTexteLink}">
     ${imTexts.modalesPongStatsBack}</div>

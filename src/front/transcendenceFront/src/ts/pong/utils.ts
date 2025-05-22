@@ -95,11 +95,20 @@ export interface    loadHtmlArg {
 	inviteCode?:    string;
 }
 
+
 export type loadPongHtmlType = "empty" | "logo" | "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name"
 	| "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game" | "tournament-end"
 	| "tour-rooms-list" | "priv-room-create" | "priv-room-code" | "nav-offline" | "nav-online" | "nav-tournament" | "nav-setting";
 
-
+/*
+export type loadPongHtmlType = 
+"empty" | "logo" | "idle" | 
+"pongSolo" | "pongVersus" | "pongTournament" | "pongSettings" | 
+"pongDrawBoard" | "pongDrawGame" | 
+"pongVersusJoin" | "pongVersusJoinConfirm" | "pongVersusJoinPrivRoom"| "pongVersusSpectate" | "pongVersusList" | "pongVersusPrivate" |
+"pongTournamentInfo"  | "pongTournamentPlay" | "pongTournamentList" | "pongTournamentFound" | "pongTournamentName" | "pongTournamentEnd" |
+"pongconfirm" | "list-rooms" | "tour-rooms-list" | "tournament-end";
+*/
 
 export const    boardWidth = 800;
 export const    boardHeight = 400;

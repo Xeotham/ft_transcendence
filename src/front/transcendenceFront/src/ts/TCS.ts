@@ -8,7 +8,7 @@ export const TCS = {
     //html_body : "m-0 h-full overflow-x-hidden",
 
     // zoneTop
-    zoneTop : "absolute fixed left-0 top-0 w-full h-[30px] z-42 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
+    zoneTop : "absolute fixed left-0 top-0 w-full h-[30px] z-10 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
     immanenceLogo : "h-full w-auto ml-[10px] float-left",
     
     // zonePong 
@@ -17,19 +17,25 @@ export const TCS = {
     // zoneTetris   
     zoneTetris : "relative flex top-[30px] w-full h-full bg-gradient-to-t from-lime-50 to-slate-200",
     
+
+    // zoneAvatar
+    avatar : "fixed flex top-[40px] w-[100px] h-[100px] z-40", 
+    avatarMask : "w-full h-full rounded-full overflow-hidden shadow-xl/50 hover:cursor-pointer hover:rotate-12 hover:scale-110 transition-all duration-200 ease-in-out",
+    avatarImg : "w-full h-full object-cover ",
+
     // zoneModale
     //modale : "fixed z-40 w-[680px] shadow-xl/30 bg-black/80 px-8 py-5 top-16 left-1/2 -translate-x-1/2 backdrop-blur-sm",
     zoneModale : "fixed z-40 w-screen h-screen",
     bkgModale : "fixed inset-0 w-screen h-screen backdrop-blur-xs",
     contentModale : "fixed z-40 w-[680px] shadow-xl/30 bg-stone-950 px-8 py-5 top-16 left-1/2 -translate-x-1/2",
     
-    
     modaleClose : "fixed z-50 w-[20px] h-[20px] shadow-xl/30 rounded-xs bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none flex items-center justify-center absolute top-[10px] right-[10px] cursor-pointer hover:cursor-pointer",
     modaleTitre : "font-sixtyfour text-[28px] relative text-amber-400",
     modaleTexte : "font-sixtyfour text-[14px] relative text-lime-50",
     modaleTexteLink : "font-sixtyfour text-[14px] text-yellow-600 hover:text-amber-400 cursor-pointer hover:cursor-pointer underline decoration-yellow-600 hover:decoration-amber-400",
     modaleToRegister : "font-sixtyfour text-[14px] relative text-lime-50",
-    modaleAvatar : "w-[100px] h-[100px] border-0 hover:border-5 border-yellow-600 cursor-pointer hover:cursor-pointer",
+    modaleAvatarProfil : "w-[100px] h-[100px] border-0 border-1 hover:border-8 border-yellow-600 cursor-pointer hover:cursor-pointer",
+    modaleAvatarChoose : "w-[86px] h-[86px] border-0 border-1 hover:border-6 border-yellow-600 cursor-pointer hover:cursor-pointer relative",
     modaleStatsLine : "font-sixtyfour text-[14px] text-lime-50 grid grid-cols-[120px_1fr_80px] gap-4 items-center",
 
     // formulaire
@@ -38,13 +44,6 @@ export const TCS = {
     formInput : "block py-0 px-0 w-full font-sixtyfour text-[14px] text-amber-400 bg-transparent border-0 border-b-1 border-yellow-600 appearance-none focus:outline-none focus:ring-0 focus:border-lime-50 peer [&:not(:placeholder-shown)]:border-lime-50 cursor-text",
     formLabel : "absolute font-sixtyfour text-[14px] text-yellow-600 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50",
     formButton : "flex justify-left w-full pt-[20px] text-lime-50 bg-yellow-600 hover:bg-amber-400 hover:text-black  cursor-pointer hover:cursor-pointer",
-    //formButton : "flex justify-left w-full pt-[20px] text-yellow-600 hover:bg-yellow-600 hover:text-lime-50 cursor-pointer hover:cursor-pointer border-b-1 border-yellow-600 hover:borded-b-0",
-    
-    // formButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 me-2 mb-2 cursor-pointer hover:cursor-pointer",
-    // formLink : "flex justify-left w-full pt-[20px] text-yellow-600 hover:bg-yellow-600 hover:text-lime-50 cursor-pointer hover:cursor-pointer border-b-1 border-yellow-600 hover:borded-b-0",
-
-
-  // Fontsona3, Fontsona4, Fontsona5, FontsonaQ, PressStart2P, Sixtyfour, PixelifySans, Doto
 
     // PONG
     pongCanvas : "bg-black/80 block",
@@ -56,10 +55,6 @@ export const TCS = {
     pongButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 cursor-pointer hover:cursor-pointer",
     pongText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
     pongNavButton : "font-sixtyfour text-[28px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 cursor-pointer hover:cursor-pointer",
-    // version arrondie
-    //buttonPongNav : "font-fontsonaQ text-[18px] text-lime-50 bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 me-2 mb-2 transition-all duration-200 ease-in-out hover:scale-110 hover:z-10",
-    // version droite
-    //subpixel-antialiased  ?
 
     // TETRIS
 
@@ -71,25 +66,11 @@ export const TCS = {
     tetrisText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
     tetrisNavButton : "font-sixtyfour text-[28px] text-black bg-slate-200 hover:bg-lime-50 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 shadow-xl/30",
 
+    tetrisSettingTitle : "font-sixtyfour text-[24px] text-yellow-600 font-medium text-left",
+    tetrisSelect : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer w-full",
+    tetrisKeybindingsName : "font-sixtyfour text-[14px] text-black font-medium text-right",
+    tetrisKeybindingsKey : "font-sixtyfour text-[14px] text-lime-5 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer",
+    
+
+
 }
-
-
-
-
-    /*
-    old style
-
-    // zoneModale
-    modale : "fixed z-40 w-[680px] shadow-xl/30 bg-gradient-to-b from-slate-50 to-stone-200 px-8 py-5 top-16 left-1/2 -translate-x-1/2 rounded-lg",
-    modaleClose : "fixed z-50 w-[20px] h-[20px] shadow-xl/30 rounded-xs bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none flex items-center justify-center absolute top-[10px] right-[10px]",
-    modaleTitre : "font-fontsona3 text-[20px]",
-    modaleTexte : "font-fontsonaQ text-[12px] relative top-4",
-    modaleLink : "font-bold hover:bg-yellow-600 hover:text-lime-50 hover:decoration-lime-50 decoration-wavy decoration-yellow-600 underline",
-    modaleToRegister : "font-fontsonaQ text-[12px] relative top-5 ",
-    // formulaire
-    form : "font-fontsonaQ text-[12px] relative top-4",
-    formDivInput : "relative z-0 w-full mb-5 group",
-    formInput : "block py-0 px-0 w-full font-fontsonaQ text-[12px] text-gray-900 bg-transparent border-0 border-b-1 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer",
-    formLabel : "peer-focus:font-medium absolute font-fontsonaQ text-[12px] text-gray-500 duration-300 transform -translate-y-3 scale-75 top-0 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-3",
-    formButton : "font-fontsona4 text-[12px] text-lime-50 bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 me-2 mb-2",
-    */

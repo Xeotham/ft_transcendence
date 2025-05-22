@@ -3,6 +3,8 @@ import {EL} from "../zone/zoneHTML.ts";
 import {Game, loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo} from "./utils.ts";
 import {pongGameInfo} from "./pong.ts";
 import {imTexts} from "../imTexts/imTexts.ts";
+// @ts-ignore
+import  page from 'page';
 
 export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
@@ -13,41 +15,41 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 		case "idle":
 			return idleHtml();
 		case "nav-offline":
-			return navOffline();
+			return pongSoloHtml();
 		case "nav-online":
-			return navOnline();
+			return pongVersusHtml();
 		case "nav-tournament":
-			return navTournament();
+			return pongTournamentHtml();
 		case "nav-setting":
-			return navSetting();
+			return pongSettingsHtml();
 		case "match-found":
-			return matchFoundHtml();
+			return pongVersusJoinHtml();
 		case "tournament-found":
-			return tournamentFoundHtml();
+			return pongTournamentFoundHtml();
 		case "board":
-			return drawBoard();
+			return pongDrawBoardHtml();
 		case "confirm":
-			return confirmPage();
+			return pongJoinConfirmPageHtml();
 		case "tournament-name":
-			return tournamentNameHtml();
+			return pongTournamentNameHtml();
 		case "spec-room-info":
-			return specRoomInfoHtml(arg?.roomId!);
+			return pongVersusSpectateHtml(arg?.roomId!);
 		case "tour-info":
-			return tourInfoHtml(arg?.tourId!, arg?.started!, arg?.tourName!);
+			return pongTournamentInfoHtml(arg?.tourId!, arg?.started!, arg?.tourName!);
 		case "list-rooms":
-			return roomListHtml(arg?.roomLst!);
+			return pongVersusListHtml(arg?.roomLst!);
 		case "tour-rooms-list":
-			return tourRoomListHtml(arg?.roomLst!);
+			return pongTournamentPlayHtml(arg?.roomLst!);
 		case "list-tournaments":
-			return tournamentListHtml(arg?.tourLst!);
+			return PongTournamentListHtml(arg?.tourLst!);
 		case "draw-game":
-			return drawGame(arg?.game!);
+			return pongDrawGameHtml(arg?.game!);
 		case "tournament-end":
-			return tournamentEndPage(arg?.winner!);
+			return pongTournamentEndPage(arg?.winner!);
 		case "priv-room-create":
-			return privRoomCreate(arg?.inviteCode!);
+			return pongVersusPrivateHtml(arg?.inviteCode!);
 		case "priv-room-code":
-			return privRoomCode();
+			return pongVersusJoinPrivRoomHtml();
 	}
 }
 
@@ -68,71 +70,54 @@ const   idleHtml = () => {
 		return ;
 	EL.contentPong.innerHTML = `
 	<nav class="${TCS.pongNav0}">
-		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
-		<div class="flex-1"><button id="offline" class="${TCS.pongNavButton}">${imTexts.pongIdleOffline}</button></div>
-		<div class="flex-1"><button id="online" class="${TCS.pongNavButton}">${imTexts.pongIdleOnline}</button></div>
-		<div class="flex-1"><button id="tournament" class="${TCS.pongNavButton}">${imTexts.pongIdleTournament}</button></div>
-		<div class="flex-1"><button id="setting" class="${TCS.pongNavButton}">${imTexts.pongIdleSetting}</button></div>
-		<div class="flex-1"><button id="home" class="${TCS.pongNavButton}">${imTexts.pongIdleHome}</button></div>
+		<div id="pongTitle" class="${TCS.pongTitre} flex-1">${imTexts.pongNavTitle}</div>
+		<div class="flex-1"><button id="pongSolo" class="${TCS.pongNavButton}">${imTexts.pongNavSolo}</button></div>
+		<div class="flex-1"><button id="pongVersus" class="${TCS.pongNavButton}">${imTexts.pongNavVersus}</button></div>
+		<div class="flex-1"><button id="pongTournament" class="${TCS.pongNavButton}">${imTexts.pongNavTournament}</button></div>
+		<div class="flex-1"><button id="pongSettings" class="${TCS.pongNavButton}">${imTexts.pongNavSettings}</button></div>
+		<div class="flex-1"><button id="pongBack" class="${TCS.pongNavButton}">${imTexts.pongNavHome}</button></div>
 	</nav>`;
 }
 
-// const   idleHtml = () => {
-// 	if (!EL.contentPong)
-// 		return ;
-// 	EL.contentPong.innerHTML = `
-// 	<nav class="${TCS.pongNav0}">
-// 		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
-// 		<div class="flex-1"><button id="Solo-game" class="${TCS.pongNavButton}">${imTexts.pongSolo}</button></div>
-// 		<div class="flex-1"><button id="Bot-game" class="${TCS.pongNavButton}">${imTexts.pongBot}</button></div>
-// 		<div class="flex-1"><button id="Join-game" class="${TCS.pongNavButton}">${imTexts.pongOnline}</button></div>
-// 		<div class="flex-1"><button id="Private-room" class="${TCS.pongNavButton}">${imTexts.pongPrivate}</button></div>
-// 		<div class="flex-1"><button id="Join-priv-room" class="${TCS.pongNavButton}">${imTexts.pongJoin}</button></div>
-// 		<div class="flex-1"><button id="Rooms-spectator" class="${TCS.pongNavButton}">${imTexts.pongSpectate}</button></div>
-// 		<div class="flex-1"><button id="Create-tournament" class="${TCS.pongNavButton}">${imTexts.pongTournament}</button></div>
-// 		<div class="flex-1"><button id="Tournaments" class="${TCS.pongNavButton}">${imTexts.pongTournament}</button></div>
-// 		<div class="flex-1"><button id="Home" class="${TCS.pongNavButton}">${imTexts.pongHome}</button></div>
-// 	</nav>`;
-// }
-
-const   navOffline = () => {
+const   pongSoloHtml = () => {
 	if (!EL.contentPong)
 		return ;
 	EL.contentPong.innerHTML = `
 	<nav class="${TCS.pongNav0}">
-		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
-		<div class="flex-1"><button id="solo" class="${TCS.pongNavButton}">${imTexts.pongOfflineSolo}</button></div>
-		<div class="flex-1"><button id="bot" class="${TCS.pongNavButton}">${imTexts.pongOfflineBot}</button></div>
-		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.pongOfflineReturn}</button></div>
+		<div id="pongSoloTitle" class="${TCS.pongTitre} flex-1">${imTexts.pongSoloTitle}</div>
+		<div class="flex-1"><button id="pongSoloSolo" class="${TCS.pongNavButton}">${imTexts.pongSoloSolo}</button></div>
+		<div class="flex-1"><button id="pongSoloBot" class="${TCS.pongNavButton}">${imTexts.pongSoloBot}</button></div>
+		<div class="flex-1"><button id="pongSoloBack" class="${TCS.pongNavButton}">${imTexts.pongSoloBack}</button></div>
 	</nav>`;
 }
 
-const   navOnline = () => {
+const   pongVersusHtml = () => {
 	if (!EL.contentPong)
 		return ;
 	EL.contentPong.innerHTML = `
 	<nav class="${TCS.pongNav0}">
-		<div id="pong" class="${TCS.pongTitre} flex-1">Pong</div>
-		<div class="flex-1"><button id="join" class="${TCS.pongNavButton}">${imTexts.pongOnlineJoin}</button></div>
-		<div class="flex-1"><button id="private" class="${TCS.pongNavButton}">${imTexts.pongOnlinePrivate}</button></div>
-		<div class="flex-1"><button id="join-priv-room" class="${TCS.pongNavButton}">${imTexts.pongOnlineJoinPriv}</button></div>
-		<div class="flex-1"><button id="spectate" class="${TCS.pongNavButton}">${imTexts.pongOnlineSpectate}</button></div>
-		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.pongOnlineReturn}</button></div>
+		<div id="pong" class="${TCS.pongTitre} flex-1">${imTexts.pongVersusTitle}</div>
+		<div class="flex-1"><button id="pongVersusJoin" class="${TCS.pongNavButton}">${imTexts.pongVersusJoin}</button></div>
+		<div class="flex-1"><button id="pongVersusPrivate" class="${TCS.pongNavButton}">${imTexts.pongVersusPrivate}</button></div>
+		<div class="flex-1"><button id="pongVersusJoinPrivRoom" class="${TCS.pongNavButton}">${imTexts.pongVersusJoinPrivRoom}</button></div>
+		<div class="flex-1"><button id="pongVersusSpectate" class="${TCS.pongNavButton}">${imTexts.pongVersusSpectate}</button></div>
+		<div class="flex-1"><button id="pongVersusBack" class="${TCS.pongNavButton}">${imTexts.pongVersusBack}</button></div>
 	</nav>`;
 }
 
-const   navTournament = () => {
+const   pongTournamentHtml = () => {
 	if (!EL.contentPong)
 		return ;
 	EL.contentPong.innerHTML = `
 	<nav class="${TCS.pongNav0}">
-		<div class="flex-1"><button id="create" class="${TCS.pongNavButton}">${imTexts.pongTournamentCreate}</button></div>
-		<div class="flex-1"><button id="play" class="${TCS.pongNavButton}">${imTexts.pongTournamentPlay}</button></div>
-		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.navTournamentReturn}</button></div>
+		<div id="pong" class="${TCS.pongTitre} flex-1">${imTexts.pongTournamentTitle}</div>
+		<div class="flex-1"><button id="pongTournamentCreate" class="${TCS.pongNavButton}">${imTexts.pongTournamentCreate}</button></div>
+		<div class="flex-1"><button id="pongTournamentPlay" class="${TCS.pongNavButton}">${imTexts.pongTournamentPlay}</button></div>
+		<div class="flex-1"><button id="pongTournamentBack" class="${TCS.pongNavButton}">${imTexts.pongTournamentBack}</button></div>
 	</nav>`;
 }
 
-const   navSetting = () => {
+const   pongSettingsHtml = () => {
 	if (!EL.contentPong)
 		return ;
 	EL.contentPong.innerHTML = `
@@ -144,7 +129,7 @@ const   navSetting = () => {
 }
 	
 
-const   matchFoundHtml = () => {
+const   pongVersusJoinHtml = () => {
 	if (!EL.contentPong)
 		return ;
 
@@ -155,7 +140,7 @@ const   matchFoundHtml = () => {
 	</div>`;
 }
 
-const   specRoomInfoHtml = (roomId: number) => {
+const   pongVersusSpectateHtml = (roomId: number) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -168,7 +153,7 @@ const   specRoomInfoHtml = (roomId: number) => {
 	</div>`;
 }
 
-const   tourInfoHtml = (tourId: number, started: boolean, name: string) => {
+const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -189,7 +174,7 @@ const   tourInfoHtml = (tourId: number, started: boolean, name: string) => {
 	EL.contentPong.innerHTML += `</div>`;
 }
 
-const   tourRoomListHtml = (rooms: RoomInfo[]) => {
+const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -207,7 +192,7 @@ const   tourRoomListHtml = (rooms: RoomInfo[]) => {
 	EL.contentPong.innerHTML = listHTML;
 }
 
-const   privRoomCreate = (inviteCode: string) => {
+const   pongVersusPrivateHtml = (inviteCode: string) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -219,7 +204,7 @@ const   privRoomCreate = (inviteCode: string) => {
 	</div>`;
 }
 
-const   privRoomCode = () => {
+const   pongVersusJoinPrivRoomHtml = () => {
 	if (!EL.contentPong)
 		return ;
 
@@ -234,7 +219,7 @@ const   privRoomCode = () => {
 	</div>`;
 }
 
-const roomListHtml = (rooms: RoomInfo[]) => {
+const pongVersusListHtml = (rooms: RoomInfo[]) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -256,7 +241,7 @@ const roomListHtml = (rooms: RoomInfo[]) => {
 	EL.contentPong.innerHTML = listHTML;
 }
 
-const tournamentListHtml = (tournaments: TournamentInfo[]) => {
+const PongTournamentListHtml = (tournaments: TournamentInfo[]) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -278,7 +263,7 @@ const tournamentListHtml = (tournaments: TournamentInfo[]) => {
 	EL.contentPong.innerHTML = listHTML;
 }
 
-const   tournamentNameHtml = () => {
+const   pongTournamentNameHtml = () => {
 	if (!EL.contentPong)
 		return ;
 
@@ -293,7 +278,7 @@ const   tournamentNameHtml = () => {
 	</div>`;
 }
 
-const   tournamentEndPage = (winner: number) => {
+const   pongTournamentEndPage = (winner: number) => {
 	if (!EL.contentPong)
 		return ;
 
@@ -305,7 +290,7 @@ const   tournamentEndPage = (winner: number) => {
 	</div>`;
 }
 
-const   tournamentFoundHtml = () => {
+const   pongTournamentFoundHtml = () => {
 	if (!EL.contentPong)
 		return ;
 	if (!pongGameInfo.getTournament())
@@ -326,7 +311,7 @@ const   tournamentFoundHtml = () => {
 
 // TODO: Add spec tournament board
 
-const   drawBoard = () => {
+const   pongDrawBoardHtml = () => {
 	if (!EL.contentPong)
 		return
 
@@ -338,9 +323,18 @@ const   drawBoard = () => {
 		</div>
 		<canvas id="pongCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
 	</div>`;
+
+	// TODO: move this in correct place
+	const quitButton = document.getElementById("quit") as HTMLButtonElement;
+	if (!quitButton)
+		return ;
+	quitButton.addEventListener("click", () => {
+		page("/pong/solo");
+		// TODO quit server game ?
+	});
 }
 
-const   confirmPage = () => {
+const   pongJoinConfirmPageHtml = () => {
 	if (!EL.contentPong)
 		return ;
 
@@ -354,7 +348,7 @@ const   confirmPage = () => {
 	</div>`;
 }
 
-function drawGame(game: Game) {
+function pongDrawGameHtml (game: Game) {
 	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
 	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
 

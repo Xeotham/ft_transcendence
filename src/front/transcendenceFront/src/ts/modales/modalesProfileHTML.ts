@@ -2,7 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 
 import closeIconImg from '../../medias/images/modales/croixSlate200.png';
-import avatarImg from '../../medias/avatars/avatar00.png';
+import avatarImg from '../../medias/avatars/avatar1.png';
 
 export const modaleProfileHTML = `
 
@@ -12,7 +12,7 @@ export const modaleProfileHTML = `
   -->
         
   <div class="flex flex-row items-start justify-start gap-4">
-    <div id="profileAvatar" class="${TCS.modaleAvatar} ">
+    <div id="profileAvatar" class="${TCS.modaleAvatarProfil} ">
       <img src="${avatarImg}"/>
     </div>
     <div>

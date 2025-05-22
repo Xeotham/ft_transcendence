@@ -90,6 +90,9 @@ const zoneResize = () => {
   if (EL.zoneTetris) {
     EL.zoneTetris.style.width = `${document.documentElement.clientWidth - zone.separatorPos}px`;
   }
+  if (EL.zoneAvatar) {
+    EL.zoneAvatar.style.left = `${zone.separatorPos - 50}px`;
+  }
   // if (EL.zoneModale) {
   //   EL.zoneModale.style.left = `${zone.separatorPos}px`;
   // }
@@ -137,6 +140,11 @@ const zoneSetHOME = () => {
   evAdClickPong();
   evAdClickTetris();
 
+  if (EL.zonePong ) { EL.zonePong.style.cursor = "pointer"; }
+  if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "pointer"; }
+
+  // TODO creer un gestionnaire d evenement qui lance la modale signin si on est pas connecté
+  
   // modaleHide();
   // modaleDisplay(ModaleType.SIGNIN, modale_signin);
   // modaleDisplay(ModaleType.SIGNUP, modale_signup);
@@ -145,7 +153,6 @@ const zoneSetHOME = () => {
   zone.state = "HOME";
   loadPongPage("logo");
   loadTetrisPage("logo");
-  //page.show("/"); 
 }
 
 const zoneSetOVER_PONG = () => {
@@ -163,13 +170,14 @@ const zoneSetPONG = () => {
   evRemClickPong();
   evRemOverTetris();
   evAdClickTetris();
+  if (EL.zonePong ) { EL.zonePong.style.cursor = "default"; }
+  if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "pointer"; }
 
   modaleHide();
 
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.91);
   zone.state = "PONG";
   loadTetrisPage("empty");
-  //page.show("/PONG");
   loadPongPage("idle");
 }
 
@@ -180,12 +188,13 @@ const zoneSetTETRIS = () => {
   evAdClickPong();
   evRemOverTetris();
   evRemClickTetris();
+  if (EL.zonePong ) { EL.zonePong.style.cursor = "pointer"; }
+  if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "default"; }
 
   modaleHide();
 
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.09);
   zone.state = "TETRIS";
   loadPongPage("empty");
-  //page.show("/TETRIS");
   loadTetrisPage("idle");
 }

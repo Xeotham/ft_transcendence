@@ -10,11 +10,11 @@ export const modaleSignInHTML = `
   <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
   -->
 
-  <div id="signinTitre" class="${TCS.modaleTitre} pb-[30px]">
-  ${imTexts.modalesSigninTitre}</div>
+  <div id="signinTitle" class="${TCS.modaleTitre} pb-[30px]">
+  ${imTexts.modalesSigninTitle}</div>
         
-  <div id="signinTexte" class="${TCS.modaleTexte} pb-[50px]">
-  ${imTexts.modalesSigninTexte}</div>
+  <div id="signinText" class="${TCS.modaleTexte} pb-[50px]">
+  ${imTexts.modalesSigninText}</div>
 
   <form id="signinForm" class="${TCS.form} w-full">
     <div id="signinUsernameDiv" class="${TCS.formDivInput} pb-[6px]">

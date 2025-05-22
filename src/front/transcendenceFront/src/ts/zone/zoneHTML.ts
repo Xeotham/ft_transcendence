@@ -24,6 +24,7 @@ export const	EL = {
   zoneTop: null as HTMLElement | null,
   zonePong: null as HTMLElement | null,
   zoneTetris: null as HTMLElement | null,
+  zoneAvatar: null as HTMLElement | null,
   zoneModale: null as HTMLElement | null,
   contentPong: null as HTMLElement | null,
   contentTetris: null as HTMLElement | null,
@@ -36,6 +37,7 @@ export const	EL = {
     EL.zoneTop = document.getElementById("zoneTop");
     EL.zonePong = document.getElementById("zonePong");
     EL.zoneTetris = document.getElementById("zoneTetris");
+    EL.zoneAvatar = document.getElementById("zoneAvatar");
     EL.zoneModale = document.getElementById("zoneModale");
     EL.contentPong = document.getElementById("contentPong");
     EL.contentTetris = document.getElementById("contentTetris");
@@ -44,7 +46,7 @@ export const	EL = {
     EL.bkgTetris = document.getElementById("bkgTetris");
   },
   check: () => {
-    if (EL.app && EL.zoneTop && EL.zonePong && EL.zoneTetris && EL.zoneModale && EL.contentPong && EL.contentTetris && EL.contentModale && EL.bkgPong && EL.bkgTetris) {
+    if (EL.app && EL.zoneTop && EL.zonePong && EL.zoneTetris && EL.zoneModale && EL.contentPong && EL.contentTetris && EL.contentModale && EL.bkgPong && EL.bkgTetris && EL.zoneAvatar) {
       return true;
     }
     return false;
@@ -92,6 +94,12 @@ export const setHtmlFront = () => {
     </div>
 </div>
 
+<div name="zoneAvatar" id="zoneAvatar" class="${TCS.avatar}">
+    <div id="avatarMask" class="${TCS.avatarMask}">
+      <img id="avatarImg" src="/src/medias/avatars/avatar1.png" class="${TCS.avatarImg}"/>
+    </div>
+</div>
+
 <div name="zoneModale" id="zoneModale" class="${TCS.zoneModale} hidden">
     <div id="bkgModale" class="${TCS.bkgModale}"></div>
     <div id="contentModale" class="${TCS.contentModale}"></div>
@@ -117,7 +125,8 @@ export const setZoneTopTMP = () => {
   <a id="PROFILE" class="hover:text-yellow-600">PROFILE</a>&nbsp|
   <a id="PONG_STATS" class="hover:text-yellow-600">PONG_STATS</a>&nbsp|
   <a id="TETRIS_STATS" class="hover:text-yellow-600">TETRIS_STATS</a>&nbsp|
-  <a id="TETRIS_STATS_DETAIL" class="hover:text-yellow-600">TETRIS_STATS_DETAIL</a>
+  <a id="TETRIS_STATS_DETAIL" class="hover:text-yellow-600">TETRIS_STATS_DETAIL</a>&nbsp|
+  <a id="AVATAR" class="hover:text-yellow-600">AVATAR</a>
   </span>
   `;
   document.getElementById('SIGNIN')?.addEventListener('click', () => {
@@ -132,4 +141,6 @@ export const setZoneTopTMP = () => {
     modaleDisplay(ModaleType.TETRIS_STATS);});
   document.getElementById('TETRIS_STATS_DETAIL')?.addEventListener('click', () => {
     modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);}); 
+  document.getElementById('AVATAR')?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.AVATAR);});
 }

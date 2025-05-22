@@ -7,7 +7,7 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame, tetrisGoalInfo, tetrisGameInfo, boardHeight
+	tetrisGame, tetrisGoalInfo, tetrisGameInfo
 } from "./utils.ts";
 
 import { loadTetrisHtml } from "./tetrisHTML.ts";
@@ -22,7 +22,6 @@ import {
 } from "./gameManagement.ts";
 
 import {postToApi, resetGamesSocket} from "../utils.ts";
-import { zoneSet } from "../zone/zoneCore.ts";
 import { address } from "../immanence.ts";
 
 export const userKeys: keys = new keys();
@@ -346,7 +345,7 @@ const   drawGame = () => {
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	drawInfo(ctx, infoCoord.x, infoCoord.y, gameInfo);
-	// if (opponents && opponents.length > 0)
+	if (opponents && opponents.length > 0)
 	drawOpponents(ctx, opponentsCoord.x, opponentsCoord.y, opponents);
 
 	if (tetrisGameInformation.getSettingsValue("showBags") && game.bags)
