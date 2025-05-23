@@ -80,13 +80,13 @@ export class Game {
 				spectator?.send(JSON.stringify(data));
 	}
 
-	public sendScore() {
-		this.sendData({ type: "GAME", data: this.score, message: "SCORE" }, true);
+	private sendSpectator(data: any) {
+		for (let spectator of this.spectators)
+			spectator?.send(JSON.stringify(data));
 	}
 
 	private async spawnBall(side: string | "P1" | "P2") {
 		resetBot(this.id, 0);
-		this.sendScore();
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
@@ -166,17 +166,24 @@ export class Game {
 		if (player === "P1" && this.ball.x - this.ball.size / 2 < paddle.x + paddle.x_size) {
 			this.ball.x = paddle.x + paddle.x_size + this.ball.size;
 			this.hitPaddle(player, paddle);
-			this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
-			if (!this.isBot && !this.isSolo)
-				this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
+			if (this.isSolo || this.isBot)
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+			else {
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+				this.sendSpectator({ type: "GAME", message: "EFFECT", data: "hitPaddle" });
+				this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }))
+			}
 		}
 		if (player === "P2" && this.ball.x + this.ball.size / 2 > paddle.x) {
 			this.ball.x = paddle.x - this.ball.size;
-			console.log("paddle hit at y ", this.ball.y)
 			this.hitPaddle(player, paddle);
-			this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
-			if (!this.isBot && !this.isSolo)
+			if (this.isSolo || this.isBot) {
 				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
+			} else {
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
+				this.sendSpectator({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" })
+				this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+			}
 		}
 	}
 
@@ -199,12 +206,14 @@ export class Game {
 		this.ball.x += speed * Math.cos(this.ball.orientation);
 		this.ball.y += speed * Math.sin(this.ball.orientation);
 
-		if (this.ball.x - this.ball.size < 0) {
+		if (this.ball.x < 0) {
 			this.score.player2.score++;
+			this.sendData({type: "GAME", message: "EFFECT", data: "goal"}, true);
 			await this.spawnBall("P1");
 		}
 		if (this.ball.x + this.ball.size >= WIDTH) {
 			this.score.player1.score++;
+			this.sendData({type: "GAME", message: "EFFECT", data: "goal"}, true);
 			await this.spawnBall("P2");
 		}
 	}

@@ -42,6 +42,16 @@ const socketInit = (socket: WebSocket) => {
 		tetrisGameInformation.setRoomCode("");
 		loadTetrisPage("idle");
 	};
+	window.onbeforeunload = () => {
+		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
+			username: username, roomCode: tetrisGameInformation.getRoomCode() });
+		tetrisGameInformation.setGameId(-1);
+		tetrisGameInformation.setGame(null);
+		tetrisGameInformation.setSocket(null);
+		tetrisGameInformation.setRoomOwner(false);
+		console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+		tetrisGameInformation.setRoomCode("");
+	}
 }
 
 export const resetSocket = (leaveType: string = "game") => {
@@ -52,6 +62,7 @@ export const resetSocket = (leaveType: string = "game") => {
 		tetrisGameInformation.getSocket()?.close();
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.resetSettings();
+		window.onbeforeunload = null;
 	}
 	tetrisGameInformation.setGameId(-1);
 	tetrisGameInformation.setGame(null);
