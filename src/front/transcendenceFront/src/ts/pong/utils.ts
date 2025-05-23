@@ -1,6 +1,44 @@
 import {PongRoom} from "./game.ts";
 import {Tournament} from "./tournament.ts";
 
+class   sfxHandler {
+	private readonly    sfx: {
+		[key: string]:{
+			[key: string]: HTMLAudioElement }
+};
+	private             pack: string;
+	constructor(pack: string | null) {
+		this.sfx = {
+			"retro": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/retro/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/retro/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/retro/goal.mp3"),
+			},
+		}
+		if (pack !== null)
+			this.pack = pack;
+		else
+			this.pack = "retro";
+	}
+
+	play(name: string) {
+		if (this.sfx[this.pack][name] !== undefined) {
+			const   sound = new Audio(this.sfx[this.pack][name].src);
+			sound.play();
+		}
+		else
+			console.error("Sound not found: " + name);
+	}
+	setPack(pack: string) {
+		if (this.sfx[pack] !== undefined)
+			this.pack = pack;
+		else
+			console.error("Sound pack not found: " + pack);
+	}
+}
+
+export const pongSfxPlayer = new sfxHandler(null);
+
 export class   gameInformation {
 	private room: PongRoom | null;
 	private tournament: Tournament | null;

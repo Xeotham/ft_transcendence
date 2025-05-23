@@ -97,11 +97,11 @@ export interface        tetrisGameInfo {
 }
 
 export class    TimeoutKey {
-	start:      number;
-	timer:      number;
-	delay:      number;
-	remaining:  number;
-	callback:   () => void;
+	private start:      number;
+	private timer:      number;
+	private delay:      number;
+	private remaining:  number;
+	private callback:   () => void;
 
 	constructor(callback: () => void, delay: number) {
 		this.start = Date.now();
@@ -221,7 +221,7 @@ class    sfxHandler {
 	}
 }
 
-export const sfxPlayer = new sfxHandler();
+export const tetrisSfxPlayer = new sfxHandler();
 
 class   bgmHandler {
 	private readonly bgm: {[key: string]: HTMLAudioElement};

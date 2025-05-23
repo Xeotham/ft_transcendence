@@ -1,4 +1,4 @@
-import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
+import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./utils.ts";
 import {address, user} from "../immanence.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
@@ -145,6 +145,12 @@ export class PongRoom {
 			quit(pongGameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
 		};
 		this.socket.addEventListener("message", messageHandler);
+		window.onbeforeunload = () => {
+			if (this.socket) {
+				quit();
+				this.socket.close();
+			}
+		}
 	}
 
 	prepareGame(roomId: number, player: string | null) {
@@ -309,6 +315,19 @@ export const   messageHandler = (event: MessageEvent)=> {
 	}
 }
 
+const   effectHandler = (effect: string) => {
+	switch (effect) {
+		case "hitPaddle":
+			console.log("Hit paddle");
+			pongSfxPlayer.play("hitPaddle");
+			return ;
+		case "hitOpponentPaddle":
+			console.log("Hit opponent paddle");
+			pongSfxPlayer.play("hitOpponentPaddle");
+			return ;
+	}
+}
+
 const	gameMessageHandler = (res: responseFormat) => {
 	switch (res.message) {
 		case "PREP":
@@ -359,6 +378,9 @@ const	gameMessageHandler = (res: responseFormat) => {
 			console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
 			loadPongPage("board");
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
+		case "EFFECT":
+			effectHandler(res.data);
+			return ;
 		default:
 			pongGameInfo?.getRoom()?.setGame(res.data);
 			loadPongPage("board", { game: res.data });
