@@ -194,10 +194,10 @@ export const pongTextures: { [key: string]: HTMLImageElement } = {};
 export const loadPongTextures = () => {
 
 	const   texturePaths = {
-		"BACKGROUND": './src/textures/pong/background.jpg',
-		"BOARD": './src/textures/pong/pongBoard.png',
-		"PADDLE": './src/textures/pong/pongPaddle.png',
-		"BALL": './src/textures/pong/pongBall.png',
+		"BACKGROUND": '/src/medias/textures/pong/background.jpg',
+		"BOARD": '/src/medias/textures/pong/pongBoard.png',
+		"PADDLE": '/src/medias/textures/pong/pongPaddle.png',
+		"BALL": '/src/medias/textures/pong/pongBall.png',
 	}
 
 	return Promise.all(
@@ -270,6 +270,11 @@ const drawGame =  (game: Game) => {
 	let     paddle1Coord;
 	let     paddle2Coord;
 	let     ballCoord;
+
+	window.addEventListener('resize', () => {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	});
 
 	if (game) {
 		paddle1Coord = {x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y};

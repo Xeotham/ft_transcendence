@@ -94,9 +94,9 @@ export class Room {
 
 		if (!this.full)
 			return ;
+		console.log("Room: ", this.P1.username, " ", this.P2?.username);
 		this.sendData({ type: "INFO", message: "Room is full, ready to start, awaiting confirmation" });
-		console.log("websockets: " + this.P1 + ", " + this.P2);
-		this.sendData({ type : "CONFIRM" });
+ 		this.sendData({ type : "CONFIRM" });
 	}
 
 	soloSetup(socket: WebSocket) {

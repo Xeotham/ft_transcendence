@@ -18,10 +18,15 @@ import { Room } from "./Room";
 import {createPongGame} from "../../user_management/api/controllers";
 // impoer { Timeout } from
 
+interface   playerScore {
+	username:   string;
+	score:      number;
+}
+
 export class Game {
 	readonly id:number;
 	players:	{ player1: player | null, player2: player | null };
-	score:		{ player1: number, player2: number };
+	score:		{ player1: playerScore, player2: playerScore };
 	paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	paddle2:	{ x: number, y: number, x_size: number, y_size: number };
 	ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
@@ -38,7 +43,7 @@ export class Game {
 	constructor(id: number, player1: player | null, player2: player | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
 		this.id = id;
 		this.players = { player1, player2 };
-		this.score = { player1: 0, player2: 0 };
+		this.score = { player1: {username: player1?.username!, score: 0}, player2: {username: player2?.username!, score: 0} };
 		this.paddle1 = { x: PADDLE1_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
 		this.paddle2 = { x: PADDLE2_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
 		this.ball = { x: WIDTH / 2, y: HEIGHT / 2, size: BALL_SIZE, orientation: 0, speed: BALL_SPEED };
@@ -58,6 +63,7 @@ export class Game {
 			paddle1: { ...this.paddle1 },
 			paddle2: { ...this.paddle2 },
 			ball: { ...this.ball},
+			score: this.score,
 		};
 	}
 
@@ -91,7 +97,7 @@ export class Game {
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
-		if (this.score.player1 < 10 && this.score.player2 < 10)
+		if (this.score.player1.score < 10 && this.score.player2.score < 10)
 			await delay(1250);
 			// await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
@@ -113,7 +119,7 @@ export class Game {
 			}, 1000) as unknown as number; // once per second
 
 			const gameLoopIteration = async () => {
-				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
+				if (this.score.player1.score < 10 && this.score.player2.score < 10 && !this.over) {
 					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
 					return ;
@@ -123,11 +129,11 @@ export class Game {
 				clearInterval(botInterval);
 				this.finishTime = performance.now();
 				if (!this.over) // If the game didn't end because of a forfeit
-					this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
+					this.winner = (this.score.player1.score >= 10) ? this.players.player1 : this.players.player2;
 				this.over = true;
 				let winner = this.winner?.username;
 				if (this.isSolo)
-					winner = this.score.player1 >= 10 ? "P1" : "P2";
+					winner = this.score.player1.score >= 10 ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
@@ -188,11 +194,11 @@ export class Game {
 		this.ball.y += speed * Math.sin(this.ball.orientation);
 
 		if (this.ball.x - this.ball.size < 0) {
-			this.score.player2++;
+			this.score.player2.score++;
 			await this.spawnBall("P1");
 		}
 		if (this.ball.x + this.ball.size >= WIDTH) {
-			this.score.player1++;
+			this.score.player1.score++;
 			await this.spawnBall("P2");
 		}
 	}
