@@ -256,8 +256,6 @@ const   drawBall = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number
 }
 
 const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }, canvas: HTMLCanvasElement) => {
-	console.log("test");
-
 	ctx.textAlign = "center";
 
 	const   writeText = (text: string, x: number, y: number) => {

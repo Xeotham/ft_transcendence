@@ -97,11 +97,11 @@ export interface        tetrisGameInfo {
 }
 
 export class    TimeoutKey {
-	start:      number;
-	timer:      number;
-	delay:      number;
-	remaining:  number;
-	callback:   () => void;
+	private start:      number;
+	private timer:      number;
+	private delay:      number;
+	private remaining:  number;
+	private callback:   () => void;
 
 	constructor(callback: () => void, delay: number) {
 		this.start = Date.now();
@@ -139,75 +139,75 @@ class    sfxHandler {
 	constructor() {
 		this.sfx = {
 			/* ==== BTB ==== */
-			"btb_1": new Audio("./src/sfx/tetris/BejeweledSR/btb_1.ogg"),
-			"btb_2": new Audio("./src/sfx/tetris/BejeweledSR/btb_2.ogg"),
-			"btb_3": new Audio("./src/sfx/tetris/BejeweledSR/btb_3.ogg"),
-			"btb_break": new Audio("./src/sfx/tetris/BejeweledSR/btb_break.ogg"),
+			"btb_1": new Audio("/src/medias/sfx/tetris/BejeweledSR/btb_1.ogg"),
+			"btb_2": new Audio("/src/medias/sfx/tetris/BejeweledSR/btb_2.ogg"),
+			"btb_3": new Audio("/src/medias/sfx/tetris/BejeweledSR/btb_3.ogg"),
+			"btb_break": new Audio("/src/medias/sfx/tetris/BejeweledSR/btb_break.ogg"),
 
 			/* ==== CLEAR ==== */
-			"allclear": new Audio("./src/sfx/tetris/BejeweledSR/allclear.ogg"),
-			"clearbtb": new Audio("./src/sfx/tetris/BejeweledSR/clearbtb.ogg"),
-			"clearline": new Audio("./src/sfx/tetris/BejeweledSR/clearline.ogg"),
-			"clearquad": new Audio("./src/sfx/tetris/BejeweledSR/clearquad.ogg"),
-			"clearspin": new Audio("./src/sfx/tetris/BejeweledSR/clearspin.ogg"),
+			"allclear": new Audio("/src/medias/sfx/tetris/BejeweledSR/allclear.ogg"),
+			"clearbtb": new Audio("/src/medias/sfx/tetris/BejeweledSR/clearbtb.ogg"),
+			"clearline": new Audio("/src/medias/sfx/tetris/BejeweledSR/clearline.ogg"),
+			"clearquad": new Audio("/src/medias/sfx/tetris/BejeweledSR/clearquad.ogg"),
+			"clearspin": new Audio("/src/medias/sfx/tetris/BejeweledSR/clearspin.ogg"),
 
 			/* ==== COMBO ==== */
-			"combo_1": new Audio("./src/sfx/tetris/BejeweledSR/combo_1.ogg"),
-			"combo_2": new Audio("./src/sfx/tetris/BejeweledSR/combo_2.ogg"),
-			"combo_3": new Audio("./src/sfx/tetris/BejeweledSR/combo_3.ogg"),
-			"combo_4": new Audio("./src/sfx/tetris/BejeweledSR/combo_4.ogg"),
-			"combo_5": new Audio("./src/sfx/tetris/BejeweledSR/combo_5.ogg"),
-			"combo_6": new Audio("./src/sfx/tetris/BejeweledSR/combo_6.ogg"),
-			"combo_7": new Audio("./src/sfx/tetris/BejeweledSR/combo_7.ogg"),
-			"combo_8": new Audio("./src/sfx/tetris/BejeweledSR/combo_8.ogg"),
-			"combo_9": new Audio("./src/sfx/tetris/BejeweledSR/combo_9.ogg"),
-			"combo_10": new Audio("./src/sfx/tetris/BejeweledSR/combo_10.ogg"),
-			"combo_11": new Audio("./src/sfx/tetris/BejeweledSR/combo_11.ogg"),
-			"combo_12": new Audio("./src/sfx/tetris/BejeweledSR/combo_12.ogg"),
-			"combo_13": new Audio("./src/sfx/tetris/BejeweledSR/combo_13.ogg"),
-			"combo_14": new Audio("./src/sfx/tetris/BejeweledSR/combo_14.ogg"),
-			"combo_15": new Audio("./src/sfx/tetris/BejeweledSR/combo_15.ogg"),
-			"combo_16": new Audio("./src/sfx/tetris/BejeweledSR/combo_16.ogg"),
-			"combobreak": new Audio("./src/sfx/tetris/BejeweledSR/combobreak.ogg"),
+			"combo_1": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_1.ogg"),
+			"combo_2": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_2.ogg"),
+			"combo_3": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_3.ogg"),
+			"combo_4": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_4.ogg"),
+			"combo_5": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_5.ogg"),
+			"combo_6": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_6.ogg"),
+			"combo_7": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_7.ogg"),
+			"combo_8": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_8.ogg"),
+			"combo_9": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_9.ogg"),
+			"combo_10": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_10.ogg"),
+			"combo_11": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_11.ogg"),
+			"combo_12": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_12.ogg"),
+			"combo_13": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_13.ogg"),
+			"combo_14": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_14.ogg"),
+			"combo_15": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_15.ogg"),
+			"combo_16": new Audio("/src/medias/sfx/tetris/BejeweledSR/combo_16.ogg"),
+			"combobreak": new Audio("/src/medias/sfx/tetris/BejeweledSR/combobreak.ogg"),
 
 			/* ==== GARBAGE ==== */
-			"counter": new Audio("./src/sfx/tetris/BejeweledSR/counter.ogg"),
-			"damage_alert": new Audio("./src/sfx/tetris/BejeweledSR/damage_alert.ogg"),
-			"damage_large": new Audio("./src/sfx/tetris/BejeweledSR/damage_large.ogg"),
-			"damage_medium": new Audio("./src/sfx/tetris/BejeweledSR/damage_medium.ogg"),
-			"damage_small": new Audio("./src/sfx/tetris/BejeweledSR/damage_small.ogg"),
-			"garbage_in_large": new Audio("./src/sfx/tetris/BejeweledSR/garbage_in_large.ogg"),
-			"garbage_in_medium": new Audio("./src/sfx/tetris/BejeweledSR/garbage_in_medium.ogg"),
-			"garbage_in_small": new Audio("./src/sfx/tetris/BejeweledSR/garbage_in_small.ogg"),
-			"garbage_out_large": new Audio("./src/sfx/tetris/BejeweledSR/garbage_out_large.ogg"),
-			"garbage_out_medium": new Audio("./src/sfx/tetris/BejeweledSR/garbage_out_medium.ogg"),
-			"garbage_out_small": new Audio("./src/sfx/tetris/BejeweledSR/garbage_out_small.ogg"),
+			"counter": new Audio("/src/medias/sfx/tetris/BejeweledSR/counter.ogg"),
+			"damage_alert": new Audio("/src/medias/sfx/tetris/BejeweledSR/damage_alert.ogg"),
+			"damage_large": new Audio("/src/medias/sfx/tetris/BejeweledSR/damage_large.ogg"),
+			"damage_medium": new Audio("/src/medias/sfx/tetris/BejeweledSR/damage_medium.ogg"),
+			"damage_small": new Audio("/src/medias/sfx/tetris/BejeweledSR/damage_small.ogg"),
+			"garbage_in_large": new Audio("/src/medias/sfx/tetris/BejeweledSR/garbage_in_large.ogg"),
+			"garbage_in_medium": new Audio("/src/medias/sfx/tetris/BejeweledSR/garbage_in_medium.ogg"),
+			"garbage_in_small": new Audio("/src/medias/sfx/tetris/BejeweledSR/garbage_in_small.ogg"),
+			"garbage_out_large": new Audio("/src/medias/sfx/tetris/BejeweledSR/garbage_out_large.ogg"),
+			"garbage_out_medium": new Audio("/src/medias/sfx/tetris/BejeweledSR/garbage_out_medium.ogg"),
+			"garbage_out_small": new Audio("/src/medias/sfx/tetris/BejeweledSR/garbage_out_small.ogg"),
 
 			/* ==== USER_EFFECT ==== */
-			"harddrop": new Audio("./src/sfx/tetris/BejeweledSR/harddrop.ogg"),
-			"softdrop": new Audio("./src/sfx/tetris/BejeweledSR/softdrop.ogg"),
-			"hold": new Audio("./src/sfx/tetris/BejeweledSR/hold.ogg"),
-			"move": new Audio("./src/sfx/tetris/BejeweledSR/move.ogg"),
-			"rotate": new Audio("./src/sfx/tetris/BejeweledSR/rotate.ogg"),
+			"harddrop": new Audio("/src/medias/sfx/tetris/BejeweledSR/harddrop.ogg"),
+			"softdrop": new Audio("/src/medias/sfx/tetris/BejeweledSR/softdrop.ogg"),
+			"hold": new Audio("/src/medias/sfx/tetris/BejeweledSR/hold.ogg"),
+			"move": new Audio("/src/medias/sfx/tetris/BejeweledSR/move.ogg"),
+			"rotate": new Audio("/src/medias/sfx/tetris/BejeweledSR/rotate.ogg"),
 
 			/* ==== LEVEL ==== */
-			"level1": new Audio("./src/sfx/tetris/BejeweledSR/level1.ogg"),
-			"level5": new Audio("./src/sfx/tetris/BejeweledSR/level5.ogg"),
-			"level10": new Audio("./src/sfx/tetris/BejeweledSR/level10.ogg"),
-			"level15": new Audio("./src/sfx/tetris/BejeweledSR/level15.ogg"),
-			"levelup": new Audio("./src/sfx/tetris/BejeweledSR/levelup.ogg"),
+			"level1": new Audio("/src/medias/sfx/tetris/BejeweledSR/level1.ogg"),
+			"level5": new Audio("/src/medias/sfx/tetris/BejeweledSR/level5.ogg"),
+			"level10": new Audio("/src/medias/sfx/tetris/BejeweledSR/level10.ogg"),
+			"level15": new Audio("/src/medias/sfx/tetris/BejeweledSR/level15.ogg"),
+			"levelup": new Audio("/src/medias/sfx/tetris/BejeweledSR/levelup.ogg"),
 
 			/* ==== LOCK ==== */
-			"spinend": new Audio("./src/sfx/tetris/BejeweledSR/spinend.ogg"),
-			"lock": new Audio("./src/sfx/tetris/BejeweledSR/lock.ogg"),
+			"spinend": new Audio("/src/medias/sfx/tetris/BejeweledSR/spinend.ogg"),
+			"lock": new Audio("/src/medias/sfx/tetris/BejeweledSR/lock.ogg"),
 
 			/* ==== SPIN ==== */
-			"spin": new Audio("./src/sfx/tetris/BejeweledSR/spin.ogg"),
+			"spin": new Audio("/src/medias/sfx/tetris/BejeweledSR/spin.ogg"),
 
 			/* ==== BOARD ==== */
-			"floor": new Audio("./src/sfx/tetris/BejeweledSR/floor.ogg"),
-			"sidehit": new Audio("./src/sfx/tetris/BejeweledSR/sidehit.ogg"),
-			"topout": new Audio("./src/sfx/tetris/BejeweledSR/topout.ogg"),
+			"floor": new Audio("/src/medias/sfx/tetris/BejeweledSR/floor.ogg"),
+			"sidehit": new Audio("/src/medias/sfx/tetris/BejeweledSR/sidehit.ogg"),
+			"topout": new Audio("/src/medias/sfx/tetris/BejeweledSR/topout.ogg"),
 		}
 	}
 
@@ -221,7 +221,7 @@ class    sfxHandler {
 	}
 }
 
-export const sfxPlayer = new sfxHandler();
+export const tetrisSfxPlayer = new sfxHandler();
 
 class   bgmHandler {
 	private readonly bgm: {[key: string]: HTMLAudioElement};

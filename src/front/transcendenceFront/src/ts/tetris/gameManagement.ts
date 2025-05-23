@@ -1,5 +1,5 @@
 import { loadTetrisHtml } from "./tetrisHTML.ts";
-import {bgmPlayer, roomInfo, sfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
+import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
 import { address } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
@@ -122,25 +122,25 @@ export const startRoom = () => {
 
 const   btbEffect = (btb: string) => {
 	if (btb === "break")
-		return sfxPlayer.play("btb_break")
+		return tetrisSfxPlayer.play("btb_break")
 	else if (Number(btb) <= 3 )
-		return sfxPlayer.play(`btb_${btb}`);
+		return tetrisSfxPlayer.play(`btb_${btb}`);
 	else
-		return sfxPlayer.play("btb_3");
+		return tetrisSfxPlayer.play("btb_3");
 }
 
 const   clearEffect = (clear: string) => {
 	switch (clear) {
 		case "all":
-			return sfxPlayer.play("allclear");
+			return tetrisSfxPlayer.play("allclear");
 		case "btb":
-			return sfxPlayer.play("clearbtb");
+			return tetrisSfxPlayer.play("clearbtb");
 		case "line":
-			return sfxPlayer.play("clearline");
+			return tetrisSfxPlayer.play("clearline");
 		case "quad":
-			return sfxPlayer.play("clearquad");
+			return tetrisSfxPlayer.play("clearquad");
 		case "spin":
-			return sfxPlayer.play("clearspin");
+			return tetrisSfxPlayer.play("clearspin");
 		default:
 			return ;
 	}
@@ -148,33 +148,33 @@ const   clearEffect = (clear: string) => {
 
 const   comboEffect = (combo: string) => {
 	if (combo === "break")
-		return sfxPlayer.play("combobreak");
+		return tetrisSfxPlayer.play("combobreak");
 	else if (Number(combo) <= 16)
-		return sfxPlayer.play(`combo_${combo}`);
+		return tetrisSfxPlayer.play(`combo_${combo}`);
 	else
-		return sfxPlayer.play("combo_16");
+		return tetrisSfxPlayer.play("combo_16");
 }
 
 const   garbageEffect = (garbage: string) => {
-	return sfxPlayer.play(garbage);
+	return tetrisSfxPlayer.play(garbage);
 }
 
 const   userEffect = (user: string) => {
-	return sfxPlayer.play(user);
+	return tetrisSfxPlayer.play(user);
 }
 
 const   levelEffect = (level: string) => {
 	switch (level) {
 		case "up":
-			return sfxPlayer.play("levelup");
+			return tetrisSfxPlayer.play("levelup");
 		case "1":
-			return sfxPlayer.play("level1");
+			return tetrisSfxPlayer.play("level1");
 		case "5":
-			return sfxPlayer.play("level5");
+			return tetrisSfxPlayer.play("level5");
 		case "10":
-			return sfxPlayer.play("level10");
+			return tetrisSfxPlayer.play("level10");
 		case "15":
-			return sfxPlayer.play("level15");
+			return tetrisSfxPlayer.play("level15");
 		default:
 			return ;
 	}
@@ -183,9 +183,9 @@ const   levelEffect = (level: string) => {
 const   lockEffect = (lock: string) => {
 	switch (lock) {
 		case "lock":
-			return sfxPlayer.play("lock");
+			return tetrisSfxPlayer.play("lock");
 		case "spinend":
-			return sfxPlayer.play("spinend");
+			return tetrisSfxPlayer.play("spinend");
 		default:
 			return ;
 	}
@@ -194,12 +194,12 @@ const   lockEffect = (lock: string) => {
 const   spinEffect = (spin: string) => {
 	switch (spin) {
 		default:
-			return sfxPlayer.play("spin");
+			return tetrisSfxPlayer.play("spin");
 	}
 }
 
 const   boardEffect = (board: string) => {
-	return sfxPlayer.play(board);
+	return tetrisSfxPlayer.play(board);
 }
 
 const effectPlayer = (type: string, argument: string | null = null) => {

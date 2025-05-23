@@ -165,11 +165,17 @@ export class Game {
 		if (player === "P1" && this.ball.x - this.ball.size / 2 < paddle.x + paddle.x_size) {
 			this.ball.x = paddle.x + paddle.x_size + this.ball.size;
 			this.hitPaddle(player, paddle);
+			this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+			if (!this.isBot && !this.isSolo)
+				this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
 		}
 		if (player === "P2" && this.ball.x + this.ball.size / 2 > paddle.x) {
 			this.ball.x = paddle.x - this.ball.size;
 			console.log("paddle hit at y ", this.ball.y)
 			this.hitPaddle(player, paddle);
+			this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+			if (!this.isBot && !this.isSolo)
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
 		}
 	}
 
