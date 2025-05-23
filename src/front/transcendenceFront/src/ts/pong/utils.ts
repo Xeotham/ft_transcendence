@@ -1,13 +1,14 @@
 import {PongRoom} from "./game.ts";
 import {Tournament} from "./tournament.ts";
 
-class   sfxHandler {
+
+export const    pongSfxPlayer = new class {
 	private readonly    sfx: {
 		[key: string]:{
 			[key: string]: HTMLAudioElement }
 };
 	private             pack: string;
-	constructor(pack: string | null) {
+	constructor() {
 		this.sfx = {
 			"retro": {
 				"hitPaddle": new Audio("/src/medias/sfx/pong/retro/hitPaddle.mp3"),
@@ -15,10 +16,7 @@ class   sfxHandler {
 				"goal": new Audio("/src/medias/sfx/pong/retro/goal.mp3"),
 			},
 		}
-		if (pack !== null)
-			this.pack = pack;
-		else
-			this.pack = "retro";
+		this.pack = "retro";
 	}
 
 	play(name: string) {
@@ -36,8 +34,38 @@ class   sfxHandler {
 			console.error("Sound pack not found: " + pack);
 	}
 }
+export const    pongPackHandler = new class {
+	private pack: string;
+	constructor() {
+		this.pack = "retro";
+		pongSfxPlayer.setPack("retro");
+	}
 
-export const pongSfxPlayer = new sfxHandler(null);
+	setPack(pack: string) {
+		if (this.pack !== pack) {
+			this.pack = pack;
+			pongSfxPlayer.setPack(pack);
+		}
+	}
+	getPack() { return this.pack; }
+}
+// export const    pongTextureHandler = new class {
+// 	private pack: string;
+// 	private textures: {[key: string]: {[key: string]: HTMLImageElement}};
+// 	constructor() {
+// 		this.pack = "retro";
+// 		this.textures = {
+// 			"retro": {
+// 				"BACKGROUND": new Image(),
+// 				"BOARD": "/src/medias/sfx/pong/retro/pongBoard.png",
+// 				"PADDLE": "/src/medias/sfx/pong/pongPaddle.png",
+// 				"BALL": "/src/medias/sfx/pong/pongBall.png",
+// 			},
+// 		}
+// 		this.textures["retro"]["BACKGROUND"].src = "/src/medias/sfx/pong/retro/pongBackground.png";
+//
+// 	}
+// }
 
 export class   gameInformation {
 	private room: PongRoom | null;

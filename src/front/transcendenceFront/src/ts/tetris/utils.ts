@@ -228,9 +228,9 @@ class   bgmHandler {
 	private actualBgm: string;
 	constructor() {
 		this.bgm = {
-			"bgm1": new Audio("./src/bgm/tetris/bgm1.mp3"),
-			"bgm2": new Audio("./src/bgm/tetris/bgm2.mp3"),
-			"bgm3": new Audio("./src/bgm/tetris/bgm3.mp3"),
+			"bgm1": new Audio("/src/medias/bgm/tetris/bgm1.mp3"),
+			"bgm2": new Audio("/src/medias/bgm/tetris/bgm2.mp3"),
+			"bgm3": new Audio("/src/medias/bgm/tetris/bgm3.mp3"),
 		}
 		this.actualBgm = "";
 	}

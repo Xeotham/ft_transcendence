@@ -325,6 +325,10 @@ const   effectHandler = (effect: string) => {
 			console.log("Hit opponent paddle");
 			pongSfxPlayer.play("hitOpponentPaddle");
 			return ;
+		case "goal":
+			console.log("Goal");
+			pongSfxPlayer.play("goal");
+			return ;
 	}
 }
 
