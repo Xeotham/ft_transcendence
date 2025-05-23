@@ -115,7 +115,7 @@
       "online": {
         "join": "Rejoindre",
         "private": "Privé",
-        "join-priv-room": "Rejoindre privé",
+        "joinPriv": "Rejoindre privé",
         "spectate": "Spectateur",
         "return": "Retour"
       },

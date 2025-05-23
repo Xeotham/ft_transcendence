@@ -102,10 +102,10 @@ const   idlePage = () => {
 const   navOffline = () => {
 	loadPongHtml("nav-offline");
 
-	document.getElementById("Solo-game")?.addEventListener("click", joinSolo);
-	document.getElementById("Bot-game")?.addEventListener("click", joinBot);
-	//document.getElementById("return")?.addEventListener("click", () => page.show("/pong"));
+	document.getElementById("solo")?.addEventListener("click", joinSolo);
+	document.getElementById("bot")?.addEventListener("click", joinBot);
 	document.getElementById("return")?.addEventListener("click", idlePage);
+	//document.getElementById("return")?.addEventListener("click", () => page.show("/pong"));
 }
 
 const   navOnline = () => {
@@ -120,7 +120,7 @@ const   navOnline = () => {
 const   navTournament = () => {
 	loadPongHtml("nav-tournament");
 	document.getElementById("create")?.addEventListener("click", getTournamentName);
-	document.getElementById("play")?.addEventListener("click", () => { page.show("/pong/list/tournament-info"); });
+	document.getElementById("play")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
 	document.getElementById("return")?.addEventListener("click", idlePage);
 }
 
@@ -210,10 +210,10 @@ export const pongTextures: { [key: string]: HTMLImageElement } = {};
 export const loadPongTextures = () => {
 
 	const   texturePaths = {
-		"BACKGROUND": './src/textures/pong/background.jpg',
-		"BOARD": './src/textures/pong/pongBoard.png',
-		"PADDLE": './src/textures/pong/pongPaddle.png',
-		"BALL": './src/textures/pong/pongBall.png',
+		"BACKGROUND": '/src/medias/textures/pong/background.jpg',
+		"BOARD": '/src/medias/textures/pong/pongBoard.png',
+		"PADDLE": '/src/medias/textures/pong/pongPaddle.png',
+		"BALL": '/src/medias/textures/pong/pongBall.png',
 	}
 
 	return Promise.all(
@@ -256,6 +256,8 @@ const   drawBall = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number
 }
 
 const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }, canvas: HTMLCanvasElement) => {
+	console.log("test");
+
 	ctx.textAlign = "center";
 
 	const   writeText = (text: string, x: number, y: number) => {
@@ -286,6 +288,11 @@ const drawGame =  (game: Game) => {
 	let     paddle1Coord;
 	let     paddle2Coord;
 	let     ballCoord;
+
+	window.addEventListener('resize', () => {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	});
 
 	if (game) {
 		paddle1Coord = {x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y};

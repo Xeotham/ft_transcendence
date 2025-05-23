@@ -164,11 +164,16 @@ export const    createPrivateRoom = () => {
 export const    joinPrivRoom = () => {
 	loadPongPage("priv-room-code");
 
+	const form = document.getElementById("inviteForm") as HTMLFormElement;
+	form?.addEventListener("submit", (event) => {
+		event.preventDefault(); // Prevent the page from reloading
 
-	document.getElementById("submit")?.addEventListener("click", () => {
-		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
-		const   socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}&username=${user.getUsername()}`);
-
+		const inviteCode = (document.getElementById("inviteCode") as HTMLInputElement).value;
+		if (!inviteCode) {
+			console.error("Invite code is required");
+			return;
+		}
+		const socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}&username=${user.getUsername()}`);
 		pongGameInfo.setRoom(new PongRoom(socket));
 		pongGameInfo.getRoom()?.initSocket();
 	});
@@ -439,12 +444,5 @@ const   confirmGame = () => {
 			body: JSON.stringify({ roomId: pongGameInfo.getRoom()?.getRoomNumber(), P: pongGameInfo.getRoom()?.getPlayer() })
 		})
 	});
-}
-
-export const    createPrivRoom = () => {
-	loadPongHtml("priv-room-create");
-	document.getElementById("quit")?.addEventListener("click", () => {
-		quit("LEAVE");
-	})
 }
 

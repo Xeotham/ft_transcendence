@@ -128,7 +128,7 @@ const   navTournament = () => {
 	<nav class="${TCS.pongNav0}">
 		<div class="flex-1"><button id="create" class="${TCS.pongNavButton}">${imTexts.pongTournamentCreate}</button></div>
 		<div class="flex-1"><button id="play" class="${TCS.pongNavButton}">${imTexts.pongTournamentPlay}</button></div>
-		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.navTournamentReturn}</button></div>
+		<div class="flex-1"><button id="return" class="${TCS.pongNavButton}">${imTexts.pongTournamentReturn}</button></div>
 	</nav>`;
 }
 
@@ -228,7 +228,7 @@ const   privRoomCode = () => {
 		<div class="flex-1"><h1 class="${TCS.pongText}">Please enter your invite code:</h1></div>
 		<form id="inviteForm" class="flex-1">
 			<input type="text" id="inviteCode" placeholder="Invite Code" class="${TCS.pongButton}">
-			<button id="submit" class="${TCS.pongButton}">Submit</button>
+			<button type="submit" id="submit" class="${TCS.pongButton}">Submit</button>
 		</form>
 		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
 	</div>`;
@@ -333,10 +333,10 @@ const   drawBoard = () => {
 	// TODO quid du quit
 	EL.contentPong.innerHTML = `
 	<div class="flex flex-col">
-		<div class="flex justify-end mb-4">
-			<button id="quit" class="${TCS.pongButton}">Quit</button>
-		</div>
-		<canvas id="pongCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
+<!--		<div class="flex justify-end mb-4">-->
+<!--			<button id="quit" class="${TCS.pongButton}">Quit</button>-->
+<!--		</div>-->
+		<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}" class="${TCS.pongCanvas}"></canvas>
 	</div>`;
 }
 
@@ -352,23 +352,4 @@ const   confirmPage = () => {
 		<div class="flex-1"><button id="confirm-game" class="${TCS.pongButton}">Confirm Game</button></div>
 		<div class="flex-1"><p id="timer">Time remaining: 10s</p></div>
 	</div>`;
-}
-
-function drawGame(game: Game) {
-	const canvas = document.getElementById("gameCanvas")  as HTMLCanvasElement;
-	const c = canvas?.getContext("2d") as CanvasRenderingContext2D;
-
-	if (!c || !game)
-		return;
-	c.clearRect(0, 0, canvas.width, canvas.height);
-
-	// Draw ball
-	c.fillStyle = "white";
-	c.beginPath();
-	c.arc(game.ball.x, game.ball.y, game.ball.size, 0, Math.PI * 2);
-	c.fill();
-
-	// Draw paddles
-	c.fillRect(game.paddle1.x, game.paddle1.y, game.paddle1.x_size, game.paddle1.y_size); // Left Paddle
-	c.fillRect(game.paddle2.x, game.paddle2.y, game.paddle2.x_size, game.paddle2.y_size); // Right Paddle
 }
