@@ -160,4 +160,5 @@ export const    resetGamesSocket = (type: string) => {
 		pongGameInfo.getRoom()?.getSocket()?.close();
 	if (pongGameInfo.getTournament()?.getSocket() && type !== "pong")
 		pongGameInfo.getTournament()?.getSocket()?.close();
+	window.onbeforeunload = null;
 }
