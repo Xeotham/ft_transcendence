@@ -26,29 +26,11 @@ export const evAdOutDocument = () => {
     };
     window.addEventListener('mouseout', outDocumentHandler);
   }
-
-  const target = document.querySelector<HTMLDivElement>('div[name="zoneTop"]');
-  if (target && !overzoneTopHandler) {
-    overzoneTopHandler = (event: Event) => {
-      const mouseEvent = event as MouseEvent;
-      if (mouseEvent.relatedTarget !== target) {
-        zoneSet('HOME');
-      }
-    };
-      
-    target.addEventListener('mouseover', overzoneTopHandler);    
-  }
 }
 export const evRemOutDocument = () => {
   if (window && outDocumentHandler) {
     window.removeEventListener('mouseout', outDocumentHandler);
     outDocumentHandler = null;
-  }
-
-  const target = document.querySelector<HTMLDivElement>('div[name="zoneTop"]');
-  if (target && overzoneTopHandler) {
-    target.removeEventListener('mouseover', overzoneTopHandler);
-    overzoneTopHandler = null;
   }
 }
 

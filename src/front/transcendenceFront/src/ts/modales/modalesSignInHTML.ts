@@ -1,18 +1,14 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
+import { ModaleType, modaleDisplay, modaleAlert } from './modalesCore.ts';
 
-import closeIconImg from '../../medias/images/modales/croixSlate200.png';
 
-export const modaleSignInHTML = `
-
-  <!-- 
-  <div id="closeIcon" class="${TCS.modaleClose} hidden">
-  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
-  -->
+export const modaleSignInHTML = () => {
+  let SignInHTML = `
 
   <div id="signinTitle" class="${TCS.modaleTitre} pb-[30px]">
   ${imTexts.modalesSigninTitle}</div>
-        
+
   <div id="signinText" class="${TCS.modaleTexte} pb-[50px]">
   ${imTexts.modalesSigninText}</div>
 
@@ -30,14 +26,45 @@ export const modaleSignInHTML = `
 
     <button type="submit" id="signinButton" class="${TCS.formButton} -translate-y-[15px]">
     ${imTexts.modalesSigninEnter}</button>
+
+    <div id="modaleAlert" class="${TCS.modaleTexte}"></div>
   </form>
 
-  <div id="to_register_text" class="${TCS.modaleToRegister} pt-[20px]">
+  <div id="signinRegisterText" class="${TCS.modaleToRegister} pt-[20px]">
     ${imTexts.modalesSigninNoAccount}
-    <a id="to_register_link" href="#" class="${TCS.formButton}">
+    <a id="signinRegisterLink" class="${TCS.formButton}">
     ${imTexts.modalesSigninRegister}</a>
   </div>
 
   <div class="h-[40px]" />
 
 `;
+
+  return SignInHTML;
+}
+
+export const modaleSignInEvents = () => {
+
+  const signinForm = document.getElementById('signinForm') as HTMLFormElement;
+  const signinRegisterLink = document.getElementById('signinRegisterLink') as HTMLAnchorElement;
+
+  if (!signinForm || !signinRegisterLink)
+    return;
+
+  // TODO: enlever les événements modaleBKG pour ne pas pouvoir cliquer sur le fond et fermer la modale
+
+  signinForm.addEventListener('submit', (event: SubmitEvent) => {
+
+    // TODO: ajouter les événements pour le formulaire de connexion 
+
+    event.preventDefault(); // TODO: supprimer
+    modaleAlert("Vous avez appuye sur le bouton, dommage..."); // TODO: supprimer
+  });
+
+  signinRegisterLink.addEventListener('click', () => {
+    console.log("signinRegisterLink: click");
+    modaleDisplay(ModaleType.SIGNUP);
+  });
+
+}
+

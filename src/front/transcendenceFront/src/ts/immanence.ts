@@ -1,7 +1,7 @@
 // Events & core
 import {resetGamesSocket, UserInfo} from "./utils.ts";
 //import { evAddDocResize } from './zone/zoneEvents.ts'
-import { EL, setHtmlFront, awaitMedias } from './zone/zoneHTML.ts';
+import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'
 //import { zoneSet } from './zone/zoneCore.ts'
 import {startRouter} from "./page/router.ts";
@@ -18,11 +18,12 @@ const main = () => {
     resetGamesSocket("HOME");
     setHtmlFront();
     EL.init();
-    if (EL.check()) {
-      modaleInit();
-    }
+    if (!EL.check())
+      return;
+    setZoneAvatar(false); //TODO: false -> true 
     awaitMedias();
     startRouter();
+    modaleInit();
 }
 
 // Start the app

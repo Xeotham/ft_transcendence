@@ -1,16 +1,13 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
+import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
-import closeIconImg from '../../medias/images/modales/croixSlate200.png';
-import avatarImg from '../../medias/avatars/avatar1.png';
+import avatarImg from '../../medias/avatars/avatar1.png'; // TODO: remplacer par l'avatar de l'utilisateur
 
-export const modaleProfileHTML = `
+export const modaleProfileHTML = () => {
 
-  <!-- 
-  <div id="closeIcon" class="${TCS.modaleClose} hidden">
-  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
-  -->
-        
+  let ProfileHTML = `
+      
   <div class="flex flex-row items-start justify-start gap-4">
     <div id="profileAvatar" class="${TCS.modaleAvatarProfil} ">
       <img src="${avatarImg}"/>
@@ -47,3 +44,38 @@ export const modaleProfileHTML = `
   <div class="h-[30px]"></div>
 
 `;
+
+  return ProfileHTML;
+}
+
+export const modaleProfileEvents = () => {
+  
+  const profileAvatar =         document.getElementById('profileAvatar') as HTMLImageElement;
+  const profileUserEditLink =   document.getElementById('profileUserEditLink') as HTMLAnchorElement;
+  const profileDeconectLink =   document.getElementById('profileDeconectLink') as HTMLAnchorElement;
+  const modalePongStatsLink =   document.getElementById('modalePongStatsLink') as HTMLImageElement;
+  const modaleTetrisStatsLink = document.getElementById('modaleTetrisStatsLink') as HTMLImageElement;
+
+  if (!profileAvatar || !profileUserEditLink || !profileDeconectLink || !modalePongStatsLink || !modaleTetrisStatsLink)
+    return;
+    
+  profileAvatar.addEventListener('click', () => {
+    modaleDisplay(ModaleType.AVATAR);
+  });
+
+  profileUserEditLink.addEventListener('click', () => {
+    modaleDisplay(ModaleType.SIGNUP); // TODO: remplacer par la modale de modification de profile
+  });
+
+  profileDeconectLink.addEventListener('click', () => {
+    modaleDisplay(ModaleType.SIGNIN); // TODO: faire une vrai deconnection avec refresh sur la home
+  });
+
+  modalePongStatsLink.addEventListener('click', () => {
+    modaleDisplay(ModaleType.PONG_STATS);
+  });
+
+  modaleTetrisStatsLink.addEventListener('click', () => {
+    modaleDisplay(ModaleType.TETRIS_STATS);
+  });
+}

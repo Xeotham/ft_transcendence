@@ -3,25 +3,21 @@ import '../style/style.css'
 ///////////////////////////////////////////
 //  Tailwind Class Strings 
 export const TCS = {
-
-    // body
-    //html_body : "m-0 h-full overflow-x-hidden",
-
-    // zoneTop
-    zoneTop : "absolute fixed left-0 top-0 w-full h-[30px] z-10 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
-    immanenceLogo : "h-full w-auto ml-[10px] float-left",
     
     // zonePong 
-    zonePong : "relative flex top-[30px] w-full h-full bg-gradient-to-b from-amber-400 to-yellow-600",
+    zonePong : "relative flex w-full h-full bg-gradient-to-b from-amber-400 to-yellow-600",
+    zonePongShadow : "shadow-[inset_-30px_0_25px_-3px_rgba(0,0,0,0.45)]",
 
     // zoneTetris   
-    zoneTetris : "relative flex top-[30px] w-full h-full bg-gradient-to-t from-lime-50 to-slate-200",
+    zoneTetris : "relative flex w-full h-full bg-gradient-to-t from-lime-50 to-slate-200",
+    zoneTetrisShadow : "shadow-[inset_30px_0_25px_-3px_rgba(12,10,9,0.35)]", //12, 10, 9
     
 
     // zoneAvatar
-    avatar : "fixed flex top-[40px] w-[100px] h-[100px] z-40", 
-    avatarMask : "w-full h-full rounded-full overflow-hidden shadow-xl/50 hover:cursor-pointer hover:rotate-12 hover:scale-110 transition-all duration-200 ease-in-out",
+    avatar : "fixed flex top-[20px] w-[100px] h-[100px] z-40", 
+    avatarMask : "w-full h-full rounded-full overflow-hidden shadow-xl/40 hover:cursor-pointer hover:rotate-11 hover:scale-110 hover:shadow-xl/80 transition-all duration-200 ease-in-out",
     avatarImg : "w-full h-full object-cover ",
+    avatarHidden : "hidden",
 
     // zoneModale
     //modale : "fixed z-40 w-[680px] shadow-xl/30 bg-black/80 px-8 py-5 top-16 left-1/2 -translate-x-1/2 backdrop-blur-sm",
@@ -48,29 +44,37 @@ export const TCS = {
     // PONG
     pongCanvas : "bg-black/80 block",
 
-    pongLogo :   "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-lime-50",
-    pongTitre : "font-sixtyfour text-[42px] flex items-center justify-center h-full w-full text-lime-50",
+    pongLogo :   "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-lime-50 text-shadow-lg text-shadow-stone-900/40",
+    pongTitre : "font-sixtyfour text-[42px] flex items-center justify-center h-full w-full text-lime-50 text-shadow-lg text-shadow-stone-900/40",
     pongNav0 : "flex flex-col items-center justify-center fade-in-up",
     pongNav1 : "flex flex-col items-center justify-center bg-lime-50 px-[28px] py-[28px] shadow-xl/50",
-    pongButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 cursor-pointer hover:cursor-pointer",
+    pongButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 shadow-xl/30 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:bg-amber-400 hover:scale-110 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
     pongText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
-    pongNavButton : "font-sixtyfour text-[28px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 cursor-pointer hover:cursor-pointer",
+    pongNavButton : "font-sixtyfour text-[28px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
 
     // TETRIS
 
-    tetrisLogo : "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-yellow-600 text-shadow-md text-shadow-white/50",
-    tetrisTitre : "font-sixtyfour text-[80px] flex items-center justify-center h-full w-full text-yellow-600",  
-    tetrisNav0 : "flex flex-col items-center justify-center",
+    tetrisLogo : "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-yellow-600 text-shadow-lg text-shadow-stone-900/40",
+    tetrisTitre : "font-sixtyfour text-[42px] flex items-center justify-center text-yellow-600 text-shadow-lg text-shadow-stone-900/40",
+    tetrisNav0 : "flex flex-col items-center justify-center fade-in-up",
     tetrisNav1 : "flex flex-col items-center justify-center bg-yellow-600 px-[28px] py-[28px] shadow-xl/50",
-    tetrisButton : "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
+    tetrisButton :   "font-sixtyfour text-[14px] text-black bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
+    //tetrisButton : "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
     tetrisText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
-    tetrisNavButton : "font-sixtyfour text-[28px] text-black bg-slate-200 hover:bg-lime-50 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 shadow-xl/30",
+    tetrisNavButton : "font-sixtyfour text-[28px] text-black bg-slate-200 hover:bg-lime-50 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
+    //tetrisNavButton : "font-sixtyfour text-[28px] text-black bg-slate-200 hover:bg-lime-50 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 shadow-xl/30",
 
     tetrisSettingTitle : "font-sixtyfour text-[24px] text-yellow-600 font-medium text-left",
     tetrisSelect : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer w-full",
     tetrisKeybindingsName : "font-sixtyfour text-[14px] text-black font-medium text-right",
     tetrisKeybindingsKey : "font-sixtyfour text-[14px] text-lime-5 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer",
     
+    // body
+    //html_body : "m-0 h-full overflow-x-hidden",
+
+    // zoneTop
+    // zoneTop : "absolute fixed left-0 top-0 w-full h-[30px] z-10 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
+    //immanenceLogo : "h-full w-auto ml-[10px] float-left",
 
 
 }

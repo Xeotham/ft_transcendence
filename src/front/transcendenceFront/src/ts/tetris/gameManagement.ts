@@ -1,8 +1,8 @@
-import { loadTetrisHtml } from "./tetrisHTML.ts";
 import {bgmPlayer, roomInfo, sfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
 import { address } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
+import { tetrisBoardHtml } from "./tetrisHTML.ts";
 // @ts-ignore
 import page from "page";
 
@@ -72,7 +72,7 @@ export const    arcadeGame = () => {
 
 	socketInit(socket);
 	tetrisGameInformation.setSocket(socket);
-	loadTetrisHtml("board");
+	tetrisBoardHtml();
 	window.addEventListener("beforeunload", () => {
 		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
 		if (tetrisGameInformation.getSocket()) {
@@ -249,7 +249,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			tetrisGameInformation.setGameId(res.game.gameId);
 			bgmPlayer.choseBgm("bgm1");
 			// bgmPlayer.play();
-			loadTetrisHtml("board");
+			tetrisBoardHtml();
 			loadTetrisPage("board");
 			gameControllers();
 			return ;
