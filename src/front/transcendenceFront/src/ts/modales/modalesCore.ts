@@ -3,13 +3,13 @@
 
 import { EL } from '../zone/zoneHTML.ts';
 
-import { modaleSignInHTML } from './modalesSignInHTML.ts';
-import { modaleSignUpHTML } from './modalesSignUpHTML.ts';
-import { modaleProfileHTML } from './modalesProfileHTML.ts';
-import { modalePongStatHTML } from './modalesPongStatHTML.ts';
-import { modaleTetrisStatHTML } from './modalesTetrisStatHTML.ts';
-import { modaleTetrisStatDetailHTML } from './modalesTetrisStatDetailHTML.ts';
-import { modaleAvatarHTML } from './modalesAvatarHTML.ts';
+import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
+import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
+import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
+import { modalePongStatHTML, modalePongStatEvents } from './modalesPongStatHTML.ts';
+import { modaleTetrisStatHTML, modaleTetrisStatEvents, modaleTetrisStatLineEvents } from './modalesTetrisStatHTML.ts';
+import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
+import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
 
 ///////////////////////////////////////////
 // Variables
@@ -39,7 +39,16 @@ export const modaleInit = () => {
   modale.show = false;
   modale.zone = EL.zoneModale as HTMLDivElement;
   modale.content = EL.contentModale as HTMLDivElement;
-  modaleHide();
+
+  const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
+  if (!bkgModale) 
+    return;
+  bkgModale.addEventListener('click', () => {
+    modaleHide();
+  });
+
+  //modaleHide();
+  modaleDisplay(ModaleType.SIGNIN);
 }
 
 export const modaleDisplay = (modaleType: ModaleType) => {
@@ -48,19 +57,34 @@ export const modaleDisplay = (modaleType: ModaleType) => {
   modale.type = modaleType;
   switch (modaleType) {
     case ModaleType.SIGNIN:
-      modale.content.innerHTML = modaleSignInHTML; break;
+      modale.content.innerHTML = modaleSignInHTML(); 
+      modaleSignInEvents();
+      break;
     case ModaleType.SIGNUP:
-      modale.content.innerHTML = modaleSignUpHTML; break;
+      modale.content.innerHTML = modaleSignUpHTML(); 
+      modaleSignUpEvents();
+      break;
     case ModaleType.PROFILE:
-      modale.content.innerHTML = modaleProfileHTML; break;
+      modale.content.innerHTML = modaleProfileHTML(); 
+      modaleProfileEvents();
+      break;
     case ModaleType.PONG_STATS:
-      modale.content.innerHTML = modalePongStatHTML; break;
+      modale.content.innerHTML = modalePongStatHTML(0); 
+      modalePongStatEvents();
+      break;
     case ModaleType.TETRIS_STATS:
-      modale.content.innerHTML = modaleTetrisStatHTML; break;
+      modale.content.innerHTML = modaleTetrisStatHTML(0); 
+      modaleTetrisStatEvents();
+      modaleTetrisStatLineEvents();
+      break;
     case ModaleType.TETRIS_STATS_DETAIL:
-      modale.content.innerHTML = modaleTetrisStatDetailHTML; break;
+      modale.content.innerHTML = modaleTetrisStatDetailHTML(42); // TODO: mettre id de la partie
+      modaleTetrisStatDetailEvents();
+      break;
     case ModaleType.AVATAR:
-      modale.content.innerHTML = modaleAvatarHTML; break;
+      modale.content.innerHTML = modaleAvatarHTML();
+      modaleAvatarEvents();
+      break;
     default:
       modale.content.innerHTML = '';
   }
@@ -71,7 +95,6 @@ export const modaleDisplay = (modaleType: ModaleType) => {
   }
   modale.zone.classList.add('block');
   modale.show = true;
-  modaleAddCloseIcon(); // a tester
 }
 
 export const modaleHide = () => {
@@ -86,52 +109,19 @@ export const modaleHide = () => {
   modale.show = false;
 }
 
-export const modaleAddCloseIcon = () => {
+export const modaleAlert = (message: string) => {
+  const alert = document.getElementById('modaleAlert') as HTMLDivElement;
 
-  /*
-  const closeIcon = document.querySelector<HTMLDivElement>('div[id="closeIcon"]');
-  if (!closeIcon) return;
+  if (!alert)
+    return;
 
-  while (closeIcon.classList.contains('hidden')) {
-    closeIcon.classList.remove('hidden');
-  }
-  closeIcon.classList.add('block');
+  alert.innerHTML = `
+  <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+    <div>
+      ${message}
+    </div>
+  </div>
+  `;
 
-  closeIcon.addEventListener('click', () => {
-    modaleHide();
-  });
-  */
-  document.getElementById('bkgModale')?.addEventListener('click', () => {
-    //document.getElementById('bkgModale')?.removeEventListener('click', () => { });
-    modaleHide();
-  });
-
-  // Ajouter les gestionnaires d'événements pour les liens
-  /*
-  const toRegisterLink = document.querySelector<HTMLAnchorElement>('#to_register_link');
-  if (toRegisterLink) {
-    toRegisterLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      modaleDisplay(ModaleType.SIGNUP);
-    });
-  }
-  */
+  // TODO refresh zone modale avec un timeout ???
 }
-
-export const modaleRemoveCloseIcon = () => {
-  /*
-  const closeIcon = document.querySelector<HTMLDivElement>('div[id="closeIcon"]');
-  if (!closeIcon) return;
-
-  while (closeIcon.classList.contains('block')) {
-    closeIcon.classList.remove('block');
-  }
-  closeIcon.classList.add('hidden');
-  
-  closeIcon.removeEventListener('click', () => { });
-  */
-  document.getElementById('bkgModale')?.removeEventListener('click', () => { });
-}
-
-
-

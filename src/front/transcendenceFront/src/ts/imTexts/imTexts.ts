@@ -1,6 +1,7 @@
 type SupportedLanguages = 'fr' | 'en' | 'de' | 'ja';
 
-import imTextsJson from './imTexts.json';
+import imTextsJsonLoad from './imTexts.json';
+export const imTextsJson = imTextsJsonLoad; 
 export const imTexts: {[key: string]: string} = {};
 export let language: SupportedLanguages = 'fr';
 

@@ -22,7 +22,6 @@ export const	address = import.meta.env.VITE_API_ADDRESS;
 // EL
 export const	EL = {
   app: null as HTMLElement | null,
-  zoneTop: null as HTMLElement | null,
   zonePong: null as HTMLElement | null,
   zoneTetris: null as HTMLElement | null,
   zoneAvatar: null as HTMLElement | null,
@@ -35,7 +34,6 @@ export const	EL = {
   oldVersion: false,
   init: () => {
     EL.app = document.getElementById("app");
-    EL.zoneTop = document.getElementById("zoneTop");
     EL.zonePong = document.getElementById("zonePong");
     EL.zoneTetris = document.getElementById("zoneTetris");
     EL.zoneAvatar = document.getElementById("zoneAvatar");
@@ -47,7 +45,7 @@ export const	EL = {
     EL.bkgTetris = document.getElementById("bkgTetris");
   },
   check: () => {
-    if (EL.app && EL.zoneTop && EL.zonePong && EL.zoneTetris && EL.zoneModale && EL.contentPong && EL.contentTetris && EL.contentModale && EL.bkgPong && EL.bkgTetris && EL.zoneAvatar) {
+    if (EL.app && EL.zonePong && EL.zoneTetris && EL.zoneModale && EL.contentPong && EL.contentTetris && EL.contentModale && EL.bkgPong && EL.bkgTetris && EL.zoneAvatar) {
       return true;
     }
     return false;
@@ -77,9 +75,7 @@ export const setHtmlFront = () => {
     app.classList.add('h-full');
     app.innerHTML = 
     `
-<div name="zoneTop" id="zoneTop" class="${TCS.zoneTop}">
-    <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
-</div>
+
 
 <div name="zonePong" id="zonePong" class="${TCS.zonePong}">
     <div id="contentPong" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
@@ -88,7 +84,7 @@ export const setHtmlFront = () => {
     </div>
 </div>
 
-<div name="zoneTetris" id="zoneTetris" class="${TCS.zoneTetris}">
+<div name="zoneTetris" id="zoneTetris" class="${TCS.zoneTetris} ${TCS.zoneTetrisShadow}">
     <div id="contentTetris" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
     <div id="bkgTetris" class="w-full h-full absolute z-0 flex items-start justify-center">
         <img src="${img_tetris_bkg}" class="w-[1024px] h-[1024px] object-none" />
@@ -109,41 +105,57 @@ export const setHtmlFront = () => {
   `
   }
 
-  setZoneTopTMP(); //TODO: remove
+  //setZoneTopTMP(); //TODO: remove
 
 }
 
-// TODO: remove
-export const setZoneTopTMP = () => {
-  const app = document.getElementById('zoneTop'); if (!app) return;
-
-  app.innerHTML = `
-  <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
-  <span class="font-sixtyfour text-[14px] cursor-pointer hover:cursor-pointer">
-  &nbsp&nbsp&nbsp     
-  <a id="SIGNIN" class="hover:text-yellow-600">SIGNIN</a>&nbsp|
-  <a id="SIGNUP" class="hover:text-yellow-600">SIGNUP</a>&nbsp|
-  <a id="PROFILE" class="hover:text-yellow-600">PROFILE</a>&nbsp|
-  <a id="PONG_STATS" class="hover:text-yellow-600">PONG_STATS</a>&nbsp|
-  <a id="TETRIS_STATS" class="hover:text-yellow-600">TETRIS_STATS</a>&nbsp|
-  <a id="TETRIS_STATS_DETAIL" class="hover:text-yellow-600">TETRIS_STATS_DETAIL</a>&nbsp|
-  <a id="AVATAR" class="hover:text-yellow-600">AVATAR</a>
-  </span>
-  `;
-  document.getElementById('SIGNIN')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.SIGNIN)
-    evAdClickSignIn();});
-  document.getElementById('SIGNUP')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.SIGNUP);
-    evAdClickSignUp()});
-  document.getElementById('PROFILE')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.PROFILE);});
-  document.getElementById('PONG_STATS')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.PONG_STATS);});
-  document.getElementById('TETRIS_STATS')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.TETRIS_STATS);});
-  document.getElementById('TETRIS_STATS_DETAIL')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);}); 
-  document.getElementById('AVATAR')?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.AVATAR);});
+export const setZoneAvatar = (hide: boolean = false) => {
+  if(EL.zoneAvatar) {
+    if(hide) {
+      EL.zoneAvatar.classList.add(TCS.avatarHidden);
+      EL.zoneAvatar.removeEventListener('click', () => {
+      });
+    } else {
+      EL.zoneAvatar.classList.remove(TCS.avatarHidden);
+      EL.zoneAvatar.addEventListener('click', () => {
+        console.log("setZoneAvatar: click");
+        modaleDisplay(ModaleType.PROFILE);
+      });
+    }
+  }
 }
+//
+// // TODO: remove
+// export const setZoneTopTMP = () => {
+//   const app = document.getElementById('zoneTop'); if (!app) return;
+//
+//   app.innerHTML = `
+//   <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
+//   <span class="font-sixtyfour text-[14px] cursor-pointer hover:cursor-pointer">
+//   &nbsp&nbsp&nbsp
+//   <a id="SIGNIN" class="hover:text-yellow-600">SIGNIN</a>&nbsp|
+//   <a id="SIGNUP" class="hover:text-yellow-600">SIGNUP</a>&nbsp|
+//   <a id="PROFILE" class="hover:text-yellow-600">PROFILE</a>&nbsp|
+//   <a id="PONG_STATS" class="hover:text-yellow-600">PONG_STATS</a>&nbsp|
+//   <a id="TETRIS_STATS" class="hover:text-yellow-600">TETRIS_STATS</a>&nbsp|
+//   <a id="TETRIS_STATS_DETAIL" class="hover:text-yellow-600">TETRIS_STATS_DETAIL</a>&nbsp|
+//   <a id="AVATAR" class="hover:text-yellow-600">AVATAR</a>
+//   </span>
+//   `;
+//   document.getElementById('SIGNIN')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.SIGNIN)
+//     evAdClickSignIn();});
+//   document.getElementById('SIGNUP')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.SIGNUP);
+//     evAdClickSignUp()});
+//   document.getElementById('PROFILE')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.PROFILE);});
+//   document.getElementById('PONG_STATS')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.PONG_STATS);});
+//   document.getElementById('TETRIS_STATS')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.TETRIS_STATS);});
+//   document.getElementById('TETRIS_STATS_DETAIL')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);});
+//   document.getElementById('AVATAR')?.addEventListener('click', () => {
+//     modaleDisplay(ModaleType.AVATAR);});
+// }

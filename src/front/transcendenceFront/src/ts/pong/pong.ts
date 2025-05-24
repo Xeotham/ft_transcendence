@@ -105,7 +105,7 @@ const   navTournament = () => {
 	loadPongHtml("nav-tournament");
 
 	document.getElementById("pongTournamentCreate")?.addEventListener("click", getTournamentName);
-	document.getElementById("pongTournamentPlay")?.addEventListener("click", () => { page.show("/pong/list/tournament-info"); });
+	document.getElementById("pongTournamentPlay")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
 	document.getElementById("pongTournamentBack")?.addEventListener("click", () => { page.show("/pong"); });
 }
 

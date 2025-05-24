@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* ANIMATIONS */
 @layer utilities {
     @keyframes fade-in-up {
         from {
@@ -19,6 +20,7 @@
     }
 }
 
+/* FONTS */
 @font-face {
     font-family: 'Fontsona3';
     src: url('../medias/fonts/ttf/Fontsona3FES.ttf') format('truetype');
@@ -99,7 +101,23 @@
 }
 .font-pixelcode { font-family: 'PixelCode', sans-serif; }
 
+/* SELECTION */
 .custom-selection::selection {
     background: #fbbf24; /* Couleur de fond de la sélection */
     /*color: #18181b; */    /* Couleur du texte sélectionné */
+}
+
+
+/* BLINK */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink 1s step-end infinite;
 }

@@ -1,54 +1,86 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
-import closeIconImg from '../../medias/images/modales/croixSlate200.png';
+import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
-export const modalePongStatHTML = `
+let pongStatPage = 0;
 
-  <!-- 
-  <div id="closeIcon" class="${TCS.modaleClose} hidden">
-  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
-  -->
+export const modalePongStatHTML = (page: number) => {
 
-  <div id="titre_pong_stats" class="${TCS.modaleTitre}">
-  ${imTexts.modalesPongStatsTitle}</div>
+  pongStatPage = page;
 
-  <div id="back_pong_stats" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsBack}</div>
+  let PongStatHTML =`
+    <div id="PongStatsTitle" class="${TCS.modaleTitre}">
+    ${imTexts.modalesPongStatsTitle}</div>
 
-  <div class="h-[30px]"></div>
-
-
-  <div id="line0_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine0}</div>
-  <div id="line1_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine1}</div>
-  <div id="line2_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine2}</div>
-  <div id="line3_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine3}</div>
-  <div id="line4_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine4}</div>
-  <div id="line5_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine5}</div>
-  <div id="line6_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine6}</div>
-  <div id="line7_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine7}</div>
-  <div id="line8_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine8}</div>
-  <div id="line9_pong_stats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesPongStatsLine9}</div>
-
-  <div class="h-[10px]"></div>
-
-  <div id="back_pong_stats" class="${TCS.modaleTexte}">
-    <a id="back_pong_stats_link" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsPrev}</a>
-    /
-    <a id="next_pong_stats_link" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsNext}</a>
-  </div>
+    <div id="PongStatsBack" class="${TCS.modaleTexteLink}">
+      ${imTexts.modalesPongStatsBack}</div>
 
     <div class="h-[30px]"></div>
+  `;
 
-`;
+  PongStatHTML += getModalePongStatListHTML(pongStatPage);
+
+  PongStatHTML += `
+    <div class="h-[30px]"></div>
+  </div>
+  `;
+
+  return PongStatHTML;
+}
+
+const getModalePongStatListHTML = (page: number) => {
+
+  let listHTML = ``;
+
+  console.log("getModalePongStatListHTML", page); // TODO: enlever
+
+  for (let i = 0; i < 10; i++) {
+    listHTML += `
+    <div id="pongStatLine${i}" class="${TCS.modaleTexte}">
+    ${imTexts[`modalesPongStatsLine${i}`]}</div>
+    `;
+  }
+
+  listHTML += `  <div class="h-[10px]"></div>
+
+  <div id="PongStatsPrevNext" class="${TCS.modaleTexte}">
+    <a id="PongStatsPrev" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsPrev}</a>
+    /
+    <a id="PongStatsNext" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsNext}</a>
+  </div>`;
+
+  listHTML += `
+  <div class="h-[10px]"></div>
+  `;
+
+  return listHTML;
+}
+
+export const modalePongStatEvents = () => {
+
+  const PongStatsBack = document.getElementById('PongStatsBack') as HTMLAnchorElement;
+  const PongStatsPrev = document.getElementById('PongStatsPrev') as HTMLAnchorElement;
+  const PongStatsNext = document.getElementById('PongStatsNext') as HTMLAnchorElement;
+
+  if (!PongStatsBack || !PongStatsPrev || !PongStatsNext)
+    return;
+  
+
+  PongStatsBack.addEventListener('click', () => {
+    modaleDisplay(ModaleType.PROFILE);
+  });
+
+  PongStatsPrev.addEventListener('click', () => {
+    if (pongStatPage <= 0)
+      return;
+    modalePongStatHTML(--pongStatPage);
+  });
+
+  PongStatsNext.addEventListener('click', () => {
+    if (pongStatPage >= 10) // TODO: remplacer par le nombre de pages
+      return;
+    modalePongStatHTML(++pongStatPage);
+  });
+}

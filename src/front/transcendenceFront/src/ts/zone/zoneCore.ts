@@ -4,6 +4,7 @@
 import  page from "page"
 // HTML
 import { EL } from './zoneHTML.ts';
+import { TCS } from '../TCS.ts';
 import { loadPongPage } from '../pong/pong.ts';
 import { loadTetrisPage } from '../tetris/tetris.ts';
 
@@ -24,7 +25,6 @@ import {
  } from './zoneEvents.ts'
 // Modales
 import { modaleHide } from '../modales/modalesCore.ts';
-//import { modale_signin, modale_signup } from '../modales/modalesHTML.ts';
 
 ///////////////////////////////////////////
 // Variables
@@ -170,8 +170,8 @@ const zoneSetPONG = () => {
   evRemClickPong();
   evRemOverTetris();
   evAdClickTetris();
-  if (EL.zonePong ) { EL.zonePong.style.cursor = "default"; }
-  if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "pointer"; }
+  if (EL.zonePong ) EL.zonePong.style.cursor = "default";
+  if (EL.zoneTetris) EL.zoneTetris.style.cursor = "pointer";
 
   modaleHide();
 
@@ -188,8 +188,8 @@ const zoneSetTETRIS = () => {
   evAdClickPong();
   evRemOverTetris();
   evRemClickTetris();
-  if (EL.zonePong ) { EL.zonePong.style.cursor = "pointer"; }
-  if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "default"; }
+  if (EL.zonePong ) EL.zonePong.style.cursor = "pointer";
+  if (EL.zoneTetris) EL.zoneTetris.style.cursor = "default";
 
   modaleHide();
 

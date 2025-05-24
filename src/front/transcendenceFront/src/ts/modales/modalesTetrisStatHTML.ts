@@ -1,14 +1,14 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
-import closeIconImg from '../../medias/images/modales/croixSlate200.png';
+import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
-export const modaleTetrisStatHTML = `
+let tetrisStatPage = 0;
 
-  <!-- 
-  <div id="closeIcon" class="${TCS.modaleClose} hidden">
-  <img src="${closeIconImg}" class="w-[10px] h-[10px]"/></div>
-  -->
+export const modaleTetrisStatHTML = (page: number) => {
+  
+  tetrisStatPage = page;
 
+  let TetrisStatHTML = `
   <div id="tetrisStatsTitle" class="${TCS.modaleTitre}">
   ${imTexts.modalesTetrisStatsTitle}</div>
 
@@ -16,51 +16,94 @@ export const modaleTetrisStatHTML = `
     ${imTexts.modalesTetrisStatsBack}</div>
 
   <div class="h-[30px]"></div>
+  `;
 
-  <div id="tetrisBestScore" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsBestScore}</div>
+  TetrisStatHTML += getModaleTetrisStatListHTML(tetrisStatPage);
 
-  <div class="h-[30px]"></div>
+  TetrisStatHTML += `
+    <div class="h-[30px]"></div>
+  `;
 
-  <div id="tetrisStatsLine0" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine0}
-  <a id="tetrisStatsLineLink0" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
+  return TetrisStatHTML;
+}
 
-  <div id="tetrisStatsLine1" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine1}
-  <a id="tetrisStatsLineLink1" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
 
-  <div id="tetrisStatsLine2" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine2}
-  <a id="tetrisStatsLineLink2" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
+const getModaleTetrisStatListHTML = (page: number) => {
+  
+  let listHTML = ``;
 
-  <div id="tetrisStatsLine3" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine3}
-  <a id="tetrisStatsLineLink3" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
+  console.log("getModaleTetrisStatListHTML", page); // TODO: enlever
 
-  <div id="tetrisStatsLine4" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine4}
-  <a id="tetrisStatsLineLink4" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
+  listHTML += `
+    <div id="tetrisBestScore" class="${TCS.modaleTexte}">
+    ${imTexts.modalesTetrisStatsBestScore}</div>
+    
+    <div class="h-[30px]"></div>
+  `;
 
-  <div id="tetrisStatsLine5" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine5}
-  <a id="tetrisStatsLineLink5" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
+  for (let i = 0; i < 10; i++) {
+    listHTML += `
+    <div id="tetrisStatsLine${i}" class="${TCS.modaleTexte}">
+      ${imTexts[`modalesTetrisStatsLine${i}`]}
+      <a id="tetrisStatsLineLink${i}" class="${TCS.modaleTexteLink}">
+      ${imTexts.modalesTetrisStatsLinkName}
+      </a></div>
+    `;
+  } 
 
-  <div id="tetrisStatsLine6" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine6}
-  <a id="tetrisStatsLineLink6" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
-
-  <div id="tetrisStatsLine7" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine7}
-  <a id="tetrisStatsLineLink7" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
-
-  <div id="tetrisStatsLine8" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine8}
-  <a id="tetrisStatsLineLink8" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
-
-  <div id="tetrisStatsLine9" class="${TCS.modaleTexte}">${imTexts.modalesTetrisStatsLine9}
-  <a id="tetrisStatsLineLink9" class="${TCS.modaleTexteLink}">${imTexts.modalesTetrisStatsLinkName}</a></div>
-
+  listHTML += `
   <div class="h-[10px]"></div>
-
-  <div id="tetrisStatsBackNext" class="${TCS.modaleTexte}">
-    <a id="tetrisStatsBackLink" class="${TCS.modaleTexteLink}">
+  `
+  listHTML += `
+  <div id="tetrisStatsPrevNext" class="${TCS.modaleTexte}">
+    <a id="tetrisStatsPrev" class="${TCS.modaleTexteLink}">
     ${imTexts.modalesTetrisStatsPrev}</a>
     /
-    <a id="tetrisStatsNextLink" class="${TCS.modaleTexteLink}">
+    <a id="tetrisStatsNext" class="${TCS.modaleTexteLink}">
     ${imTexts.modalesTetrisStatsNext}</a>
   </div>
+  `;
 
-    <div class="h-[30px]"></div>
+  return listHTML;
+}
 
-`;
+export const modaleTetrisStatEvents = () => {
+  const tetrisStatsBack = document.getElementById('tetrisStatsBack') as HTMLAnchorElement;
+  const tetrisStatsPrev = document.getElementById('tetrisStatsPrev') as HTMLAnchorElement;
+  const tetrisStatsNext = document.getElementById('tetrisStatsNext') as HTMLAnchorElement;
+
+  if (!tetrisStatsBack || !tetrisStatsPrev || !tetrisStatsNext)
+    return;
+  
+
+  tetrisStatsBack.addEventListener('click', () => {
+    console.log('tetrisStatsBack');
+    modaleDisplay(ModaleType.PROFILE);
+    modaleTetrisStatLineEvents();
+  });
+
+  tetrisStatsPrev.addEventListener('click', () => {
+    if (tetrisStatPage <= 0)
+      return;
+    modaleTetrisStatHTML(--tetrisStatPage);
+    modaleTetrisStatLineEvents();
+  });
+
+  tetrisStatsNext.addEventListener('click', () => {
+    if (tetrisStatPage >= 10) // TODO: remplacer par le nombre de pages
+      return;
+    modaleTetrisStatHTML(++tetrisStatPage);
+  });
+}
+
+export const modaleTetrisStatLineEvents = () => {
+
+  for (let i = 0; i < 10; i++) {
+    const tetrisStatsLine = document.getElementById(`tetrisStatsLine${i}`) as HTMLAnchorElement;
+    if (!tetrisStatsLine)
+      return;
+    tetrisStatsLine.addEventListener('click', () => {
+      modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);
+    });
+  }
+}
