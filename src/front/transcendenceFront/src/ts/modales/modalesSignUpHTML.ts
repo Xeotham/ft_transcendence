@@ -3,9 +3,6 @@ import { imTexts } from '../imTexts/imTexts.ts';
 
 import closeIconImg from '../../medias/images/modales/croixSlate200.png';
 import { modaleAlert } from './modalesCore.ts';
-import {postToApi} from "../utils.ts";
-import {address} from "../immanence.ts";
-import page from 'page';
 
 export const modaleSignUpHTML = () => {
 
@@ -19,8 +16,8 @@ export const modaleSignUpHTML = () => {
 
   <form id="signupForm" class="${TCS.form} w-full">
     <div id="signupUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
-        <input type="text" name="signupUsername" id="signupUsername" class="${TCS.formInput}" placeholder=" " required />
-        <label for="signupUsername" name="signupUsernameLabel" id="signupUsernameLabel" class="${TCS.formLabel}">
+        <input type="text" name="signinUsername" id="signinUsername" class="${TCS.formInput}" placeholder=" " required />
+        <label for="signinUsername" name="signinUsernameLabel" id="signinUsernameLabel" class="${TCS.formLabel}">
         ${imTexts.modalesSignupUsername}</label>
     </div>
     <div id="signupPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
@@ -55,32 +52,11 @@ export const modaleSignUpEvents = () => {
     return;
   
   signupForm.addEventListener('submit', (event: SubmitEvent) => {
-      event.preventDefault();
 
-      const username = (document.getElementById("signupUsername") as HTMLInputElement).value;
-      const password = (document.getElementById("signupPassword") as HTMLInputElement).value;
-      const confirmPassword = (document.getElementById("signupPasswordConfirm") as HTMLInputElement).value;
-      // const avatar = (document.getElementById("avatar") as HTMLInputElement).value;
-      const avatar = "sss";
-      console.log(username, password, confirmPassword, avatar);
+    // TODO: ajouter les événements pour le formulaire de connexion 
 
-      if (password !== confirmPassword) {
-          modaleAlert("Passwords do not match");
-          return;
-      }
-
-      const data = {username: username, password: password, avatar: avatar};
-
-      postToApi(`http://${address}/api/user/register`, data)
-          .then(() => {
-              // console.log("User registered successfully");
-              alert("Registered successfully!");
-              page.show("/login");
-          })
-          .catch((error) => {
-              console.error("Error signing up:", error.status, error.message);
-              modaleAlert(error.message);
-          });
+    event.preventDefault(); // TODO: supprimer
+    modaleAlert("<span class='blink'>ALERT:</span><br>Quoi vous avez encore appuye... pauvre <b>fou</b>..."); // TODO: supprimer
   });
 
 }
