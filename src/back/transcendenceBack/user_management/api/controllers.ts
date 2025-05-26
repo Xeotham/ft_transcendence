@@ -7,10 +7,11 @@ import { createStats, getStatsById, updateStats } from '../../database/models/St
 import { request } from 'http';
 import { createUserGameStatsPong, createUserGameStatsTetris, getUserStatsGame, getUserGameHistory, getGameDetailsById } from '../../database/models/GamesUsers';
 import { getMessageById, saveMessage } from '../../database/models/Message';
-import { saveGame } from '../../database/models/Game';
+import { saveGame, getGameById } from '../../database/models/Game';
 import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
+import {player} from "../../pong_app/utils";
 
 interface Users {
     id?:            number;
@@ -412,9 +413,9 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 /* Game */
 
 // createGame modified
-export const createPongGame = (players: any, score: any, winner: any, solo: boolean, bot: boolean) =>
+export const createPongGame = (players: {player1: player | null, player2: player | null}, score: any, winner: player | null, solo: boolean, bot: boolean) =>
 {
-    console.log(players.player1.username, score.player1.score, winner.player.username, solo);
+    console.log(players.player1?.username, score, winner?.username, solo);
     if (solo === true && bot === false)
     {
         console.log("return solo game");
@@ -423,7 +424,7 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
 
     if (bot === true)
     {
-        const   player1 = getUserByUsername(players.player1.username) as Users;
+        const   player1 = getUserByUsername(players.player1?.username!) as Users;
 
         if (!player1)
         {
@@ -439,17 +440,18 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
 
             const gameId = saveGame("");
 
-            if (winner.player)
+            if (winner === players.player1)
                 createUserGameStatsPong(player1.id, gameId, score.player1, true, "pong");
             else
                 createUserGameStatsPong(player1.id, gameId, score.player1, false, "pong");
+            updateStats(player1.id);
             console.log("return bot game");
         }
     }
     else
     {
-        const   player1 = getUserByUsername(players.player1.username) as Users;
-        const   player2 = getUserByUsername(players.player2.username) as Users;
+        const   player1 = getUserByUsername(players.player1?.username!) as Users;
+        const   player2 = getUserByUsername(players.player2?.username!) as Users;
 
         if (!player1 || !player2)
             return ;
@@ -461,8 +463,8 @@ export const createPongGame = (players: any, score: any, winner: any, solo: bool
 
             const gameId = saveGame("");
 
-            createUserGameStatsPong(player1.id, gameId, score.player1, players.player1.username === winner.player.username, "pong");
-            createUserGameStatsPong(player2.id, gameId, score.player2, players.player2.username === winner.player.username, "pong");
+            createUserGameStatsPong(player1.id, gameId, score.player1, players.player1?.username === winner?.username, "pong");
+            createUserGameStatsPong(player2.id, gameId, score.player2, players.player2?.username === winner?.username, "pong");
 
             updateStats(player1.id);
             updateStats(player2.id);
@@ -561,6 +563,11 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
         const gamesId = getUserGameHistory(user.id);
         const fullGameHistory = await Promise.all(gamesId.map(async (id) => {
             const gameDetails = await getGameDetailsById(id); // Pass individual ID
+            gameDetails.forEach((gameDetail) => {
+                gameDetail.username = getUsernameById(gameDetail.userId);
+                gameDetail.userId = -1;
+                gameDetail.date = getGameById(id)?.date!;
+            })
             return { gameId: id, players: gameDetails };
         }));
         // history: added

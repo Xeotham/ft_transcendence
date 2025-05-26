@@ -1,6 +1,8 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay, modaleAlert } from './modalesCore.ts';
+import {postToApi} from "../utils.ts";
+import {address, user} from "../immanence.ts";
 
 
 export const modaleSignInHTML = () => {
@@ -54,11 +56,23 @@ export const modaleSignInEvents = () => {
   // TODO: enlever les événements modaleBKG pour ne pas pouvoir cliquer sur le fond et fermer la modale
 
   signinForm.addEventListener('submit', (event: SubmitEvent) => {
+    event.preventDefault();
 
-    // TODO: ajouter les événements pour le formulaire de connexion 
+    const   username = (document.getElementById("signinUsername") as HTMLInputElement).value;
+    const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
 
-    event.preventDefault(); // TODO: supprimer
-    modaleAlert("Vous avez appuye sur le bouton, dommage..."); // TODO: supprimer
+    const   data = { username: username, password:  password };
+    console.log(data);
+    postToApi(`http://${address}/api/user/login`, data)
+        .then(() => {
+          localStorage.setItem("username", username);
+          user.setUsername(username);
+          alert("User signed in successfully!");
+        })
+        .catch((error) => {
+          console.error("Error logging in:", error.status, error.message);
+          modaleAlert(error.message);
+        });
   });
 
   signinRegisterLink.addEventListener('click', () => {
