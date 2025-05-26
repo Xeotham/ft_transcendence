@@ -97,8 +97,8 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
     if (!user || !(await bcrypt.compare(password, user.password)))
         return reply.status(401).send({ message: 'Invalid username or password' });
 
-    if (user?.connected)
-        return reply.status(401).send({ message: 'User already connected' });
+    // if (user?.connected)
+    //     return reply.status(401).send({ message: 'User already connected' });
 
     logUserById(user.id as number);
 

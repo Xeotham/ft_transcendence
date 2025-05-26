@@ -10,7 +10,7 @@ import { joinRoom } from "../tetris/gameManagement.ts";
 import  { loadPongPage } from "../pong/pong.ts";
 import  { getTournamentInfo, getTourRoomInfo, listTournaments } from "../pong/tournament.ts";
 import  { getRoomInfo, listRoomsSpectator } from "../pong/spectate.ts";
-import {loginUser, signUpUser} from "../userManagement/userManagement.ts";
+// import {loginUser, signUpUser} from "../userManagement/userManagement.ts";
 //import { userKeys } from "../tetris/tetris.ts";
 
 // Start the router
