@@ -29,3 +29,15 @@ export const saveGame = (date: string): number =>
         return result.lastInsertRowid as number;
     }
 };
+
+export const getGameById = (id: number): Game | null =>
+{
+    const stmt = db.prepare(`
+        SELECT id, date
+        FROM game
+        WHERE id = ?
+        `);
+
+    const gameDetails = stmt.get(id) as Game;
+    return gameDetails;
+}

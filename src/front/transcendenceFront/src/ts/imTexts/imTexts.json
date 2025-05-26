@@ -22,8 +22,10 @@
         "username": "B3n05",
         "userEdit": "éditer",
         "deconect": "déconecter",
-        "pongStats": "50 victoires pour 100 parties.",
-        "tetrisStats": "Meilleur score : 1000000pt",
+        "winrate" : "Ratio",
+        "victories": "Victoires",
+        "defeats": "Défaites",
+        "bestScore": "Meilleur score",
         "pongStatsLink": "Voir plus de Stats Pong",
         "tetrisStatsLink": "Voir plus de Stats Tetris"
       },

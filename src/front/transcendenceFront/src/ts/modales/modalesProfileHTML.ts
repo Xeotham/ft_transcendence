@@ -2,9 +2,23 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
-import avatarImg from '../../medias/avatars/avatar1.png'; // TODO: remplacer par l'avatar de l'utilisateur
+import avatarImg from '../../medias/avatars/avatar1.png';
+import {getFromApi} from "../utils.ts";
+import {address, user} from "../immanence.ts";
 
-export const modaleProfileHTML = () => {
+const pongWinRate = async () => {
+  const stats = await getFromApi(`http://${address}/api/user/get-stat?username=${user.getUsername()}`);
+  const victories: number = stats.stats.pongWin;
+  let defeats: number = stats.stats.pongLose;
+  return `${imTexts.modalesProfileWinrate}: ${victories} ${imTexts.modalesProfileVictories} / ${defeats} ${imTexts.modalesProfileDefeats}`;
+}
+
+const tetrisBestScore = (score: number) => {
+  return `${imTexts.modalesProfileBestScore}: ${score}pts`;
+}
+
+
+export const modaleProfileHTML = async () => {
 
   let ProfileHTML = `
       
@@ -28,7 +42,7 @@ export const modaleProfileHTML = () => {
   
   <span class="${TCS.modaleTexte} text-[24px]">Pong</span>
   <div id="modalePongStats" class="${TCS.modaleTexte}">
-  ${imTexts.modalesProfilePongStats}</div>
+  ${await pongWinRate()}</div>
   <div id="modalePongStatsLink" class="${TCS.modaleTexteLink}">
   ${imTexts.modalesProfilePongStatsLink}</div>
 
@@ -36,7 +50,7 @@ export const modaleProfileHTML = () => {
 
   <span class="${TCS.modaleTexte} text-[24px]">Tetris</span>
   <div id="modaleTetrisStats" class="${TCS.modaleTexte}">
-    ${imTexts.modalesProfileTetrisStats}
+    ${tetrisBestScore(1000)}
   </div>
   <div id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
   ${imTexts.modalesProfileTetrisStatsLink}</div>

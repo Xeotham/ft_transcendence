@@ -11,6 +11,8 @@ interface GamesUsers
 
 interface GameUserInfo 
 {
+	date: 	 string;
+	username ?: string;
 	userId: number;
 	score: 	number;
 	winner: boolean;
@@ -86,7 +88,7 @@ export const getUserGameHistory = (userId: number): number[] =>
 	return rows.map(row => row.gameId);
 };
 
-export const getGameDetailsById = (gameId: number): GameUserInfo[] => 
+export const getGameDetailsById = (gameId: number): GameUserInfo[] =>
 {
 	const stmt = db.prepare(`
 		SELECT userId, score, winner, type, gameTime, maxCombo, piecesPlaced, piecesPerSecond, attacksSent, attacksSentPerMinute, attacksReceived, attacksReceivedPerMinute, keysPressed, keysPerPiece, keysPerSecond, holds, linesCleared, linesPerMinute, maxB2b, perfectClears, single, double, triple, quad, tspinZero, tspinSingle, tspinDouble, tspinTriple, tspinQuad, miniTspinZero, miniTspinSingle, miniSpinZero, miniSpinSingle, miniSpinDouble, miniSpinTriple, miniSpinQuad

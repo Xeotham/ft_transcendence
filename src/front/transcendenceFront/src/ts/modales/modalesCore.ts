@@ -6,7 +6,7 @@ import { EL } from '../zone/zoneHTML.ts';
 import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
-import { modalePongStatHTML, modalePongStatEvents } from './modalesPongStatHTML.ts';
+import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
 import { modaleTetrisStatHTML, modaleTetrisStatEvents, modaleTetrisStatLineEvents } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
@@ -51,7 +51,7 @@ export const modaleInit = () => {
   modaleDisplay(ModaleType.SIGNIN);
 }
 
-export const modaleDisplay = (modaleType: ModaleType) => {
+export const modaleDisplay = async (modaleType: ModaleType) => {
   if (!modale.content || !modale.zone || modale.type === modaleType) { return; }
 
   modale.type = modaleType;
@@ -65,10 +65,11 @@ export const modaleDisplay = (modaleType: ModaleType) => {
       modaleSignUpEvents();
       break;
     case ModaleType.PROFILE:
-      modale.content.innerHTML = modaleProfileHTML(); 
+      modale.content.innerHTML = await modaleProfileHTML();
       modaleProfileEvents();
       break;
     case ModaleType.PONG_STATS:
+      await loadPongStat();
       modale.content.innerHTML = modalePongStatHTML(0); 
       modalePongStatEvents();
       break;
