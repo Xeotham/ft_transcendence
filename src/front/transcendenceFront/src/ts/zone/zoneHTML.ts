@@ -8,7 +8,7 @@ import img_logo_immanence from '/src/medias/images/zones/flamingtext_3.png';
 import img_pong_bkg from '/src/medias/images/zones/fond_test_pong.png';
 import img_tetris_bkg from '/src/medias/images/zones/fond_test_tetris.png';
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
-import {loadPongTextures} from "../pong/pong.ts";
+// import {loadPongTextures} from "../pong/pong.ts";
 
 //TMP
 import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
@@ -60,7 +60,7 @@ export const	EL = {
 // definir une palce pour le chargement des medias
 export const awaitMedias = async () => {
 	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
-    await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
+    // await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
 }
 
 export const setHtmlFront = () => {

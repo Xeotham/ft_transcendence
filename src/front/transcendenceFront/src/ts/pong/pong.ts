@@ -6,7 +6,7 @@ import {
 	loadHtmlArg,
 	gameInformation,
 	boardWidth,
-	boardHeight, ballSize
+	boardHeight, ballSize, pongTextureHandler
 } from "./utils.ts";
 import {createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit} from "./game.ts";
 import {getTournamentName} from "./tournament.ts";
@@ -204,55 +204,56 @@ const   confirmPage = () => {
 
 
 
-
-export const pongTextures: { [key: string]: HTMLImageElement } = {};
-
-export const loadPongTextures = () => {
-
-	const   texturePaths = {
-		"BACKGROUND": '/src/medias/textures/pong/background.jpg',
-		"BOARD": '/src/medias/textures/pong/pongBoard.png',
-		"PADDLE": '/src/medias/textures/pong/pongPaddle.png',
-		"BALL": '/src/medias/textures/pong/pongBall.png',
-	}
-
-	return Promise.all(
-		Object.entries(texturePaths).map(([key, path]) => {
-			return new Promise<void>((resolve, reject) => {
-				const img = new Image();
-				// console.log(`Loading texture: ${key} from ${path}`);
-				img.src = path;
-				img.onload = () => {
-					pongTextures[key] = img;
-					resolve();
-				};
-				img.onerror = (err) => {
-					console.error(`Failed to load texture: ${key} from ${path}`, err);
-					reject(err)
-				};
-				// console.log(tetrisTextures[key]);
-			});
-		})
-	);
-};
+//
+// export const pongTextures: { [key: string]: HTMLImageElement } = {};
+//
+// export const loadPongTextures = () => {
+//
+// 	const   texturePaths = {
+// 		"BACKGROUND": '/src/medias/textures/pong/background.jpg',
+// 		"BOARD": '/src/medias/textures/pong/pongBoard.png',
+// 		"PADDLE": '/src/medias/textures/pong/pongPaddle.png',
+// 		"BALL": '/src/medias/textures/pong/pongBall.png',
+// 	}
+//
+// 	return Promise.all(
+// 		Object.entries(texturePaths).map(([key, path]) => {
+// 			return new Promise<void>((resolve, reject) => {
+// 				const img = new Image();
+// 				// console.log(`Loading texture: ${key} from ${path}`);
+// 				img.src = path;
+// 				img.onload = () => {
+// 					pongTextures[key] = img;
+// 					resolve();
+// 				};
+// 				img.onerror = (err) => {
+// 					console.error(`Failed to load texture: ${key} from ${path}`, err);
+// 					reject(err)
+// 				};
+// 				// console.log(tetrisTextures[key]);
+// 			});
+// 		})
+// 	);
+// };
 
 
 const   drawBackground = (ctx: CanvasRenderingContext2D, width: number, height: number ) => {
 	ctx.clearRect(0, 0, width, height);
-	ctx.drawImage(pongTextures["BACKGROUND"], 0, 0, width, height);
+	ctx.drawImage(pongTextureHandler.getTexture("BACKGROUND") as HTMLImageElement, 0, 0, width, height);
 }
 
 const   drawBoard = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
 	// console.log(coord);
-	ctx.drawImage(pongTextures["BOARD"], coord.x, coord.y - 3, boardWidth, boardHeight + 6);
+	ctx.drawImage(pongTextureHandler.getTexture("BOARD") as HTMLImageElement, coord.x, coord.y - 3, boardWidth, boardHeight + 6);
 }
 
 const   drawPaddle = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
-	ctx.drawImage(pongTextures["PADDLE"], coord.x, coord.y, pongTextures["PADDLE"].width, pongTextures["PADDLE"].height);
+	const   paddleTexture = pongTextureHandler.getTexture("PADDLE") as HTMLImageElement;
+	ctx.drawImage(paddleTexture, coord.x, coord.y, paddleTexture.width, paddleTexture.height);
 }
 
 const   drawBall = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
-	ctx.drawImage(pongTextures["BALL"], coord.x, coord.y, ballSize * 2, ballSize * 2)
+	ctx.drawImage(pongTextureHandler.getTexture("BALL") as HTMLImageElement, coord.x, coord.y, ballSize * 2, ballSize * 2)
 }
 
 const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }, canvas: HTMLCanvasElement) => {

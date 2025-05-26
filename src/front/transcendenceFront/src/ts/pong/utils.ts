@@ -1,5 +1,6 @@
 import {PongRoom} from "./game.ts";
 import {Tournament} from "./tournament.ts";
+import {pongTextures} from "./pong.ts";
 
 
 export const    pongSfxPlayer = new class {
@@ -49,23 +50,58 @@ export const    pongPackHandler = new class {
 	}
 	getPack() { return this.pack; }
 }
-// export const    pongTextureHandler = new class {
-// 	private pack: string;
-// 	private textures: {[key: string]: {[key: string]: HTMLImageElement}};
-// 	constructor() {
-// 		this.pack = "retro";
-// 		this.textures = {
-// 			"retro": {
-// 				"BACKGROUND": new Image(),
-// 				"BOARD": "/src/medias/sfx/pong/retro/pongBoard.png",
-// 				"PADDLE": "/src/medias/sfx/pong/pongPaddle.png",
-// 				"BALL": "/src/medias/sfx/pong/pongBall.png",
-// 			},
-// 		}
-// 		this.textures["retro"]["BACKGROUND"].src = "/src/medias/sfx/pong/retro/pongBackground.png";
-//
-// 	}
-// }
+export const    pongTextureHandler = new class {
+	private pack: string;
+	private textures: {[key: string]: {[key: string]: HTMLImageElement}};
+	constructor() {
+		this.pack = "retro";
+		this.textures = {};
+		this.generateTextures();
+	}
+	private generateTextures() {
+		const   texturePaths = {
+			"retro": {
+				"BACKGROUND": '/src/medias/textures/pong/retro/background.png',
+				"BOARD": '/src/medias/textures/pong/retro/pongBoard.png',
+				"PADDLE": '/src/medias/textures/pong/retro/pongPaddle.png',
+				"BALL": '/src/medias/textures/pong/retro/pongBall.png',
+			}
+		}
+
+		return Promise.all(
+			Object.entries(texturePaths).map(([pack, path]) => {
+				this.textures[pack] = {};
+				Object.entries(path).map(([key, path]) => {
+					return new Promise<void>((resolve, reject) => {
+						const img = new Image();
+						// console.log(`Loading texture: ${key} from ${path}`);
+						img.src = path;
+						img.onload = () => {
+							this.textures[pack][key] = img;
+							resolve();
+						};
+						img.onerror = (err) => {
+							console.error(`Failed to load texture: ${key} from ${path}`, err);
+							reject(err)
+						};
+					})
+				})
+			})
+		);
+	}
+	getTexture(name: string) {
+		if (this.textures[this.pack] && this.textures[this.pack][name])
+			return this.textures[this.pack][name];
+		else
+			console.error("Texture not found: " + name);
+	}
+	setPack(pack: string) {
+		if (this.textures[pack] !== undefined)
+			this.pack = pack;
+		else
+			console.error("Texture pack not found: " + pack);
+	}
+}
 
 export class   gameInformation {
 	private room: PongRoom | null;
