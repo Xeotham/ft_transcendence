@@ -2,10 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
-import avatarImg from '../../medias/avatars/avatar1.png';
-import {postToApi} from "../utils.ts";
-import {address} from "../immanence.ts"; // TODO: remplacer par l'avatar de l'utilisateur
-import  page from "page";
+import avatarImg from '../../medias/avatars/avatar1.png'; // TODO: remplacer par l'avatar de l'utilisateur
 
 export const modaleProfileHTML = () => {
 
@@ -71,17 +68,7 @@ export const modaleProfileEvents = () => {
   });
 
   profileDeconectLink.addEventListener('click', () => {
-    const user = { username: localStorage.getItem("username")};
-    postToApi(`http://${address}/api/user/logout`, user)
-        .then(() => {
-          localStorage.clear();
-          alert("User signed out successfully!");
-          page.show("/");
-        })
-        .catch((error) => {
-          console.error("Error logging out:", error.status, error.message);
-          alert(error.message);
-        });
+    modaleDisplay(ModaleType.SIGNIN); // TODO: faire une vrai deconnection avec refresh sur la home
   });
 
   modalePongStatsLink.addEventListener('click', () => {

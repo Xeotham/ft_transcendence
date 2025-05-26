@@ -12,7 +12,6 @@ import {loadPongTextures} from "../pong/pong.ts";
 
 //TMP
 import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
-import {evAdClickSignIn, evAdClickSignUp} from "./zoneEvents.ts";
 
 ///////////////////////////////////////////
 // Exports
@@ -124,15 +123,22 @@ export const setZoneAvatar = (hide: boolean = false) => {
     }
   }
 }
-//
-// // TODO: remove
+
+// zoneTop a enlever
+
+// `
+// <div name="zoneTop" id="zoneTop" class="${TCS.zoneTop}">
+//     <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
+// </div>
+// `
+
 // export const setZoneTopTMP = () => {
 //   const app = document.getElementById('zoneTop'); if (!app) return;
-//
+
 //   app.innerHTML = `
 //   <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
 //   <span class="font-sixtyfour text-[14px] cursor-pointer hover:cursor-pointer">
-//   &nbsp&nbsp&nbsp
+//   &nbsp&nbsp&nbsp     
 //   <a id="SIGNIN" class="hover:text-yellow-600">SIGNIN</a>&nbsp|
 //   <a id="SIGNUP" class="hover:text-yellow-600">SIGNUP</a>&nbsp|
 //   <a id="PROFILE" class="hover:text-yellow-600">PROFILE</a>&nbsp|
@@ -143,11 +149,9 @@ export const setZoneAvatar = (hide: boolean = false) => {
 //   </span>
 //   `;
 //   document.getElementById('SIGNIN')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.SIGNIN)
-//     evAdClickSignIn();});
+//     modaleDisplay(ModaleType.SIGNIN);});
 //   document.getElementById('SIGNUP')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.SIGNUP);
-//     evAdClickSignUp()});
+//     modaleDisplay(ModaleType.SIGNUP);});
 //   document.getElementById('PROFILE')?.addEventListener('click', () => {
 //     modaleDisplay(ModaleType.PROFILE);});
 //   document.getElementById('PONG_STATS')?.addEventListener('click', () => {
@@ -155,7 +159,7 @@ export const setZoneAvatar = (hide: boolean = false) => {
 //   document.getElementById('TETRIS_STATS')?.addEventListener('click', () => {
 //     modaleDisplay(ModaleType.TETRIS_STATS);});
 //   document.getElementById('TETRIS_STATS_DETAIL')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);});
+//     modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);}); 
 //   document.getElementById('AVATAR')?.addEventListener('click', () => {
 //     modaleDisplay(ModaleType.AVATAR);});
 // }
