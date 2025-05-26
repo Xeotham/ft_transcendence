@@ -16,7 +16,7 @@ const tetrisSettingsHtml = (keys: keys) => {
 		return;
 
 	EL.contentTetris.innerHTML = `
-	<div class="${TCS.pongNav1}">
+	<div class="${TCS.tetrisWindowBkg}">
 	
 		<div id="tetrisSettingsTitle" class="${TCS.tetrisSettingTitle}">
 		${imTexts.tetrisSettingsTitle}</div> 

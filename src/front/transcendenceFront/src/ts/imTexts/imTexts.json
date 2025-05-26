@@ -133,7 +133,7 @@
       },
       "settings": {
         "title": "Paramètres Tetris",
-        "back": "Retour",
+        "back": "Valider",
         "mino": {
           "title": "Tetriminos",
           "name":[
@@ -189,36 +189,39 @@
           "hold": "Garder",
           "forfeit": "Forfait"
         }
-        }
-    },
-    "board": {
-      "score": "Score",
-      "level": "Niveau",
-      "lines": "Lignes",
-      "next": "Suivant",
-      "pause": "Pause",
-      "resume": "Reprendre",
-      "quit": "Quitter",
-      "gameOver": "Game over",
-      "newGame": "Nouvelle partie"
-    },
-    "multiplayerRoom": {
-      "title": "Salle multijoueur",
-      "create": "Créer une salle",
-      "join": "Rejoindre",
-      "list": "Liste des salles",
-      "players": "Joueurs",
-      "ready": "Prêt",
-      "waiting": "En attente",
-      "start": "Commencer"
-    },
-    "displayMultiplayerRoom": {
-      "title": "Salle multijoueur",
-      "players": "Joueurs",
-      "status": "Statut",
-      "quit": "Quitter la salle",
-      "chat": "Chat",
-      "send": "Envoyer"
+      },
+        "board": {
+        "score": "Score",
+        "level": "Niveau",
+        "lines": "Lignes",
+        "next": "Suivant",
+        "pause": "Pause",
+        "resume": "Reprendre",
+        "quit": "Quitter",
+        "gameOver": "Game over",
+        "newGame": "Nouvelle partie"
+      },
+        "createMultiplayerRoom": {
+        "title": "Salle multijoueur",
+        "create": "Créer une salle",
+        "join": "Rejoindre",
+        "list": "Liste des salles",
+        "players": "Joueurs",
+        "ready": "Prêt",
+        "waiting": "En attente",
+        "start": "Commencer"
+      },
+      "displayMultiplayerRoom": {
+        "title": "Tetris Rooms",
+        "back": "retour",
+        "codeTitle": "Privée",
+        "codeLabel": "Room Code",
+        "codeSubmit": "Rejoindre",
+        "listTitle": "Public",
+        "refresh": "actualiser",
+        "noList": "Aucune partie disponible",
+        "join": " » Rejoindre"
+      }
     }
   }
 }

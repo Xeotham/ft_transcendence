@@ -39,6 +39,8 @@ export const TCS = {
     formDivInput : "relative z-0 w-full mb-5 group",
     formInput : "block py-0 px-0 w-full font-sixtyfour text-[14px] text-amber-400 bg-transparent border-0 border-b-1 border-yellow-600 appearance-none focus:outline-none focus:ring-0 focus:border-lime-50 peer [&:not(:placeholder-shown)]:border-lime-50 cursor-text",
     formLabel : "absolute font-sixtyfour text-[14px] text-yellow-600 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50",
+    formInputTetrisMultiplayer : "block py-0 px-0 w-full font-sixtyfour text-[14px] text-stone-950 bg-transparent border-0 border-b-1 border-yellow-600 appearance-none focus:outline-none focus:ring-0 peer cursor-text",
+    formLabelTetrisMultiplayer : "absolute font-sixtyfour text-[14px] text-yellow-600 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50/0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50/0",
     formButton : "flex justify-left w-full pt-[20px] text-lime-50 bg-yellow-600 hover:bg-amber-400 hover:text-black  cursor-pointer hover:cursor-pointer",
 
     // PONG
@@ -64,17 +66,21 @@ export const TCS = {
     tetrisNavButton : "font-sixtyfour text-[28px] text-black bg-slate-200 hover:bg-lime-50 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
     //tetrisNavButton : "font-sixtyfour text-[28px] text-black bg-slate-200 hover:bg-lime-50 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 shadow-xl/30",
 
+    tetrisWindowBkg : "fixed z-40 w-[680px] shadow-xl/30 bg-lime-50 px-8 py-5 top-16 left-1/2 -translate-x-1/2",
+    tetrisWindowText : "font-sixtyfour text-[14px] relative text-stone-950",
+
     tetrisSettingTitle : "font-sixtyfour text-[24px] text-yellow-600 font-medium text-left",
     tetrisSelect : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer w-full",
     tetrisKeybindingsName : "font-sixtyfour text-[14px] text-black font-medium text-right",
-    tetrisKeybindingsKey : "font-sixtyfour text-[14px] text-lime-5 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer",
-    
+    tetrisKeybindingsKey : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer",
+    tetrisRoomList :       "font-sixtyfour text-[14px] text-stone-950 font-medium text-left bg-lime-50 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[10px]",
+
+    //transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer
     // body
     //html_body : "m-0 h-full overflow-x-hidden",
 
     // zoneTop
     // zoneTop : "absolute fixed left-0 top-0 w-full h-[30px] z-10 bg-gradient-to-t from-slate-50 to-stone-200 shadow-xl/30",
     //immanenceLogo : "h-full w-auto ml-[10px] float-left",
-
-
+    
 }
