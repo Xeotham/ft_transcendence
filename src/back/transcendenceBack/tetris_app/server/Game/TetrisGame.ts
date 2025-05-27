@@ -12,6 +12,7 @@ import { O } from "./Pieces/O";
 import { I } from "./Pieces/I";
 import { clamp, delay, mod } from "./utils";
 import { idGenerator } from "../../../pong_app/utils";
+import {createTetrisGame} from "../../../user_management/api/controllers";
 
 const   idGen = idGenerator()
 
@@ -219,10 +220,31 @@ export class TetrisGame {
 
 	public getGameId(): number { return this.gameId; }
 	public isOver(): boolean { return this.over; }
+	public getUsername(): string { return this.username; }
 	public getHasForfeit(): boolean { return this.hasForfeit; }
 	public getPlayer(): WebSocket { return this.player; }
 	public getCanRetry(): boolean { return this.canRetry; }
 	public getOpponent(): TetrisGame | undefined { return this.opponent; }
+	public getScore(): number { return this.score; }
+	public getbeginningTime(): number { return this.beginningTime; }
+	public getGameTime(): number { return this.gameTime; }
+	public getCombo(): number { return this.combo; }
+	public getMaxCombo(): number { return this.maxCombo; }
+	public getPiecesPlaced(): number { return this.piecesPlaced; }
+	public getPiecesPerSecond(): number { return this.piecesPerSecond; }
+	public getAttacksSent(): number { return this.attacksSent; }
+	public getAttacksSentPerMinute(): number { return this.attacksSentPerMinute; }
+	public getAttacksReceived(): number { return this.attacksReceived; }
+	public getAttacksReceivedPerMinute(): number { return this.attacksReceivedPerMinute; }
+	public getKeysPressed(): number { return this.keysPressed; }
+	public getKeysPerPiece(): number { return this.keysPerPiece; }
+	public getKeysPerSecond(): number { return this.keysPerSecond; }
+	public getHolds(): number { return this.holds; }
+	public getLinesCleared(): number { return this.linesCleared; }
+	public getLinesPerMinute(): number { return this.linesPerMinute; }
+	public getMaxB2B(): number { return this.maxB2B; }
+	public getPerfectClears(): number { return this.perfectClears; }
+	public getAllLinesClear(): { [p: string]: number, Single: number, Double: number, Triple: number, Quad: number, "T-Spin Zero": number, "T-Spin Single": number, "T-Spin Double": number, "T-Spin Triple": number, "T-Spin Quad": number, "Mini T-Spin Zero": number, "Mini T-Spin Single": number, "Mini Spin Zero": number, "Mini Spin Single": number, "Mini Spin Double": number, "Mini Spin Triple": number, "Mini Spin Quad": number } { return this.allLinesClear; }
 
 	public setOver(over: boolean): void { this.over = over; }
 	public setOpponent(opponent: TetrisGame): void { this.opponent = opponent; }
@@ -714,6 +736,7 @@ export class TetrisGame {
 		this.player.send(JSON.stringify({type: "EFFECT", argument: "BOARD", value: "gameover"}));
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}));
 		this.sendStats();
+		createTetrisGame(this);
 		this.player.send(JSON.stringify({type: "GAME_FINISH"}));
 	}
 

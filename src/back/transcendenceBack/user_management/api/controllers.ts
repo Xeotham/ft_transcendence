@@ -13,6 +13,7 @@ import bcrypt from 'bcrypt';
 import fs from 'fs';
 import {player} from "../../pong_app/utils";
 import jwt from 'jsonwebtoken';
+import {TetrisGame} from "../../tetris_app/server/Game/TetrisGame";
 
 interface Users {
     id?:            number;
@@ -473,6 +474,7 @@ export const createPongGame = (players: {player1: player | null, player2: player
             if (score.player1.score < 0 && score.player2.score < 0)
                 return ;
 
+            // TO DO : change date
             const gameId = saveGame("");
 
             createUserGameStatsPong(player1.id, gameId, score.player1, players.player1?.username === winner?.username, "pong");
@@ -485,57 +487,70 @@ export const createPongGame = (players: {player1: player | null, player2: player
     }
 };
 
-// export const createGame = async (request: FastifyRequest, reply:FastifyReply) => 
-//     {
-//         const   { username1, username2, date, scoreP1, scoreP2, winner, type, tetrisStatP1, tetrisStatP2
-//             } = request.body as {
-//             username1: string, username2: string, date: string, scoreP1: number, scoreP2: number, winner: string, type: string,  tetrisStatP1: any, tetrisStatP2: any}
+export const createTetrisGame = (data: TetrisGame) =>
+{
+    console.log(data.getUsername());
 
+    const   player1 = getUserByUsername(data.getUsername()) as Users;
 
-//         const   player1 = getUserByUsername(username1) as Users;
-//         const   player2 = getUserByUsername(username2) as Users;
+    if (!player1 )
+    {
+        console.log("Invalid User");
+        return ;
+    }
+    if (player1.id)
+    {
+        if (data.getScore() < 0)
+        {
+            console.log("Invalid score");
+            return ;
+        }
 
-//         console.log(username1, "|", username2);
-//         if (!player1 || !player2)
-//             return reply.status(401).send({ message: 'Invalid username'});
+        const gameId = saveGame("");
 
-//         if (player1.id && player2.id)
-//         {
-//             if (scoreP1 < 0 || scoreP2 < 0)
-//                 return reply.status(401).send({ message: 'Invalid score'});
+        const gameTetrisId = data.getGameId();
 
-//             const gameId = saveGame(date);
+        const stats = new Map<string, any>();
+        stats.set("gameTime", data.getGameTime());
+        stats.set("combo", data.getCombo());
+        stats.set("maxCombo", data.getMaxCombo());
+        stats.set("piecesPlaced", data.getPiecesPlaced());
+        stats.set("piecesPerSecond", data.getPiecesPerSecond());
+        stats.set("attacksSent", data.getAttacksSent());
+        stats.set("attackSentPerMinute", data.getAttacksSentPerMinute());
+        stats.set("attacksReceived", data.getAttacksReceived());
+        stats.set("attackReceivedPerMinute", data.getAttacksReceivedPerMinute());
+        stats.set("keyPressed", data.getKeysPressed());
+        stats.set("keysPerPiece", data.getKeysPerPiece());
+        stats.set("keysPerSecond", data.getKeysPerSecond());
+        stats.set("holds", data.getHolds());
+        stats.set("linesCleared", data.getLinesCleared());
+        stats.set("linesPerMinute", data.getLinesPerMinute());
+        stats.set("maxB2B", data.getMaxB2B());
+        stats.set("perfectClears", data.getPerfectClears());
+        stats.set("allLinesCLear", data.getAllLinesClear())
 
-//             if (type === 'pong')
-//             {
-//                 createUserGameStatsPong(player1.id, gameId, scoreP1, username1 === winner, type);
-//                 createUserGameStatsPong(player2.id, gameId, scoreP2, username2 === winner, type);
-//                 updateStats(player1.id);
-//                 updateStats(player2.id);
-//                 return reply.status(401).send({ message: 'Pong game saved'});
-//             }
-//             else
-//             {
-//                 const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
-//                 const tetrisStatP1J = JSON.parse(validJsonString);
-//                 const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
-//                 const tetrisStatP2J = JSON.parse(validJsonString2);
-//                 const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
-//                 const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
-//                 console.log(StatP1);
-//                 console.log(StatP2);
-//                 createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
-//                 createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
-//                 updateStats(player1.id);
-//                 updateStats(player2.id);
-//                 return reply.status(401).send({ message: 'Tetris game saved'});
-//             }
+        createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, stats);
+        updateStats(player1.id);
 
-
-
-
-//         }
-//     };
+        // else
+        // {
+        //     const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
+        //     const tetrisStatP1J = JSON.parse(validJsonString);
+        //     const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
+        //     const tetrisStatP2J = JSON.parse(validJsonString2);
+        //     const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
+        //     const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
+        //     console.log(StatP1);
+        //     console.log(StatP2);
+        //     createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
+        //     createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
+        //     updateStats(player1.id);
+        //     updateStats(player2.id);
+        //     return reply.status(401).send({ message: 'Tetris game saved'});
+        // }
+    }
+};
 
 
 /*--------------------------------------------------------------------------------------------*/
