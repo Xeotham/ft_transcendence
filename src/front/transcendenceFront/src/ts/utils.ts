@@ -1,11 +1,14 @@
 import { tetrisGameInformation } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
-import { address } from "./immanence.ts";
+import {address, user} from "./immanence.ts";
 
 export class UserInfo {
-	username: string;
+	private username: string;
+	private token: string | null;
 	constructor() {
 		this.username = localStorage.getItem("username") || UserInfo.generateUsername();
+		this.token = null;
+
 	}
 
 	static generateUsername() {
@@ -18,6 +21,21 @@ export class UserInfo {
 		return result;
 	}
 
+	getToken() {
+		return this.token;
+	}
+
+	isAuthenticated() {
+		return this.token !== null && this.token !== undefined && this.token !== "";
+	}
+
+	setToken(token: string | null) {
+		this.token = token;
+		if (token)
+			localStorage.setItem("authToken", token);
+		else
+			localStorage.removeItem("authToken");
+	}
 	getUsername() {
 		return this.username;
 	}
@@ -29,34 +47,37 @@ export class UserInfo {
 export const    postToApi = async (url: string, data: any) => {
 	// console.log("Data: ", data);
 
-	await fetch(url, {
+	console.log("Token: ", user.getToken());
+
+	const fetched = await fetch(url, {
 		method: 'POST', // Specify the HTTP method
 		headers: {
 			'Content-Type': 'application/json', // Set the content type to JSON
+			'Authorization': `Bearer ${user.getToken() || ""}`, // Include the token
 		},
 		body: JSON.stringify(data), // Convert the data to a JSON string
 	})
-	.then(async response => {
-		if (!response.ok) {
-			// Check if the response status is not OK (status code 200-299)
-			let errorData = await response.json();
-			console.error('Error in post:', url);
-			throw {
-				status: response.status,
-				message: errorData.message || 'An error occurred',
-			};
-		}
-		return response.json(); // Parse the JSON response if successful
-	})
-	// .then(data => {
-	// 	// Handle the successful response data
-	// 	console.log('Success:', data);
+	// .then(async response => {
+	// 	if (!response.ok) {
+	// 		// Check if the response status is not OK (status code 200-299)
+	// 		let errorData = await response.json();
+	// 		console.error('Error in post:', url);
+	// 		throw {
+	// 			status: response.status,
+	// 			message: errorData.message || 'An error occurred',
+	// 		};
+	// 	}
 	// })
-	// .catch(error => {
-	// 	// Handle the error
-	// 	console.error('Error:', error.status, error.message);
-	// 	throw error;
-	// });
+	if (!fetched.ok)
+	{
+		let errorData = await fetched.json();
+		console.error('Error in post:', url);
+		throw {
+			status: fetched.status,
+			message: errorData.message || 'An error occurred',
+		};
+	}
+	return fetched.json(); // Parse the JSON response if successful
 }
 
 export const    getFromApi = async (url: string) => {

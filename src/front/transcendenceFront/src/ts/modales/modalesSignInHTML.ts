@@ -64,10 +64,12 @@ export const modaleSignInEvents = () => {
     const   data = { username: username, password:  password };
     console.log(data);
     postToApi(`http://${address}/api/user/login`, data)
-        .then(() => {
-          localStorage.setItem("username", username);
-          user.setUsername(username);
-          alert("User signed in successfully!");
+        .then((info: any) => {
+            localStorage.setItem("username", username);
+            user.setUsername(username);
+            console.log(info);
+            user.setToken(info.token);
+            alert("User signed in successfully!");
         })
         .catch((error) => {
           console.error("Error logging in:", error.status, error.message);
