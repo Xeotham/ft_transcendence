@@ -35,15 +35,15 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: n
 	stmt.run(userId, gameId, score, win, type);
 };
 	
-export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, tetrisStat:any ): void => 
+export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat:any ): void =>
 {
 	const win = (winner === true ? 1 : 0);
 	let stmt = db.prepare('\
-		INSERT INTO gamesUsers (userId, gameId, score, winner, type) \
-		VALUES (?, ?, ?, ?, ?) \
+		INSERT INTO gamesUsers (userId, gameId, score, winner, type, gameTetrisId) \
+		VALUES (?, ?, ?, ?, ?, ?) \
 		');
 
-	stmt.run(userId, gameId, score, win, type);
+	stmt.run(userId, gameId, score, win, type, gameTetrisId);
 
 	console.log("Tetris stats: ", tetrisStat);
 	Object.keys(tetrisStat as object).forEach((key) => {
