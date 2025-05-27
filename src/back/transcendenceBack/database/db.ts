@@ -88,6 +88,7 @@ db.exec(` \
     score   INTEGER NOT NULL,
     winner  BOOLEAN NOT NULL,
     type    VARCHAR(50) NOT NULL,
+    gameTetrisId INTEGER NOT NULL DEFAULT 0,
     gameTime INTEGER DEFAULT 0,
     maxCombo INTEGER DEFAULT 0,
     piecesPlaced INTEGER DEFAULT 0,
