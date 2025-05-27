@@ -95,7 +95,8 @@ export const   tetrisCreateRoomPage = () => {
 
 const multiplayerRoom = (arg: loadTetrisArgs) => {
 	///// ??????????????????????????
-	tetrisMultiplayerRoom(arg);	
+	console.log("multiplayerRoom called with arg:", arg);
+	tetrisMultiplayerRoom(arg);
 }
 
 export const displayMultiplayerRooms = (rooms: roomInfo[]) => {

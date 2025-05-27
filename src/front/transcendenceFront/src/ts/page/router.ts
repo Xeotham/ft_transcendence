@@ -119,7 +119,7 @@ const tetrisRouter = () => {
 		if (tetrisGameInformation.getRoomCode() === "")
 			joinRoom(roomCode);
 		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
-		zoneSet("TETRIS");
+		zoneSet("TETRIS"); // TODO: BABOZO
 	})
 }
 
