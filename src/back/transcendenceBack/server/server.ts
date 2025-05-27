@@ -20,7 +20,7 @@ fastify.register(fastifyWebsocket);
 // Register the CORS plugin
 fastify.register(fastifyCors, {
 	origin: `*`, // Allow all origins, or specify your frontend's origin
-	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', "PATCH"],
 	// allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
@@ -33,22 +33,23 @@ fastify.register(pongRoutes, { prefix: '/api/pong' });
 fastify.addHook('onRequest', (request, reply, done) => {
 	const token = request.headers.authorization?.split(' ')[1];
 
-	// console.log(process.env.AUTH_KEY);
 
 	if (token && tokenBlacklist.has(token)) {
 		console.log("Token is Blacklisted: ", token);
 		reply.status(401).send({ message: 'Token is invalid' });
 	} else {
-		if (token)
+		if (token) {
 			jwt.verify(token, process.env.AUTH_KEY!, (err, decoded) => {
 				if (err) {
 					console.log(err);
-					reply.status(401).send({ message: 'Token is invalid' });
+					reply.status(401).send({message: 'Token is invalid'});
 				} else {
 					// request.user = decoded; // Attach user info to request
 					done();
 				}
 			});
+		}
+		console.log("Token is not provided or is valid: ", token);
 		done();
 	}
 });

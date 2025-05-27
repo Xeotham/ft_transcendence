@@ -2,7 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
-import avatarImg from '../../medias/avatars/avatar1.png';
+// import avatarImg from '../../medias/avatars/avatar1.png';
 import {getFromApi, postToApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
@@ -24,10 +24,10 @@ export const modaleProfileHTML = async () => {
       
   <div class="flex flex-row items-start justify-start gap-4">
     <div id="profileAvatar" class="${TCS.modaleAvatarProfil} ">
-      <img src="${avatarImg}"/>
+      <img src="${user.getAvatar()}"/>
     </div>
     <div>
-      <div id="profileUsername" class="${TCS.modaleTitre}">${imTexts.modalesProfileUsername}</div>
+      <div id="profileUsername" class="${TCS.modaleTitre}">${user.getUsername()}</div>
       <div id="profileUserEdit" class="${TCS.modaleTexte}">
         <a id="profileUserEditLink" class="${TCS.modaleTexteLink}">
         ${imTexts.modalesProfileUserEdit}</a>

@@ -112,7 +112,6 @@ export const documentResize = () => {
 // App Query selector
 
 export const zoneSet = (state: string) => {
-  console.log(user.isAuthenticated());
   if (!zone) {
     console.error('zoneSet: Unknown state');
     return;

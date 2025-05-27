@@ -66,9 +66,9 @@ export const modaleSignInEvents = () => {
     postToApi(`http://${address}/api/user/login`, data)
         .then((info: any) => {
             localStorage.setItem("username", username);
-            user.setUsername(username);
-            console.log(info);
             user.setToken(info.token);
+            user.setUsername(info.user.username);
+            user.setAvatar(info.user.avatar);
             alert("User signed in successfully!");
         })
         .catch((error) => {

@@ -1,10 +1,12 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { modaleDisplay, ModaleType } from './modalesCore.ts';
+import {address, user} from "../immanence.ts";
+import {patchToApi} from "../utils.ts";
 
 
 export let modaleAvatarHTML = () => {
-  let AvatarHTML = `
+	let AvatarHTML = `
   <div id="titre_avatar" class="${TCS.modaleTitre}">
   ${imTexts.modalesAvatarTitle}</div>
 
@@ -16,31 +18,134 @@ export let modaleAvatarHTML = () => {
   <div class="grid grid-cols-6 gap-x-[21px] gap-y-[21px]">
 `;
 
-  for (let i = 0; i < 24; i++) {
-    console.log("/medias/avatars/avatar"+i+".png");
-    AvatarHTML += `
+	for (let i = 0; i < 24; i++) {
+		AvatarHTML += `
     <div id="profileAvatar${i}" class="${TCS.modaleAvatarChoose}">
-      <img src="/src/medias/avatars/avatar${i+1}.png"/>
+      <img id="avatar${i}" src="/src/medias/avatars/avatar${i+1}.png"/>
     </div>
   `;
-  }
+	}
 
-  AvatarHTML += `
-  </div>
+	AvatarHTML += `
+	</div>
+		<div id="upload">
+			<p class="${TCS.modaleTitre}">Upload Avatar:</p>
+			<input type="file" id="uploadAvatar" class="${TCS.modaleTexte}" />
+		</div>
+	<div class="h-[30px]"></div>
+	`;
 
-  <div class="h-[30px]"></div>
-  `;
-
-  return AvatarHTML;
+	return AvatarHTML;
 }
 
-export const modaleAvatarEvents = () => {
-  const avatarBack = document.getElementById('avatarBack') as HTMLAnchorElement;
+const imageToBase64 = (imageElement: HTMLImageElement): string => {
+	// Create a canvas element
+	const canvas = document.createElement('canvas');
+	const context = canvas.getContext('2d');
 
-  if (!avatarBack)
-    return;
+	if (!context) {
+		throw new Error('Failed to get canvas context');
+	}
 
-  avatarBack.addEventListener('click', () => {
-    modaleDisplay(ModaleType.PROFILE);
-  });
+	// Set canvas dimensions to match the image
+	canvas.width = 200;
+	canvas.height = 200;
+
+	if (imageElement.width > imageElement.height)
+		imageElement.width = 200;
+	else
+		imageElement.height = 200;
+
+	const cropSize = Math.min(imageElement.width, imageElement.height); // Use the smaller dimension for cropping
+	const cropX = (imageElement.width - cropSize) / 2; // Center crop horizontally
+	const cropY = (imageElement.height - cropSize) / 2;
+
+	// Draw the image onto the canvas
+	context.drawImage(imageElement, 0, 0, 200, 200);
+
+	// Get the Base64 string (default is 'image/png')
+	return canvas.toDataURL('image/png').split(',')[1]; // Remove the data URL prefix
+}
+
+const processUploadedAvatar = (uploadedAvatar: File): Promise<string> => {
+	return new Promise((resolve, reject) => {
+		// Check if the file is an image
+		if (!uploadedAvatar.type.startsWith('image/')) {
+			return reject(new Error('The uploaded file is not an image.'));
+		}
+
+		const reader = new FileReader();
+
+		reader.onload = () => {
+			const img = new Image();
+			img.onload = () => {
+				try {
+					// Use the existing imageToBase64 function
+					const base64String = imageToBase64(img);
+					resolve(base64String);
+				} catch (error) {
+					reject(new Error('Failed to convert image to Base64.'));
+				}
+			};
+
+			img.onerror = () => {
+				reject(new Error('Failed to load the image.'));
+			};
+
+			img.src = reader.result as string; // Set the image source to the FileReader result
+		};
+
+		reader.onerror = () => {
+			reject(new Error('Failed to read the file.'));
+		};
+
+		reader.readAsDataURL(uploadedAvatar); // Read the file as a data URL
+	});
+};
+
+export const modaleAvatarEvents = async () => {
+	const   avatarBack = document.getElementById('avatarBack') as HTMLAnchorElement;
+	const   uploadedAvatar = (document.getElementById('uploadAvatar') as HTMLInputElement)
+	let     avatarBase64: string | undefined;
+
+	if (!avatarBack) {
+		return;
+	}
+
+	avatarBack.addEventListener('click', () => {
+		modaleDisplay(ModaleType.PROFILE);
+	});
+
+	uploadedAvatar.addEventListener("change", async event => {
+		const   fileInput = event.target as HTMLInputElement;
+		if (fileInput.files && fileInput.files.length > 0) {
+			const   file = fileInput.files[0];
+			try {
+				avatarBase64 = await processUploadedAvatar(file);
+				user.setAvatar(avatarBase64);
+				patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: avatarBase64});
+				modaleDisplay(ModaleType.PROFILE);
+			} catch (error) {
+				console.error('Error processing uploaded avatar:', error);
+			}
+		}
+	})
+
+	for (let i = 0; i < 24; i++) {
+		const avatar = document.getElementById(`profileAvatar${i}`) as HTMLDivElement;
+		if (!avatar)
+			continue;
+		avatar.addEventListener('click', async () => {
+			const   img = new Image();
+			img.src = `http://localhost:5000/src/medias/avatars/avatar${i+1}.png`;
+
+			const   avatar = imageToBase64(img);
+
+			if (!avatar)
+				return;
+			user.setAvatar(avatar);
+			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: avatar})
+			modaleDisplay(ModaleType.PROFILE);
+		})
+	}
 }
