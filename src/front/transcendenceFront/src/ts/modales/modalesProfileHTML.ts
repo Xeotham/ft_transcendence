@@ -3,7 +3,7 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
 import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi} from "../utils.ts";
+import {getFromApi, postToApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
 const pongWinRate = async () => {
@@ -82,7 +82,17 @@ export const modaleProfileEvents = () => {
   });
 
   profileDeconectLink.addEventListener('click', () => {
-    modaleDisplay(ModaleType.SIGNIN); // TODO: faire une vrai deconnection avec refresh sur la home
+    const username = { username: user.getUsername()};
+    postToApi(`http://${address}/api/user/logout`, username)
+        .then(() => {
+          localStorage.clear();
+          user.setToken(null);
+          alert("User signed out successfully!");
+        })
+        .catch((error) => {
+          console.error("Error logging out:", error.status, error.message);
+          alert(error.message);
+        });
   });
 
   modalePongStatsLink.addEventListener('click', () => {
