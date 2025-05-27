@@ -12,6 +12,7 @@ import { createParam, updateParam, getParamById } from '../../database/models/Pa
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 import {player} from "../../pong_app/utils";
+import jwt from 'jsonwebtoken';
 
 interface Users {
     id?:            number;
@@ -22,6 +23,9 @@ interface Users {
     createdAt?:    string;
 }
 
+const   authKey = process.env.AUTH_KEY;
+
+export const   tokenBlacklist = new Set();
 
 /*----------------------------------------------------------------------------*/
 /* User */
@@ -101,17 +105,25 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
     // if (user?.connected)
     //     return reply.status(401).send({ message: 'User already connected' });
 
+    const   payload = { username: user.username, id: user.id };
+    const   authToken = jwt.sign(payload, authKey!, { expiresIn: '1h' });
+
     logUserById(user.id as number);
 
-    return reply.send({ message: 'Login successful' });
+    return reply.send({ message: 'Login successful', token: authToken });
 };
 
 export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) => 
 {
+    const   token = request.headers.authorization?.split(' ')[1];
     const { username } = request.body as { username: string, };
 
     const user = getUserByUsername(username);
 
+    console.log(token);
+    if (token) {
+        tokenBlacklist.add(token);
+    }
     if (!user)
         return reply.status(401).send({ message: 'Invalid username' });
 

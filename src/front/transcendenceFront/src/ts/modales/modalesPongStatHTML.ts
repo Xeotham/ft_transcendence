@@ -159,6 +159,7 @@ export const modalePongStatEvents = () => {
   PongStatsNext.addEventListener('click', () => {
     if (pongStatPage >= 10) // TODO: remplacer par le nombre de pages
       return;
-    modalePongStatHTML(++pongStatPage);
+    if ((pongStatPage + 1) * 10 <= pongHistory.length)
+      modalePongStatHTML(++pongStatPage);
   });
 }
