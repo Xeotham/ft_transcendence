@@ -12,6 +12,7 @@ import {loadPongTextures} from "../pong/pong.ts";
 
 //TMP
 import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
+import {user} from "../immanence.ts";
 
 ///////////////////////////////////////////
 // Exports
@@ -92,7 +93,7 @@ export const setHtmlFront = () => {
 
 <div name="zoneAvatar" id="zoneAvatar" class="${TCS.avatar}">
     <div id="avatarMask" class="${TCS.avatarMask}">
-      <img id="avatarImg" src="/src/medias/avatars/avatar1.png" class="${TCS.avatarImg}"/>
+      <img id="avatarImg" src="${user.getAvatar()/*"http://localhost:5000/src/medias/avatars/avatar1.png"*/}" class="${TCS.avatarImg}"/>
     </div>
 </div>
 

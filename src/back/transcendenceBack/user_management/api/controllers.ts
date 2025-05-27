@@ -10,6 +10,7 @@ import { getMessageById, saveMessage } from '../../database/models/Message';
 import { saveGame, getGameById } from '../../database/models/Game';
 import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
 import bcrypt from 'bcrypt';
+import path from 'path';
 import fs from 'fs';
 import {player} from "../../pong_app/utils";
 import jwt from 'jsonwebtoken';
@@ -30,10 +31,23 @@ export const   tokenBlacklist = new Set();
 /*----------------------------------------------------------------------------*/
 /* User */
 
+const generateDefaultAvatar = () => {
+    const filePath = path.join(__dirname, '../medias/defaultAvatar.png'); // Adjust the relative path
+    console.log(filePath);
+    const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
+    console.log(fileBuffer);
+    // const blob = new Blob([fileBuffer], { type: 'image/png' }); // Create a Blob from the Buffer
+    // const blob = fileBuffer;
+    return fileBuffer;
+};
 
-export const registerUser = async (request: FastifyRequest, reply: FastifyReply) => 
+export const registerUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const { username, password, avatar } = request.body as { username: string, password: string, avatar: string };
+    const { username, password } = request.body as { username: string, password: string };
+
+    const avatar = generateDefaultAvatar();
+
+    console.log("Blob: ", avatar);
 
     if(!username || !password || !avatar)
         return reply.status(400).send({ message: 'Username, password and avatar can\'t be empty' });
@@ -47,11 +61,11 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
 
         // const base64Avatar = avatar.split(',')[1];
 
-        const id = createUser( username, hashedPassword as string, avatar );
+        const id = await createUser( username, hashedPassword as string, avatar );
 
-        createStats(id);
+        createStats(Number(id));
 
-        createParam(id);
+        createParam(Number(id));
 
         return reply.status(201).send({ message: 'User registered successfully', id });
     }
@@ -107,10 +121,13 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
 
     const   payload = { username: user.username, id: user.id };
     const   authToken = jwt.sign(payload, authKey!, { expiresIn: '1h' });
+    // const   newAvatar = new Blob([user.avatar], { type: 'image/png' });
+
+    // console.log(newAvatar);
 
     logUserById(user.id as number);
 
-    return reply.send({ message: 'Login successful', token: authToken });
+    return reply.send({ message: 'Login successful', token: authToken, user: {username: user.username, avatar: user.avatar } });
 };
 
 export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) => 

@@ -12,17 +12,17 @@ interface User
     createdAt?:     string;
 }
 
-export const createUser = (username:string, password:string, avatar:string): number =>
-{
-    console.log("createUser", username, password, avatar);
-    let stmt = db.prepare('\
+export const createUser = async (username: string, password: string, avatar: string) => {
+	console.log("createUser", username, password, avatar);
+
+	let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\
         ');
 
-    const result = stmt.run(username, password, avatar);
+	const result = stmt.run(username, password, avatar);
 
-    return result.lastInsertRowid as number;
+	return result.lastInsertRowid;
 };
 
 export const updateUserById = (id: number, type: string, update: string): void =>

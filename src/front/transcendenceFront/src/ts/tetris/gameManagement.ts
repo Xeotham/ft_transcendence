@@ -273,10 +273,6 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("MULTIPLAYER_LEAVE");
 			resetSocket("room");
 			return ;
-		case 'MULTIPLAYER_LEAVE':
-			console.log("MULTIPLAYER_LEAVE");
-			resetSocket("room");
-			return ;
 		case 'INFO':
 			console.log("INFO: " + res.argument);
 			return ;
