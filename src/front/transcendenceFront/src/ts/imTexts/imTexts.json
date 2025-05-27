@@ -133,7 +133,7 @@
       },
       "settings": {
         "title": "Paramètres Tetris",
-        "back": "Valider",
+        "back": "Retour",
         "mino": {
           "title": "Tetriminos",
           "name":[
@@ -188,7 +188,9 @@
           "softDrop": "Bas",
           "hold": "Garder",
           "forfeit": "Forfait"
-        }
+        },
+        "validate": "Valider",
+        "keyChange": "Appuyez sur la touche"
       },
         "board": {
         "score": "Score",
@@ -201,19 +203,28 @@
         "gameOver": "Game over",
         "newGame": "Nouvelle partie"
       },
-        "createMultiplayerRoom": {
-        "title": "Salle multijoueur",
-        "create": "Créer une salle",
-        "join": "Rejoindre",
-        "list": "Liste des salles",
-        "players": "Joueurs",
-        "ready": "Prêt",
-        "waiting": "En attente",
-        "start": "Commencer"
+      "createMultiplayerRoom": {
+        "title": "Tetris creation room",
+        "back": "Retour",
+        "copyCode": "copier",
+        "start": "Démarrer",
+        "settingsTitle": "Réglages",
+        "showShadow": "Afficher les pièces",
+        "showBags": "Afficher les sacs",
+        "holdAllowed": "Autoriser le maintien",
+        "showHold": "Afficher le maintien",
+        "infiniteHold": "Maintien infini",
+        "infiniteMovement": "Déplacement infini",
+        "lockTime": "Temps de verrouillage",
+        "spawnARE": "Spawn ARE",
+        "softDropAmp": "Multiplicateur de descente lente",
+        "level": "Niveau de départ",
+        "isLeveling": "Niveau progressif",
+        "save": "Sauver"
       },
       "displayMultiplayerRoom": {
-        "title": "Tetris Rooms",
-        "back": "retour",
+        "title": "Tetris rooms",
+        "back": "Retour",
         "codeTitle": "Privée",
         "codeLabel": "Room Code",
         "codeSubmit": "Rejoindre",

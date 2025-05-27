@@ -20,7 +20,11 @@ const tetrisSettingsHtml = (keys: keys) => {
 	
 		<div id="tetrisSettingsTitle" class="${TCS.tetrisSettingTitle}">
 		${imTexts.tetrisSettingsTitle}</div> 
-		
+
+		<div class="${TCS.modaleTexte} translate-y-[-5px]">
+		<a id="tetrisSettingsBack" class="${TCS.modaleTexteLink}">
+		${imTexts.tetrisSettingsBack}</a></div>	
+
 		<div class="h-[30px]"></div>
 
 		<div class="grid grid-cols-2 gap-x-[20px] gap-y-[2px]">
@@ -97,9 +101,11 @@ const tetrisSettingsHtml = (keys: keys) => {
 			<div id="forfeitName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyForfeit}</div>
 			<div id="forfeitKey" class="${TCS.tetrisKeybindingsKey}">${keys.getForfeit()}</div>
 
-			<div class="col-span-2 h-[30px]"></div>
+			<div class="col-span-2 h-[10px]"></div>
 
-			<div class="col-span-2"><button id="tetrisSettingsBack" class="${TCS.form}${TCS.formButton}">${imTexts.tetrisSettingsBack}</button></div>
+			<div></div>
+			<div id="tetrisSettingsValidate" class="${TCS.tetrisKeybindingsKey} h-[40px] flex items-end">
+			${imTexts.tetrisSettingsValidate}</div>
 
 		</div>
 
@@ -109,39 +115,44 @@ const tetrisSettingsHtml = (keys: keys) => {
 }
 
 const tetrisSettingsEvents = () => {
+	const elements = {
+		moveLeft: document.getElementById("moveLeftKey"),
+		moveRight: document.getElementById("moveRightKey"),
+		rotClock: document.getElementById("rotClockKey"),
+		rotCountClock: document.getElementById("rotCountClockKey"),
+		rot180: document.getElementById("rot180Key"),
+		hardDrop: document.getElementById("hardDropKey"),
+		softDrop: document.getElementById("softDropKey"),
+		hold: document.getElementById("holdKey"),
+		forfeit: document.getElementById("forfeitKey")
+	};
 
-	// document.getElementById("idle")?.addEventListener("click", () => loadTetrisPage("idle"));
-	// document.getElementById("keybindings")?.addEventListener("click", () => loadTetrisPage("keybindings", { keys: userKeys }));
-
-	const moveLeft = document.getElementById("moveLeftKey") as HTMLButtonElement;
-	const moveRight = document.getElementById("moveRightKey") as HTMLButtonElement;
-	const rotClock = document.getElementById("rotClockKey") as HTMLButtonElement;
-	const rotCountClock = document.getElementById("rotCountClockKey") as HTMLButtonElement;
-	const rot180 = document.getElementById("rot180Key") as HTMLButtonElement;
-	const hardDrop = document.getElementById("hardDropKey") as HTMLButtonElement;
-	const softDrop = document.getElementById("softDropKey") as HTMLButtonElement;
-	const hold = document.getElementById("holdKey") as HTMLButtonElement;
-	const forfeit = document.getElementById("forfeitKey") as HTMLButtonElement;
-
-	if (!moveLeft || !moveRight || !rotClock || !rotCountClock || !rot180 || !hardDrop || !softDrop || !hold || !forfeit)
+	// Vérifier si tous les éléments existent
+	if (Object.values(elements).some(el => !el)) {
+		console.error("tetrisSettingsEvents: certains éléments n'ont pas été trouvés");
+		page("/tetris");
 		return;
+	}
 
-	moveLeft.addEventListener("click", () => changeKeys("moveLeft"));
-	moveRight.addEventListener("click", () => changeKeys("moveRight"));
-	rotClock.addEventListener("click", () => changeKeys("rotClock"));
-	rotCountClock.addEventListener("click", () => changeKeys("rotCountClock"));
-	rot180.addEventListener("click", () => changeKeys("rot180"));
-	hardDrop.addEventListener("click", () => changeKeys("hardDrop"));
-	softDrop.addEventListener("click", () => changeKeys("softDrop"));
-	hold.addEventListener("click", () => changeKeys("hold"));
-	forfeit.addEventListener("click", () => changeKeys("forfeit"));
+	// Ajouter les event listeners
+	elements.moveLeft?.addEventListener("click", () => {
+		console.log("KEY moveLeft /////////////////////////////");
+		changeKeys("moveLeft")
+	});
+	elements.moveRight?.addEventListener("click", () => changeKeys("moveRight"));
+	elements.rotClock?.addEventListener("click", () => changeKeys("rotClock"));
+	elements.rotCountClock?.addEventListener("click", () => changeKeys("rotCountClock"));
+	elements.rot180?.addEventListener("click", () => changeKeys("rot180"));
+	elements.hardDrop?.addEventListener("click", () => changeKeys("hardDrop"));
+	elements.softDrop?.addEventListener("click", () => changeKeys("softDrop"));
+	elements.hold?.addEventListener("click", () => changeKeys("hold"));
+	elements.forfeit?.addEventListener("click", () => changeKeys("forfeit"));
 
-	const tetrisSettingsBack = document.getElementById("tetrisSettingsBack") as HTMLButtonElement;
+	document.getElementById("tetrisSettingsBack")?.addEventListener("click", () => {
+		page("/tetris");
+	});
 
-	if (!tetrisSettingsBack)
-		return;
-
-	tetrisSettingsBack.addEventListener("click", () => {
+	document.getElementById("tetrisSettingsValidate")?.addEventListener("click", () => {
 		page("/tetris");
 	});
 }

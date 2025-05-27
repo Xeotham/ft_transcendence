@@ -28,10 +28,10 @@ export const TCS = {
     modaleClose : "fixed z-50 w-[20px] h-[20px] shadow-xl/30 rounded-xs bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none flex items-center justify-center absolute top-[10px] right-[10px] cursor-pointer hover:cursor-pointer",
     modaleTitre : "font-sixtyfour text-[28px] relative text-amber-400",
     modaleTexte : "font-sixtyfour text-[14px] relative text-lime-50",
-    modaleTexteLink : "font-sixtyfour text-[14px] text-yellow-600 hover:text-amber-400 cursor-pointer hover:cursor-pointer underline decoration-yellow-600 hover:decoration-amber-400",
+    modaleTexteLink : "font-sixtyfour text-[14px] text-yellow-600 hover:text-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer underline decoration-yellow-600 hover:decoration-amber-400",
     modaleToRegister : "font-sixtyfour text-[14px] relative text-lime-50",
-    modaleAvatarProfil : "w-[100px] h-[100px] border-0 border-1 hover:border-8 border-yellow-600 cursor-pointer hover:cursor-pointer",
-    modaleAvatarChoose : "w-[86px] h-[86px] border-0 border-1 hover:border-6 border-yellow-600 cursor-pointer hover:cursor-pointer relative",
+    modaleAvatarProfil : "w-[100px] h-[100px] border-0 border-1 hover:border-8 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+    modaleAvatarChoose : "w-[86px] h-[86px] border-0 border-1 hover:border-6 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer relative",
     modaleStatsLine : "font-sixtyfour text-[14px] text-lime-50 grid grid-cols-[120px_1fr_80px] gap-4 items-center",
 
     // formulaire
@@ -41,7 +41,11 @@ export const TCS = {
     formLabel : "absolute font-sixtyfour text-[14px] text-yellow-600 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50",
     formInputTetrisMultiplayer : "block py-0 px-0 w-full font-sixtyfour text-[14px] text-stone-950 bg-transparent border-0 border-b-1 border-yellow-600 appearance-none focus:outline-none focus:ring-0 peer cursor-text",
     formLabelTetrisMultiplayer : "absolute font-sixtyfour text-[14px] text-yellow-600 peer-focus:font-medium duration-300 transform -translate-y-[20px] scale-100 top-[0px] -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-lime-50/0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-100 peer-focus:-translate-y-[20px] peer-[&:not(:placeholder-shown)]:text-lime-50/0",
-    formButton : "flex justify-left w-full pt-[20px] text-lime-50 bg-yellow-600 hover:bg-amber-400 hover:text-black  cursor-pointer hover:cursor-pointer",
+    formButton : "flex justify-left w-full pt-[20px] text-lime-50 bg-yellow-600 hover:bg-amber-400 hover:text-black transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+    formInputNumber :    "w-[80px] py-[2px] border-1 text-yellow-600 p-[2px] border-2 border-[#d6d3d1] bg-white transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+    formInputNumberBkg : "w-[80px] py-[2px] bg-transparent border-none appearance-none focus:outline-none focus:ring-0 focus:border-yellow-600",
+
+//    <input checked id="red-checkbox" type="checkbox" value="" class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
 
     // PONG
     pongCanvas : "bg-black/80 block",
@@ -70,11 +74,12 @@ export const TCS = {
     tetrisWindowText : "font-sixtyfour text-[14px] relative text-stone-950",
 
     tetrisSettingTitle : "font-sixtyfour text-[24px] text-yellow-600 font-medium text-left",
-    tetrisSelect : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer w-full",
-    tetrisKeybindingsName : "font-sixtyfour text-[14px] text-black font-medium text-right",
-    tetrisKeybindingsKey : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer",
-    tetrisRoomList :       "font-sixtyfour text-[14px] text-stone-950 font-medium text-left bg-lime-50 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[10px]",
-
+    tetrisSelect : "font-sixtyfour text-[14px] pl-[10px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer w-full",
+    tetrisKeybindingsName : "font-sixtyfour text-[14px] text-black font-medium text-left",
+    tetrisKeybindingsKey : "font-sixtyfour text-[14px] pl-[10px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+    tetrisRoomList : "font-sixtyfour text-[14px] text-stone-950 font-medium text-left bg-lime-50 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[10px]",
+    tetrisStartRoom : "font-sixtyfour text-[24px] text-lime-50 pt-[5px] w-full font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer"
+    //
     //transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer
     // body
     //html_body : "m-0 h-full overflow-x-hidden",

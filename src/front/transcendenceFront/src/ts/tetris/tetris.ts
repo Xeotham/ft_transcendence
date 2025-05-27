@@ -10,7 +10,8 @@ import {
 	tetrisGame, tetrisGoalInfo, tetrisGameInfo
 } from "./utils.ts";
 
-import { tetrisDisplayMultiplayerRoom, tetrisMultiplayerRoom } from "./tetrisMultiplayerHTML.ts";
+import { tetrisDisplayMultiplayerRoom } from "./tetrisMultiplayerDisplayHTML.ts";
+import { tetrisMultiplayerRoom } from "./tetrisMultiplayerCreateHTML.ts";
 import { tetrisEmptyHtml, tetrisBoardHtml, tetrisLogoHtml, tetrisIdleHtml } from "./tetrisHTML.ts";
 import { tetrisSettings } from "./tetrisSettingsHTML.ts";
 
@@ -24,6 +25,7 @@ import {
 } from "./gameManagement.ts";
 
 import {resetGamesSocket} from "../utils.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
 
 export const userKeys: keys = new keys();
 export const tetrisGameInformation: tetrisGame = new tetrisGame();
@@ -96,7 +98,8 @@ export const   tetrisCreateRoomPage = () => {
 const multiplayerRoom = (arg: loadTetrisArgs) => {
 	///// ??????????????????????????
 	console.log("multiplayerRoom called with arg:", arg);
-	tetrisMultiplayerRoom(arg);
+	tetrisMultiplayerRoom(arg.rooms?.[0]?.roomCode || ""); // TODO modif ben est ce que c est bo
+	//tetrisMultiplayerRoom(arg); //TODO before marchais pas ...
 }
 
 export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
@@ -117,7 +120,11 @@ let  modify: boolean = false;
 export const changeKeys = (keyType: string) => {
 	if (modify)
 		return ;
-	document.getElementById(keyType)!.innerText = "Press a key";
+
+	const pressKey = document.createElement('div');
+	pressKey.className = 'fixed inset-0 w-full h-full bg-black/80 z-[9999] flex justify-center items-center text-white text-2xl';
+	pressKey.textContent = imTexts.tetrisSettingsKeyChange + " ("+ keyType + ")";
+	document.body.appendChild(pressKey);
 
 	modify = true;
 
@@ -127,7 +134,10 @@ export const changeKeys = (keyType: string) => {
 		setKey(keyType, newKey);
 		console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
-		document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
+		//TODO marche pas  ?
+		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
+		pressKey.remove();
+		tetrisSettingsPage();
 	};
 
 	document.addEventListener("keydown", getNewKey);
