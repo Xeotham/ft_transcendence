@@ -8,8 +8,10 @@ export class UserInfo {
 	private token: string | null;
 	private avatarImg: string;
 	constructor() {
+		this.token = localStorage.getItem("authToken") || null;
+		if (!this.token)
+			localStorage.clear();
 		this.username = localStorage.getItem("username") || UserInfo.generateUsername();
-		this.token = null;
 		this.avatarImg = "http://localhost:5000/src/medias/avatars/avatar1.png"; // Default avatar
 	}
 
@@ -70,6 +72,12 @@ export class UserInfo {
 	setUsername(username: string) {
 		this.username = username;
 	}
+
+	resetUser() {
+		this.username = "";
+		this.token = null;
+		this.avatarImg = "http://localhost:5000/src/medias/avatars/avatar1.png"; // Default avatar
+	}
 }
 
 export const    postToApi = async (url: string, data: any) => {
@@ -88,6 +96,11 @@ export const    postToApi = async (url: string, data: any) => {
 	{
 		let errorData = await fetched.json();
 		console.error('Error in post:', url);
+		if (fetched.status === 401 && errorData.disconnect) {
+			console.log("Disconnecting user due to 401 error");
+			localStorage.clear();
+			user.resetUser();
+		}
 		throw {
 			status: fetched.status,
 			message: errorData.message || 'An error occurred',
@@ -110,6 +123,11 @@ export const    patchToApi = async (url: string, data: any) => {
 	{
 		let errorData = await fetched.json();
 		console.error('Error in patch:', url);
+		if (fetched.status === 401 && errorData.disconnect) {
+			console.log("Disconnecting user due to 401 error");
+			localStorage.clear();
+			user.resetUser();
+		}
 		throw {
 			status: fetched.status,
 			message: errorData.message || 'An error occurred',
@@ -122,6 +140,12 @@ export const    getFromApi = async (url: string) => {
 	const   response = await fetch(url);
 	if (!response.ok) {
 		console.error("Error:", response.statusText);
+		const   errorData = await response.json();
+		if (response.status === 401 && errorData.disconnect) {
+			console.log("Disconnecting user due to 401 error");
+			localStorage.clear();
+			user.resetUser();
+		}
 	}
 	return response.json();
 }

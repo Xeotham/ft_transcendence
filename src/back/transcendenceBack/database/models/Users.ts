@@ -13,8 +13,6 @@ interface User
 }
 
 export const createUser = async (username: string, password: string, avatar: string) => {
-	console.log("createUser", username, password, avatar);
-
 	let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\

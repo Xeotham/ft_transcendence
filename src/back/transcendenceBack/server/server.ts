@@ -35,21 +35,19 @@ fastify.addHook('onRequest', (request, reply, done) => {
 
 
 	if (token && tokenBlacklist.has(token)) {
-		console.log("Token is Blacklisted: ", token);
-		reply.status(401).send({ message: 'Token is invalid' });
+		reply.status(401).send({ message: 'Token is invalid', disconnect: true });
 	} else {
 		if (token) {
 			jwt.verify(token, process.env.AUTH_KEY!, (err, decoded) => {
 				if (err) {
 					console.log(err);
-					reply.status(401).send({message: 'Token is invalid'});
+					reply.status(401).send({message: 'Token is invalid', disconnect: true});
 				} else {
 					// request.user = decoded; // Attach user info to request
 					done();
 				}
 			});
 		}
-		console.log("Token is not provided or is valid: ", token);
 		done();
 	}
 });
