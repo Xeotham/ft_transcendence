@@ -7,12 +7,14 @@ import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
 import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
-import { modaleTetrisStatHTML, modaleTetrisStatEvents, loadTetrisStat,modaleTetrisStatLineEvents } from './modalesTetrisStatHTML.ts';
+import { modaleTetrisStatHTML, modaleTetrisStatEvents, loadTetrisStat } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
+import { user } from '../immanence.ts';
 
 ///////////////////////////////////////////
 // Variables
+
 export enum ModaleType {
   NONE = 'NONE',
   SIGNIN = 'SIGNIN',
@@ -22,6 +24,8 @@ export enum ModaleType {
   TETRIS_STATS = 'TETRIS_STATS',
   TETRIS_STATS_DETAIL = 'TETRIS_STATS_DETAIL',
   AVATAR = 'AVATAR',
+  FRIEND_LIST = 'FRIEND_LIST',
+  FRIEND_PROFILE = 'FRIEND_PROFILE'
 }
 
 export let modale = {
@@ -40,15 +44,17 @@ export const modaleInit = () => {
   modale.zone = EL.zoneModale as HTMLDivElement;
   modale.content = EL.contentModale as HTMLDivElement;
 
-  const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
-  if (!bkgModale) 
-    return;
-  bkgModale.addEventListener('click', () => {
-    modaleHide();
-  });
+  // const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
+  // if (!bkgModale) 
+  //   return;
+  // bkgModale.addEventListener('click', () => {
+  //   modaleHide();
+  // });
 
-  //modaleHide();
-  modaleDisplay(ModaleType.SIGNIN);
+  if (!user.isAuthenticated())
+    modaleDisplay(ModaleType.SIGNIN);
+  else
+    modaleHide();
 }
 
 export const modaleDisplay = async (modaleType: ModaleType) => {
@@ -91,24 +97,29 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       modale.content.innerHTML = '';
   }
 
-  // Afficher la modale
   while (modale.zone.classList.contains('hidden')) {
     modale.zone.classList.remove('hidden');
   }
   modale.zone.classList.add('block');
   modale.show = true;
+  modaleSetBkgCloseEvent(modaleType);
 }
 
 export const modaleHide = () => {
+
   if (!modale.zone || !modale.content)
     return;
+
   modale.type = ModaleType.NONE;
   modale.content.innerHTML = '';
+
   while (modale.zone.classList.contains('block')) {
     modale.zone.classList.remove('block');
   }
   modale.zone.classList.add('hidden');
   modale.show = false;
+
+  modaleSetBkgCloseEvent(modale.type);
 }
 
 export const modaleAlert = (message: string) => {
@@ -124,6 +135,30 @@ export const modaleAlert = (message: string) => {
     </div>
   </div>
   `;
+}
 
-  // TODO refresh zone modale avec un timeout ???
+export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
+
+  const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
+  if (!bkgModale) 
+    return;
+
+  if (modaleType===ModaleType.SIGNIN || modaleType===ModaleType.SIGNUP || modaleType===ModaleType.NONE) {
+    bkgModale.removeEventListener('click', (e) => {
+      // TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
+      // e.stopPropagation();
+      // modaleHide();
+    });
+    bkgModale.classList.remove('hover:cursor-pointer');
+    bkgModale.classList.add('hover:cursor-default');
+    return;
+  }
+
+  console.log("modaleSetBkgCloseEvent: " + modaleType);
+  bkgModale.addEventListener('click', (e) => {
+    e.stopPropagation();
+    modaleHide();
+  });
+  bkgModale.classList.add('hover:cursor-pointer');
+  bkgModale.classList.remove('hover:cursor-default');
 }

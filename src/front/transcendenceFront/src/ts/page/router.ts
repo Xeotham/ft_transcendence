@@ -10,11 +10,12 @@ import { joinRoom } from "../tetris/gameManagement.ts";
 import  { loadPongPage } from "../pong/pong.ts";
 import  { getTournamentInfo, getTourRoomInfo, listTournaments } from "../pong/tournament.ts";
 import  { getRoomInfo, listRoomsSpectator } from "../pong/spectate.ts";
-import {signUpUser} from "../userManagement/userManagement.ts";
+//import {signUpUser} from "../userManagement/userManagement.ts";
 //import { userKeys } from "../tetris/tetris.ts";
 
 // Start the router
 export const startRouter = () => {
+
 	// ROOT
 	page('/', () => zoneSet("HOME"));
 	// PONG
@@ -22,12 +23,13 @@ export const startRouter = () => {
 	// TETRIS
 	tetrisRouter();
 	// LOGIN
-	loginRouter();
+	// loginRouter();
 	// 404
 	page('*', () => {
 		console.log('404 Not Found');
 		page.show("/")
 	});
+
 	// start the router
 	page();
 }
@@ -123,14 +125,14 @@ const tetrisRouter = () => {
 	})
 }
 
-const loginRouter = () => {
-	page('/login', () => {
-		loginUser();
-		zoneSet("HOME");
-	});
+// const loginRouter = () => {
+// 	page('/login', () => {
+// 		loginUser();
+// 		zoneSet("HOME");
+// 	});
 	
-	page('/sign-up', () => {
-		signUpUser();
-		zoneSet("HOME");
-	});
-}
+// 	page('/sign-up', () => {
+// 		signUpUser();
+// 		zoneSet("HOME");
+// 	});
+// }

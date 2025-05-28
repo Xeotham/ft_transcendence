@@ -5,6 +5,8 @@ import { ModaleType, modaleDisplay } from './modalesCore.ts';
 // import avatarImg from '../../medias/avatars/avatar1.png';
 import {getFromApi, postToApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
+// @ts-ignore
+import  page from "page";
 
 interface GameUserInfo
 {
@@ -62,6 +64,24 @@ export const modaleProfileHTML = async () => {
 
   <div class="h-[30px]"></div>
   
+  <span class="${TCS.modaleTexte} text-[24px]">
+  ${imTexts.modalesProfileLanguageTitle}</span>
+  <div id="profileUserLanguage" class="${TCS.modaleTexte}">
+    fr -
+    <span class="${TCS.modaleTexteLink}">en</span> -
+    <span class="${TCS.modaleTexteLink}">es</span> -
+    <span class="${TCS.modaleTexteLink}">de</span>
+  </div>
+
+  <div class="h-[30px]"></div>
+  
+  <span class="${TCS.modaleTexte} text-[24px]">
+  ${imTexts.modalesProfileFriendList})</span>
+  <div id="modaleProfileFriendListLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfileFriendListLink}</div>
+ 
+  <div class="h-[30px]"></div>
+
   <span class="${TCS.modaleTexte} text-[24px]">Pong</span>
   <div id="modalePongStats" class="${TCS.modaleTexte}">
   ${await pongWinRate()}</div>
@@ -88,27 +108,28 @@ export const modaleProfileEvents = () => {
   const profileAvatar =         document.getElementById('profileAvatar') as HTMLImageElement;
   const profileUserEditLink =   document.getElementById('profileUserEditLink') as HTMLAnchorElement;
   const profileDeconectLink =   document.getElementById('profileDeconectLink') as HTMLAnchorElement;
+  const profileFriendListLink = document.getElementById('profileFriendListLink') as HTMLAnchorElement;
   const modalePongStatsLink =   document.getElementById('modalePongStatsLink') as HTMLImageElement;
   const modaleTetrisStatsLink = document.getElementById('modaleTetrisStatsLink') as HTMLImageElement;
 
-  if (!profileAvatar || !profileUserEditLink || !profileDeconectLink || !modalePongStatsLink || !modaleTetrisStatsLink)
-    return;
+  // if (!profileAvatar || !profileUserEditLink || !profileDeconectLink || !modalePongStatsLink || !modaleTetrisStatsLink)
+  //   return;
     
-  profileAvatar.addEventListener('click', () => {
+  profileAvatar?.addEventListener('click', () => {
     modaleDisplay(ModaleType.AVATAR);
   });
 
-  profileUserEditLink.addEventListener('click', () => {
+  profileUserEditLink?.addEventListener('click', () => {
     modaleDisplay(ModaleType.SIGNUP); // TODO: remplacer par la modale de modification de profile
   });
 
-  profileDeconectLink.addEventListener('click', () => {
+  profileDeconectLink?.addEventListener('click', () => {
     const username = { username: user.getUsername()};
     postToApi(`http://${address}/api/user/logout`, username)
         .then(() => {
           localStorage.clear();
           user.setToken(null);
-          alert("User signed out successfully!");
+          page("/");
         })
         .catch((error) => {
           console.error("Error logging out:", error.status, error.message);
@@ -116,11 +137,15 @@ export const modaleProfileEvents = () => {
         });
   });
 
-  modalePongStatsLink.addEventListener('click', () => {
+  profileFriendListLink?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.FRIEND_LIST);
+  });
+
+  modalePongStatsLink?.addEventListener('click', () => {
     modaleDisplay(ModaleType.PONG_STATS);
   });
 
-  modaleTetrisStatsLink.addEventListener('click', () => {
+  modaleTetrisStatsLink?.addEventListener('click', () => {
     modaleDisplay(ModaleType.TETRIS_STATS);
   });
 }
