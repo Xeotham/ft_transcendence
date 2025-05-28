@@ -1,6 +1,6 @@
 import {PongRoom} from "./game.ts";
 import {Tournament} from "./tournament.ts";
-import {pongTextures} from "./pong.ts";
+// import {pongTextures} from "./pong.ts";
 
 
 export const    pongSfxPlayer = new class {
@@ -16,6 +16,16 @@ export const    pongSfxPlayer = new class {
 				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/retro/hitOpponentPaddle.mp3"),
 				"goal": new Audio("/src/medias/sfx/pong/retro/goal.mp3"),
 			},
+			"phantom": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/phantom/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/phantom/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/phantom/goal.mp3"),
+			},
+			"tv_world": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/TVWorld/goal.mp3"),
+			}
 		}
 		this.pack = "retro";
 	}
@@ -35,36 +45,43 @@ export const    pongSfxPlayer = new class {
 			console.error("Sound pack not found: " + pack);
 	}
 }
-export const    pongPackHandler = new class {
-	private pack: string;
-	constructor() {
-		this.pack = "retro";
-		pongSfxPlayer.setPack("retro");
-	}
 
-	setPack(pack: string) {
-		if (this.pack !== pack) {
-			this.pack = pack;
-			pongSfxPlayer.setPack(pack);
-		}
-	}
-	getPack() { return this.pack; }
-}
 export const    pongTextureHandler = new class {
 	private pack: string;
 	private textures: {[key: string]: {[key: string]: HTMLImageElement}};
+	private fonts: {[key: string]: string}
 	constructor() {
 		this.pack = "retro";
 		this.textures = {};
 		this.generateTextures();
+		this.fonts = {
+			"retro": "30px Arial",
+			"phantom": "30px 'PhantomFont', Arial, sans-serif",
+			"tv_world": "30px 'Fontsona4', Arial, sans-serif",
+		}
 	}
 	private generateTextures() {
 		const   texturePaths = {
 			"retro": {
-				"BACKGROUND": '/src/medias/textures/pong/retro/background.png',
-				"BOARD": '/src/medias/textures/pong/retro/pongBoard.png',
-				"PADDLE": '/src/medias/textures/pong/retro/pongPaddle.png',
-				"BALL": '/src/medias/textures/pong/retro/pongBall.png',
+				"BACKGROUND":       '/src/medias/textures/pong/retro/background.png',
+				"BOARD":            '/src/medias/textures/pong/retro/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/retro/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/retro/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/retro/pongBall.png',
+			},
+			"phantom": {
+				"BACKGROUND":       '/src/medias/textures/pong/phantom/background.png',
+				"BOARD":            '/src/medias/textures/pong/phantom/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/phantom/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/phantom/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/phantom/pongBall.png',
+			},
+			"tv_world": {
+				"BACKGROUND":       '/src/medias/textures/pong/TVWorld/background.png',
+				"BOARD":            '/src/medias/textures/pong/TVWorld/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/TVWorld/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/TVWorld/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/TVWorld/pongBall.png',
 			}
 		}
 
@@ -101,6 +118,30 @@ export const    pongTextureHandler = new class {
 		else
 			console.error("Texture pack not found: " + pack);
 	}
+	getFont() {
+		if (this.fonts[this.pack] !== undefined)
+			return this.fonts[this.pack];
+		else
+			console.error("Font pack not found: " + this.pack);
+	}
+}
+
+export const    pongPackHandler = new class {
+	private pack: string;
+	constructor() {
+		this.pack = "retro"; // Default pack
+		pongSfxPlayer.setPack(this.pack);
+		pongTextureHandler.setPack(this.pack);
+	}
+
+	setPack(pack: string) {
+		if (this.pack !== pack) {
+			this.pack = pack;
+			pongSfxPlayer.setPack(pack);
+			pongTextureHandler.setPack(pack);
+		}
+	}
+	getPack() { return this.pack; }
 }
 
 export class   gameInformation {
