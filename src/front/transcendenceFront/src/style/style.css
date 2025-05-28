@@ -101,6 +101,17 @@
 }
 .font-pixelcode { font-family: 'PixelCode', sans-serif; }
 
+@font-face {
+    font-family: 'PhantomFont';
+    src: url('../medias/fonts/ttf/phantomFont.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-earwig { font-family: 'PhantomFont', sans-serif; }
+
+
+
+
 /* SELECTION */
 .custom-selection::selection {
     background: #fbbf24; /* Couleur de fond de la sélection */
