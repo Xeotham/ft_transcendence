@@ -6,6 +6,16 @@ import { ModaleType, modaleDisplay } from './modalesCore.ts';
 import {getFromApi, postToApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
+interface GameUserInfo
+{
+  date: 	 string;
+  username : string;
+  userId: number;
+  score: 	number;
+  winner: boolean;
+  type: 	string;
+}
+
 const pongWinRate = async () => {
   const stats = await getFromApi(`http://${address}/api/user/get-stat?username=${user.getUsername()}`);
   const victories: number = stats.stats.pongWin;
@@ -13,7 +23,19 @@ const pongWinRate = async () => {
   return `${imTexts.modalesProfileWinrate}: ${victories} ${imTexts.modalesProfileVictories} / ${defeats} ${imTexts.modalesProfileDefeats}`;
 }
 
-const tetrisBestScore = (score: number) => {
+const tetrisBestScore = async () => {
+  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
+  history.filter((e) => e.players[0].type !== 'tetris');
+  if (!history.length)
+    return `${imTexts.modalesProfileBestScore}: No game played`;
+  let score: number = 0;
+  history.forEach((game) => {
+    game.players.forEach((player) => {
+      if (user.getUsername() === player.username && player.score > score)
+        score = player.score;
+    })
+  })
   return `${imTexts.modalesProfileBestScore}: ${score}pts`;
 }
 
@@ -50,8 +72,7 @@ export const modaleProfileHTML = async () => {
 
   <span class="${TCS.modaleTexte} text-[24px]">Tetris</span>
   <div id="modaleTetrisStats" class="${TCS.modaleTexte}">
-    ${tetrisBestScore(1000)}
-  </div>
+    ${await tetrisBestScore()}</div>
   <div id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
   ${imTexts.modalesProfileTetrisStatsLink}</div>
 

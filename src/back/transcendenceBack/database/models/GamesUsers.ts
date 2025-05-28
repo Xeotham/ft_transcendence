@@ -38,12 +38,14 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: n
 export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat:any ): void =>
 {
 	const win = (winner === true ? 1 : 0);
+	console.log(userId, gameId, score, winner, type, gameTetrisId);
 	let stmt = db.prepare('\
 		INSERT INTO gamesUsers (userId, gameId, score, winner, type, gameTetrisId) \
 		VALUES (?, ?, ?, ?, ?, ?) \
 		');
 
 	stmt.run(userId, gameId, score, win, type, gameTetrisId);
+
 
 	console.log("Tetris stats: ", tetrisStat);
 	Object.keys(tetrisStat as object).forEach((key) => {

@@ -7,7 +7,7 @@ import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
 import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
-import { modaleTetrisStatHTML, modaleTetrisStatEvents, modaleTetrisStatLineEvents } from './modalesTetrisStatHTML.ts';
+import { modaleTetrisStatHTML, modaleTetrisStatEvents, loadTetrisStat,modaleTetrisStatLineEvents } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
 
@@ -74,9 +74,10 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       modalePongStatEvents();
       break;
     case ModaleType.TETRIS_STATS:
+      await loadTetrisStat();
       modale.content.innerHTML = modaleTetrisStatHTML(0); 
       modaleTetrisStatEvents();
-      modaleTetrisStatLineEvents();
+      // modaleTetrisStatLineEvents();
       break;
     case ModaleType.TETRIS_STATS_DETAIL:
       modale.content.innerHTML = modaleTetrisStatDetailHTML(42); // TODO: mettre id de la partie
