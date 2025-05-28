@@ -4,9 +4,10 @@
 import  page from "page"
 // HTML
 import { EL } from './zoneHTML.ts';
-import { TCS } from '../TCS.ts';
+//import { TCS } from '../TCS.ts';
 import { loadPongPage } from '../pong/pong.ts';
 import { loadTetrisPage } from '../tetris/tetris.ts';
+import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
 
 // Events
 import {  
@@ -116,9 +117,14 @@ export const zoneSet = (state: string) => {
     console.error('zoneSet: Unknown state');
     return;
   }
-  if (zone.state === state) {
-    return;
+  if (!user.isAuthenticated()) {
+    modaleDisplay(ModaleType.SIGNIN);
+    // zoneSetHOME(); 
+    // return;
   }
+    if (zone.state === state) {
+      return;
+    }
   zone.state = state;
   switch (zone.state) {
     case 'HOME':        { zoneSetHOME(); break; }

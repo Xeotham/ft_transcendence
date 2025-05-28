@@ -1,6 +1,6 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
-import { ModaleType, modaleDisplay, modaleAlert } from './modalesCore.ts';
+import { ModaleType, modaleDisplay, modaleAlert, modaleHide } from './modalesCore.ts';
 import {postToApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
@@ -53,8 +53,6 @@ export const modaleSignInEvents = () => {
   if (!signinForm || !signinRegisterLink)
     return;
 
-  // TODO: enlever les événements modaleBKG pour ne pas pouvoir cliquer sur le fond et fermer la modale
-
   signinForm.addEventListener('submit', (event: SubmitEvent) => {
     event.preventDefault();
 
@@ -69,7 +67,8 @@ export const modaleSignInEvents = () => {
             user.setToken(info.token);
             user.setUsername(info.user.username);
             user.setAvatar(info.user.avatar);
-            alert("User signed in successfully!");
+            // alert("User signed in successfully!");
+            modaleHide();
         })
         .catch((error) => {
           console.error("Error logging in:", error.status, error.message);

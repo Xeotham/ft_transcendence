@@ -1,10 +1,11 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 
-import closeIconImg from '../../medias/images/modales/croixSlate200.png';
 import { modaleAlert } from './modalesCore.ts';
 import {postToApi} from "../utils.ts";
 import {address} from "../immanence.ts";
+// @ts-ignore
+import  page from "page";
 
 export const modaleSignUpHTML = () => {
 
@@ -74,7 +75,8 @@ export const modaleSignUpEvents = () => {
       postToApi(`http://${address}/api/user/register`, data)
           .then(() => {
               // console.log("User registered successfully");
-              alert("Registered successfully!");
+              // alert("Registered successfully!");
+              page("/");
               // page.show("/login");
           })
           .catch((error) => {
