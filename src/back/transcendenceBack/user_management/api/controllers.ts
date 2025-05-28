@@ -37,8 +37,6 @@ const generateDefaultAvatar = () => {
     console.log(filePath);
     const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
     console.log(fileBuffer);
-    // const blob = new Blob([fileBuffer], { type: 'image/png' }); // Create a Blob from the Buffer
-    // const blob = fileBuffer;
     return fileBuffer;
 };
 
@@ -47,8 +45,6 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     const { username, password } = request.body as { username: string, password: string };
 
     const avatar = generateDefaultAvatar();
-
-    console.log("Blob: ", avatar);
 
     if(!username || !password || !avatar)
         return reply.status(400).send({ message: 'Username, password and avatar can\'t be empty' });
@@ -59,9 +55,7 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
     try
     {
         const hashedPassword = await hashPassword(password);
-
-        // const base64Avatar = avatar.split(',')[1];
-
+        
         const id = await createUser( username, hashedPassword as string, avatar );
 
         createStats(Number(id));
@@ -121,14 +115,14 @@ export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
     //     return reply.status(401).send({ message: 'User already connected' });
 
     const   payload = { username: user.username, id: user.id };
-    const   authToken = jwt.sign(payload, authKey!, { expiresIn: '1h' });
+    const   authToken = jwt.sign(payload, authKey!, { expiresIn: '10h' });
     // const   newAvatar = new Blob([user.avatar], { type: 'image/png' });
 
     // console.log(newAvatar);
 
     logUserById(user.id as number);
 
-    return reply.send({ message: 'Login successful', token: authToken, user: {username: user.username, avatar: user.avatar } });
+    return reply.send({ message: 'Login successful', token: authToken, user: { username: user.username, avatar: user.avatar } });
 };
 
 export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) => 
@@ -165,6 +159,42 @@ export const    getUserInfo = async (request: FastifyRequest, reply: FastifyRepl
     
     return reply.status(201).send({ message: 'User\'s infos sended', user });
 };
+
+export const    connectUser = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { username } = request.body as { username: string };
+
+    const user = getUserByUsername(username);
+
+    if (!user)
+        return reply.status(401).send({ message: 'Invalid username' });
+
+    if (user.connected)
+        return reply.status(401).send({ message: 'User already connected' });
+
+    logUserById(user.id as number);
+
+    console.log("Connecting user:", user.username);
+
+    return reply.status(201).send({ message: 'User connected successfully', user: { username: user.username, avatar: user.avatar } });
+}
+
+export const    disconnectUser = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { username } = request.body as { username: string };
+
+    const user = getUserByUsername(username);
+
+    if (!user)
+        return reply.status(401).send({ message: 'Invalid username' });
+
+    if (!user.connected)
+        return reply.status(401).send({ message: 'User already disconnected' });
+
+    logOutUserById(user.id as number);
+
+    console.log("Disconnecting user:", user.username);
+
+    return reply.status(201).send({ message: 'User disconnected successfully' });
+}
 
 /*----------------------------------------------------------------------------*/
 /* Contact */

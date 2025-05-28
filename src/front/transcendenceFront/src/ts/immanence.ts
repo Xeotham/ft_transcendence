@@ -1,5 +1,5 @@
 // Events & core
-import {resetGamesSocket, UserInfo} from "./utils.ts";
+import {postToApi, resetGamesSocket, UserInfo} from "./utils.ts";
 //import { evAddDocResize } from './zone/zoneEvents.ts'
 import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'
@@ -25,6 +25,26 @@ const main = () => {
     startRouter();
     modaleInit();
 }
+
+window.onload = async () => {
+    if (user.getToken()) {
+        console.log("User already connected, loading user data...");
+        const response = await postToApi(`http://${address}/api/user/connect-user`, { username: user.getUsername() })
+        if (response)
+            user.setAvatar(response.user.avatar);
+    }
+}
+
+window.onbeforeunload = async () => {
+    if (user.getToken()) {
+        try {
+            await postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
+        } catch (error) {
+            console.error('Error disconnecting user:', error);
+        }
+    }
+}
+
 
 // Start the app
 document.addEventListener('DOMContentLoaded', () => {

@@ -51,15 +51,6 @@ const imageToBase64 = (imageElement: HTMLImageElement): string => {
 	canvas.width = 200;
 	canvas.height = 200;
 
-	if (imageElement.width > imageElement.height)
-		imageElement.width = 200;
-	else
-		imageElement.height = 200;
-
-	const cropSize = Math.min(imageElement.width, imageElement.height); // Use the smaller dimension for cropping
-	const cropX = (imageElement.width - cropSize) / 2; // Center crop horizontally
-	const cropY = (imageElement.height - cropSize) / 2;
-
 	// Draw the image onto the canvas
 	context.drawImage(imageElement, 0, 0, 200, 200);
 
