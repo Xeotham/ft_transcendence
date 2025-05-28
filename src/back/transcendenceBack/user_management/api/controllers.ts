@@ -168,8 +168,8 @@ export const    connectUser = async (request: FastifyRequest, reply: FastifyRepl
     if (!user)
         return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.connected)
-        return reply.status(401).send({ message: 'User already connected' });
+    // if (user.connected)
+    //     return reply.status(401).send({ message: 'User already connected' });
 
     logUserById(user.id as number);
 
