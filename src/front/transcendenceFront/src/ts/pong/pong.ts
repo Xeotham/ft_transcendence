@@ -234,8 +234,8 @@ const   drawBoard = (ctx: CanvasRenderingContext2D, coord: { x: number, y: numbe
 	ctx.drawImage(pongTextureHandler.getTexture("BOARD") as HTMLImageElement, coord.x, coord.y - 3, boardWidth, boardHeight + 6);
 }
 
-const   drawPaddle = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }) => {
-	const   paddleTexture = pongTextureHandler.getTexture("PADDLE") as HTMLImageElement;
+const   drawPaddle = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number }, opponent: boolean) => {
+	const   paddleTexture = pongTextureHandler.getTexture(opponent ? "OPPONENT_PADDLE" : "USER_PADDLE") as HTMLImageElement;
 	ctx.drawImage(paddleTexture, coord.x, coord.y, paddleTexture.width, paddleTexture.height);
 }
 
@@ -247,7 +247,7 @@ const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string,
 	ctx.textAlign = "center";
 
 	const   writeText = (text: string, x: number, y: number) => {
-		ctx.font = "30px Arial";
+		ctx.font = pongTextureHandler.getFont()!;
 		ctx.fillStyle = "black";
 		ctx.strokeText(text, x, y);
 		ctx.fillStyle = "white";
@@ -311,6 +311,6 @@ const drawGame =  (game: Game) => {
 	// ctx.fill();
 
 	// Draw paddles
-	drawPaddle(ctx, paddle1Coord!);
-	drawPaddle(ctx, paddle2Coord!);
+	drawPaddle(ctx, paddle1Coord!, false); // User paddle
+	drawPaddle(ctx, paddle2Coord!, true); // Opponent paddle
 }

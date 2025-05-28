@@ -318,15 +318,12 @@ export const   messageHandler = (event: MessageEvent)=> {
 const   effectHandler = (effect: string) => {
 	switch (effect) {
 		case "hitPaddle":
-			console.log("Hit paddle");
 			pongSfxPlayer.play("hitPaddle");
 			return ;
 		case "hitOpponentPaddle":
-			console.log("Hit opponent paddle");
 			pongSfxPlayer.play("hitOpponentPaddle");
 			return ;
 		case "goal":
-			console.log("Goal");
 			pongSfxPlayer.play("goal");
 			return ;
 	}
