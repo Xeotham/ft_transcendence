@@ -129,7 +129,7 @@ export const    pongTextureHandler = new class {
 export const    pongPackHandler = new class {
 	private pack: string;
 	constructor() {
-		this.pack = "retro"; // Default pack
+		this.pack = "phantom"; // Default pack
 		pongSfxPlayer.setPack(this.pack);
 		pongTextureHandler.setPack(this.pack);
 	}

@@ -321,6 +321,8 @@ const   pongDrawBoardHtml = () => {
 		</div>
 		<canvas id="pongCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
 	</div>`;
+	// TODO: replace width with ${window.innerWidth} and height with ${window.innerHeight}
+	// TODO: Canva Ben
 
 	// TODO: move this in correct place
 	const quitButton = document.getElementById("quit") as HTMLButtonElement;
