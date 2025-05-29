@@ -536,8 +536,6 @@ export const createPongGame = (players: {player1: player | null, player2: player
 
 export const createTetrisGame = (data: TetrisGame) =>
 {
-    console.log(data.getUsername());
-
     const   player1 = getUserByUsername(data.getUsername()) as Users;
 
     if (!player1 )

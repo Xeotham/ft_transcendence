@@ -36,13 +36,13 @@ db.exec(` \
     password    VARCHAR(150) NOT NULL,
     avatar      TEXT,
     connected   BOOLEAN DEFAULT false,
-    createdAt   DATETIME DEFAULT CURRENTTIMESTAMP
+    createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
   CREATE TABLE IF NOT EXISTS game
   (
     id		INTEGER PRIMARY KEY AUTOINCREMENT,
-    date 	DATETIME DEFAULT CURRENTTIMESTAMP
+    date 	DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
   CREATE TABLE IF NOT EXISTS stat
@@ -76,7 +76,7 @@ db.exec(` \
     senderId    INTEGER NOT NULL,
     recipientId INTEGER NOT NULL,
     content     TEXT,
-    date        DATETIME DEFAULT CURRENTTIMESTAMP,
+    date        DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (senderId) REFERENCES user(id),
     FOREIGN KEY (recipientId) REFERENCES user(id)
   );

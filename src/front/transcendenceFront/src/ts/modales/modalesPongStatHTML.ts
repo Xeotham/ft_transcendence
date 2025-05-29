@@ -1,6 +1,6 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
-import { ModaleType, modaleDisplay } from './modalesCore.ts';
+import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
 import {getFromApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
@@ -24,15 +24,6 @@ interface GameUserInfo
   winner: boolean;
   type: 	string;
 }
-
-interface gameHistory {
-  gameId: number,
-  username: string,
-  date: string,
-  score: number,
-  winner: boolean,
-  type: string }
-
 
 let pongHistory: pongStats[] = []
 
@@ -144,7 +135,6 @@ export const modalePongStatEvents = () => {
 
   if (!PongStatsBack || !PongStatsPrev || !PongStatsNext)
     return;
-  
 
   PongStatsBack.addEventListener('click', () => {
     modaleDisplay(ModaleType.PROFILE);
@@ -153,13 +143,17 @@ export const modalePongStatEvents = () => {
   PongStatsPrev.addEventListener('click', () => {
     if (pongStatPage <= 0)
       return;
-    modalePongStatHTML(--pongStatPage);
+    modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
+    modalePongStatEvents();
   });
 
   PongStatsNext.addEventListener('click', () => {
     if (pongStatPage >= 10) // TODO: remplacer par le nombre de pages
       return;
-    if ((pongStatPage + 1) * 10 <= pongHistory.length)
-      modalePongStatHTML(++pongStatPage);
+    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    {
+      modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
+      modalePongStatEvents();
+    }
   });
 }
