@@ -7,7 +7,13 @@ import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
 import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
-import { modaleTetrisStatHTML, modaleTetrisStatEvents, loadTetrisStat, modaleTetrisStatLineEvents } from './modalesTetrisStatHTML.ts';
+import {
+  modaleTetrisStatHTML,
+  modaleTetrisStatEvents,
+  loadTetrisStat,
+  modaleTetrisStatLineEvents,
+  modaleDislpayPrevNext
+} from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
 import { user } from '../immanence.ts';
@@ -82,8 +88,9 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
     case ModaleType.TETRIS_STATS:
       await loadTetrisStat();
       modale.content.innerHTML = modaleTetrisStatHTML(0);
+      modaleDislpayPrevNext();
       modaleTetrisStatEvents();
-      modaleTetrisStatLineEvents(0);
+      modaleTetrisStatLineEvents();
       break;
     case ModaleType.TETRIS_STATS_DETAIL:
       modale.content.innerHTML = modaleTetrisStatDetailHTML(42); // TODO: mettre id de la partie
@@ -144,7 +151,7 @@ export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
     return;
 
   if (modaleType===ModaleType.SIGNIN || modaleType===ModaleType.SIGNUP || modaleType===ModaleType.NONE) {
-    bkgModale.removeEventListener('click', (e) => {
+    bkgModale.removeEventListener('click', () => {
       // TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
       // e.stopPropagation();
       // modaleHide();

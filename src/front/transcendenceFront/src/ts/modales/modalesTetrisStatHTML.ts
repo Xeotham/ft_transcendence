@@ -143,13 +143,14 @@ const getModaleTetrisStatListHTML = (page: number) => {
   }
   listHTML += `  <div class="h-[10px]"></div>
 
-  <div id="TetrisStatsPrevNext" class="${TCS.modaleTexte}">
-    <a id="TetrisStatsPrev" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesTetrisStatsPrev}</a>
-    /
-    <a id="TetrisStatsNext" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesTetrisStatsNext}</a>
-  </div>`;
+  <span id="TetrisStatsPrevNext" class="${TCS.modaleTexte}">
+    <span id="TetrisPrev"><a id="TetrisStatsPrev" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesTetrisStatsPrev}</a></span>
+    <span id="TetrisSlash">/</span>
+    <span id="TetrisNext"><a id="TetrisStatsNext" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesTetrisStatsNext}</a></span>
+  </div>
+`;
 
   listHTML += `
   <div class="h-[10px]"></div>
@@ -255,6 +256,7 @@ export const modaleTetrisStatEvents = () => {
     if (tetrisStatPage <= 0)
       return;
     modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
+    modaleDislpayPrevNext();
     modaleTetrisStatEvents();
     modaleTetrisStatLineEvents();
   });
@@ -265,8 +267,32 @@ export const modaleTetrisStatEvents = () => {
     if ((tetrisStatPage + 1) * 10 < tetrisHistory.length)
     {
       modale.content.innerHTML = modaleTetrisStatHTML(++tetrisStatPage);
+      modaleDislpayPrevNext();
       modaleTetrisStatEvents();
       modaleTetrisStatLineEvents();
     }
   });
+}
+
+export const modaleDislpayPrevNext = () => {
+
+  const prev = document.getElementById('TetrisPrev');
+  const next = document.getElementById('TetrisNext');
+  const slash = document.getElementById('TetrisSlash');
+
+  const isNext = tetrisHistory.length - (tetrisStatPage * 10) > 10;
+
+  console.log("PREV" + isNext);
+  console.log("Prev " + prev);
+  console.log("Next " + next);
+  console.log("slash " + slash);
+
+
+  if (!isNext)
+    next?.classList.add('hidden');
+  if (tetrisStatPage==0)
+    prev?.classList.add('hidden');
+  if (!isNext || tetrisStatPage==0)
+    slash?.classList.add('hidden');
+
 }

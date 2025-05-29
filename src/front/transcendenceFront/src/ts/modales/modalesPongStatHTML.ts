@@ -112,12 +112,12 @@ const getModalePongStatListHTML = (page: number) => {
 
   listHTML += `  <div class="h-[10px]"></div>
 
-  <div id="PongStatsPrevNext" class="${TCS.modaleTexte}">
-    <a id="PongStatsPrev" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsPrev}</a>
-    /
-    <a id="PongStatsNext" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsNext}</a>
+  <span id="PongStatsPrevNext" class="${TCS.modaleTexte}">
+    <span id="PongPrev"><a id="PongStatsPrev" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsPrev}</a></span>
+    <span id="PongSlash">/</span>
+    <span id="PongPrev"><a id="PongStatsNext" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsNext}</a></span>
   </div>`;
 
   listHTML += `
