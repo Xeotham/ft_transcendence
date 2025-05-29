@@ -294,9 +294,12 @@ const drawGame =  (game: Game) => {
 	if (!ctx || !game)
 		return;
 
-	drawBackground(ctx, canvas.width, canvas.height);
+	// Draw background
+	// drawBackground(ctx, canvas.width, canvas.height);
+	drawBackground(ctx, window.innerWidth, window.innerHeight); // ????
+
 	// Draw board
-	drawBoard(ctx, boardCoord)
+	drawBoard(ctx, boardCoord);
 
 	// Draw score
 	if (game.score)

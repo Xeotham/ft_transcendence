@@ -253,7 +253,7 @@ export const modaleTetrisStatEvents = () => {
   });
 
   TetrisStatsPrev.addEventListener('click', () => {
-    if (tetrisStatPage <= 0)
+    if (tetrisStatPage <= 0 || !modale.content)
       return;
     modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
     modaleDislpayPrevNext();
@@ -262,7 +262,7 @@ export const modaleTetrisStatEvents = () => {
   });
 
   TetrisStatsNext.addEventListener('click', () => {
-    if (tetrisStatPage >= 10) // TODO: remplacer par le nombre de pages
+    if (tetrisStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
       return;
     if ((tetrisStatPage + 1) * 10 < tetrisHistory.length)
     {

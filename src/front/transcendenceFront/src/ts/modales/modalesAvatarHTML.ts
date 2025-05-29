@@ -3,19 +3,20 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { modaleDisplay, ModaleType } from './modalesCore.ts';
 import {address, user} from "../immanence.ts";
 import {patchToApi} from "../utils.ts";
+import { modaleAlert } from './modalesCore.ts';
 
 
 export let modaleAvatarHTML = () => {
 	let AvatarHTML = `
-  <div id="titre_avatar" class="${TCS.modaleTitre}">
-  ${imTexts.modalesAvatarTitle}</div>
+	<div id="titre_avatar" class="${TCS.modaleTitre}">
+	${imTexts.modalesAvatarTitle}</div>
+	
+	<div id="avatarBack" class="${TCS.modaleTexteLink}">
+	${imTexts.modalesAvatarBack}</div>
 
-  <div id="avatarBack" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesAvatarBack}</div>
+	<div class="h-[30px]"></div>
 
-  <div class="h-[30px]"></div>
-
-  <div class="grid grid-cols-6 gap-x-[21px] gap-y-[21px]">
+	<div class="grid grid-cols-6 gap-x-[21px] gap-y-[21px]">
 `;
 
 	for (let i = 0; i < 24; i++) {
@@ -27,12 +28,22 @@ export let modaleAvatarHTML = () => {
 	}
 
 	AvatarHTML += `
+	<div class="h-[1Xpx]"></div>
+
 	</div>
 		<div id="upload">
-			<p class="${TCS.modaleTitre}">Upload Avatar:</p>
-			<input type="file" id="uploadAvatar" class="${TCS.modaleTexte}" />
+			<div class="${TCS.modaleTexte} text-[24px]">${imTexts.modalesAvatarUploadTitle}</div>
+			<label for="uploadAvatar" class="${TCS.modaleTexte} ${TCS.formButton} cursor-pointer">
+				${imTexts.modalesAvatarUploadLink}
+				<input type="file" id="uploadAvatar" file-type="image/*" accept="image/*" class="hidden" />
+			</label>
 		</div>
-	<div class="h-[30px]"></div>
+	
+	<div class="h-[5px]"></div>
+
+	<div id="modaleAlert" class="${TCS.modaleTexte}"></div>
+
+	<div class="h-[25px]"></div>
 	`;
 
 	return AvatarHTML;
@@ -87,7 +98,7 @@ const processUploadedAvatar = (uploadedAvatar: File): Promise<string> => {
 		};
 
 		reader.onerror = () => {
-			reject(new Error('Failed to read the file.'));
+			reject(new Error('Failed to read the file.'));			
 		};
 
 		reader.readAsDataURL(uploadedAvatar); // Read the file as a data URL
@@ -118,6 +129,7 @@ export const modaleAvatarEvents = async () => {
 				modaleDisplay(ModaleType.PROFILE);
 			} catch (error) {
 				console.error('Error processing uploaded avatar:', error);
+				modaleAlert('Error processing uploaded avatar.');
 			}
 		}
 	})

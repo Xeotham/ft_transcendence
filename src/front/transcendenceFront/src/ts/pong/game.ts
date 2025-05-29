@@ -2,6 +2,7 @@ import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./
 import {address, user} from "../immanence.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
+import { EL } from "../zone/zoneHTML.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore
@@ -220,6 +221,10 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 	if ((matchType === "PONG" && pongGameInfo.getMatchType() === "TOURNAMENT") && !winner) {
 		specTournament(pongGameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
 	}
+
+	if (EL.zoneGame)
+		EL.zoneGame.classList.add("hidden"); //TODO from ben a appliquer a tetris
+
 }
 
 const   quitRoom = (msg: string = "LEAVE") => {
@@ -249,6 +254,7 @@ const   quitRoom = (msg: string = "LEAVE") => {
 		socket.close();
 	}
 	pongGameInfo.resetRoom();
+	// TODO hide game zone
 	page.show("/pong");
 }
 

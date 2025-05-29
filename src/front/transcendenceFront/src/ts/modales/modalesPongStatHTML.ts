@@ -141,14 +141,14 @@ export const modalePongStatEvents = () => {
   });
 
   PongStatsPrev.addEventListener('click', () => {
-    if (pongStatPage <= 0)
+    if (pongStatPage <= 0 || !modale.content)
       return;
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modalePongStatEvents();
   });
 
   PongStatsNext.addEventListener('click', () => {
-    if (pongStatPage >= 10) // TODO: remplacer par le nombre de pages
+    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
       return;
     if ((pongStatPage + 1) * 10 < pongHistory.length)
     {

@@ -16,6 +16,8 @@ import {
 } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
+import { modaleFriendListHTML, modaleFriendListEvents } from './modalesFriendListHTML.ts';
+import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../immanence.ts';
 
 ///////////////////////////////////////////
@@ -99,6 +101,15 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
     case ModaleType.AVATAR:
       modale.content.innerHTML = modaleAvatarHTML();
       modaleAvatarEvents();
+      break;
+    case ModaleType.FRIEND_LIST:
+      modale.content.innerHTML = modaleFriendListHTML(0);
+      modaleFriendListEvents();
+      break;
+    case ModaleType.FRIEND_PROFILE:
+      //modale.content.innerHTML = modaleFriendProfileHTML(0);
+      await modaleFriendProfileHTML(); // TODO: pourquoi on ne peut pas mettre modaleFriendProfileHTML(0) ? seul fonction asynchrone ???
+      modaleFriendProfileEvents();
       break;
     default:
       modale.content.innerHTML = '';

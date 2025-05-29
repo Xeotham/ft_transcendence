@@ -106,7 +106,7 @@ export const documentResize = () => {
       stateProxy.separatorPos = zone.separatorCenter; // a verifier quand fd clique
       zone.separatorShift = Math.floor(document.documentElement.clientWidth / zone.sepRatioShift);
   }
-  // a faire mettre en place un pourcentage... puis le multiplier pour avoir les positions  
+  // TODO mettre en place un pourcentage... puis le multiplier pour avoir les positions  
 }
 
 ///////////////////////////////////////////
@@ -119,8 +119,6 @@ export const zoneSet = (state: string) => {
   }
   if (!user.isAuthenticated()) {
     modaleDisplay(ModaleType.SIGNIN);
-    // zoneSetHOME(); 
-    // return;
   }
     if (zone.state === state) {
       return;
@@ -149,12 +147,6 @@ const zoneSetHOME = () => {
 
   if (EL.zonePong ) { EL.zonePong.style.cursor = "pointer"; }
   if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "pointer"; }
-
-  // TODO creer un gestionnaire d evenement qui lance la modale signin si on est pas connecté
-  
-  // modaleHide();
-  // modaleDisplay(ModaleType.SIGNIN, modale_signin);
-  // modaleDisplay(ModaleType.SIGNUP, modale_signup);
 
   stateProxy.separatorPosTogo = zone.separatorCenter;
   zone.state = "HOME";
