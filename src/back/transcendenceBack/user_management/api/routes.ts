@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import {
     registerUser, updateUser, loginUser, logoutUser,
-    getUserInfo, getFriends, addFriend, deleteFriend, blockContact,
-    unblockContact, addMessage, getMessage, createPongGame, getStat,
+    getUserInfo, getFriends, addFriend, deleteFriend, addMessage, getMessage, createPongGame, getStat,
     getGameHistory, updateParameter, getParameter, connectUser, disconnectUser
 } from './controllers';
 
@@ -19,8 +18,8 @@ export default async function userRoutes(fastify: FastifyInstance)
     fastify.post('/add-friend', addFriend);
     fastify.get('/get-friend', getFriends);
     fastify.post('/delete-friend', deleteFriend);
-    fastify.post('/block-contact', blockContact);
-    fastify.post('/unblock-contact', unblockContact);
+    // fastify.post('/block-contact', blockContact);
+    // fastify.post('/unblock-contact', unblockContact);
     fastify.post('/add-message', addMessage);
     fastify.get('/get-message', getMessage);
     fastify.get('/get-stat', getStat);
