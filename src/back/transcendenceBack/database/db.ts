@@ -60,10 +60,6 @@ db.exec(` \
   (
       user1Id   INTEGER NOT NULL,
       user2Id   INTEGER NOT NULL,
-      friendU1  BOOLEAN DEFAULT false,
-      friendU2  BOOLEAN DEFAULT false,
-      blockU1   BOOLEAN DEFAULT false,
-      blockU2   BOOLEAN DEFAULT false,
       FOREIGN KEY (user1Id) REFERENCES user(id),
       FOREIGN KEY (user2Id) REFERENCES user(id),
       PRIMARY KEY (user1Id, user2Id),
