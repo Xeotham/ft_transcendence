@@ -20,7 +20,7 @@ const generateUserName = () => {
 }
 
 
-export const username = /*localStorage.getItem("username");*/ generateUserName(); // TODO: Change this to use the username from the local storage
+export const username = localStorage.getItem("username"); generateUserName(); // TODO: Change this to use the username from the local storage
 
 const socketInit = (socket: WebSocket) => {
 	tetrisGameInformation.setSocket(socket);
