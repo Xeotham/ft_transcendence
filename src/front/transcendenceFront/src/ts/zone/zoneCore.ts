@@ -197,3 +197,25 @@ const zoneSetTETRIS = () => {
   loadPongPage("empty");
   loadTetrisPage("idle");
 }
+
+export const	hideZoneGame = () => {
+	if (EL.zoneGame && !EL.zoneGame.classList.contains("hidden"))
+		EL.zoneGame.classList.add("hidden");
+	if (EL.zonePong && EL.zonePong.classList.contains("hidden"))
+		EL.zonePong.classList.remove("hidden");
+	if (EL.zoneTetris && EL.zoneTetris.classList.contains("hidden"))
+		EL.zoneTetris.classList.remove("hidden");
+	if (EL.zoneAvatar && EL.zoneAvatar.classList.contains("hidden"))
+		EL.zoneAvatar.classList.remove("hidden");
+}
+
+export const	showZoneGame = () => {
+	if (EL.zoneGame && EL.zoneGame.classList.contains("hidden"))
+		EL.zoneGame.classList.remove("hidden");
+	if (EL.zonePong && !EL.zonePong.classList.contains("hidden"))
+		EL.zonePong.classList.add("hidden");
+	if (EL.zoneTetris && !EL.zoneTetris.classList.contains("hidden"))
+		EL.zoneTetris.classList.add("hidden");
+	if (EL.zoneAvatar && !EL.zoneAvatar.classList.contains("hidden"))
+		EL.zoneAvatar.classList.add("hidden");	
+}

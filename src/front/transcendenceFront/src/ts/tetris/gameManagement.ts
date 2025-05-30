@@ -4,6 +4,7 @@ import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
 import { address } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
 import { tetrisBoardHtml } from "./tetrisHTML.ts";
+import { hideZoneGame } from "../zone/zoneCore.ts";
 // @ts-ignore
 import page from "page";
 
@@ -429,20 +430,13 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getForfeit():
 			case userKeys.getForfeit().toLowerCase():
 			case userKeys.getForfeit().toUpperCase():
-				postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
-				// tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
-				// tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
-				// document.removeEventListener('keydown', keydownHandler);
-				// document.removeEventListener('keyup', keyupHandler);
-				// bgmPlayer.stop();
-				// page.show("/tetris")
+				forfeit();
 				return;
 			case userKeys.getRetry():
 			case userKeys.getRetry().toLowerCase():
 			case userKeys.getRetry().toUpperCase():
 				postToApi(`http://${address}/api/tetris/retry`, { argument: "retry", gameId: tetrisGameInformation.getGameId() });
 				return;
-
 		}
 	}
 
@@ -498,4 +492,16 @@ const gameControllers = async (finish: boolean = false) => {
 		document.addEventListener("keydown", keydownHandler, { signal });
 		document.addEventListener("keyup", keyupHandler, { signal });
 	}
+}
+
+export const   forfeit = () => {
+	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
+	hideZoneGame();
+
+	// tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+	// tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+	// document.removeEventListener('keydown', keydownHandler);
+	// document.removeEventListener('keyup', keyupHandler);
+	// bgmPlayer.stop();
+	// page.show("/tetris")	
 }

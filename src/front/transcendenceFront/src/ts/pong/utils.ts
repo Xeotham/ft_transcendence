@@ -25,6 +25,11 @@ export const    pongSfxPlayer = new class {
 				"hitPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitPaddle.mp3"),
 				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitOpponentPaddle.mp3"),
 				"goal": new Audio("/src/medias/sfx/pong/TVWorld/goal.mp3"),
+			},
+			"retro1975": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/retro/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/retro/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/retro/goal.mp3"),
 			}
 		}
 		this.pack = "retro";
@@ -58,6 +63,7 @@ export const    pongTextureHandler = new class {
 			"retro": "30px Arial",
 			"phantom": "30px 'PhantomFont', Arial, sans-serif",
 			"tv_world": "30px 'Fontsona4', Arial, sans-serif",
+			"retro1975": "30px 'C64Pro', Arial, sans-serif",
 		}
 	}
 	private generateTextures() {
@@ -82,6 +88,13 @@ export const    pongTextureHandler = new class {
 				"USER_PADDLE":      '/src/medias/textures/pong/TVWorld/userPaddle.png',
 				"OPPONENT_PADDLE":  '/src/medias/textures/pong/TVWorld/opponentPaddle.png',
 				"BALL":             '/src/medias/textures/pong/TVWorld/pongBall.png',
+			},
+			"retro1975": {
+				"BACKGROUND":       '/src/medias/textures/pong/retro1975/background.jpg',
+				"BOARD":            '/src/medias/textures/pong/retro1975/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/retro1975/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/retro1975/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/retro1975/pongBall.png',
 			}
 		}
 
@@ -106,30 +119,34 @@ export const    pongTextureHandler = new class {
 			})
 		);
 	}
-	getTexture(name: string) {
+
+	getTexture(name: string): HTMLImageElement | null {
+		// TODO: verifier si texture est bien chargée
 		if (this.textures[this.pack] && this.textures[this.pack][name])
 			return this.textures[this.pack][name];
-		else
-			console.error("Texture not found: " + name);
+		console.error("Texture not found: " + name);
+		return null;
 	}
-	setPack(pack: string) {
+
+	setPack(pack: string): string | null {
 		if (this.textures[pack] !== undefined)
 			this.pack = pack;
-		else
-			console.error("Texture pack not found: " + pack);
+		console.error("Texture pack not found: " + pack);
+		return null;
 	}
-	getFont() {
+
+	getFont(): string | null {
 		if (this.fonts[this.pack] !== undefined)
 			return this.fonts[this.pack];
-		else
-			console.error("Font pack not found: " + this.pack);
+		console.error("Font pack not found: " + this.pack);
+		return null;
 	}
 }
 
 export const    pongPackHandler = new class {
 	private pack: string;
 	constructor() {
-		this.pack = "phantom"; // Default pack retro, phantom, tv_world
+		this.pack = "retro1975"; // Default pack retro, phantom, tv_world, retro1975
 		pongSfxPlayer.setPack(this.pack);
 		pongTextureHandler.setPack(this.pack);
 	}
