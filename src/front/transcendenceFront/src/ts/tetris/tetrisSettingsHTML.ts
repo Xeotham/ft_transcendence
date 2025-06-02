@@ -18,10 +18,10 @@ const tetrisSettingsHtml = (keys: keys) => {
 	let html = `
 	<div class="${TCS.tetrisWindowBkg}">
 	
-		<div id="tetrisSettingsTitle" class="${TCS.tetrisSettingTitle}">
+		<div id="tetrisSettingsTitle" class="${TCS.gameTitle}">
 		${imTexts.tetrisSettingsTitle}</div> 
 
-		<div class="${TCS.modaleTexte} translate-y-[-5px]">
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
 		<a id="tetrisSettingsBack" class="${TCS.modaleTexteLink}">
 		${imTexts.tetrisSettingsBack}</a></div>	
 
@@ -30,8 +30,8 @@ const tetrisSettingsHtml = (keys: keys) => {
 		<div class="grid grid-cols-2 gap-x-[20px] gap-y-[2px]">
 
 <!-- Mino -->
-			<div id="minoName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsMinoTitle}</div>
-			<div id="minoKey" class="${TCS.tetrisSelect}">
+			<div id="minoName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsMinoTitle}</div>
+			<div id="minoKey" class="${TCS.gameSelect}">
 				<select id="minoSelect" class="w-full">
 					<option value="1">${imTextsJson.fr.tetris.settings.mino.name[0]}</option>
 					<option value="2">${imTextsJson.fr.tetris.settings.mino.name[1]}</option>
@@ -46,8 +46,8 @@ const tetrisSettingsHtml = (keys: keys) => {
 			<div class="col-span-2 h-[20px]"></div>
 
 <!-- Background -->
-			<div id="bkgName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsBkgTitle}</div>
-			<div id="bkgKey" class="${TCS.tetrisSelect}">
+			<div id="bkgName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsBkgTitle}</div>
+			<div id="bkgKey" class="${TCS.gameSelect}">
 				<select id="bkgSelect" class="w-full">
 					<option value="1">${imTextsJson.fr.tetris.settings.bkg.name[0]}</option>
 					<option value="2">${imTextsJson.fr.tetris.settings.bkg.name[1]}</option>
@@ -60,8 +60,8 @@ const tetrisSettingsHtml = (keys: keys) => {
 			<div class="col-span-2 h-[20px]"></div>
 
 <!-- Music -->
-			<div id="musicName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsMusicTitle}</div>
-			<div id="musicKey" class="${TCS.tetrisSelect}">
+			<div id="musicName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsMusicTitle}</div>
+			<div id="musicKey" class="${TCS.gameSelect}">
 				<select id="musicSelect" class="w-full">
 					<option value="1">${imTextsJson.fr.tetris.settings.music.name[0]}</option>
 					<option value="2">${imTextsJson.fr.tetris.settings.music.name[1]}</option>
@@ -74,37 +74,37 @@ const tetrisSettingsHtml = (keys: keys) => {
 			<div class="col-span-2 h-[20px]"></div>
 
 <!-- Keybindings -->
-			<div id="moveLeftName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyMoveLeft}</div>
-			<div id="moveLeftKey" class="${TCS.tetrisKeybindingsKey}">${keys.getMoveLeft()}</div>
+			<div id="moveLeftName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyMoveLeft}</div>
+			<div id="moveLeftKey" class="${TCS.gameBlockLink}">${keys.getMoveLeft()}</div>
 			
-			<div id="moveRightName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyMoveRight}</div>
-			<div id="moveRightKey" class="${TCS.tetrisKeybindingsKey}">${keys.getMoveRight()}</div>
+			<div id="moveRightName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyMoveRight}</div>
+			<div id="moveRightKey" class="${TCS.gameBlockLink}">${keys.getMoveRight()}</div>
 			
-			<div id="rotClockName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyRotateClockwise}</div>
-			<div id="rotClockKey" class="${TCS.tetrisKeybindingsKey}">${keys.getClockwiseRotate()}</div>
+			<div id="rotClockName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRotateClockwise}</div>
+			<div id="rotClockKey" class="${TCS.gameBlockLink}">${keys.getClockwiseRotate()}</div>
 			
-			<div id="rotCountClockName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyRotateCounterclockwise}</div>
-			<div id="rotCountClockKey" class="${TCS.tetrisKeybindingsKey}">${keys.getCounterclockwise()}</div>
+			<div id="rotCountClockName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRotateCounterclockwise}</div>
+			<div id="rotCountClockKey" class="${TCS.gameBlockLink}">${keys.getCounterclockwise()}</div>
 			
-			<div id="rot180Name" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyRotate180}</div>
-			<div id="rot180Key" class="${TCS.tetrisKeybindingsKey}">${keys.getRotate180()}</div>
+			<div id="rot180Name" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRotate180}</div>
+			<div id="rot180Key" class="${TCS.gameBlockLink}">${keys.getRotate180()}</div>
 			
-			<div id="hardDropName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyHardDrop}</div>
-			<div id="hardDropKey" class="${TCS.tetrisKeybindingsKey}">${keys.getHardDrop()}</div>
+			<div id="hardDropName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyHardDrop}</div>
+			<div id="hardDropKey" class="${TCS.gameBlockLink}">${keys.getHardDrop()}</div>
 			
-			<div id="softDropName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeySoftDrop}</div>
-			<div id="softDropKey" class="${TCS.tetrisKeybindingsKey}">${keys.getSoftDrop()}</div>
+			<div id="softDropName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeySoftDrop}</div>
+			<div id="softDropKey" class="${TCS.gameBlockLink}">${keys.getSoftDrop()}</div>
 			
-			<div id="holdName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyHold}</div>
-			<div id="holdKey" class="${TCS.tetrisKeybindingsKey}">${keys.getHold()}</div>
+			<div id="holdName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyHold}</div>
+			<div id="holdKey" class="${TCS.gameBlockLink}">${keys.getHold()}</div>
 			
-			<div id="forfeitName" class="${TCS.tetrisKeybindingsName}">${imTexts.tetrisSettingsKeyForfeit}</div>
-			<div id="forfeitKey" class="${TCS.tetrisKeybindingsKey}">${keys.getForfeit()}</div>
+			<div id="forfeitName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyForfeit}</div>
+			<div id="forfeitKey" class="${TCS.gameBlockLink}">${keys.getForfeit()}</div>
 
 			<div class="col-span-2 h-[10px]"></div>
 
 			<div></div>
-			<div id="tetrisSettingsValidate" class="${TCS.tetrisKeybindingsKey} h-[40px] flex items-end">
+			<div id="tetrisSettingsValidate" class="${TCS.gameBlockLink} h-[40px] flex items-end">
 			${imTexts.tetrisSettingsValidate}</div>
 
 		</div>

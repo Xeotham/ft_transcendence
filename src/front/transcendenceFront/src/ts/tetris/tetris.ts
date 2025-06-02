@@ -86,7 +86,7 @@ const   tetrisVersusPage = () => {
 	searchGame();
 }
 
-export const   tetrisRoomListPage = () => {
+export const   gameListPage = () => {
 	getMultiplayerRooms();
 }
 

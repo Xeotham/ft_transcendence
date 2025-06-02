@@ -32,7 +32,7 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 	EL.contentTetris.innerHTML = `
 	<div class="${TCS.tetrisWindowBkg}">
 
-		<div class="${TCS.tetrisSettingTitle}">
+		<div class="${TCS.gameTitle}">
 		${imTexts.tetrisCreateMultiplayerRoomTitle}</div>		
 
 		<div class="${TCS.modaleTexte} translate-y-[-5px]">
@@ -42,7 +42,7 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 		<div class='h-[30px]'></div>
 		
 		<div id="tetrisDisplayMultiplayerRoomFormCode" class="grid grid-cols-4 gap-x-[10px] gap-y-[7px]">
-			<div id="startCustom" class="${TCS.tetrisStartRoom} col-span-3 row-span-2">
+			<div id="startCustom" class="${TCS.gameBigButton} col-span-3 row-span-2">
 			${imTexts.tetrisCreateMultiplayerRoomStart}</div>
 			<div class="${TCS.tetrisWindowText} text-[24px] mb-[-10px] text-left translate-y-[5px]">
 			${code}</div>
