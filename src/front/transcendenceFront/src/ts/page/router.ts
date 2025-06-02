@@ -4,7 +4,7 @@ import  page from 'page';
 // ZONE
 import { zoneSet } from "../zone/zoneCore.ts";
 // TETRIS
-import { loadTetrisPage, tetrisGameInformation, tetrisRoomListPage, tetrisCreateRoomPage, tetrisSettingsPage } from "../tetris/tetris.ts";
+import { loadTetrisPage, tetrisGameInformation, gameListPage, tetrisCreateRoomPage, tetrisSettingsPage } from "../tetris/tetris.ts";
 import { joinRoom } from "../tetris/gameManagement.ts";
 // PONG
 import  { loadPongPage } from "../pong/pong.ts";
@@ -100,7 +100,7 @@ const tetrisRouter = () => {
 	// TETRIS MULTIPLAYER ROOM LIST
 	page("/tetris/room-list", () => {
 		zoneSet("TETRIS");
-		tetrisRoomListPage();
+		gameListPage();
 	});
 	// TETRIS CREATE ROOM
 	page("/tetris/create-room", () => {

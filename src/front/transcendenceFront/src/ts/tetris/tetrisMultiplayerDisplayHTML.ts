@@ -23,7 +23,7 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 	let html = `
 	<div class="${TCS.tetrisWindowBkg}">
 
-		<div class="${TCS.tetrisSettingTitle}">
+		<div class="${TCS.gameTitle}">
 		${imTexts.tetrisDisplayMultiplayerRoomTitle}</div>
 
 		<div class="${TCS.modaleTexte} translate-y-[-5px]">
@@ -43,7 +43,7 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 				${imTexts.tetrisDisplayMultiplayerRoomCodeLabel}</label>
 			</div>
 			
-			<div><button id="tetrisDisplayMultiplayerRoomCodeSubmit" class="${TCS.tetrisKeybindingsKey} w-full">
+			<div><button id="tetrisDisplayMultiplayerRoomCodeSubmit" class="${TCS.gameBlockLink} w-full">
 			${imTexts.tetrisDisplayMultiplayerRoomCodeSubmit}</button></div>
 
 		</form>
@@ -65,7 +65,7 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 		// List of rooms
 		rooms.forEach((room: roomInfo) => {
 		html += `
-		<a href="/tetris/room:${room?.roomCode}" class="${TCS.tetrisRoomList} block w-full">
+		<a href="/tetris/room:${room?.roomCode}" class="${TCS.gameList} block w-full">
 		<span class="text-yellow-600">» </span>${room.roomCode}
 		<span class="text-stone-50">${imTexts.tetrisDisplayMultiplayerRoomJoin}</span>
 		</a>`;

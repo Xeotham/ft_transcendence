@@ -103,8 +103,8 @@ const   navTournament = () => {
 const   navSetting = () => {
 	loadPongHtml("nav-setting");
 
-	document.getElementById("ok")?.addEventListener("click", () => { page.show("/pong"); });
-	document.getElementById("return")?.addEventListener("click", () => { page.show("/pong"); });
+	// document.getElementById("ok")?.addEventListener("click", () => { page.show("/pong"); });
+	// document.getElementById("return")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
 

@@ -110,13 +110,21 @@
         "play": "Jouer",
         "back": "Retour"
       },
-      "settings": {
-        "title": "Réglages",
-        "ok": "Ok"
-      },
-      "matchfound": {
-        "title": "Match trouvé",
-        "quit": "Quitter"
+      "modales": {
+        "back": "Retour",
+        "joinTitle": "Rejoindre partie",
+        "joinText": "Attente d'un adversaire",
+        "specRoomTitle": "Mode spectateur infos",
+        "specRoomText1": "Room Info:",
+        "specRoomText2": "Room Number:",
+        "specRoomButton": "Assister à la partie",
+        "tournamentInfoTitle": "Tournois",
+        "tournamentInfoName": "Tournament name:",
+        "tournamentInfoNumber": "Tournament Number:",
+        "tournamentInfoStarted": "Le tournois a déjà commencé.",
+        "tournamentInfoNotStarted": "Le tournois est ouvert.",
+        "tournamentInfoJoin": "Rejoindre le tournois",
+        "SettingsTitle": "Réglages"
       }
     },
     "tetris": {
