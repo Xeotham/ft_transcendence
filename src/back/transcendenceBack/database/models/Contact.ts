@@ -29,32 +29,19 @@ export const deleteContact = (user1Id:number, user2Id:number): void =>
 };
 
 
-export const getUserContactById = (id: number): number[] =>
+export const getUserContactById = (id: number): FriendIdRow[] =>
 {
 	const stmt1 = db.prepare('\
         SELECT c.user2Id as friendId\
         FROM user u \
         JOIN contact c \
         ON c.user1Id = u.id \
-        WHERE ((u.id = ? AND friendU1 = 1) AND friendU2 = 1) \
+        WHERE (u.id = ?)  \
         ');
 	const rows1 = stmt1.all(id) as FriendIdRow[];
 
-    const stmt2 = db.prepare('\
-        SELECT c.user1Id as friendId\
-        FROM user u \
-        JOIN contact c \
-        ON c.user2Id = u.id \
-        WHERE ((u.id = ? AND friendU1 = 1) AND friendU2 = 1)\
-        ');
-    const rows2 = stmt2.all(id) as FriendIdRow[];
 
-    const contactIds = [
-        ...rows1.map(row => row.friendId),
-        ...rows2.map(row => row.friendId)
-    ];
-
-    return contactIds;
+    return rows1;
 };
 
 // export const checkFriendshipStatus = (user1Id: number, user2Id: number): number =>
