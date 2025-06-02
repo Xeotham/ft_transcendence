@@ -4,7 +4,6 @@
 // Syles
 import { TCS } from '../TCS.ts';
 // Images
-import img_logo_immanence from '/src/medias/images/zones/flamingtext_3.png';
 import img_pong_bkg from '/src/medias/images/zones/fond_test_pong.png';
 import img_tetris_bkg from '/src/medias/images/zones/fond_test_tetris.png';
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
@@ -26,6 +25,7 @@ export const	EL = {
   zoneTetris: null as HTMLElement | null,
   zoneAvatar: null as HTMLElement | null,
   zoneModale: null as HTMLElement | null,
+  zoneGame: null as HTMLElement | null,
   contentPong: null as HTMLElement | null,
   contentTetris: null as HTMLElement | null,
   contentModale: null as HTMLElement | null,
@@ -38,6 +38,7 @@ export const	EL = {
     EL.zoneTetris = document.getElementById("zoneTetris");
     EL.zoneAvatar = document.getElementById("zoneAvatar");
     EL.zoneModale = document.getElementById("zoneModale");
+    EL.zoneGame = document.getElementById("zoneGame");
     EL.contentPong = document.getElementById("contentPong");
     EL.contentTetris = document.getElementById("contentTetris");
     EL.contentModale = document.getElementById("contentModale");
@@ -75,8 +76,6 @@ export const setHtmlFront = () => {
     app.classList.add('h-full');
     app.innerHTML = 
     `
-
-
 <div name="zonePong" id="zonePong" class="${TCS.zonePong}">
     <div id="contentPong" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
     <div id="bkgPong" class="w-full h-full absolute z-0 flex items-start justify-center">
@@ -102,11 +101,9 @@ export const setHtmlFront = () => {
     <div id="contentModale" class="${TCS.contentModale}"></div>
 </div>
 
+<div name="zoneGame" id="zoneGame" class="${TCS.zoneGame} hidden"></div>
   `
   }
-
-  //setZoneTopTMP(); //TODO: remove
-
 }
 
 export const setZoneAvatar = (hide: boolean = false) => {
@@ -124,43 +121,3 @@ export const setZoneAvatar = (hide: boolean = false) => {
     }
   }
 }
-
-// zoneTop a enlever
-
-// `
-// <div name="zoneTop" id="zoneTop" class="${TCS.zoneTop}">
-//     <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
-// </div>
-// `
-
-// export const setZoneTopTMP = () => {
-//   const app = document.getElementById('zoneTop'); if (!app) return;
-
-//   app.innerHTML = `
-//   <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
-//   <span class="font-sixtyfour text-[14px] cursor-pointer hover:cursor-pointer">
-//   &nbsp&nbsp&nbsp     
-//   <a id="SIGNIN" class="hover:text-yellow-600">SIGNIN</a>&nbsp|
-//   <a id="SIGNUP" class="hover:text-yellow-600">SIGNUP</a>&nbsp|
-//   <a id="PROFILE" class="hover:text-yellow-600">PROFILE</a>&nbsp|
-//   <a id="PONG_STATS" class="hover:text-yellow-600">PONG_STATS</a>&nbsp|
-//   <a id="TETRIS_STATS" class="hover:text-yellow-600">TETRIS_STATS</a>&nbsp|
-//   <a id="TETRIS_STATS_DETAIL" class="hover:text-yellow-600">TETRIS_STATS_DETAIL</a>&nbsp|
-//   <a id="AVATAR" class="hover:text-yellow-600">AVATAR</a>
-//   </span>
-//   `;
-//   document.getElementById('SIGNIN')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.SIGNIN);});
-//   document.getElementById('SIGNUP')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.SIGNUP);});
-//   document.getElementById('PROFILE')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.PROFILE);});
-//   document.getElementById('PONG_STATS')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.PONG_STATS);});
-//   document.getElementById('TETRIS_STATS')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.TETRIS_STATS);});
-//   document.getElementById('TETRIS_STATS_DETAIL')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);}); 
-//   document.getElementById('AVATAR')?.addEventListener('click', () => {
-//     modaleDisplay(ModaleType.AVATAR);});
-// }

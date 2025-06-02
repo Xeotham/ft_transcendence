@@ -1,6 +1,6 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
-import { ModaleType, modaleDisplay } from './modalesCore.ts';
+import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
 import {getFromApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
@@ -24,15 +24,6 @@ interface GameUserInfo
   winner: boolean;
   type: 	string;
 }
-
-interface gameHistory {
-  gameId: number,
-  username: string,
-  date: string,
-  score: number,
-  winner: boolean,
-  type: string }
-
 
 let pongHistory: pongStats[] = []
 
@@ -121,12 +112,12 @@ const getModalePongStatListHTML = (page: number) => {
 
   listHTML += `  <div class="h-[10px]"></div>
 
-  <div id="PongStatsPrevNext" class="${TCS.modaleTexte}">
-    <a id="PongStatsPrev" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsPrev}</a>
-    /
-    <a id="PongStatsNext" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesPongStatsNext}</a>
+  <span id="PongStatsPrevNext" class="${TCS.modaleTexte}">
+    <span id="PongPrev"><a id="PongStatsPrev" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsPrev}</a></span>
+    <span id="PongSlash">/</span>
+    <span id="PongPrev"><a id="PongStatsNext" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsNext}</a></span>
   </div>`;
 
   listHTML += `
@@ -144,22 +135,25 @@ export const modalePongStatEvents = () => {
 
   if (!PongStatsBack || !PongStatsPrev || !PongStatsNext)
     return;
-  
 
   PongStatsBack.addEventListener('click', () => {
     modaleDisplay(ModaleType.PROFILE);
   });
 
   PongStatsPrev.addEventListener('click', () => {
-    if (pongStatPage <= 0)
+    if (pongStatPage <= 0 || !modale.content)
       return;
-    modalePongStatHTML(--pongStatPage);
+    modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
+    modalePongStatEvents();
   });
 
   PongStatsNext.addEventListener('click', () => {
-    if (pongStatPage >= 10) // TODO: remplacer par le nombre de pages
+    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
       return;
-    if ((pongStatPage + 1) * 10 <= pongHistory.length)
-      modalePongStatHTML(++pongStatPage);
+    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    {
+      modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
+      modalePongStatEvents();
+    }
   });
 }

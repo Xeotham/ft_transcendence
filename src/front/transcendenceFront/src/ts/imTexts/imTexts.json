@@ -32,6 +32,21 @@
         "pongStatsLink": "Voir plus de Stats Pong",
         "tetrisStatsLink": "Voir plus de Stats Tetris"
       },
+      "friendList": {
+        "title": "Mes amis",
+        "back": "retour au profil",
+        "connected": "Connecté",
+        "disconnected": "Hors ligne",
+        "remove": "Supprimer",        
+        "prev": "précedent",
+        "next": "suivant"
+      },
+      "friendProfile": {
+        "back": "retour",
+        "connected": "Connecté",
+        "disconnected": "Hors ligne",
+        "friendRemove": "Supprimer"
+      },
       "pongStats": {
         "title": "Pong historique",
         "back": "retour au profil",
@@ -57,7 +72,9 @@
         "text": "Choix de l'avatar",
         "back":"retour au profil",
         "ok":"ok",
-        "cancel":"annuler"
+        "cancel":"annuler",
+        "uploadTitle": "Charger une image",
+        "uploadLink": "Sélectionner un fichier"
       }
     },
     "pong": {

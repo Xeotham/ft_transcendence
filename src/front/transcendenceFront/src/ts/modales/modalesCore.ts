@@ -7,9 +7,17 @@ import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
 import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
-import { modaleTetrisStatHTML, modaleTetrisStatEvents, loadTetrisStat } from './modalesTetrisStatHTML.ts';
+import {
+  modaleTetrisStatHTML,
+  modaleTetrisStatEvents,
+  loadTetrisStat,
+  modaleTetrisStatLineEvents,
+  modaleDislpayPrevNext
+} from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
+import { modaleFriendListHTML, modaleFriendListEvents } from './modalesFriendListHTML.ts';
+import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../immanence.ts';
 
 ///////////////////////////////////////////
@@ -45,7 +53,7 @@ export const modaleInit = () => {
   modale.content = EL.contentModale as HTMLDivElement;
 
   // const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
-  // if (!bkgModale) 
+  // if (!bkgModale)
   //   return;
   // bkgModale.addEventListener('click', () => {
   //   modaleHide();
@@ -81,9 +89,10 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       break;
     case ModaleType.TETRIS_STATS:
       await loadTetrisStat();
-      modale.content.innerHTML = modaleTetrisStatHTML(0); 
+      modale.content.innerHTML = modaleTetrisStatHTML(0);
+      modaleDislpayPrevNext();
       modaleTetrisStatEvents();
-      // modaleTetrisStatLineEvents();
+      modaleTetrisStatLineEvents();
       break;
     case ModaleType.TETRIS_STATS_DETAIL:
       modale.content.innerHTML = modaleTetrisStatDetailHTML(42); // TODO: mettre id de la partie
@@ -92,6 +101,15 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
     case ModaleType.AVATAR:
       modale.content.innerHTML = modaleAvatarHTML();
       modaleAvatarEvents();
+      break;
+    case ModaleType.FRIEND_LIST:
+      modale.content.innerHTML = modaleFriendListHTML(0);
+      modaleFriendListEvents();
+      break;
+    case ModaleType.FRIEND_PROFILE:
+      //modale.content.innerHTML = modaleFriendProfileHTML(0);
+      await modaleFriendProfileHTML(); // TODO: pourquoi on ne peut pas mettre modaleFriendProfileHTML(0) ? seul fonction asynchrone ???
+      modaleFriendProfileEvents();
       break;
     default:
       modale.content.innerHTML = '';
@@ -140,11 +158,11 @@ export const modaleAlert = (message: string) => {
 export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
 
   const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
-  if (!bkgModale) 
+  if (!bkgModale)
     return;
 
   if (modaleType===ModaleType.SIGNIN || modaleType===ModaleType.SIGNUP || modaleType===ModaleType.NONE) {
-    bkgModale.removeEventListener('click', (e) => {
+    bkgModale.removeEventListener('click', () => {
       // TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
       // e.stopPropagation();
       // modaleHide();

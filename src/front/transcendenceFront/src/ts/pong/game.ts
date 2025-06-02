@@ -2,6 +2,7 @@ import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./
 import {address, user} from "../immanence.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
+import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore
@@ -220,6 +221,8 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 	if ((matchType === "PONG" && pongGameInfo.getMatchType() === "TOURNAMENT") && !winner) {
 		specTournament(pongGameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
 	}
+
+	hideZoneGame();
 }
 
 const   quitRoom = (msg: string = "LEAVE") => {
@@ -249,6 +252,7 @@ const   quitRoom = (msg: string = "LEAVE") => {
 		socket.close();
 	}
 	pongGameInfo.resetRoom();
+	// TODO hide game zone
 	page.show("/pong");
 }
 
@@ -339,7 +343,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 		case "START":
 			console.log("Starting game");
 			loadPongHtml("board");
-			loadPongPage("board");
+			// loadPongPage("board"); //TODO ?? c etaait en double?
 			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.addEventListener("keydown", keyHandler);
@@ -400,7 +404,6 @@ export const keyHandler = (event: KeyboardEvent) => {
 	if (event.code === "Escape") {
 		quit();
 	}
-
 
 	async function sendPaddleMovement(key: string, p: string) {
 		if (!game)

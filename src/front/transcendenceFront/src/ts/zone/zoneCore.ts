@@ -106,7 +106,7 @@ export const documentResize = () => {
       stateProxy.separatorPos = zone.separatorCenter; // a verifier quand fd clique
       zone.separatorShift = Math.floor(document.documentElement.clientWidth / zone.sepRatioShift);
   }
-  // a faire mettre en place un pourcentage... puis le multiplier pour avoir les positions  
+  // TODO mettre en place un pourcentage... puis le multiplier pour avoir les positions  
 }
 
 ///////////////////////////////////////////
@@ -119,8 +119,6 @@ export const zoneSet = (state: string) => {
   }
   if (!user.isAuthenticated()) {
     modaleDisplay(ModaleType.SIGNIN);
-    // zoneSetHOME(); 
-    // return;
   }
     if (zone.state === state) {
       return;
@@ -149,12 +147,6 @@ const zoneSetHOME = () => {
 
   if (EL.zonePong ) { EL.zonePong.style.cursor = "pointer"; }
   if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "pointer"; }
-
-  // TODO creer un gestionnaire d evenement qui lance la modale signin si on est pas connecté
-  
-  // modaleHide();
-  // modaleDisplay(ModaleType.SIGNIN, modale_signin);
-  // modaleDisplay(ModaleType.SIGNUP, modale_signup);
 
   stateProxy.separatorPosTogo = zone.separatorCenter;
   zone.state = "HOME";
@@ -204,4 +196,26 @@ const zoneSetTETRIS = () => {
   zone.state = "TETRIS";
   loadPongPage("empty");
   loadTetrisPage("idle");
+}
+
+export const	hideZoneGame = () => {
+	if (EL.zoneGame && !EL.zoneGame.classList.contains("hidden"))
+		EL.zoneGame.classList.add("hidden");
+	if (EL.zonePong && EL.zonePong.classList.contains("hidden"))
+		EL.zonePong.classList.remove("hidden");
+	if (EL.zoneTetris && EL.zoneTetris.classList.contains("hidden"))
+		EL.zoneTetris.classList.remove("hidden");
+	if (EL.zoneAvatar && EL.zoneAvatar.classList.contains("hidden"))
+		EL.zoneAvatar.classList.remove("hidden");
+}
+
+export const	showZoneGame = () => {
+	if (EL.zoneGame && EL.zoneGame.classList.contains("hidden"))
+		EL.zoneGame.classList.remove("hidden");
+	if (EL.zonePong && !EL.zonePong.classList.contains("hidden"))
+		EL.zonePong.classList.add("hidden");
+	if (EL.zoneTetris && !EL.zoneTetris.classList.contains("hidden"))
+		EL.zoneTetris.classList.add("hidden");
+	if (EL.zoneAvatar && !EL.zoneAvatar.classList.contains("hidden"))
+		EL.zoneAvatar.classList.add("hidden");	
 }

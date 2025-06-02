@@ -15,7 +15,7 @@ const tetrisSettingsHtml = (keys: keys) => {
 	if (!EL.contentTetris)
 		return;
 
-	EL.contentTetris.innerHTML = `
+	let html = `
 	<div class="${TCS.tetrisWindowBkg}">
 	
 		<div id="tetrisSettingsTitle" class="${TCS.tetrisSettingTitle}">
@@ -112,6 +112,10 @@ const tetrisSettingsHtml = (keys: keys) => {
 		<div class="h-[10px]"></div>
 
 	</div>`;
+	 
+	html = html.replace(/"> <\/div>/g, '">space</div>'); // affichage de space
+
+	EL.contentTetris.innerHTML = html;
 }
 
 const tetrisSettingsEvents = () => {

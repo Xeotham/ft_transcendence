@@ -9,14 +9,45 @@ interface GamesUsers
     type:      string
 }
 
-interface GameUserInfo 
+interface GameUserInfo
 {
 	date: 	 string;
-	username ?: string;
+	username?: string;
 	userId: number;
 	score: 	number;
 	winner: boolean;
 	type: 	string;
+	maxCombo: number;
+	piecesPlaced: number;
+	piecesPerSecond: number;
+	attacksSent: number;
+	attacksSentPerMinute: number;
+	attacksReceived: number;
+	attacksReceivedPerMinute: number;
+	keysPressed: number;
+	keysPerPiece: number;
+	keysPerSecond: number;
+	holds: number;
+	linesCleared: number;
+	linesPerMinute: number;
+	maxB2b: number;
+	perfectClears: number;
+	single: number;
+	double: number;
+	triple: number;
+	quad: number;
+	tspinZero: number;
+	tspinSingle: number;
+	tspinDouble: number;
+	tspinTriple: number;
+	tspinQuad: number;
+	miniTspinZero: number;
+	miniTspinSingle: number;
+	miniSpinZero: number;
+	miniSpinSingle: number;
+	miniSpinDouble: number;
+	miniSpinTriple: number;
+	miniSpinQuad: number;
 }
 
 interface GameIdRow 

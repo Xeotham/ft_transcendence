@@ -77,7 +77,7 @@ export const modaleProfileHTML = async () => {
   
   <span class="${TCS.modaleTexte} text-[24px]">
   ${imTexts.modalesProfileFriendList})</span>
-  <div id="modaleProfileFriendListLink" class="${TCS.modaleTexteLink}">
+  <div id="modlaleFriendListLink" class="${TCS.modaleTexteLink}">
   ${imTexts.modalesProfileFriendListLink}</div>
  
   <div class="h-[30px]"></div>
@@ -108,13 +108,10 @@ export const modaleProfileEvents = () => {
   const profileAvatar =         document.getElementById('profileAvatar') as HTMLImageElement;
   const profileUserEditLink =   document.getElementById('profileUserEditLink') as HTMLAnchorElement;
   const profileDeconectLink =   document.getElementById('profileDeconectLink') as HTMLAnchorElement;
-  const profileFriendListLink = document.getElementById('profileFriendListLink') as HTMLAnchorElement;
-  const modalePongStatsLink =   document.getElementById('modalePongStatsLink') as HTMLImageElement;
-  const modaleTetrisStatsLink = document.getElementById('modaleTetrisStatsLink') as HTMLImageElement;
+  const modaleFriendListLink = document.getElementById('modlaleFriendListLink') as HTMLAnchorElement;
+  const modalePongStatsLink =   document.getElementById('modalePongStatsLink') as HTMLAnchorElement;
+  const modaleTetrisStatsLink = document.getElementById('modaleTetrisStatsLink') as HTMLAnchorElement;
 
-  // if (!profileAvatar || !profileUserEditLink || !profileDeconectLink || !modalePongStatsLink || !modaleTetrisStatsLink)
-  //   return;
-    
   profileAvatar?.addEventListener('click', () => {
     modaleDisplay(ModaleType.AVATAR);
   });
@@ -137,7 +134,8 @@ export const modaleProfileEvents = () => {
         });
   });
 
-  profileFriendListLink?.addEventListener('click', () => {
+  modaleFriendListLink?.addEventListener('click', () => {
+    console.log("profileFriendListLink <<<<<<<<");
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 

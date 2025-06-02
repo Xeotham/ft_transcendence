@@ -1,8 +1,11 @@
-import {TCS} from "../TCS.ts";
-import {EL} from "../zone/zoneHTML.ts";
-import {Game, loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo} from "./utils.ts";
-import {pongGameInfo} from "./pong.ts";
-import {imTexts} from "../imTexts/imTexts.ts";
+import { TCS } from "../TCS.ts";
+import { EL } from "../zone/zoneHTML.ts";
+import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils.ts";
+import { pongGameInfo } from "./pong.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
+import { quit } from "./game.ts"; // TODO a valider 
+import { showZoneGame} from "../zone/zoneCore.ts";
+
 // @ts-ignore
 import  page from 'page';
 
@@ -310,28 +313,25 @@ const   pongTournamentFoundHtml = () => {
 // TODO: Add spec tournament board
 
 const   pongDrawBoardHtml = () => {
-	if (!EL.contentPong)
+	if (!EL.zoneGame)
 		return
 
-	// TODO quid du quit
-	EL.contentPong.innerHTML = `
-	<div class="flex flex-col">
-		<div class="flex justify-end mb-4">
-			<button id="quit" class="${TCS.pongButton}">Quit</button>
-		</div>
-		<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}" class="${TCS.pongCanvas}"></canvas>
-	</div>`;
-	// TODO: replace width with ${window.innerWidth} and height with ${window.innerHeight}
-	// TODO: Canva Ben
+	showZoneGame();
 
-	// TODO: move this in correct place
-	const quitButton = document.getElementById("quit") as HTMLButtonElement;
-	if (!quitButton)
-		return ;
-	quitButton.addEventListener("click", () => {
-		page("/pong/solo");
-		// TODO quit server game ?
-	});
+	EL.zoneGame.innerHTML = `
+	<div class="absolute z-50 w-full h-full">
+
+		<div class="absolute z-50 top-[10px] right-[10px]">
+			<button class="${TCS.pongButton}" id="quit">Quit</button>
+		</div>
+		
+		<div id="pongGameCanvas" class="absolute z-25 w-full h-full flex items-center justify-center bg-black">		
+			<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
+		</div>
+
+	</div>`;
+
+	pongQuitButton();
 }
 
 const   pongJoinConfirmPageHtml = () => {
@@ -346,4 +346,17 @@ const   pongJoinConfirmPageHtml = () => {
 		<div class="flex-1"><button id="confirm-game" class="${TCS.pongButton}">Confirm Game</button></div>
 		<div class="flex-1"><p id="timer">Time remaining: 10s</p></div>
 	</div>`;
+}
+
+const   pongQuitButton = () => {
+	const quitButton = document.getElementById("quit") as HTMLButtonElement;
+
+	if (!quitButton)
+		return ;
+
+	quitButton.addEventListener("click", () => {
+		// TODO quit server game ?
+		quit();// TODO a valider 
+		page("/pong/solo");
+	});
 }
