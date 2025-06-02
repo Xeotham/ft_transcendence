@@ -58,7 +58,7 @@ export class UserInfo {
 
 	isAuthenticated() {
 		const result = this.token !== null && this.token !== undefined && this.token !== "";
-		//console.log("isAuthenticated: ", result, "token: ", this.token); // TODO: remove 
+		//console.log("isAuthenticated: ", result, "token: ", this.token); // TODO: remove
 		setZoneAvatar(result);
 
 		return result;
