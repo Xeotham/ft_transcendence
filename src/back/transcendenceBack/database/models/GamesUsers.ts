@@ -57,6 +57,7 @@ interface GameIdRow
 
 export const createUserGameStatsPong = (userId: number, gameId: number, score: {username: string, score: number}, winner: boolean, type:string): void => 
 {
+	// console.log("userId : " + userId + ", gameId : " + gameId + ", score : " + score + ", winner : " + winner + ", type : " + type);
 	const win = (winner === true ? 1 : 0);
 	const stmt = db.prepare('\
 		INSERT INTO gamesUsers (userId, gameId, score, winner, type) \

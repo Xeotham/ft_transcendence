@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import * as tc from "./tetrisConstants";
-import { IPos } from "./IPos";
+import { Pos } from "./Pos";
 import { Matrix } from "./Matrix";
 import { ATetrimino } from "./ATetrimino";
 import { S } from "./Pieces/S";
@@ -19,7 +19,7 @@ const   idGen = idGenerator()
 export class TetrisGame {
 	private readonly player:			WebSocket;
 	private readonly username:			string;
-	private readonly size:				IPos;
+	private readonly size:				Pos;
 	private matrix:						Matrix;
 	private currentPiece:				ATetrimino | null;
 	private shadowPiece:				ATetrimino | null;
@@ -100,7 +100,7 @@ export class TetrisGame {
 	constructor(player: WebSocket, username: string) {
 		this.player = player;
 		this.username = username;
-		this.size = new IPos(tc.TETRIS_WIDTH, tc.TETRIS_HEIGHT);
+		this.size = new Pos(tc.TETRIS_WIDTH, tc.TETRIS_HEIGHT);
 		this.matrix = new Matrix(this.size.add(0, tc.BUFFER_HEIGHT));
 		this.currentPiece = null;
 		this.shadowPiece = null;
@@ -314,7 +314,7 @@ export class TetrisGame {
 		if (!this.currentPiece)
 			return ;
 
-		this.currentPiece.setCoordinates(new IPos(3 - 2, tc.BUFFER_HEIGHT - 3 - 2)); // -2 to take piece inner size into account
+		this.currentPiece.setCoordinates(new Pos(3 - 2, tc.BUFFER_HEIGHT - 3 - 2)); // -2 to take piece inner size into account
 		if (this.currentPiece.isColliding(this.matrix)) {
 			console.log("Piece is colliding at spawn, game over");
 			this.over = true;
@@ -514,7 +514,7 @@ export class TetrisGame {
 		if (!this.currentPiece || !this.showShadowPiece)
 			return ;
 		this.shadowPiece?.remove(this.matrix, true);
-		this.shadowPiece = new (this.currentPiece!.constructor as { new (coordinates: IPos, texture: string): ATetrimino })(
+		this.shadowPiece = new (this.currentPiece!.constructor as { new (coordinates: Pos, texture: string): ATetrimino })(
 			this.currentPiece.getCoordinates(), this.currentPiece.getTexture() + "_SHADOW");
 		this.shadowPiece.setCoordinates(this.currentPiece.getCoordinates());
 		this.shadowPiece.setRotation(this.currentPiece.getRotation());
@@ -656,7 +656,7 @@ export class TetrisGame {
 			return ;
 
 		++this.keysPressed;
-		const offset: IPos = direction === "left" ? new IPos(-1, 0) : new IPos(1, 0);
+		const offset: Pos = direction === "left" ? new Pos(-1, 0) : new Pos(1, 0);
 		if (this.currentPiece.isColliding(this.matrix, offset))
 			return;
 		if (this.isInLockPhase) {
