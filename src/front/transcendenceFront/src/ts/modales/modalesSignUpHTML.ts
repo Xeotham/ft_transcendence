@@ -62,7 +62,7 @@ export const modaleSignUpEvents = () => {
       const confirmPassword = (document.getElementById("signupPasswordConfirm") as HTMLInputElement).value;
       // const avatar = (document.getElementById("avatar") as HTMLInputElement).value;
       // const avatar = `http://${address}/src/medias/avatars/avatar1.png`;
-      console.log(username, password, confirmPassword);
+      // console.log(username, password, confirmPassword);
 
       if (password !== confirmPassword) {
           modaleAlert("Passwords do not match");
@@ -71,7 +71,7 @@ export const modaleSignUpEvents = () => {
 
       const data = {username: username, password: password};
 
-      console.log(data);
+      // console.log(data);
       postToApi(`http://${address}/api/user/register`, data)
           .then(() => {
               // console.log("User registered successfully");

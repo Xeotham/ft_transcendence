@@ -60,7 +60,7 @@ export const modaleSignInEvents = () => {
     const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
 
     const   data = { username: username, password:  password };
-    console.log(data);
+    // console.log(data);
     postToApi(`http://${address}/api/user/login`, data)
         .then((info: any) => {
             localStorage.setItem("username", username);
@@ -77,7 +77,7 @@ export const modaleSignInEvents = () => {
   });
 
   signinRegisterLink.addEventListener('click', () => {
-    console.log("signinRegisterLink: click");
+    // console.log("signinRegisterLink: click");
     modaleDisplay(ModaleType.SIGNUP);
   });
 

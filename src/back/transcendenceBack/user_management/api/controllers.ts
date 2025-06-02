@@ -132,7 +132,7 @@ export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) =
 
     const user = getUserByUsername(username);
 
-    console.log(token);
+    // console.log(token);
     if (token) {
         tokenBlacklist.add(token);
     }
@@ -536,8 +536,8 @@ export const createPongGame = (players: {player1: player | null, player2: player
 
 export const createTetrisGame = (data: TetrisGame) =>
 {
-    console.log("TetrisGame");
-    console.log(data.getUsername());
+    // console.log("TetrisGame");
+    // console.log(data.getUsername());
     const   player1 = getUserByUsername(data.getUsername()) as Users;
 
     if (!player1)

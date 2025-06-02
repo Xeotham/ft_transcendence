@@ -38,7 +38,6 @@ export const predictY = (ballData: any): number =>
 		ballData.x +=  Math.cos(ballData.orientation);
 		ballData.y +=  Math.sin(ballData.orientation);
 	}
-	console.log("y is", ballData.y);
 	if (ballData.y + (ballData.size / 2) < 0)
 		ballData.y *= -1; 
 	return ballData.y;
@@ -58,7 +57,6 @@ export const movePaddleBot = (y_paddle: number, y_predicted: number, room: Room)
 			(move === "down" && y_predicted < (y_paddle + constants.PADDLE_HEIGHT / 2)))
 			clearInterval(intervalIds[room.getId()]);
 		room.getGame()?.movePaddle("P2", move);
-		console.log(move);
 		if (move === "up")
 			y_paddle -= constants.PADDLE_SPEED;
 		else

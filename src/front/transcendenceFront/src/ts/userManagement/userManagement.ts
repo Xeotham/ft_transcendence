@@ -13,12 +13,12 @@ export const signInUser = () => {
 		const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
 
 		const   data = { username: username, password:  password };
-		console.log(data);
+		// console.log(data);
 		postToApi(`http://${address}/api/user/login`, data)
 			.then(() => {
 				localStorage.setItem("username", username);
 				user.setUsername(username);
-				alert("User signed in successfully!");
+				alert("User signed in successfully!"); // TODO: change the alert to a modal text
 				page.show("/");
 			})
 			.catch((error) => {
@@ -66,7 +66,7 @@ export const    signUpUser = () => {
 		const confirmPassword = (document.getElementById("password_confirm") as HTMLInputElement).value;
 		// const avatar = (document.getElementById("avatar") as HTMLInputElement).value;
 		const avatar = "sss";
-		console.log(username, password, confirmPassword, avatar);
+		// console.log(username, password, confirmPassword, avatar);
 
 		if (password !== confirmPassword) {
 			alert("Passwords do not match");

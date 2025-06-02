@@ -97,7 +97,7 @@ export const   tetrisCreateRoomPage = () => {
 
 const multiplayerRoom = (arg: loadTetrisArgs) => {
 	///// ??????????????????????????
-	console.log("multiplayerRoom called with arg:", arg);
+	// console.log("multiplayerRoom called with arg:", arg);
 	tetrisMultiplayerRoom(arg.rooms?.[0]?.roomCode || ""); // TODO modif ben est ce que c est bo
 	//tetrisMultiplayerRoom(arg); //TODO before marchais pas ...
 }
@@ -132,7 +132,7 @@ export const changeKeys = (keyType: string) => {
 		const newKey = event.key;
 		modify = false;
 		setKey(keyType, newKey);
-		console.log("New key set:", newKey);
+		// console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
 		//TODO marche pas  ?
 		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;

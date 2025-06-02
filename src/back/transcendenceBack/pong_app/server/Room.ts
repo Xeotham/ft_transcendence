@@ -104,7 +104,7 @@ export class Room {
 		this.P2 = { username: "Player 2", socket: socket };
 		this.full = true;
 		this.isSolo = true;
-		this.sendData({ type: "INFO", message: "Solo room created, starting game" });
+		this.sendData({ type: "INFO", message: "Solo room created" });
 		this.sendData({ type: "GAME", message: "PREP", player: "P1", roomId: this.id });
 		this.game = new Game(this.id, this.P1, this.P2, true, this.spectators);
 	}
@@ -114,7 +114,7 @@ export class Room {
 		this.P2 = { username: "Bot", socket: socket };
 		this.full = true;
 		this.isSolo = true;
-		this.sendData({ type: "INFO", message: "Bot room created, starting game" });
+		this.sendData({ type: "INFO", message: "Bot room created" });
 		this.sendData({ type: "GAME", message: "PREP", player: "P1", roomId: this.id });
 		this.game = new Game(this.id, this.P1, this.P2, true, this.spectators, true);
 	}

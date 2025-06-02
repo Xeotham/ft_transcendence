@@ -133,7 +133,7 @@ const getModaleTetrisStatListHTML = (page: number) => {
 
   let listHTML = ``;
 
-  console.log("getModaleTetrisStatListHTML", page); // TODO: enlever
+  // console.log("getModaleTetrisStatListHTML", page); // TODO: enlever
 
   for (let i = 0; i < 10 && tetrisHistory[(page * 10) + i]; i++) {
     listHTML += `
@@ -282,10 +282,10 @@ export const modaleDislpayPrevNext = () => {
 
   const isNext = tetrisHistory.length - (tetrisStatPage * 10) > 10;
 
-  console.log("PREV" + isNext);
-  console.log("Prev " + prev);
-  console.log("Next " + next);
-  console.log("slash " + slash);
+  // console.log("PREV " + isNext);
+  // console.log("Prev " + prev);
+  // console.log("Next " + next);
+  // console.log("slash " + slash);
 
 
   if (!isNext)

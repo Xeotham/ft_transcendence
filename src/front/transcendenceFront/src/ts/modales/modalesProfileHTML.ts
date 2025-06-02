@@ -135,7 +135,7 @@ export const modaleProfileEvents = () => {
   });
 
   modaleFriendListLink?.addEventListener('click', () => {
-    console.log("profileFriendListLink <<<<<<<<");
+    // console.log("profileFriendListLink <<<<<<<<");
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 

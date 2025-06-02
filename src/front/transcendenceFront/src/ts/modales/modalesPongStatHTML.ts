@@ -49,7 +49,7 @@ export const  loadPongStat = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
   const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
   history.filter((e) => e.players[0].type !== 'pong');
-  console.log(history);
+  // console.log(history);
   const newHistory: pongStats[] = [];
   history.forEach((game) => {
     if (game.players.length < 2) {
@@ -101,7 +101,7 @@ const getModalePongStatListHTML = (page: number) => {
 
   let listHTML = ``;
 
-  console.log("getModalePongStatListHTML", page); // TODO: enlever
+  // console.log("getModalePongStatListHTML", page); // TODO: enlever
 
   for (let i = 0; i < 10 && pongHistory[(page * 10) + i]; i++) {
     listHTML += `

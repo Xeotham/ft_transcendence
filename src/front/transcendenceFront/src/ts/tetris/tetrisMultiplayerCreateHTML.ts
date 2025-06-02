@@ -64,6 +64,11 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 		<div class="${TCS.tetrisWindowText} grid grid-cols-4 gap-x-[20px] gap-y-[6px]">
 
 			<div id="createMultiplayerRoomShowShadow" class="col-span-3">
+				${imTexts.tetrisCreateMultiplayerRoomIsPrivate}</div>
+			<div><label class="custom-checkbox"><input type="checkbox" id="is-private" 
+			${s.isPrivate ? "checked" : ""}/><span class="checkmark"></span></label></div>
+
+			<div id="createMultiplayerRoomShowShadow" class="col-span-3">
 				${imTexts.tetrisCreateMultiplayerRoomShowShadow}</div>
 			<div><label class="custom-checkbox"><input type="checkbox" id="show-shadow" 
 			${s.showShadowPiece ? "checked" : ""}/><span class="checkmark"></span></label></div>
@@ -154,6 +159,7 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 		await copyToClipboard(code);
 	});
 
+	document.getElementById("is-private")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
 	document.getElementById("show-shadow")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
 	document.getElementById("show-bags")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
 	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
@@ -167,6 +173,7 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 
 	document.getElementById("saveCustom")?.addEventListener("click", () => {
 		tetrisGameInformation.setSettings({
+			"isPrivate": (document.getElementById("is-private") as HTMLInputElement)?.checked,
 			"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
 			"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
 			"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,

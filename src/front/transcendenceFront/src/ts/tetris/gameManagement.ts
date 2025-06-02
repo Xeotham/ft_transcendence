@@ -1,7 +1,7 @@
 //import { loadTetrisHtml } from "./tetrisHTML.ts";
 import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
-import { address } from "../immanence.ts";
+import { address, user } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
 import { tetrisBoardHtml } from "./tetrisHTML.ts";
 import { hideZoneGame } from "../zone/zoneCore.ts";
@@ -9,19 +9,6 @@ import { hideZoneGame } from "../zone/zoneCore.ts";
 import page from "page";
 
 let socket: WebSocket | null = null;
-const generateUserName = () => {
-	const   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	const   length = 8;
-	let     result: string = "";
-
-	for (let i = 0; i < length; i++)
-		result += characters.charAt(Math.floor(Math.random() * characters.length));
-	console.log("Generated username: " + result);
-	return result;
-}
-
-
-export const username = localStorage.getItem("username"); generateUserName(); // TODO: Change this to use the username from the local storage
 
 const socketInit = (socket: WebSocket) => {
 	tetrisGameInformation.setSocket(socket);
@@ -34,23 +21,25 @@ const socketInit = (socket: WebSocket) => {
 		else
 			console.error('WebSocket connection died. Code:', event.code, 'Reason:', event.reason);
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
-			username: username, roomCode: tetrisGameInformation.getRoomCode() });
+			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
 		tetrisGameInformation.setGameId(-1);
 		tetrisGameInformation.setGame(null);
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.setRoomOwner(false);
-		console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+		if (tetrisGameInformation.getRoomCode() !== "")
+			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
 		loadTetrisPage("idle");
 	};
 	window.onbeforeunload = () => {
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
-			username: username, roomCode: tetrisGameInformation.getRoomCode() });
+			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
 		tetrisGameInformation.setGameId(-1);
 		tetrisGameInformation.setGame(null);
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.setRoomOwner(false);
-		console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+		if (tetrisGameInformation.getRoomCode() !== "")
+			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
 	}
 }
@@ -81,7 +70,7 @@ export const    searchGame = () => {
 
 export const    arcadeGame = () => {
 	// console.log("arcadeGame");
-	socket = new WebSocket(`ws://${address}/api/tetris/arcade?username=${username}`);
+	socket = new WebSocket(`ws://${address}/api/tetris/arcade?username=${user.getUsername()}`);
 
 	socketInit(socket);
 	tetrisGameInformation.setSocket(socket);
@@ -96,7 +85,7 @@ export const    arcadeGame = () => {
 }
 
 export const createRoom = () => {
-	socket = new WebSocket(`ws://${address}/api/tetris/createRoom?username=${username}`);
+	socket = new WebSocket(`ws://${address}/api/tetris/createRoom?username=${user.getUsername()}`);
 	socketInit(socket);
 	tetrisGameInformation.setRoomOwner(true);
 }
@@ -121,7 +110,7 @@ export const getMultiplayerRooms = () => {
 }
 
 export const joinRoom = (roomCode: string) => {
-	socket = new WebSocket(`ws://${address}/api/tetris/joinRoom?code=${roomCode}&username=${username}`);
+	socket = new WebSocket(`ws://${address}/api/tetris/joinRoom?code=${roomCode}&username=${user.getUsername()}`);
 	socketInit(socket);
 }
 
@@ -258,24 +247,23 @@ const   messageHandler = (event: MessageEvent)=> {
 		case 'GAME_START':
 			console.log("GAME_START");
 			tetrisGameInformation.setGame(res.game);
-			// console.log("Game: ", res.game);
 			tetrisGameInformation.setGameId(res.game.gameId);
 			bgmPlayer.choseBgm("bgm1");
-			// bgmPlayer.play();
+			bgmPlayer.play();
 			tetrisBoardHtml();
 			loadTetrisPage("board");
 			gameControllers();
 			return ;
 		case 'MULTIPLAYER_JOIN':
 			if (res.argument === "OWNER") {
-				console.log("MULTIPLAYER_OWNER");
+				// console.log("MULTIPLAYER_OWNER");
 				tetrisGameInformation.setRoomOwner(true);
 			}
 			else if(res.argument === "SETTINGS") {
 				tetrisGameInformation.setSettings(res.value);
 			}
 			else {
-				console.log("MULTIPLAYER_JOIN");
+				// console.log("MULTIPLAYER_JOIN");
 				tetrisGameInformation.setRoomCode(res.argument as string);
 				// page.show("/tetris"); // TODO: BABOZO
 				console.log("Joining room: " + res.argument);
@@ -283,7 +271,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInformation.getRoomCode()}]});
 			return ;
 		case 'MULTIPLAYER_LEAVE':
-			console.log("MULTIPLAYER_LEAVE");
+			// console.log("MULTIPLAYER_LEAVE");
 			resetSocket("room");
 			return ;
 		case 'INFO':

@@ -172,7 +172,7 @@ export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
     return;
   }
 
-  console.log("modaleSetBkgCloseEvent: " + modaleType);
+  // console.log("modaleSetBkgCloseEvent: " + modaleType);
   bkgModale.addEventListener('click', (e) => {
     e.stopPropagation();
     modaleHide();

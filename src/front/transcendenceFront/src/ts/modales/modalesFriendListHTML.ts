@@ -177,7 +177,7 @@ export const modaleFriendListEvents = () => {
   for (let i = 0; i < 10; i++) {
     const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
     friendListLine.addEventListener('click', () => {
-      console.log("friendListLine <<<<<<<<");
+      // console.log("friendListLine <<<<<<<<");
       modaleDisplay(ModaleType.FRIEND_PROFILE);
     });
   }

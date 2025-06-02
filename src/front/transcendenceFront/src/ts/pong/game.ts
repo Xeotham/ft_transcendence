@@ -211,7 +211,8 @@ export const   joinBot = async () => {
 export const   quit = (msg: string = "LEAVE", force: string = "", winner: number | null = null) => {
 	const   matchType = force !== "" ? force : pongGameInfo.getMatchType();
 
-	console.log("Quiting room of type: " + matchType);
+	if (matchType != null)
+		console.log("Quiting room of type: " + matchType);
 	if (!matchType)
 		return ;
 	quitRoom(msg);
@@ -341,9 +342,8 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  pongGameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
-			console.log("Starting game");
+			// console.log("Starting game");
 			loadPongHtml("board");
-			// loadPongPage("board"); //TODO ?? c etaait en double?
 			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.addEventListener("keydown", keyHandler);
@@ -380,7 +380,8 @@ const	gameMessageHandler = (res: responseFormat) => {
 			if (res.data >= 0)
 				pongGameInfo.getRoom()?.setSpecPlacement(res.data);
 			pongGameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
-			console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
+			console.log("Starting Spectator mode");
+			// console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
 			loadPongPage("board");
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		case "EFFECT":

@@ -114,7 +114,7 @@ export class Game {
 			let botInterval: number = 0;
 			if (this.isBot)
 				botInterval = setInterval(() => {
-			console.log("rotation in calss Game is " + this.ball.orientation)
+			// console.log("rotation in calss Game is " + this.ball.orientation)
 				botLogic(this.toJSON(), this.id);
 			}, 1000) as unknown as number; // once per second
 
@@ -139,7 +139,7 @@ export class Game {
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
 				// HEERE
-				console.log(this.players.player1?.username);
+				// console.log(this.players.player1?.username);
 				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
 				resolve();
 			};
@@ -235,8 +235,6 @@ export class Game {
 			this.winner = this.players.player2;
 		else
 			this.winner = this.players.player1;
-		// let winner = this.winner === this.players.player1 ? "P1" : "P2";
-		// console.log("Winner set to:", winner);
 		this.over = true;
 	}
 

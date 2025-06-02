@@ -7,7 +7,6 @@ import { MultiplayerRoomPlayer } from "./MultiplayerRoomPlayer";
 export class MultiplayerRoom {
 	private players:			MultiplayerRoomPlayer[];
 	private isInGame:			boolean;
-	private private:			boolean;
 	private code:				string;
 	private playersRemaining:	number;
 	private settings:			any; // Object containing the settings of the game : {}
@@ -15,7 +14,6 @@ export class MultiplayerRoom {
 	constructor(socket: WebSocket, username: string, isPrivate: boolean = false, codeName: string | undefined = undefined) {
 		this.players = [];
 		this.isInGame = false;
-		this.private = isPrivate;
 		if (codeName && codeName.length === 4 && isUpperCase(codeName) && !codeNameExists(codeName))
 			this.code = codeName;
 		else
@@ -23,14 +21,13 @@ export class MultiplayerRoom {
 		console.log("The code of the new room is " + this.code);
 		this.playersRemaining = 0;
 		this.addPlayer(socket, username);
-		this.settings = {isLevelling: false, level: 4, canRetry: true};
+		this.settings = {isPrivate: false, isLevelling: false, level: 4, canRetry: true};
 	}
 
-	public isPrivate(): boolean						{ return this.private; }
+	public isPrivate(): boolean						{ return this.settings.isPrivate == undefined ? false : this.settings.isPrivate; }
 	public getCode(): string						{ return this.code; }
 
 	public changeCode(): void						{ this.code = this.generateInviteCode(); }
-	public setPrivate(isPrivate: boolean): void		{ this.private = isPrivate; }
 	public setSettings(settings: any): void			{ this.settings = settings; }
 
 	public addPlayer(socket: WebSocket, username: string): void		{

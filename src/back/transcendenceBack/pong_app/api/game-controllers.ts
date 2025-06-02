@@ -113,7 +113,6 @@ export const joinSolo = async (socket: WebSocket, req: FastifyRequest) => {
 export const joinBot = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
 	const   username = req.query.username;
 
-	console.log("ok");
 	if (isPlayerInRoom(socket)) {
 		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));
 		return socket.send(JSON.stringify({type: "LEAVE"}));
@@ -129,8 +128,7 @@ export const joinBot = async (socket: WebSocket, req: FastifyRequest<{Querystrin
 export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
 	let room = getRoomById(request.body.roomId);
 	const	player: string | "P1" | "P2" = request.body.P;
-	// TODO: look at that again later
-	console.log("startConfirm : " + player + " in room : " + request.body.roomId);
+	// console.log("startConfirm : " + player + " in room : " + request.body.roomId);
 	// console.log("room : " + room);
 
 	if (!room)
@@ -143,7 +141,8 @@ export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }
 	playerSocket?.send(JSON.stringify({ type: "INFO", message: "You are ready, waiting for your opponent" }))
 
 	if (!room.getP1Ready() || !room.getP2Ready())
-		return playerSocket?.send(JSON.stringify({type: "INFO", message: "Players not ready"}));
+		return ;
+		// return playerSocket?.send(JSON.stringify({type: "INFO", message: "Players not ready"}));
 
 	room.startGame();
 }

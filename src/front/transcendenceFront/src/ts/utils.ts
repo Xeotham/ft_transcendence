@@ -1,6 +1,6 @@
 import { tetrisGameInformation } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
-import {address, user} from "./immanence.ts";
+import { address, user } from "./immanence.ts";
 
 
 export class UserInfo {
@@ -22,6 +22,7 @@ export class UserInfo {
 
 		for (let i = 0; i < length; i++)
 			result += characters.charAt(Math.floor(Math.random() * characters.length));
+		// console.log("Generated username:", result);
 		return result;
 	}
 
@@ -46,7 +47,7 @@ export class UserInfo {
 		const   url = URL.createObjectURL(avatarBlob);
 
 
-		console.log(url);
+		// console.log(url);
 		document.getElementById("avatarImg")?.setAttribute("src", `${url}`);
 		this.avatarImg = url;
 	}
@@ -56,7 +57,7 @@ export class UserInfo {
 	}
 
 	isAuthenticated() {
-		console.log("token: ", this.token); //TODO: remove
+		// console.log("token: ", this.token); //TODO: remove
 		return this.token !== null && this.token !== undefined && this.token !== "";
 	}
 
@@ -82,7 +83,7 @@ export class UserInfo {
 }
 
 export const    postToApi = async (url: string, data: any) => {
-	console.log("Token: ", user.getToken());
+	// console.log("Token: ", user.getToken());
 
 	const fetched = await fetch(url, {
 		method: 'POST', // Specify the HTTP method

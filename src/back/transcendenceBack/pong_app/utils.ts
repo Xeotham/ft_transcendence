@@ -121,7 +121,7 @@ export function getRoomById(id: number): Room | undefined {
 		if (tour.getRoomById(id) !== undefined)
 			return tour.getRoomById(id);
 	}
-	console.log("Room with id " + id + " not found");
+	// console.log("Room with id " + id + " not found");
 }
 
 export function getTournamentById(id: number): Tournament | undefined {

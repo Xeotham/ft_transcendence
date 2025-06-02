@@ -255,7 +255,7 @@ class   bgmHandler {
 	async stop() {
 		if (this.bgm[this.actualBgm]) {
 			this.bgm[this.actualBgm].pause();
-			console.log("BGM paused: ", this.bgm[this.actualBgm].paused);
+			// console.log("BGM paused: ", this.bgm[this.actualBgm].paused);
 			this.bgm[this.actualBgm].currentTime = 0;
 		}
 	}
@@ -326,12 +326,13 @@ export class    tetrisGame {
 	}
 	resetSettings() {
 		this.settings = {
+			"isPrivate":				true,
 			"showShadowPiece":			true,
 			"showBags":					true,
 			"holdAllowed":				true,
 			"showHold":					true,
 			"infiniteHold":				true, // TODO : change to false
-			"infiniteMovement":			true,
+			"infiniteMovement":			true, // TODO : change to false
 			"lockTime":					-1, // TODO : change to 500
 			"spawnARE":					0,
 			"softDropAmp":				1.5,

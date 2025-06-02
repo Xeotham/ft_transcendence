@@ -135,7 +135,7 @@ export const    listTournaments = () => {
 
 //
 export const getTournamentInfo = (id: number) => {
-	console.log("Id: " + id);
+	// console.log("Id: " + id);
     fetch(`http://${address}/api/pong/get_tournament_info?id=${id}`, {
         method: "GET",
         headers: {
@@ -154,7 +154,7 @@ export const getTournamentInfo = (id: number) => {
 
 			if (tournamentName === undefined || started === undefined)
 				throw new Error("Tournament does not exist");
-			console.log("started: " + started + ", name: " + tournamentName);
+			// console.log("started: " + started + ", name: " + tournamentName);
 			loadPongPage("tour-info", { tourId: id, started: started, tourName: tournamentName });
             if (!started) {
                 document.getElementById('joinTournament')?.addEventListener("click", () => {
