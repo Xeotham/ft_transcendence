@@ -28,10 +28,14 @@ const main = () => {
 
 window.onload = async () => {
     if (user.getToken()) {
-        console.log("User already connected, loading user data...");
-        const response = await postToApi(`http://${address}/api/user/connect-user`, { username: user.getUsername() })
-        if (response)
-            user.setAvatar(response.user.avatar);
+        try {
+            console.log("User already connected, loading user data...");
+            const response = await postToApi(`http://${address}/api/user/connect-user`, { username: user.getUsername() })
+            if (response)
+                user.setAvatar(response.user.avatar);
+        } catch (error) {
+            console.error('Error connecting user:', error);
+        }
     }
 }
 

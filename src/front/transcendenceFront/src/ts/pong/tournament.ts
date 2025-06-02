@@ -224,7 +224,7 @@ export const    specTournament = async (tournamentId: number) => {
 			return ;
 		}
 		loadPongPage("tour-rooms-list", { roomLst: data });
-		console.log("Testing this bullshit");
+		// console.log("Testing this bullshit");
 	})
 	.catch(error => {
 		alert(error);

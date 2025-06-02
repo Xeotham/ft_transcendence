@@ -406,6 +406,6 @@ const   pongQuitButton = () => {
 	quitButton.addEventListener("click", () => {
 		// TODO quit server game ?
 		quit();// TODO a valider 
-		page("/pong/solo");
+		page("/pong");
 	});
 }

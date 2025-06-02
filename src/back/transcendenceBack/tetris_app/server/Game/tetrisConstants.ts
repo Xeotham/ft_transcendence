@@ -1,4 +1,4 @@
-import { IPos } from "./IPos";
+import { Pos } from "./Pos";
 import { clamp } from "./utils";
 
 export const ROTATIONS: string[] = ["north", "east", "south", "west"];
@@ -189,9 +189,9 @@ export interface linesCleared {
 
 export interface block {
 	[key: string]: any;
-	"blocks" : IPos[];
-	"rotationPoints": IPos[];
-	"rotationPoints180": IPos[];
+	"blocks" : Pos[];
+	"rotationPoints": Pos[];
+	"rotationPoints180": Pos[];
 }
 
 export interface pieceStruct {

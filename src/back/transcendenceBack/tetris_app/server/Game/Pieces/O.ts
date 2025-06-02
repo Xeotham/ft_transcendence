@@ -1,5 +1,5 @@
 import { ATetrimino } from "../ATetrimino";
-import { IPos } from "../IPos";
+import { Pos } from "../Pos";
 import * as tc from "../tetrisConstants";
 import OJson from "./OJson.json";
 import { Matrix } from "../Matrix";
@@ -21,7 +21,7 @@ export class O extends ATetrimino {
 		};
 	})();
 
-	constructor(coordinates: IPos = new IPos(0, 0), texture: string = "O") {
+	constructor(coordinates: Pos = new Pos(0, 0), texture: string = "O") {
 		super("O", coordinates, texture);
 	}
 
