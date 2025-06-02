@@ -606,15 +606,14 @@ export const createTetrisGame = (data: TetrisGame) =>
 
         const stats = new Map<string, any>();
         stats.set("gameTime", data.getGameTime());
-        stats.set("combo", data.getCombo());
         stats.set("maxCombo", data.getMaxCombo());
         stats.set("piecesPlaced", data.getPiecesPlaced());
         stats.set("piecesPerSecond", data.getPiecesPerSecond());
         stats.set("attacksSent", data.getAttacksSent());
-        stats.set("attackSentPerMinute", data.getAttacksSentPerMinute());
+        stats.set("attacksSentPerMinute", data.getAttacksSentPerMinute());
         stats.set("attacksReceived", data.getAttacksReceived());
-        stats.set("attackReceivedPerMinute", data.getAttacksReceivedPerMinute());
-        stats.set("keyPressed", data.getKeysPressed());
+        stats.set("attacksReceivedPerMinute", data.getAttacksReceivedPerMinute());
+        stats.set("keysPressed", data.getKeysPressed());
         stats.set("keysPerPiece", data.getKeysPerPiece());
         stats.set("keysPerSecond", data.getKeysPerSecond());
         stats.set("holds", data.getHolds());
@@ -622,7 +621,21 @@ export const createTetrisGame = (data: TetrisGame) =>
         stats.set("linesPerMinute", data.getLinesPerMinute());
         stats.set("maxB2B", data.getMaxB2B());
         stats.set("perfectClears", data.getPerfectClears());
-        stats.set("allLinesCLear", data.getAllLinesClear())
+        // stats.set("allLinesClear", data.getAllLinesClear());
+        const   allLinesClear = data.getAllLinesClear();
+
+        stats.set("tspinZero", allLinesClear["tspinZero"]);
+        stats.set("tspinSingle", allLinesClear["tspinSingle"]);
+        stats.set("tspinDouble", allLinesClear["tspinDouble"]);
+        stats.set("tspinTriple", allLinesClear["tspinTriple"]);
+        stats.set("tspinQuad", allLinesClear["tspinQuad"]);
+        stats.set("miniTspinZero", allLinesClear["miniTspinZero"]);
+        stats.set("miniTspinSingle", allLinesClear["miniTspinSingle"]);
+        stats.set("miniSpinZero", allLinesClear["miniSpinZero"]);
+        stats.set("miniSpinSingle", allLinesClear["miniSpinSingle"]);
+        stats.set("miniSpinDouble", allLinesClear["miniSpinDouble"]);
+        stats.set("miniSpinTriple", allLinesClear["miniSpinTriple"]);
+        stats.set("miniSpinQuad", allLinesClear["miniSpinQuad"]);
 
         createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, stats);
         updateStats(player1.id);
@@ -685,6 +698,8 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
         const fullGameHistory = await Promise.all(gamesId.map(async (id) => {
             const gameDetails = await getGameDetailsById(id); // Pass individual ID
             gameDetails.forEach((gameDetail) => {
+                if (gameDetail.type === "tetris")
+                    console.log("Game Detail:", gameDetail);
                 gameDetail.username = getUsernameById(gameDetail.userId);
                 gameDetail.userId = -1;
                 gameDetail.date = getGameById(id)?.date!;
