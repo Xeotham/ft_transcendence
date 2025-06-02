@@ -34,9 +34,9 @@ export const   tokenBlacklist = new Set();
 
 const generateDefaultAvatar = () => {
     const filePath = path.join(__dirname, '../medias/defaultAvatar.png'); // Adjust the relative path
-    console.log(filePath);
+    // console.log(filePath);
     const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
-    console.log(fileBuffer);
+    // console.log(fileBuffer);
     return fileBuffer;
 };
 
@@ -475,7 +475,7 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 // createGame modified
 export const createPongGame = (players: {player1: player | null, player2: player | null}, score: any, winner: player | null, solo: boolean, bot: boolean) =>
 {
-    console.log(players.player1?.username, score, winner?.username, solo);
+    // console.log(players.player1?.username, score, winner?.username, solo);
     if (solo === true && bot === false)
     {
         console.log("return solo game");
