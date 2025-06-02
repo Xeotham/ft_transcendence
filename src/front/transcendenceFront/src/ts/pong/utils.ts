@@ -25,6 +25,11 @@ export const    pongSfxPlayer = new class {
 				"hitPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitPaddle.mp3"),
 				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitOpponentPaddle.mp3"),
 				"goal": new Audio("/src/medias/sfx/pong/TVWorld/goal.mp3"),
+			},
+			"dark_hour": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/DarkHour/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/DarkHour/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/DarkHour/goal.mp3"),
 			}
 		}
 		this.pack = "retro";
@@ -58,6 +63,7 @@ export const    pongTextureHandler = new class {
 			"retro": "30px Arial",
 			"phantom": "30px 'PhantomFont', Arial, sans-serif",
 			"tv_world": "30px 'Fontsona4', Arial, sans-serif",
+			"dark_hour": "30px 'DarkHourFont', Arial, sans-serif"
 		}
 	}
 	private generateTextures() {
@@ -82,6 +88,13 @@ export const    pongTextureHandler = new class {
 				"USER_PADDLE":      '/src/medias/textures/pong/TVWorld/userPaddle.png',
 				"OPPONENT_PADDLE":  '/src/medias/textures/pong/TVWorld/opponentPaddle.png',
 				"BALL":             '/src/medias/textures/pong/TVWorld/pongBall.png',
+			},
+			"dark_hour": {
+				"BACKGROUND":       '/src/medias/textures/pong/DarkHour/background.png',
+				"BOARD":            '/src/medias/textures/pong/DarkHour/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/DarkHour/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/DarkHour/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/DarkHour/pongBall.png',
 			}
 		}
 
@@ -129,7 +142,7 @@ export const    pongTextureHandler = new class {
 export const    pongPackHandler = new class {
 	private pack: string;
 	constructor() {
-		this.pack = "phantom"; // Default pack
+		this.pack = "dark_hour"; // Default pack
 		pongSfxPlayer.setPack(this.pack);
 		pongTextureHandler.setPack(this.pack);
 	}

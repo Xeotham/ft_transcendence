@@ -319,7 +319,7 @@ const   pongDrawBoardHtml = () => {
 		<div class="flex justify-end mb-4">
 			<button id="quit" class="${TCS.pongButton}">Quit</button>
 		</div>
-		<canvas id="pongCanvas" width="800" height="400" class="${TCS.pongCanvas}"></canvas>
+		<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}" class="${TCS.pongCanvas}"></canvas>
 	</div>`;
 	// TODO: replace width with ${window.innerWidth} and height with ${window.innerHeight}
 	// TODO: Canva Ben
