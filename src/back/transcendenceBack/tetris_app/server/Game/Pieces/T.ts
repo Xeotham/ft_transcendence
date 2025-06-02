@@ -1,5 +1,5 @@
 import { ATetrimino } from "../ATetrimino";
-import { IPos } from "../IPos";
+import { Pos } from "../Pos";
 import * as tc from "../tetrisConstants";
 import TJson from "./TJson.json";
 import { Matrix } from "../Matrix";
@@ -28,7 +28,7 @@ export class T extends ATetrimino {
 		};
 	})();
 
-	constructor(coordinates: IPos = new IPos(0, 0), texture: string = "T") {
+	constructor(coordinates: Pos = new Pos(0, 0), texture: string = "T") {
 		super("T", coordinates, texture);
 	}
 
@@ -39,7 +39,7 @@ export class T extends ATetrimino {
 			return "T-Spin";
 		if (minor >= 2 && major >= 1)
 			return "Mini T-Spin";
-		if (minor >= 1 && major >= 1 && !this.canSlide(matrix) && this.isColliding(matrix, new IPos(0, -1)))
+		if (minor >= 1 && major >= 1 && !this.canSlide(matrix) && this.isColliding(matrix, new Pos(0, -1)))
 			return "Mini T-Spin";
 		return "";
 	}

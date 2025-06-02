@@ -1,4 +1,4 @@
-import { IPos } from "./IPos";
+import { Pos } from "./Pos";
 import { Mino } from "./Mino";
 import { ATetrimino } from "./ATetrimino";
 import * as tc from "./tetrisConstants";
@@ -7,12 +7,12 @@ export class Matrix {
 
 	private static readonly full: Mino = new Mino("Full", true);
 
-	private readonly size : IPos;
+	private readonly size : Pos;
 	private matrix: Mino[][];
 
 	constructor(matrix: Matrix);
-	constructor(size: IPos);
-	constructor(arg: Matrix | IPos) {
+	constructor(size: Pos);
+	constructor(arg: Matrix | Pos) {
 		if (arg instanceof Matrix)
 			this.size = arg.size
 		else
@@ -43,46 +43,46 @@ export class Matrix {
 	}
 
 	public at(x: number, y: number): Mino;
-	public at(pos: IPos): Mino;
-	public at(arg1: number | IPos, arg2?: number): Mino {
-		let pos: IPos;
-		if (arg1 instanceof IPos)
+	public at(pos: Pos): Mino;
+	public at(arg1: number | Pos, arg2?: number): Mino {
+		let pos: Pos;
+		if (arg1 instanceof Pos)
 			pos = arg1;
 		else
-			pos = new IPos(arg1, arg2 as number);
-		if (!pos.equals(pos.clamp(new IPos(0, 0), this.size.subtract(1, 1))))
+			pos = new Pos(arg1, arg2 as number);
+		if (!pos.equals(pos.clamp(new Pos(0, 0), this.size.subtract(1, 1))))
 			return Matrix.full;
 		return this.matrix[pos.getY()][pos.getX()];
 	}
 
 	public setAt(x: number, y: number, mino: Mino): void;
-	public setAt(pos: IPos, mino: Mino): void;
-	public setAt(arg1: number | IPos, arg2: number | Mino, arg3?: Mino): void {
-		let pos: IPos;
-		if (arg1 instanceof IPos)
+	public setAt(pos: Pos, mino: Mino): void;
+	public setAt(arg1: number | Pos, arg2: number | Mino, arg3?: Mino): void {
+		let pos: Pos;
+		if (arg1 instanceof Pos)
 			pos = arg1;
 		else
-			pos = new IPos(arg1, arg2 as number);
-		if (!pos.equals(pos.clamp(new IPos(0, 0), this.size.subtract(1, 1))))
+			pos = new Pos(arg1, arg2 as number);
+		if (!pos.equals(pos.clamp(new Pos(0, 0), this.size.subtract(1, 1))))
 			return ;
-		this.matrix[pos.getY()][pos.getX()] = arg1 instanceof IPos ? arg2 as Mino : arg3 as Mino;
+		this.matrix[pos.getY()][pos.getX()] = arg1 instanceof Pos ? arg2 as Mino : arg3 as Mino;
 	}
 
 	public isMinoAt(x: number, y: number): boolean;
-	public isMinoAt(pos: IPos): boolean;
-	public isMinoAt(arg1: number | IPos, arg2?: number): boolean {
-		let pos: IPos;
-		if (arg1 instanceof IPos)
-			pos = new IPos(arg1);
+	public isMinoAt(pos: Pos): boolean;
+	public isMinoAt(arg1: number | Pos, arg2?: number): boolean {
+		let pos: Pos;
+		if (arg1 instanceof Pos)
+			pos = new Pos(arg1);
 		else
-			pos = new IPos(arg1, arg2 as number);
+			pos = new Pos(arg1, arg2 as number);
 		if (pos.getX() < 0 || pos.getX() >= this.size.getX() ||
 			pos.getY() < 0 || pos.getY() >= this.size.getY())
 			return true;
 		return (!this.matrix[pos.getY()][pos.getX()].isEmpty() && this.matrix[pos.getY()][pos.getX()].isSolid());
 	}
 
-	public getSize(): IPos { return this.size; }
+	public getSize(): Pos { return this.size; }
 
 	public reset(): void {
 		for (let y = this.size.getY() - 1; y >= 0; --y) {

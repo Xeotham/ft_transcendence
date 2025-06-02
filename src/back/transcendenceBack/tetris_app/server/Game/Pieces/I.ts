@@ -1,5 +1,5 @@
 import { ATetrimino } from "../ATetrimino";
-import { IPos } from "../IPos";
+import { Pos } from "../Pos";
 import * as tc from "../tetrisConstants";
 import IJson from "./IJson.json";
 import {Matrix} from "../Matrix";
@@ -20,12 +20,12 @@ export class I extends ATetrimino {
 		};
 	})();
 
-	constructor(coordinates: IPos = new IPos(0, 0), texture: string = "I") {
+	constructor(coordinates: Pos = new Pos(0, 0), texture: string = "I") {
 		super("I", coordinates, texture);
 	}
 
 	protected getSpinSpecific(matrix: Matrix, major: number, minor: number, rotationPointUsed: number): string {
-		if (this.canSlide(matrix) || !this.isColliding(matrix, new IPos(0, -1)))
+		if (this.canSlide(matrix) || !this.isColliding(matrix, new Pos(0, -1)))
 			return "";
 		return "Mini I-Spin";
 	}

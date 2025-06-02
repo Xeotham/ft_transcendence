@@ -1,5 +1,5 @@
 import * as tc from "./tetrisConstants";
-import { IPos } from "./IPos";
+import { Pos } from "./Pos";
 import { Matrix } from "./Matrix";
 import { mod } from "./utils";
 import { Mino } from "./Mino";
@@ -243,14 +243,14 @@ export abstract class ATetrimino {
 
 	protected name:					string;
 	protected rotation:				number;
-	protected coordinates:			IPos;
+	protected coordinates:			Pos;
 	protected texture:				string;
 
 	protected static struct:	tc.pieceStruct;
 	protected static SpinCheck:	number[][];
 
 	protected constructor(name: string = "None",
-				coordinates: IPos = new IPos(0, 0),
+				coordinates: Pos = new Pos(0, 0),
 				texture: string = "Empty") {
 		this.name = name;
 		this.coordinates = coordinates;
@@ -269,17 +269,17 @@ export abstract class ATetrimino {
 	}
 
 	protected static convertBlock(jsonBlock: any): tc.block {
-		let blocks: IPos[] = [];
+		let blocks: Pos[] = [];
 		for (let i = 0; i < jsonBlock.blocks?.length || 0; ++i)
-			blocks.push(new IPos(jsonBlock.blocks[i].x, jsonBlock.blocks[i].y));
+			blocks.push(new Pos(jsonBlock.blocks[i].x, jsonBlock.blocks[i].y));
 
-		let rotationPoints: IPos[] = [];
+		let rotationPoints: Pos[] = [];
 		for (let i = 0; i < jsonBlock.rotationPoints?.length || 0; ++i)
-			rotationPoints.push(new IPos(jsonBlock.rotationPoints[i].x, jsonBlock.rotationPoints[i].y));
+			rotationPoints.push(new Pos(jsonBlock.rotationPoints[i].x, jsonBlock.rotationPoints[i].y));
 
-		let rotationPoints180: IPos[] = [];
+		let rotationPoints180: Pos[] = [];
 		for (let i = 0; i < jsonBlock.rotationPoints180?.length || 0; ++i)
-			rotationPoints180.push(new IPos(jsonBlock.rotationPoints180[i].x, jsonBlock.rotationPoints180[i].y));
+			rotationPoints180.push(new Pos(jsonBlock.rotationPoints180[i].x, jsonBlock.rotationPoints180[i].y));
 
 		return ({
 			blocks: blocks,
@@ -315,9 +315,9 @@ export abstract class ATetrimino {
 		this.remove(matrix, false);
 
 		for (let i = 0; i < (direction === "180" ? start.rotationPoints180.length : start.rotationPoints.length); ++i) {
-			const startPos: IPos = (direction === "180" ? new IPos(3, 3) : start.rotationPoints[i]);
-			const endPos: IPos = (direction === "180" ? end.rotationPoints180[i] : end.rotationPoints[i]);
-			const dist = startPos.distanceToIPos(endPos);
+			const startPos: Pos = (direction === "180" ? new Pos(3, 3) : start.rotationPoints[i]);
+			const endPos: Pos = (direction === "180" ? end.rotationPoints180[i] : end.rotationPoints[i]);
+			const dist = startPos.distanceToPos(endPos);
 
 			// if (direction === "180") {
 			// 	console.log("startPos: " + startPos, ", endPos: " + endPos, ", dist: " + dist);
@@ -364,13 +364,13 @@ export abstract class ATetrimino {
 		return this.getSpinSpecific(matrix, major, minor, rotationPointUsed);
 	}
 
-	public isColliding(matrix: Matrix, offset: IPos = new IPos(0, 0)): boolean {
+	public isColliding(matrix: Matrix, offset: Pos = new Pos(0, 0)): boolean {
 		const struct = this.getStruct();
 		// console.log("Struct: ", struct);
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
 		// console.log("Block: ", block);
 		for (let i = 0; i < struct.nbBlocks; ++i) {
-			const pos: IPos = this.coordinates.add(block?.blocks[i]).add(offset);
+			const pos: Pos = this.coordinates.add(block?.blocks[i]).add(offset);
 			if (matrix.isMinoAt(pos))
 				return true;
 		}
@@ -381,7 +381,7 @@ export abstract class ATetrimino {
 		const struct = this.getStruct();
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < struct.nbBlocks; ++i) {
-			const pos: IPos = this.coordinates.add(block?.blocks[i]);
+			const pos: Pos = this.coordinates.add(block?.blocks[i]);
 			if (pos.getY() < 0)
 				return ;
 			if (!isShadow || (isShadow && matrix.at(pos).isEmpty())) {
@@ -396,14 +396,14 @@ export abstract class ATetrimino {
 		const struct = this.getStruct();
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
 		for (let i = 0; i < struct.nbBlocks; ++i) {
-			const pos: IPos = this.coordinates.add(block?.blocks[i]);
+			const pos: Pos = this.coordinates.add(block?.blocks[i]);
 			if (!isShadow || (isShadow && matrix.at(pos).getIsShadow()))
 				matrix.setAt(pos, new Mino("EMPTY", false));
 		}
 	}
 
-	public getCoordinates(): IPos				{ return this.coordinates; }
-	public setCoordinates(pos: IPos): void		{ this.coordinates = pos; }
+	public getCoordinates(): Pos				{ return this.coordinates; }
+	public setCoordinates(pos: Pos): void		{ this.coordinates = pos; }
 
 	public getTexture(): string					{ return this.texture; }
 	public setTexture(texture: string): void	{ this.texture = texture; }
@@ -416,12 +416,12 @@ export abstract class ATetrimino {
 
 
 	public canFall(matrix: Matrix): boolean {
-		return !this.isColliding(matrix, new IPos(0, 1));
+		return !this.isColliding(matrix, new Pos(0, 1));
 	}
 
 	public canSlide(matrix: Matrix) {
-		// console.log("Can slide on left: " + !this.isColliding(matrix, new IPos(-1, 0)) + " and right: " + !this.isColliding(matrix, new IPos(1, 0)));
-		return !this.isColliding(matrix, new IPos(1, 0)) || !this.isColliding(matrix, new IPos(-1, 0));
+		// console.log("Can slide on left: " + !this.isColliding(matrix, new Pos(-1, 0)) + " and right: " + !this.isColliding(matrix, new Pos(1, 0)));
+		return !this.isColliding(matrix, new Pos(1, 0)) || !this.isColliding(matrix, new Pos(-1, 0));
 	}
 
 }

@@ -1,5 +1,5 @@
 import * as tc from "./tetrisConstants"
-import { IPos } from "./IPos"
+import { Pos } from "./Pos"
 
 export class Mino {
 	private texture:		string;
