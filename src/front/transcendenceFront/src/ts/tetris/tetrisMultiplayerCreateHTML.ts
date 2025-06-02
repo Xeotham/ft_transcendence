@@ -193,8 +193,8 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 	});
 }
 
-const copyToClipboard = async (code: string) => {
-	if (code.length === 4) {
+export const copyToClipboard = async (code: string) => {
+	if (code.length > 0) {
 		try {
 			if (navigator.clipboard && window.isSecureContext) {
 				await navigator.clipboard.writeText(code);

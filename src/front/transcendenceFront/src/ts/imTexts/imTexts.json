@@ -84,9 +84,9 @@
       },
       "nav": {
         "title": "Pong",
-        "solo": "Mode Solo",
-        "versus": "Mode Versus",
-        "tournament": "Mode Tournoi",
+        "solo": "Solo",
+        "versus": "Versus",
+        "tournament": "Tournoi",
         "settings": "Réglages",
         "home": "Retour"
       },
@@ -98,14 +98,14 @@
       },
       "versus": {
         "title": "Pong Versus",
-        "join": "Rejoindre une partie",
-        "private": "Créer une partie privée",
-        "joinPrivRoom": "Rejoindre une partie privée",
-        "spectate": "Mode spectateur",
+        "join": "Partie Public",
+        "private": "Créer partie privée",
+        "joinPrivRoom": "Partie Privée",
+        "spectate": "Mode Spectateur",
         "back": "Retour"
       },
       "tournament": {
-        "title": "Pong en tournoi",
+        "title": "Pong Tournoi",
         "create": "Créer",
         "play": "Jouer",
         "back": "Retour"
@@ -118,12 +118,19 @@
         "specRoomText1": "Room Info:",
         "specRoomText2": "Room Number:",
         "specRoomButton": "Assister à la partie",
-        "tournamentInfoTitle": "Tournois",
-        "tournamentInfoName": "Tournament name:",
-        "tournamentInfoNumber": "Tournament Number:",
+        "tournamentInfoTitle": "Tournois Pong",
+        "tournamentInfoName": "Nom:",
+        "tournamentInfoNumber": "Id:",
         "tournamentInfoStarted": "Le tournois a déjà commencé.",
         "tournamentInfoNotStarted": "Le tournois est ouvert.",
         "tournamentInfoJoin": "Rejoindre le tournois",
+        "tournamentListTitle": "Liste des tournois",
+        "versusCreateTitle": "Versus privé",
+        "versusCreateText": "Code d'invitation:",
+        "versusCreateCopy": "Copier",
+        "versusJoinTitle": "Rejoindre versus privé",
+        "versusJoinText": "Entrez votre code d'invitation",
+        "versusJoinSubmit": "Rejoindre",
         "SettingsTitle": "Réglages"
       }
     },
