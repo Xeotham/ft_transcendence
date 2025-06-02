@@ -211,7 +211,7 @@ export const    getFriends = async (request: FastifyRequest, reply: FastifyReply
     const   contacts = getUserContactById(user.id as number);
 
     const contactsUsername = await Promise.all(contacts.map(async (id) => {
-        const friendUsername = await getUsernameById(id);
+        const friendUsername = await getUsernameById(id.friendId); // TODO: Check User by ID and sort information
         return { friendId: id, friendUsername: friendUsername};
     }));
 
