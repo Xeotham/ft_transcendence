@@ -57,7 +57,7 @@ export class UserInfo {
 	}
 
 	isAuthenticated() {
-		// console.log("token: ", this.token); //TODO: remove
+		// console.log("token: ", this.token);
 		return this.token !== null && this.token !== undefined && this.token !== "";
 	}
 

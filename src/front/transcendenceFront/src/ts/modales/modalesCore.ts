@@ -12,7 +12,7 @@ import {
   modaleTetrisStatEvents,
   loadTetrisStat,
   modaleTetrisStatLineEvents,
-  modaleDislpayPrevNext
+  modaleDislpayPrevNext, indexGame
 } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
@@ -95,7 +95,7 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       modaleTetrisStatLineEvents();
       break;
     case ModaleType.TETRIS_STATS_DETAIL:
-      modale.content.innerHTML = modaleTetrisStatDetailHTML(42); // TODO: mettre id de la partie
+      modale.content.innerHTML = modaleTetrisStatDetailHTML(indexGame); // TODO: mettre id de la partie
       modaleTetrisStatDetailEvents();
       break;
     case ModaleType.AVATAR:
