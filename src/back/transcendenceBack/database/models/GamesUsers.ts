@@ -67,7 +67,7 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: {
 	stmt.run(userId, gameId, score.score, win, type);
 };
 	
-export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: number} ): void =>
+export const createUserGameStatsTetris = (userId: number, gameId: number, score: { username: string, score: number }, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: number} ): void =>
 {
 	const win = (winner === true ? 1 : 0);
 	console.log(userId, gameId, score, winner, type, gameTetrisId);
@@ -76,7 +76,7 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 		VALUES (?, ?, ?, ?, ?, ?) \
 		');
 
-	stmt.run(userId, gameId, score, win, type, gameTetrisId);
+	stmt.run(userId, gameId, score.score, win, type, gameTetrisId);
 
 
 	// console.log("Tetris stats: ", tetrisStat);
