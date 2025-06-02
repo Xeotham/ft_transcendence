@@ -63,7 +63,7 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 
 		<div class="${TCS.tetrisWindowText} grid grid-cols-4 gap-x-[20px] gap-y-[6px]">
 
-			<div id="createMultiplayerRoomShowShadow" class="col-span-3">
+			<div id="createMultiplayerRoomisPrivate" class="col-span-3">
 				${imTexts.tetrisCreateMultiplayerRoomIsPrivate}</div>
 			<div><label class="custom-checkbox"><input type="checkbox" id="is-private" 
 			${s.isPrivate ? "checked" : ""}/><span class="checkmark"></span></label></div>
