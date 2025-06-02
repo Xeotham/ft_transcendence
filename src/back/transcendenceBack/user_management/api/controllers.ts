@@ -539,9 +539,12 @@ export const createPongGame = (players: {player1: player | null, player2: player
 	if (players.player1?.username === players.player2?.username)
 		return;
 
-	if (bot === true)
-	{
-		const   player1 = getUserByUsername(players.player1?.username!) as Users;
+    if (players.player1?.username === players.player2?.username)
+        return;
+
+    if (bot === true)
+    {
+        const   player1 = getUserByUsername(players.player1?.username!) as Users;
 
 		if (!player1)
 		{
