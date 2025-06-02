@@ -46,7 +46,6 @@ export class UserInfo {
 		const   url = URL.createObjectURL(avatarBlob);
 
 
-		console.log(url);
 		document.getElementById("avatarImg")?.setAttribute("src", `${url}`);
 		this.avatarImg = url;
 	}
@@ -56,7 +55,6 @@ export class UserInfo {
 	}
 
 	isAuthenticated() {
-		console.log("token: ", this.token); //TODO: remove
 		return this.token !== null && this.token !== undefined && this.token !== "";
 	}
 
@@ -82,8 +80,6 @@ export class UserInfo {
 }
 
 export const    postToApi = async (url: string, data: any) => {
-	console.log("Token: ", user.getToken());
-
 	const fetched = await fetch(url, {
 		method: 'POST', // Specify the HTTP method
 		headers: {
