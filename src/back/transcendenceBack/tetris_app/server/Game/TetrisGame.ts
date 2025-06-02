@@ -740,10 +740,10 @@ export class TetrisGame {
 		this.player.send(JSON.stringify({type: "GAME_FINISH"}));
 	}
 
-	private sendStats() {
-		this.player.send(JSON.stringify({type: "STATS", argument: {
+	private getStats() {
+		return {
 			gameTime: this.gameTime,
-			piecesPlaced: this.piecesPlaced,
+				piecesPlaced: this.piecesPlaced,
 			piecesPerSecond: this.piecesPerSecond,
 			attacksSent: this.attacksSent,
 			attacksSentPerMinute: this.attacksSentPerMinute,
@@ -758,8 +758,12 @@ export class TetrisGame {
 			linesPerMinute: this.linesPerMinute,
 			maxB2B: this.maxB2B,
 			PerfectClears: this.perfectClears,
-			...this.allLinesClear,
-		}}));
+		...this.allLinesClear,
+		};
+	}
+
+	private sendStats() {
+		this.player.send(JSON.stringify({type: "STATS", argument: this.getStats()}));
 	}
 
 	public forfeit() {
