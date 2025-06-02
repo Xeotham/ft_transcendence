@@ -99,7 +99,7 @@ db.exec(` \
     holds						INTEGER DEFAULT 0,
     linesCleared				INTEGER DEFAULT 0,
     linesPerMinute				INTEGER DEFAULT 0,
-    maxB2b						INTEGER DEFAULT 0,
+    maxB2B						INTEGER DEFAULT 0,
     perfectClears				INTEGER DEFAULT 0,
     single						INTEGER DEFAULT 0,
     double						INTEGER DEFAULT 0,
