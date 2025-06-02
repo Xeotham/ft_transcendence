@@ -2,7 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { modaleDisplay } from './modalesCore.ts';
 import { ModaleType } from './modalesCore.ts';
-import {indexGame} from "./modalesTetrisStatHTML.ts";
+// import {indexGame} from "./modalesTetrisStatHTML.ts";
 import {tetrisGames} from "./modalesTetrisStatHTML.ts";
 import {user} from "../immanence.ts";
 
@@ -49,7 +49,7 @@ interface GameUserInfo
 
 const getModaleTetrisStatListDetailsHTML = (gameIndex: number) => {
   const game = tetrisGames[gameIndex];
-  console.log(gameIndex);
+  console.log(tetrisGames);
   const player = game.players.find((p: GameUserInfo) => p.username === user.getUsername());
 
   let listHTML = `

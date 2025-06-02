@@ -67,7 +67,7 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: {
 	stmt.run(userId, gameId, score.score, win, type);
 };
 	
-export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat:any ): void =>
+export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: Map<string, any> ): void =>
 {
 	const win = (winner === true ? 1 : 0);
 	console.log(userId, gameId, score, winner, type, gameTetrisId);
@@ -80,16 +80,48 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 
 
 	console.log("Tetris stats: ", tetrisStat);
-	Object.keys(tetrisStat as object).forEach((key) => {
-		console.log(key);
-		console.log(tetrisStat[key]);
-		let stmt = db.prepare(` \
-			UPDATE gamesUsers \
-			SET ${key} = ? \
-			WHERE userId = ? AND gameId = ?\
-			`);
-		stmt.run(tetrisStat[key], userId, gameId);
-	});
+
+	try {
+		tetrisStat.forEach((value, key) => {
+			console.log(key);
+			console.log(value);
+			let stmt = db.prepare(` \
+				UPDATE gamesUsers \
+				SET ${key} = ? \
+				WHERE userId = ? AND gameId = ?\
+				`);
+			stmt.run(value, userId, gameId);
+		});
+	}
+	catch (e) {
+		console.error("Error updating Tetris stats:", e);
+	}
+
+	// Object.entries(tetrisStat).forEach(([key, value]) => {
+	// 	console.log("Test");
+	// 	console.log(key);
+	// 	console.log(value);
+	// 	let stmt = db.prepare(` \
+	// 		UPDATE gamesUsers \
+	// 		SET ${key} = ? \
+	// 		WHERE userId = ? AND gameId = ?\
+	// 		`);
+	// 	stmt.run(value, userId, gameId);
+	// })
+	console.log("Finishing Update Tetris Stats");
+
+	//
+	// Object.keys(tetrisStat as object).forEach((key) => {
+	// 	console.log("Test");
+	// 	console.log(key);
+	// 	console.log(tetrisStat[key]);
+	// 	let stmt = db.prepare(` \
+	// 		UPDATE gamesUsers \
+	// 		SET ${key} = ? \
+	// 		WHERE userId = ? AND gameId = ?\
+	// 		`);
+	// 	stmt.run(tetrisStat[key], userId, gameId);
+	// });
 };
 
 
