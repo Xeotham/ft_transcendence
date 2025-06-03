@@ -81,7 +81,6 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
     case ModaleType.PROFILE:
       await loadFriendList()
       modale.content.innerHTML = await modaleProfileHTML();
-      loadFriendList()
       modaleProfileEvents();
       break;
     case ModaleType.PONG_STATS:
