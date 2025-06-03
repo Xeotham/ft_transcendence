@@ -130,7 +130,8 @@ const   tourRoomListPage = (rooms: RoomInfo[]) => {
 	loadPongHtml("tour-rooms-list", { roomLst: rooms });
 
 	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/tournament"));
-	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => { tourRoomListPage(rooms) }); //TODO a verifier
+	//TODO a verifier
+	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => { tourRoomListPage(rooms) });
 }
 
 const   privRoomCreate = (inviteCode: string) => {
@@ -147,25 +148,25 @@ const   privRoomCreate = (inviteCode: string) => {
 const   privRoomCode = () => {
 	loadPongHtml("priv-room-code");
 
-	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong");});
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong/versus");});
 
 }
 
 const roomListPage = (rooms: RoomInfo[]) => {
 	loadPongHtml("list-rooms", { roomLst: rooms });
 
-	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong"); });
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong/versus"); });
 }
 
 const tournamentListPage = (tournaments: TournamentInfo[]) => {
 	loadPongHtml("list-tournaments", { tourLst: tournaments });
 
-	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong"); });
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong/tournament"); });
 }
 
 const   tournamentNamePage = () => {
 	loadPongHtml("tournament-name");
-	document.getElementById("back")?.addEventListener("click", () => {page.show("/pong");});
+	document.getElementById("back")?.addEventListener("click", () => {page.show("/pong/tournament");});
 }
 
 const   tournamentEndPage = (winner: number) => {

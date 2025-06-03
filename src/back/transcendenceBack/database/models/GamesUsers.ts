@@ -55,7 +55,7 @@ interface GameIdRow
 	gameId: number;
 }
 
-export const createUserGameStatsPong = (userId: number, gameId: number, score: number, winner: boolean, type:string): void => 
+export const createUserGameStatsPong = (userId: number, gameId: number, score: {username: string, score: number}, winner: boolean, type:string): void => 
 {
 	const win = (winner === true ? 1 : 0);
 	const stmt = db.prepare('\
@@ -63,7 +63,7 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: n
 		VALUES (?, ?, ?, ?, ?) \
 		');
 
-	stmt.run(userId, gameId, score, win, type);
+	stmt.run(userId, gameId, score.score, win, type);
 };
 	
 export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat:any ): void =>

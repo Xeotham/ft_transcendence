@@ -72,14 +72,14 @@ export const TCS = {
     tetrisWindowBkg : "fixed z-40 w-[680px] shadow-xl/30 bg-lime-50 px-8 py-5 top-16 left-1/2 -translate-x-1/2",
     tetrisWindowText : "font-sixtyfour text-[14px] relative text-stone-950",
 
-    gameTitle : "font-sixtyfour text-[24px] text-yellow-600 font-medium text-left",
+    gameTitle : "font-sixtyfour text-[24px] text-amber-900 font-medium text-left",
     gameTexte : "font-sixtyfour text-[14px] relative text-stone-950",
+    gameTexteGris : "font-sixtyfour text-[14px] relative text-stone-400",
     gameSelect : "font-sixtyfour text-[14px] pl-[10px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 cursor-pointer hover:cursor-pointer w-full",
     gameBlockLabel : "font-sixtyfour text-[14px] text-black font-medium text-left",
-    gameBlockLink : "font-sixtyfour text-[14px] pl-[10px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+    gameBlockLink : "font-sixtyfour  text-[14px] w-full h-[40px] pl-[2px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
     gameList : "font-sixtyfour text-[14px] text-stone-950 font-medium text-left bg-lime-50 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[10px]",
     gameBigButton : "font-sixtyfour text-[24px] text-lime-50 pt-[5px] w-full font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
     gamePackImg : "w-[616px] h-[100px] hover:border-x-[10px] hover:border-amber-400 hover:scale-105 hover:shadow-xl/60 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer relative",
-
-    
+   
 }

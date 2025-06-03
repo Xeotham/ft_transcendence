@@ -500,10 +500,7 @@ export const createPongGame = (players: {player1: player | null, player2: player
 
             const gameId = saveGame("");
 
-            if (winner === players.player1)
-                createUserGameStatsPong(player1.id, gameId, score.player1, true, "pong");
-            else
-                createUserGameStatsPong(player1.id, gameId, score.player1, false, "pong");
+            createUserGameStatsPong(player1.id, gameId, score.player1, winner === players.player1, "pong");
             updateStats(player1.id);
             console.log("return bot game");
         }
