@@ -17,12 +17,12 @@ import jwt from 'jsonwebtoken';
 import {TetrisGame} from "../../tetris_app/server/Game/TetrisGame";
 
 interface Users {
-    id?:            number;
-    username:       string;
-    password:       string;
-    avatar:         string;
-    connected:      boolean;
-    createdAt?:    string;
+	id?:            number;
+	username:       string;
+	password:       string;
+	avatar:         string;
+	connected:      boolean;
+	createdAt?:    string;
 }
 
 const   authKey = process.env.AUTH_KEY;
@@ -33,223 +33,223 @@ export const   tokenBlacklist = new Set();
 /* User */
 
 const generateDefaultAvatar = () => {
-    const filePath = path.join(__dirname, '../medias/defaultAvatar.png'); // Adjust the relative path
-    // console.log(filePath);
-    const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
-    // console.log(fileBuffer);
-    return fileBuffer;
+	const filePath = path.join(__dirname, '../medias/defaultAvatar.png'); // Adjust the relative path
+	// console.log(filePath);
+	const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
+	// console.log(fileBuffer);
+	return fileBuffer;
 };
 
 export const registerUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const { username, password } = request.body as { username: string, password: string };
+	const { username, password } = request.body as { username: string, password: string };
 
-    const avatar = generateDefaultAvatar();
+	const avatar = generateDefaultAvatar();
 
-    if(!username || !password || !avatar)
-        return reply.status(400).send({ message: 'Username, password and avatar can\'t be empty' });
+	if(!username || !password || !avatar)
+		return reply.status(400).send({ message: 'Username, password and avatar can\'t be empty' });
 
-    const existingUser = getUserByUsername(username);
-    if (existingUser)
-        return reply.status(400).send({ message: 'Username already exists' });
-    try
-    {
-        const hashedPassword = await hashPassword(password);
-        
-        const id = await createUser( username, hashedPassword as string, avatar );
+	const existingUser = getUserByUsername(username);
+	if (existingUser)
+		return reply.status(400).send({ message: 'Username already exists' });
+	try
+	{
+		const hashedPassword = await hashPassword(password);
 
-        createStats(Number(id));
+		const id = await createUser( username, hashedPassword as string, avatar );
 
-        createParam(Number(id));
+		createStats(Number(id));
 
-        return reply.status(201).send({ message: 'User registered successfully', id });
-    }
-    catch (err)
-    {
-        return reply.status(400).send({ error: (err as Error).message });
-    }
+		createParam(Number(id));
+
+		return reply.status(201).send({ message: 'User registered successfully', id });
+	}
+	catch (err)
+	{
+		return reply.status(400).send({ error: (err as Error).message });
+	}
 };
 
-export const updateUser = async (request: FastifyRequest, reply: FastifyReply) => 
+export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const { username, type, update } = request.body as { username: string, type: string, update: string };
+	const { username, type, update } = request.body as { username: string, type: string, update: string };
 
-    const user = getUserByUsername(username);
-    if (!user)
-        return reply.status(400).send({ message: 'User doesn\'t exist' });
+	const user = getUserByUsername(username);
+	if (!user)
+		return reply.status(400).send({ message: 'User doesn\'t exist' });
 
-    if (type === "password")
-    {
-        try
-        {
-            const hashedPassword = await hashPassword(update);
+	if (type === "password")
+	{
+		try
+		{
+			const hashedPassword = await hashPassword(update);
 
-            updateUserById(user.id!, type, hashedPassword as string);
+			updateUserById(user.id!, type, hashedPassword as string);
 
-            return reply.status(201).send({ message: 'User updated successfully' });
-        }
-        catch (err)
-        {
-            return reply.status(400).send({ error: (err as Error).message });
-        }
-    }
-    else
-    {
-        updateUserById( user.id as number, type, update);
+			return reply.status(201).send({ message: 'User updated successfully' });
+		}
+		catch (err)
+		{
+			return reply.status(400).send({ error: (err as Error).message });
+		}
+	}
+	else
+	{
+		updateUserById( user.id as number, type, update);
 
-        return reply.status(201).send({ message: 'User updated successfully' });
-    }
+		return reply.status(201).send({ message: 'User updated successfully' });
+	}
 };
 
-export const loginUser = async (request: FastifyRequest, reply: FastifyReply) => 
+export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const { username, password } = request.body as { username: string, password: string };
+	const { username, password } = request.body as { username: string, password: string };
 
-    const user = getUserByUsername(username);
+	const user = getUserByUsername(username);
 
 
-    if (!user || !(await bcrypt.compare(password, user.password)))
-        return reply.status(401).send({ message: 'Invalid username or password' });
+	if (!user || !(await bcrypt.compare(password, user.password)))
+		return reply.status(401).send({ message: 'Invalid username or password' });
 
-    // if (user?.connected)
-    //     return reply.status(401).send({ message: 'User already connected' });
+	// if (user?.connected)
+	//     return reply.status(401).send({ message: 'User already connected' });
 
-    const   payload = { username: user.username, id: user.id };
-    const   authToken = jwt.sign(payload, authKey!, { expiresIn: '10h' });
-    // const   newAvatar = new Blob([user.avatar], { type: 'image/png' });
+	const   payload = { username: user.username, id: user.id };
+	const   authToken = jwt.sign(payload, authKey!, { expiresIn: '10h' });
+	// const   newAvatar = new Blob([user.avatar], { type: 'image/png' });
 
-    // console.log(newAvatar);
+	// console.log(newAvatar);
 
-    logUserById(user.id as number);
+	logUserById(user.id as number);
 
-    return reply.send({ message: 'Login successful', token: authToken, user: { username: user.username, avatar: user.avatar } });
+	return reply.send({ message: 'Login successful', token: authToken, user: { username: user.username, avatar: user.avatar } });
 };
 
-export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) => 
+export const logoutUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   token = request.headers.authorization?.split(' ')[1];
-    const { username } = request.body as { username: string, };
+	const   token = request.headers.authorization?.split(' ')[1];
+	const { username } = request.body as { username: string, };
 
-    const user = getUserByUsername(username);
+	const user = getUserByUsername(username);
 
-    // console.log(token);
-    if (token) {
-        tokenBlacklist.add(token);
-    }
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	// console.log(token);
+	if (token) {
+		tokenBlacklist.add(token);
+	}
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (!user?.connected)
-        return reply.status(401).send({ message: 'User already disconnected' });
+	if (!user?.connected)
+		return reply.status(401).send({ message: 'User already disconnected' });
 
 
-    logOutUserById(user.id as number);
+	logOutUserById(user.id as number);
 
-    return reply.send({ message: 'Logout successful' });
+	return reply.send({ message: 'Logout successful' });
 };
 
-export const    getUserInfo = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    getUserInfo = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username } = request.query as { username: string };
+	const   { username } = request.query as { username: string };
 
-    const   user = getUserByUsername(username);
+	const   user = getUserByUsername(username);
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
-    
-    return reply.status(201).send({ message: 'User\'s infos sended', user });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
+
+	return reply.status(201).send({ message: 'User\'s infos sended', user });
 };
 
 export const    connectUser = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { username } = request.body as { username: string };
+	const { username } = request.body as { username: string };
 
-    const user = getUserByUsername(username);
+	const user = getUserByUsername(username);
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    // if (user.connected)
-    //     return reply.status(401).send({ message: 'User already connected' });
+	// if (user.connected)
+	//     return reply.status(401).send({ message: 'User already connected' });
 
-    logUserById(user.id as number);
+	logUserById(user.id as number);
 
-    console.log("Connecting user:", user.username);
+	console.log("Connecting user:", user.username);
 
-    return reply.status(201).send({ message: 'User connected successfully', user: { username: user.username, avatar: user.avatar } });
+	return reply.status(201).send({ message: 'User connected successfully', user: { username: user.username, avatar: user.avatar } });
 }
 
 export const    disconnectUser = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { username } = request.body as { username: string };
+	const { username } = request.body as { username: string };
 
-    const user = getUserByUsername(username);
+	const user = getUserByUsername(username);
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (!user.connected)
-        return reply.status(401).send({ message: 'User already disconnected' });
+	if (!user.connected)
+		return reply.status(401).send({ message: 'User already disconnected' });
 
-    logOutUserById(user.id as number);
+	logOutUserById(user.id as number);
 
-    console.log("Disconnecting user:", user.username);
+	console.log("Disconnecting user:", user.username);
 
-    return reply.status(201).send({ message: 'User disconnected successfully' });
+	return reply.status(201).send({ message: 'User disconnected successfully' });
 }
 
 /*----------------------------------------------------------------------------*/
 /* Contact */
 
-export const    getFriends = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    getFriends = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    try {
-        const   { username } = request.query as { username: string };
+	try {
+		const   { username } = request.query as { username: string };
 
-        const   user = getUserByUsername(username);
+		const   user = getUserByUsername(username);
 
-        if (!user)
-            return reply.status(400).send({ message: 'Invalid username' });
+		if (!user)
+			return reply.status(400).send({ message: 'Invalid username' });
 
-        const   contacts = getUserContactById(user.id as number);
+		const   contacts = getUserContactById(user.id as number);
 
-        const contactsUsername = await Promise.all(contacts.map(async (id) => {
-            const friendUsername = getUserById(id.friendId); // TODO: Check User by ID and sort information
-            return { username: friendUsername?.username, avatar: friendUsername?.avatar, connected: friendUsername?.connected };
-        }));
+		const contactsUsername = await Promise.all(contacts.map(async (id) => {
+			const friendUsername = getUserById(id.friendId); // TODO: Check User by ID and sort information
+			return { username: friendUsername?.username, avatar: friendUsername?.avatar, connected: friendUsername?.connected };
+		}));
 
-        if (!contacts.length)
-            return reply.status(401).send({ message: 'Client does not have any contact.' });
+		if (!contacts.length)
+			return reply.status(401).send({ message: 'Client does not have any contact.' });
 
-        return reply.status(201).send({ message: "Contacts found", friendList: contactsUsername })
-    }
-    catch (error) {
-        console.error('Error getting friends:', error);
-        return reply.status(500).send({ message: 'Internal server error' });
-    }
+		return reply.status(201).send({ message: "Contacts found", friendList: contactsUsername })
+	}
+	catch (error) {
+		console.error('Error getting friends:', error);
+		return reply.status(500).send({ message: 'Internal server error' });
+	}
 
 };
 
 
 export const    addFriend = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
+	const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
 
-    const   user = getUserByUsername(username);
+	const   user = getUserByUsername(username);
 
-    const   userFriend = getUserByUsername(usernameFriend);
+	const   userFriend = getUserByUsername(usernameFriend);
 
-    if (!user || !userFriend)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user || !userFriend)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id === userFriend.id)
-        return reply.status(401).send({ message: 'User cannot add himself' });
+	if (user.id === userFriend.id)
+		return reply.status(401).send({ message: 'User cannot add himself' });
 
-    if (userFriend.id)
-    {
-        const   user1Id = user.id as number;
-        const   user2Id = userFriend.id as number;
+	if (userFriend.id)
+	{
+		const   user1Id = user.id as number;
+		const   user2Id = userFriend.id as number;
 
-        createContact( user1Id, user2Id );
-    }
+		createContact( user1Id, user2Id );
+	}
 };
 
 
@@ -318,23 +318,23 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 
 export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
+	const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
 
-    const   user = getUserByUsername(username);
+	const   user = getUserByUsername(username);
 
-    const   userFriend = getUserByUsername(usernameFriend);
+	const   userFriend = getUserByUsername(usernameFriend);
 
-    if (!user || !userFriend)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user || !userFriend)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (userFriend.id)
-    {
-        const   user1Id = user.id as number;
-        const   user2Id = userFriend.id as number;
+	if (userFriend.id)
+	{
+		const   user1Id = user.id as number;
+		const   user2Id = userFriend.id as number;
 
-        deleteContact(user1Id, user2Id);
+		deleteContact(user1Id, user2Id);
 
-    }
+	}
 };
 
 // export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) =>
@@ -483,44 +483,44 @@ export const    deleteFriend = async (request: FastifyRequest, reply: FastifyRep
 /* Message */
 
 
-export const    addMessage = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    addMessage = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username, usernameContact, content, date } = request.body as { username: string, usernameContact: string, content:string, date:string };
+	const   { username, usernameContact, content, date } = request.body as { username: string, usernameContact: string, content:string, date:string };
 
-    const   user = getUserByUsername(username);
+	const   user = getUserByUsername(username);
 
-    const   userContact = getUserByUsername(usernameContact);
+	const   userContact = getUserByUsername(usernameContact);
 
-    if (!user || !userContact)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user || !userContact)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id)
-    {
-        const   senderId = user.id as number;
-        const   recipientId = userContact.id as number;
-        saveMessage({ senderId, recipientId, content, date });
+	if (user.id)
+	{
+		const   senderId = user.id as number;
+		const   recipientId = userContact.id as number;
+		saveMessage({ senderId, recipientId, content, date });
 
-        return  reply.status(201).send({ message: 'Message saved' });
-    }
+		return  reply.status(201).send({ message: 'Message saved' });
+	}
 };
 
-export const    getMessage = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    getMessage = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { id, username } = request.query as { id: number, username: string };
+	const   { id, username } = request.query as { id: number, username: string };
 
-    const   user = getUserByUsername(username) as Users;
+	const   user = getUserByUsername(username) as Users;
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id)
-    {
-        const   senderId = id;
-        const   recipientId = user.id;
-        const   mess = getMessageById( senderId, recipientId );
+	if (user.id)
+	{
+		const   senderId = id;
+		const   recipientId = user.id;
+		const   mess = getMessageById( senderId, recipientId );
 
-        return  reply.status(201).send({ message: 'Message received', mess });
-    }
+		return  reply.status(201).send({ message: 'Message received', mess });
+	}
 };
 
 /*--------------------------------------------------------------------------------------------*/
@@ -529,191 +529,191 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 // createGame modified
 export const createPongGame = (players: {player1: player | null, player2: player | null}, score: any, winner: player | null, solo: boolean, bot: boolean) =>
 {
-    // console.log(players.player1?.username, score, winner?.username, solo);
-    if (solo === true && bot === false)
-    {
-        console.log("return solo game");
-        return ;
-    }
+	// console.log(players.player1?.username, score, winner?.username, solo);
+	if (solo === true && bot === false)
+	{
+		console.log("return solo game");
+		return ;
+	}
 
-    if (players.player1?.username === players.player2?.username)
-        return;
+	if (players.player1?.username === players.player2?.username)
+		return;
 
-    if (bot === true)
-    {
-        const   player1 = getUserByUsername(players.player1?.username!) as Users;
+	if (bot === true)
+	{
+		const   player1 = getUserByUsername(players.player1?.username!) as Users;
 
-        if (!player1)
-        {
-            console.log("Invalid User");
-            return ;
-        }
+		if (!player1)
+		{
+			console.log("Invalid User");
+			return ;
+		}
 
 
-        if (player1.id)
-        {
-            if (score.player1.score < 0)
-                return ;
+		if (player1.id)
+		{
+			if (score.player1.score < 0)
+				return ;
 
-            const gameId = saveGame("");
+			const gameId = saveGame("");
 
-            createUserGameStatsPong(player1.id, gameId, score.player1.score, winner === players.player1, "pong");
-            updateStats(player1.id);
-            console.log("return bot game");
-        }
-    }
-    else
-    {
-        const   player1 = getUserByUsername(players.player1?.username!) as Users;
-        const   player2 = getUserByUsername(players.player2?.username!) as Users;
+			createUserGameStatsPong(player1.id, gameId, score.player1, winner === players.player1, "pong");
+			updateStats(player1.id);
+			console.log("return bot game");
+		}
+	}
+	else
+	{
+		const   player1 = getUserByUsername(players.player1?.username!) as Users;
+		const   player2 = getUserByUsername(players.player2?.username!) as Users;
 
-        if (!player1 || !player2)
-            return ;
+		if (!player1 || !player2)
+			return ;
 
-        if (player1.id && player2.id)
-        {
-            if (score.player1.score < 0 && score.player2.score < 0)
-                return ;
+		if (player1.id && player2.id)
+		{
+			if (score.player1.score < 0 && score.player2.score < 0)
+				return ;
 
-            // TO DO : change date
-            const gameId = saveGame("");
+			// TO DO : change date
+			const gameId = saveGame("");
 
-            createUserGameStatsPong(player1.id, gameId, score.player1.score, players.player1?.username === winner?.username, "pong");
-            createUserGameStatsPong(player2.id, gameId, score.player2.score, players.player2?.username === winner?.username, "pong");
+			createUserGameStatsPong(player1.id, gameId, score.player1, players.player1?.username === winner?.username, "pong");
+			createUserGameStatsPong(player2.id, gameId, score.player2, players.player2?.username === winner?.username, "pong");
 
-            updateStats(player1.id);
-            updateStats(player2.id);
-            console.log("return multiplayer game");
-        }
-    }
+			updateStats(player1.id);
+			updateStats(player2.id);
+			console.log("return multiplayer game");
+		}
+	}
 };
 
 export const createTetrisGame = (data: TetrisGame) =>
 {
-    // console.log("TetrisGame");
-    // console.log(data.getUsername());
-    const   player1 = getUserByUsername(data.getUsername()) as Users;
+	// console.log("TetrisGame");
+	// console.log(data.getUsername());
+	const   player1 = getUserByUsername(data.getUsername()) as Users;
 
-    if (!player1)
-    {
-        console.log("Invalid User");
-        return ;
-    }
-    if (player1.id)
-    {
-        if (data.getScore() < 0)
-        {
-            console.log("Invalid score");
-            return ;
-        }
+	if (!player1)
+	{
+		console.log("Invalid User");
+		return ;
+	}
+	if (player1.id)
+	{
+		if (data.getScore() < 0)
+		{
+			console.log("Invalid score");
+			return ;
+		}
 
-        const gameId = saveGame("");
+		const gameId = saveGame("");
 
-        const gameTetrisId = data.getGameId();
+		const gameTetrisId = data.getGameId();
 
-        createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, data.getStats());
-        updateStats(player1.id);
+		createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, data.getStats());
+		updateStats(player1.id);
 
-        // else
-        // {
-        //     const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
-        //     const tetrisStatP1J = JSON.parse(validJsonString);
-        //     const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
-        //     const tetrisStatP2J = JSON.parse(validJsonString2);
-        //     const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
-        //     const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
-        //     console.log(StatP1);
-        //     console.log(StatP2);
-        //     createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
-        //     createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
-        //     updateStats(player1.id);
-        //     updateStats(player2.id);
-        //     return reply.status(401).send({ message: 'Tetris game saved'});
-        // }
-    }
+		// else
+		// {
+		//     const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
+		//     const tetrisStatP1J = JSON.parse(validJsonString);
+		//     const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
+		//     const tetrisStatP2J = JSON.parse(validJsonString2);
+		//     const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
+		//     const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
+		//     console.log(StatP1);
+		//     console.log(StatP2);
+		//     createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
+		//     createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
+		//     updateStats(player1.id);
+		//     updateStats(player2.id);
+		//     return reply.status(401).send({ message: 'Tetris game saved'});
+		// }
+	}
 };
 
 
 /*--------------------------------------------------------------------------------------------*/
 /* Stat */
 
-export const    getStat = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    getStat = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username } = request.query as { username: string };
+	const   { username } = request.query as { username: string };
 
-    const   user = getUserByUsername(username) as Users;
+	const   user = getUserByUsername(username) as Users;
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id)
-    {
-        const stat = getStatsById(user.id);
-        // stats: added
-        return  reply.status(201).send({ message: 'Stat sended', stats:stat });
-    }
+	if (user.id)
+	{
+		const stat = getStatsById(user.id);
+		// stats: added
+		return  reply.status(201).send({ message: 'Stat sended', stats:stat });
+	}
 };
 
 /*--------------------------------------------------------------------------------------------*/
 /* GamesUsers */
 
-export const    getGameHistory = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    getGameHistory = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username } = request.query as { username: string };
+	const   { username } = request.query as { username: string };
 
-    const   user = getUserByUsername(username) as Users;
+	const   user = getUserByUsername(username) as Users;
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id)
-    {
-        const gamesId = getUserGameHistory(user.id);
-        const fullGameHistory = await Promise.all(gamesId.map(async (id) => {
-            const gameDetails = await getGameDetailsById(id); // Pass individual ID
-            gameDetails.forEach((gameDetail) => {
-                if (gameDetail.type === "tetris")
-                    // console.log("Game Detail:", gameDetail);
-                gameDetail.username = getUsernameById(gameDetail.userId);
-                gameDetail.userId = -1;
-                gameDetail.date = getGameById(id)?.date!;
-            })
-            return { gameId: id, players: gameDetails };
-        }));
-        // history: added
-        return  reply.status(201).send({ message: 'Game History sended', history:fullGameHistory });
-    }
+	if (user.id)
+	{
+		const gamesId = getUserGameHistory(user.id);
+		const fullGameHistory = await Promise.all(gamesId.map(async (id) => {
+			const gameDetails = await getGameDetailsById(id); // Pass individual ID
+			gameDetails.forEach((gameDetail) => {
+				if (gameDetail.type === "tetris")
+					// console.log("Game Detail:", gameDetail);
+					gameDetail.username = getUsernameById(gameDetail.userId);
+				gameDetail.userId = -1;
+				gameDetail.date = getGameById(id)?.date!;
+			})
+			return { gameId: id, players: gameDetails };
+		}));
+		// history: added
+		return  reply.status(201).send({ message: 'Game History sended', history:fullGameHistory });
+	}
 };
 
 /*--------------------------------------------------------------------------------------------*/
 /* Param */
 
-export const updateParameter = async (request: FastifyRequest, reply: FastifyReply) => 
+export const updateParameter = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const { username, control, key } = request.body as { username: string, control: string, key: string };
+	const { username, control, key } = request.body as { username: string, control: string, key: string };
 
-    const user = getUserByUsername(username);
+	const user = getUserByUsername(username);
 
-    if (!user)
-        return reply.status(400).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(400).send({ message: 'Invalid username' });
 
-    updateParam( user.id as number, control, key);
+	updateParam( user.id as number, control, key);
 
-    return reply.status(201).send({ message: 'Paramater updated successfully' });
+	return reply.status(201).send({ message: 'Paramater updated successfully' });
 };
 
-export const    getParameter = async (request: FastifyRequest, reply: FastifyReply) => 
+export const    getParameter = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-    const   { username } = request.query as { username: string };
+	const   { username } = request.query as { username: string };
 
-    const   user = getUserByUsername(username) as Users;
+	const   user = getUserByUsername(username) as Users;
 
-    if (!user)
-        return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username' });
 
-    if (user.id)
-    {
-        const parameter = getParamById(user.id);
-        return  reply.status(201).send({ message: 'Parameter sended', parameter });
-    }
+	if (user.id)
+	{
+		const parameter = getParamById(user.id);
+		return  reply.status(201).send({ message: 'Parameter sended', parameter });
+	}
 };
