@@ -30,7 +30,7 @@ export class UserInfo {
 		return this.avatarImg;
 	}
 
-	private static base64ToBlob(base64: string) {
+	static base64ToBlob(base64: string) {
 		const byteCharacters = atob(base64);
 		const byteArrays = [];
 
