@@ -23,7 +23,11 @@ export const evAdOutDocument = () => {
   if (window && !outDocumentHandler) {
     outDocumentHandler = (event: Event) => {
       const mouseEvent = event as MouseEvent;
-      if (!mouseEvent.relatedTarget) {
+      
+      const activeElement = document.activeElement;
+      const isInModale = activeElement?.closest('#contentModale') !== null;
+      
+      if (!mouseEvent.relatedTarget && !isInModale) {
         zoneSet('HOME');
       }
     };

@@ -106,9 +106,9 @@ export const setHtmlFront = () => {
   }
 }
 
-export const setZoneAvatar = (hide: boolean = false) => {
+export const setZoneAvatar = (show: boolean = true) => {
   if(EL.zoneAvatar) {
-    if(hide) {
+    if(!show) {
       EL.zoneAvatar.classList.add(TCS.avatarHidden);
       EL.zoneAvatar.removeEventListener('click', () => {
       });

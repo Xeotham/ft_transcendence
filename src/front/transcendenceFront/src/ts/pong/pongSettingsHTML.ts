@@ -21,23 +21,22 @@ export const   pongSettingsHtml = () => {
 
 		<div class="h-[30px]"></div>
 
-		<img id="packSelect1" src="/src/medias/images/packSelect/darkHours.png" alt="Dark Hours" class="${TCS.gamePackImg}">
+		<img id="packSelect1" src="/src/medias/images/packSelect/packSelect_1.jpg" alt="Retro" class="${TCS.gamePackImg}">
 		<div class="h-[10px]"></div>
 
-		<img id="packSelect2" src="/src/medias/images/packSelect/darkHours.png" alt="Dark Hours" class="${TCS.gamePackImg}">
+		<img id="packSelect2" src="/src/medias/images/packSelect/packSelect_2.jpg" alt="Phantom" class="${TCS.gamePackImg}">
 		<div class="h-[10px]"></div>
 
-		<img id="packSelect3" src="/src/medias/images/packSelect/darkHours.png" alt="Dark Hours" class="${TCS.gamePackImg}">
+		<img id="packSelect3" src="/src/medias/images/packSelect/packSelect_3.jpg" alt="Tv world" class="${TCS.gamePackImg}">
 		<div class="h-[10px]"></div>
 
-		<img id="packSelect4" src="/src/medias/images/packSelect/darkHours.png" alt="Dark Hours" class="${TCS.gamePackImg}">
+		<img id="packSelect4" src="/src/medias/images/packSelect/packSelect_4.jpg" alt="Retro 1975" class="${TCS.gamePackImg}">
 		<div class="h-[10px]"></div>
 
-		<img id="packSelect5" src="/src/medias/images/packSelect/darkHours.png" alt="Dark Hours" class="${TCS.gamePackImg}">
+		<img id="packSelect5" src="/src/medias/images/packSelect/packSelect_5.jpg" alt="Dark Hours" class="${TCS.gamePackImg}">
 
 		<div class="h-[30px]"></div>
 
-		
 	</div>`;
 
 	pongSettingsEvents();

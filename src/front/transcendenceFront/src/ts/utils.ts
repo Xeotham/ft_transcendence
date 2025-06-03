@@ -1,7 +1,7 @@
 import { tetrisGameInformation } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
 import { address, user } from "./immanence.ts";
-
+import { setZoneAvatar } from "./zone/zoneHTML.ts";
 
 export class UserInfo {
 	private username: string;
@@ -57,8 +57,11 @@ export class UserInfo {
 	}
 
 	isAuthenticated() {
-		// console.log("token: ", this.token); //TODO: remove
-		return this.token !== null && this.token !== undefined && this.token !== "";
+		const result = this.token !== null && this.token !== undefined && this.token !== "";
+		//console.log("isAuthenticated: ", result, "token: ", this.token); // TODO: remove 
+		setZoneAvatar(result);
+
+		return result;
 	}
 
 	setToken(token: string | null) {

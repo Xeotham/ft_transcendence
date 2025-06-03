@@ -3,7 +3,7 @@
 // @ts-ignore
 import  page from "page"
 // HTML
-import { EL } from './zoneHTML.ts';
+import { EL, setZoneAvatar } from './zoneHTML.ts';
 //import { TCS } from '../TCS.ts';
 import { loadPongPage } from '../pong/pong.ts';
 import { loadTetrisPage } from '../tetris/tetris.ts';
@@ -41,7 +41,7 @@ interface Zone {
   sepRatioTogo: number;
   sepRatioShift: number;
 }
-let zone: Zone = {
+export const zone: Zone = {
   state: 'NO',
   separatorCenter: Math.floor(document.documentElement.clientWidth / 2),
   separatorPos: Math.floor(document.documentElement.clientWidth / 2),
@@ -120,9 +120,9 @@ export const zoneSet = (state: string) => {
   if (!user.isAuthenticated()) {
     modaleDisplay(ModaleType.SIGNIN);
   }
-    if (zone.state === state) {
-      return;
-    }
+  if (zone.state === state) {
+    return;
+  }
   zone.state = state;
   switch (zone.state) {
     case 'HOME':        { zoneSetHOME(); break; }
