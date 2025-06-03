@@ -101,7 +101,7 @@ const getModalePongStatListHTML = (page: number) => {
 
   let listHTML = ``;
 
-  console.log("getModalePongStatListHTML", page); // TODO: enlever
+  // console.log("getModalePongStatListHTML", page); // TODO: enlever
 
   for (let i = 0; i < 10 && pongHistory[(page * 10) + i]; i++) {
     listHTML += `

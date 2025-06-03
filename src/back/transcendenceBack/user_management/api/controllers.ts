@@ -201,24 +201,31 @@ export const    disconnectUser = async (request: FastifyRequest, reply: FastifyR
 
 export const    getFriends = async (request: FastifyRequest, reply: FastifyReply) => 
 {
-    const   { username } = request.query as { username: string };
+    try {
+        const   { username } = request.query as { username: string };
 
-    const   user = getUserByUsername(username);
+        const   user = getUserByUsername(username);
 
-    if (!user)
-        return reply.status(400).send({ message: 'Invalid username' });
+        if (!user)
+            return reply.status(400).send({ message: 'Invalid username' });
 
-    const   contacts = getUserContactById(user.id as number);
+        const   contacts = getUserContactById(user.id as number);
 
-    const contactsUsername = await Promise.all(contacts.map(async (id) => {
-        const friendUsername = await getUsernameById(id.friendId); // TODO: Check User by ID and sort information
-        return { friendId: id, friendUsername: friendUsername};
-    }));
+        const contactsUsername = await Promise.all(contacts.map(async (id) => {
+            const friendUsername = getUserById(id.friendId); // TODO: Check User by ID and sort information
+            return { username: friendUsername?.username, avatar: friendUsername?.avatar, connected: friendUsername?.connected };
+        }));
 
-    if (!contacts.length)
-        return reply.status(401).send({ message: 'Client does not have any contact.' });
+        if (!contacts.length)
+            return reply.status(401).send({ message: 'Client does not have any contact.' });
 
-    return reply.status(201).send({ message: "Contacts found", contactsUsername })
+        return reply.status(201).send({ message: "Contacts found", friendList: contactsUsername })
+    }
+    catch (error) {
+        console.error('Error getting friends:', error);
+        return reply.status(500).send({ message: 'Internal server error' });
+    }
+
 };
 
 
@@ -607,40 +614,7 @@ export const createTetrisGame = (data: TetrisGame) =>
 
         const gameTetrisId = data.getGameId();
 
-        const stats = new Map<string, any>();
-        stats.set("gameTime", data.getGameTime());
-        stats.set("maxCombo", data.getMaxCombo());
-        stats.set("piecesPlaced", data.getPiecesPlaced());
-        stats.set("piecesPerSecond", data.getPiecesPerSecond());
-        stats.set("attacksSent", data.getAttacksSent());
-        stats.set("attacksSentPerMinute", data.getAttacksSentPerMinute());
-        stats.set("attacksReceived", data.getAttacksReceived());
-        stats.set("attacksReceivedPerMinute", data.getAttacksReceivedPerMinute());
-        stats.set("keysPressed", data.getKeysPressed());
-        stats.set("keysPerPiece", data.getKeysPerPiece());
-        stats.set("keysPerSecond", data.getKeysPerSecond());
-        stats.set("holds", data.getHolds());
-        stats.set("linesCleared", data.getLinesCleared());
-        stats.set("linesPerMinute", data.getLinesPerMinute());
-        stats.set("maxB2B", data.getMaxB2B());
-        stats.set("perfectClears", data.getPerfectClears());
-        // stats.set("allLinesClear", data.getAllLinesClear());
-        const   allLinesClear = data.getAllLinesClear();
-
-        stats.set("tspinZero", allLinesClear["tspinZero"]);
-        stats.set("tspinSingle", allLinesClear["tspinSingle"]);
-        stats.set("tspinDouble", allLinesClear["tspinDouble"]);
-        stats.set("tspinTriple", allLinesClear["tspinTriple"]);
-        stats.set("tspinQuad", allLinesClear["tspinQuad"]);
-        stats.set("miniTspinZero", allLinesClear["miniTspinZero"]);
-        stats.set("miniTspinSingle", allLinesClear["miniTspinSingle"]);
-        stats.set("miniSpinZero", allLinesClear["miniSpinZero"]);
-        stats.set("miniSpinSingle", allLinesClear["miniSpinSingle"]);
-        stats.set("miniSpinDouble", allLinesClear["miniSpinDouble"]);
-        stats.set("miniSpinTriple", allLinesClear["miniSpinTriple"]);
-        stats.set("miniSpinQuad", allLinesClear["miniSpinQuad"]);
-
-        createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, stats);
+        createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, data.getStats());
         updateStats(player1.id);
 
         // else
@@ -702,7 +676,7 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
             const gameDetails = await getGameDetailsById(id); // Pass individual ID
             gameDetails.forEach((gameDetail) => {
                 if (gameDetail.type === "tetris")
-                    console.log("Game Detail:", gameDetail);
+                    // console.log("Game Detail:", gameDetail);
                 gameDetail.username = getUsernameById(gameDetail.userId);
                 gameDetail.userId = -1;
                 gameDetail.date = getGameById(id)?.date!;

@@ -77,6 +77,8 @@ export const TCS = {
     tetrisKeybindingsName : "font-sixtyfour text-[14px] text-black font-medium text-left",
     tetrisKeybindingsKey : "font-sixtyfour text-[14px] pl-[10px] text-lime-50 font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
     tetrisRoomList : "font-sixtyfour text-[14px] text-stone-950 font-medium text-left bg-lime-50 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[10px]",
-    tetrisStartRoom : "font-sixtyfour text-[24px] text-lime-50 pt-[5px] w-full font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer"
-    
+    tetrisStartRoom : "font-sixtyfour text-[24px] text-lime-50 pt-[5px] w-full font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+
+    gameFriendImg : "w-[40px] h-[40px] border-3 inline",
+
 }
