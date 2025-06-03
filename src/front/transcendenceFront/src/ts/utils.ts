@@ -141,13 +141,14 @@ export const    patchToApi = async (url: string, data: any) => {
 export const    getFromApi = async (url: string) => {
 	const   response = await fetch(url);
 	if (!response.ok) {
-		console.error("Error:", response.statusText);
+		console.error("Error:", ((await response.json()).message) || response.statusText);
 		const   errorData = await response.json();
 		if (response.status === 401 && errorData.disconnect) {
-			console.log("Disconnecting user due to 401 error");
+			console.error("Disconnecting user due to 401 error");
 			localStorage.clear();
 			user.resetUser();
 		}
+		throw new Error(response.statusText);
 	}
 	return response.json();
 }

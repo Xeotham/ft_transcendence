@@ -7,6 +7,7 @@ import {getFromApi, postToApi} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 // @ts-ignore
 import  page from "page";
+import {friendList} from "./modalesFriendListHTML.ts";
 
 interface GameUserInfo
 {
@@ -76,7 +77,7 @@ export const modaleProfileHTML = async () => {
   <div class="h-[30px]"></div>
   
   <span class="${TCS.modaleTexte} text-[24px]">
-  ${imTexts.modalesProfileFriendList})</span>
+  ${imTexts.modalesProfileFriendList + `(${friendList.getFriendList().length})`}</span>
   <div id="modlaleFriendListLink" class="${TCS.modaleTexteLink}">
   ${imTexts.modalesProfileFriendListLink}</div>
  
@@ -126,6 +127,7 @@ export const modaleProfileEvents = () => {
         .then(() => {
           localStorage.clear();
           user.setToken(null);
+          friendList.resetFriendList(); // Reset friend list
           page("/");
         })
         .catch((error) => {
