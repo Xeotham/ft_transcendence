@@ -740,10 +740,11 @@ export class TetrisGame {
 		this.player.send(JSON.stringify({type: "GAME_FINISH"}));
 	}
 
-	private getStats() {
-		return {
+	getStats() {
+		const   stats: {[key: string]: number} = {
 			gameTime: this.gameTime,
-				piecesPlaced: this.piecesPlaced,
+			maxCombo: this.maxCombo,
+			piecesPlaced: this.piecesPlaced,
 			piecesPerSecond: this.piecesPerSecond,
 			attacksSent: this.attacksSent,
 			attacksSentPerMinute: this.attacksSentPerMinute,
@@ -758,8 +759,24 @@ export class TetrisGame {
 			linesPerMinute: this.linesPerMinute,
 			maxB2B: this.maxB2B,
 			PerfectClears: this.perfectClears,
-		...this.allLinesClear,
-		};
+			single: this.allLinesClear.Single,
+			double: this.allLinesClear.Double,
+			triple: this.allLinesClear.Triple,
+			quad: this.allLinesClear.Quad,
+			tspinZero: this.allLinesClear["T-Spin Zero"],
+			tspinSingle: this.allLinesClear["T-Spin Single"],
+			tspinDouble: this.allLinesClear["T-Spin Double"],
+			tspinTriple: this.allLinesClear["T-Spin Triple"],
+			miniTspinZero: this.allLinesClear["Mini T-Spin Zero"],
+			miniTspinSingle: this.allLinesClear["Mini T-Spin Single"],
+			miniSpinZero: this.allLinesClear["Mini Spin Zero"],
+			miniSpinSingle: this.allLinesClear["Mini Spin Single"],
+			miniSpinDouble: this.allLinesClear["Mini Spin Double"],
+			miniSpinTriple: this.allLinesClear["Mini Spin Triple"],
+			miniSpinQuad: this.allLinesClear["Mini Spin Quad"],
+			}
+
+		return stats;
 	}
 
 	private sendStats() {

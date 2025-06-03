@@ -16,7 +16,7 @@ export default async function userRoutes(fastify: FastifyInstance)
     fastify.post('/logout', logoutUser);
     fastify.get('/get-user', getUserInfo);
     fastify.post('/add-friend', addFriend);
-    fastify.get('/get-friend', getFriends);
+    fastify.get('/get-friends', getFriends);
     fastify.post('/delete-friend', deleteFriend);
     // fastify.post('/block-contact', blockContact);
     // fastify.post('/unblock-contact', unblockContact);
