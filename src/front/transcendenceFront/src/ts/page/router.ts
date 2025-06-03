@@ -94,7 +94,6 @@ const pongRouter = () => {
 const tetrisRouter = () => {
 	// TETRIS IDLE
 	page("/tetris", () => {
-		console.log("nique ta mere");
 		zoneSet("TETRIS");
 		loadTetrisPage("idle");	
 	});
@@ -121,16 +120,16 @@ const tetrisRouter = () => {
 	// });
 
 	// @ts-ignore TETRIS MULTIPLAYER ROOM JOIN
-	page("/tetris/room:code", ({params}) => {
-		let roomCode: string = params.code.toString().substring(1);
-		console.log("In the router. Room code: " + roomCode);
-		zoneSet("TETRIS"); // TODO: BABOZO
-		page.show("/tetris");
-		// window.history.pushState({}, "", "/tetris");
-		if (tetrisGameInformation.getRoomCode() === "")
-			joinRoom(roomCode);
-		// loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
-	})
+	// page("/tetris/room:code", ({params}) => {
+	// 	let roomCode: string = params.code.toString().substring(1);
+	// 	console.log("In the router. Room code: " + roomCode);
+	// 	zoneSet("TETRIS"); // TODO: BABOZO
+	// 	page.show("/tetris");
+	// 	// window.history.pushState({}, "", "/tetris");
+	// 	if (tetrisGameInformation.getRoomCode() === "")
+	// 		joinRoom(roomCode);
+	// 	// loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
+	// })
 
 	// export const tetrisRouter = () => {
 	// 	page("/tetris", () => loadTetrisPage("idle"));

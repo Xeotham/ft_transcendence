@@ -70,7 +70,7 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: {
 export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: number} ): void =>
 {
 	const win = (winner === true ? 1 : 0);
-	console.log(userId, gameId, score, winner, type, gameTetrisId);
+	// console.log(userId, gameId, score, winner, type, gameTetrisId);
 	let stmt = db.prepare('\
 		INSERT INTO gamesUsers (userId, gameId, score, winner, type, gameTetrisId) \
 		VALUES (?, ?, ?, ?, ?, ?) \
@@ -84,8 +84,8 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 	try {
 		Object.entries(tetrisStat).forEach(([key, value]) => {
 			// console.log("Test");
-			console.log(key);
-			console.log(value);
+			// console.log(key);
+			// console.log(value);
 			let stmt = db.prepare(` \
 				UPDATE gamesUsers \
 				SET ${key} = ? \

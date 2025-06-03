@@ -4,7 +4,8 @@ import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
 import { address, user } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
 import { tetrisBoardHtml } from "./tetrisHTML.ts";
-import { hideZoneGame } from "../zone/zoneCore.ts";
+import { hideZoneGame, zone } from "../zone/zoneCore.ts";
+
 // @ts-ignore
 import page from "page";
 
@@ -29,7 +30,8 @@ const socketInit = (socket: WebSocket) => {
 		if (tetrisGameInformation.getRoomCode() !== "")
 			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
-		loadTetrisPage("idle");
+		if (zone.state === "TETRIS")
+			loadTetrisPage("idle"); // TODO : If changing to pong do not!
 	};
 	window.onbeforeunload = () => {
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
@@ -255,7 +257,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			gameControllers();
 			return ;
 		case 'MULTIPLAYER_JOIN':
-			console.log("MULTIPLAYER_JOIN : " + res.argument);
+			// console.log("MULTIPLAYER_JOIN : " + res.argument);
 			if (res.argument === "OWNER") {
 				// console.log("MULTIPLAYER_OWNER");
 				tetrisGameInformation.setRoomOwner(true);

@@ -41,7 +41,7 @@ interface Zone {
   sepRatioTogo: number;
   sepRatioShift: number;
 }
-let zone: Zone = {
+export const zone: Zone = {
   state: 'NO',
   separatorCenter: Math.floor(document.documentElement.clientWidth / 2),
   separatorPos: Math.floor(document.documentElement.clientWidth / 2),
