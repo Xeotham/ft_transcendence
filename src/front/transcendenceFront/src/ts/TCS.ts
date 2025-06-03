@@ -81,5 +81,5 @@ export const TCS = {
     gameBigButton : "font-sixtyfour text-[24px] text-lime-50 pt-[5px] w-full font-medium text-left bg-yellow-600 hover:bg-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
     gamePackImg : "w-[616px] h-[100px] hover:border-x-[10px] hover:border-amber-400 hover:scale-105 hover:shadow-xl/60 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer relative",
 
-    
+	gameFriendImg : "w-[40px] h-[40px] border-3 inline",
 }

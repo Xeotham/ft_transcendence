@@ -27,7 +27,7 @@ interface GameUserInfo
   holds: number;
   linesCleared: number;
   linesPerMinute: number;
-  maxB2b: number;
+  maxB2B: number;
   perfectClears: number;
   single: number;
   double: number;
@@ -69,7 +69,7 @@ const getModaleTetrisStatListDetailsHTML = (gameIndex: number) => {
     <p>Holds: ${player?.holds}</p>
     <p>Lines Cleared: ${player?.linesCleared}</p>
     <p>Lines Per Minute: ${player?.linesPerMinute}</p>
-    <p>Max B2B: ${player?.maxB2b}</p>
+    <p>Max B2B: ${player?.maxB2B}</p>
     <p>Perfect Clears: ${player?.perfectClears}</p>
     <p>Single: ${player?.single}</p>
     <p>Double: ${player?.double}</p>

@@ -1,28 +1,25 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
-import {getFromApi} from "../utils.ts";
+import {getFromApi, UserInfo} from "../utils.ts";
 import {address, user} from "../immanence.ts";
 
 let friendListPage = 0;
 
 interface friendList {
-  date: string;
-  username: string;
-  opponent: string;
-  score: number;
-  scoreOpponent: number;
-  winner: boolean;
+	username:   string;
+	avatar:     string;
+	connected:  boolean;
 }
 
 interface GameUserInfo
 {
-  date: 	 string;
-  username : string;
-  userId: number;
-  score: 	number;
-  winner: boolean;
-  type: 	string;
+	date: 	 string;
+	username : string;
+	userId: number;
+	score: 	number;
+	winner: boolean;
+	type: 	string;
 }
 
 let friendList: friendList[] = []
@@ -46,29 +43,16 @@ let friendList: friendList[] = []
 
 // }
 
-// export const  loadPongStat = async () => {
-//   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-//   const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-//   history.filter((e) => e.players[0].type !== 'pong');
-//   console.log(history);
-//   const newHistory: pongStats[] = [];
-//   history.forEach((game) => {
-//     if (game.players.length < 2) {
-//       return;
-//     }
-//     const stat = formatPongStat(game);
-//     if (stat) {
-//       newHistory.push(stat);
-//     }
-//   })
-//   pongHistory = newHistory;
-// }
+export const  loadFriendList = async () => {
+	const get: any = await  getFromApi(`http://${address}/api/user/get-friends?username=${user.getUsername()}`);
+	friendList = get.friendList;
+}
 
 export const modaleFriendListHTML = (page: number) => {
 
-  friendListPage = page;
+	friendListPage = page;
 
-  let friendListHTML =`
+	let friendListHTML =`
     <div id="friendListTitle" class="${TCS.modaleTitre}">
     ${imTexts.modalesFriendListTitle}</div>
 
@@ -78,59 +62,54 @@ export const modaleFriendListHTML = (page: number) => {
     <div class="h-[30px]"></div>
   `;
 
-  friendListHTML += getModaleFriendListListHTML(friendListPage);
+	friendListHTML += getModaleFriendListListHTML(friendListPage);
 
-  friendListHTML += `
+	friendListHTML += `
     <div class="h-[30px]"></div>
   </div>
   `;
 
-  return friendListHTML;
+	return friendListHTML;
 }
 
 const formatFriendListLine = (index: number) => {
-    // const stat = pongHistory[index];
-    // if (!stat)
-    //   return '';
-    // let formattedStat = `${stat.date} - `;
-    // formattedStat += stat.winner ? "<span class='text-green-500'>" : "<span class='text-red-500'>"
-    // formattedStat += `${stat.score}/${stat.scoreOpponent}</span> - ${stat.opponent}`;
-    // return formattedStat;
+	const   friend = friendList[index + (friendListPage * 10)];
+	if (!friend) {
+		return "";
+	}
 
-    let formattedFriend = `<span class="${TCS.modaleFriendList}" id="friendListLine${index}">
-    username_ami-${index}</span> - `; // TODO: remplacer par le nom de l'ami
+	friend.avatar = URL.createObjectURL(UserInfo.base64ToBlob(friend.avatar));
+	let formattedFriend = `
+	<img src="${friend.avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
+	<span class="${TCS.modaleFriendList}" id="friendListLine${index}">
+		${friend.username}
+	</span>`; // TODO: remplacer par le nom de l'ami
 
-    if (index%2 === 0) // TODO: changer par le statut de l'ami
-      formattedFriend += `<span class='text-green-500'>${imTexts.modalesFriendListConnected}</span>`;
-    else
-      formattedFriend += `<span class='text-red-500'>${imTexts.modalesFriendListDisconnected}</span>`;
-
-    // formattedFriend += `<span class='${TCS.modaleTexteLink}'>${imTexts.modalesFriendListRemove}</span>`;
-
-    return formattedFriend;
+	return formattedFriend;
 }
 
 const getModaleFriendListListHTML = (page: number) => {
 
-  let listHTML = ``;
+	friendListPage = page;
+	let listHTML = ``;
 
-  //console.log("getModalePongStatListHTML", page); // TODO: enlever
+	//console.log("getModalePongStatListHTML", page); // TODO: enlever
 
-  // for (let i = 0; i < 10 && pongHistory[(page * 10) + i]; i++) {
-  //   listHTML += `
-  //     <div id="pongStatLine${i}" class="${TCS.modaleTexte}">
-  //     ${formatPongStatLine(i + (page * 10))}</div>
-  //   `;
-  // }
+	// for (let i = 0; i < 10 && pongHistory[(page * 10) + i]; i++) {
+	//   listHTML += `
+	//     <div id="pongStatLine${i}" class="${TCS.modaleTexte}">
+	//     ${formatPongStatLine(i + (page * 10))}</div>
+	//   `;
+	// }
 
-  for (let i = 0; i < 10; i++) { // TODO: remplacer par le nombre d'amis
-    listHTML += `
+	for (let i = 0; i < 10; i++) { // TODO: remplacer par le nombre d'amis
+		listHTML += `
       <div id="friendListLine${i}" class="${TCS.modaleTexte}">
       ${formatFriendListLine(i)}</div>
     `;
-  }
+	}
 
-  listHTML += `  <div class="h-[10px]"></div>
+	listHTML += `  <div class="h-[10px]"></div>
 
   <div id="friendListPrevNext" class="${TCS.modaleTexte}">
     <a id="friendListPrev" class="${TCS.modaleTexteLink}">
@@ -140,45 +119,45 @@ const getModaleFriendListListHTML = (page: number) => {
     ${imTexts.modalesFriendListNext}</a>
   </div>`;
 
-  listHTML += `
+	listHTML += `
   <div class="h-[10px]"></div>
   `;
 
-  return listHTML;
+	return listHTML;
 }
 
 export const modaleFriendListEvents = () => {
 
-  const friendListBack = document.getElementById('friendListBack') as HTMLAnchorElement;
-  const friendListPrev = document.getElementById('friendListPrev') as HTMLAnchorElement;
-  const friendListNext = document.getElementById('friendListNext') as HTMLAnchorElement;
-  
-  if (!friendListBack || !friendListPrev || !friendListNext)
-    return;
+	const friendListBack = document.getElementById('friendListBack') as HTMLAnchorElement;
+	const friendListPrev = document.getElementById('friendListPrev') as HTMLAnchorElement;
+	const friendListNext = document.getElementById('friendListNext') as HTMLAnchorElement;
 
-  friendListBack.addEventListener('click', () => {
-    modaleDisplay(ModaleType.PROFILE);
-  });
+	if (!friendListBack || !friendListPrev || !friendListNext)
+		return;
 
-  friendListPrev.addEventListener('click', () => {
-    if (friendListPage <= 0)
-      return;
-    modaleFriendListHTML(--friendListPage);
-  });
+	friendListBack.addEventListener('click', () => {
+		modaleDisplay(ModaleType.PROFILE);
+	});
 
-  friendListNext.addEventListener('click', () => {
-    if (friendListPage >= 10) // TODO: remplacer par le nombre de pages
-      return;
-    if ((friendListPage + 1) * 10 <= friendList.length)
-      modaleFriendListHTML(++friendListPage);
-  });
+	friendListPrev.addEventListener('click', () => {
+		if (friendListPage <= 0)
+			return;
+		modaleFriendListHTML(--friendListPage);
+	});
+
+	friendListNext.addEventListener('click', () => {
+		if (friendListPage >= 10) // TODO: remplacer par le nombre de pages
+			return;
+		if ((friendListPage + 1) * 10 <= friendList.length)
+			modaleFriendListHTML(++friendListPage);
+	});
 
 
-  for (let i = 0; i < 10; i++) {
-    const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
-    friendListLine.addEventListener('click', () => {
-      // console.log("friendListLine <<<<<<<<");
-      modaleDisplay(ModaleType.FRIEND_PROFILE);
-    });
-  }
+	for (let i = 0; i < 10; i++) {
+		const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
+		friendListLine.addEventListener('click', () => {
+			// console.log("friendListLine <<<<<<<<");
+			modaleDisplay(ModaleType.FRIEND_PROFILE);
+		});
+	}
 }

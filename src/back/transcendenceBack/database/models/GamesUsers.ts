@@ -67,7 +67,7 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: {
 	stmt.run(userId, gameId, score.score, win, type);
 };
 	
-export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: Map<string, any> ): void =>
+export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: number} ): void =>
 {
 	const win = (winner === true ? 1 : 0);
 	console.log(userId, gameId, score, winner, type, gameTetrisId);
@@ -79,10 +79,11 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 	stmt.run(userId, gameId, score, win, type, gameTetrisId);
 
 
-	console.log("Tetris stats: ", tetrisStat);
+	// console.log("Tetris stats: ", tetrisStat);
 
 	try {
-		tetrisStat.forEach((value, key) => {
+		Object.entries(tetrisStat).forEach(([key, value]) => {
+			// console.log("Test");
 			console.log(key);
 			console.log(value);
 			let stmt = db.prepare(` \
@@ -91,7 +92,7 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 				WHERE userId = ? AND gameId = ?\
 				`);
 			stmt.run(value, userId, gameId);
-		});
+		})
 	}
 	catch (e) {
 		console.error("Error updating Tetris stats:", e);

@@ -16,7 +16,7 @@ import {
 } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
-import { modaleFriendListHTML, modaleFriendListEvents } from './modalesFriendListHTML.ts';
+import {modaleFriendListHTML, modaleFriendListEvents, loadFriendList} from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../immanence.ts';
 
@@ -80,6 +80,7 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       break;
     case ModaleType.PROFILE:
       modale.content.innerHTML = await modaleProfileHTML();
+      loadFriendList()
       modaleProfileEvents();
       break;
     case ModaleType.PONG_STATS:
