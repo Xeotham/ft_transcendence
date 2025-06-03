@@ -69,7 +69,7 @@ const   idlePage = () => {
 	document.getElementById("arcade")?.addEventListener("click", () => tetrisSoloPage());
 	document.getElementById("matchmaking")?.addEventListener("click", () => tetrisVersusPage());
 	document.getElementById("get-multiplayer-rooms")?.addEventListener("click", () => page.show("/tetris/room-list"));
-	document.getElementById("create-room")?.addEventListener("click", () => page.show("/tetris/create-room"));
+	document.getElementById("create-room")?.addEventListener("click", () => tetrisCreateRoomPage()); // TODO : create room
 	document.getElementById("setting")?.addEventListener("click", () => page.show("/tetris/settings"));
 
 	document.getElementById("home")?.addEventListener("click", (e) => {
@@ -96,8 +96,7 @@ export const   tetrisCreateRoomPage = () => {
 }
 
 const multiplayerRoom = (arg: loadTetrisArgs) => {
-	///// ??????????????????????????
-	// console.log("multiplayerRoom called with arg:", arg);
+	// console.log("multiplayerRoom called");
 	tetrisMultiplayerRoom(arg.rooms?.[0]?.roomCode || ""); // TODO modif ben est ce que c est bo
 	//tetrisMultiplayerRoom(arg); //TODO before marchais pas ...
 }

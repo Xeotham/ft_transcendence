@@ -251,7 +251,7 @@
         "showHold": "Afficher le maintien",
         "infiniteHold": "Maintien infini",
         "infiniteMovement": "Déplacement infini",
-        "lockTime": "Temps de verrouillage",
+        "lockTime": "Temps de verrouillage (ms)",
         "spawnARE": "Spawn ARE",
         "softDropAmp": "Multiplicateur de descente lente",
         "level": "Niveau de départ",
