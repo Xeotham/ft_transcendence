@@ -432,8 +432,8 @@ const   pongTournamentNameHtml = () => {
 		<a id="back" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
 		<div class="h-[20px]"></div>
 
-		<form id="inviteForm">
-			<input type="text" id="inviteCode" placeholder="${imTexts.pongModalesTournamentCreateText}" class="${TCS.formInputTetrisMultiplayer}">
+		<form id="tournamentNameForm">
+			<input type="text" id="tournamentName" placeholder="${imTexts.pongModalesTournamentCreateText}" class="${TCS.formInputTetrisMultiplayer}">
 			<div class="h-[10px]"></div>
 			<button type="submit" id="submit" class="${TCS.gameBlockLink} w-full h-[40px] flex items-end pb-[1px]">${imTexts.pongModalesVersusJoinSubmit}</button>
 		</form>
