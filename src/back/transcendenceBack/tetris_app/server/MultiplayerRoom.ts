@@ -129,6 +129,7 @@ export class MultiplayerRoom {
 				this.removePlayer(player.getUsername());
 			if (this.playersRemaining === 1)
 				this.players.find((player) => !player.getGame()?.isOver())?.getGame()?.setOver(true);
+			this.assignOpponents();
 			if (this.playersRemaining >= 1)
 				return ;
 			this.players.forEach((player) => {

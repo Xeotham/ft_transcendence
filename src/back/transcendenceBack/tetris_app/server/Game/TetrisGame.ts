@@ -579,7 +579,7 @@ export class TetrisGame {
 		}
 		if (sendSound)
 			this.player.send(JSON.stringify({type: "EFFECT", argument: "GARBAGE", value: "counter"}));
-		if (sending <= 0)
+		if (sending <= 0 || !this.opponent)
 			return ;
 		else if (sending <= 2)
 			this.player.send(JSON.stringify({type: "EFFECT", argument: "GARBAGE", value: "garbage_out_small"}));
