@@ -13,11 +13,11 @@ export const   pongSettingsHtml = () => {
 	<div class="${TCS.tetrisWindowBkg}">
 
 		<div id="pongSettingsTitle" class="${TCS.gameTitle}">
-		${imTexts.tetrisModalesSettingsTitle}</div>
+		${imTexts.pongModalesSettingsTitle}</div>
 		
 		<div class="${TCS.gameTexte} translate-y-[-5px]">
 		<a id="pongSettingsBack" class="${TCS.modaleTexteLink}">
-		${imTexts.tetrisModalesBack}</a></div>	
+		${imTexts.pongModalesBack}</a></div>	
 
 		<div class="h-[30px]"></div>
 

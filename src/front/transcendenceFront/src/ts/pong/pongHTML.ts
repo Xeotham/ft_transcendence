@@ -324,6 +324,8 @@ const   pongVersusJoinPrivRoomHtml = () => { //TODO pong versus join private roo
 			<div class="h-[10px]"></div>
 			<button type="submit" id="submit" class="${TCS.gameBlockLink} w-full h-[40px] flex items-end pb-[1px]">${imTexts.pongModalesVersusJoinSubmit}</button>
 		</form>
+
+		<div class="h-[30px]"></div>
 	</div>`;
 
 	// TODO alert code invalide
@@ -341,47 +343,79 @@ const   pongVersusJoinPrivRoomHtml = () => { //TODO pong versus join private roo
 }
 
 const pongVersusListHtml = (rooms: RoomInfo[]) => { // TOTO liste de rooms (spectate, tournois)
-	if (!EL.contentPong)
-		return ;
+	if (!EL.contentPong) return ;
 
 	let listHTML = `
-	<div class="${TCS.pongNav1}">
-		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
-		<div class="flex-1"><ul>`;
+	<div class="${TCS.tetrisWindowBkg}">
+		<div class="${TCS.gameTitle}">
+		${imTexts.pongModalesVersusListTitle}</div>
+
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
+		<a id="back" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
+		<div class="h-[20px]"></div>
+	`;
 
 	rooms.forEach((room: RoomInfo) => {
 		if (!room.privRoom && !room.isSolo) {
 			listHTML += `
-			<li class="flex-1" class="${TCS.pongButton}">
-				<a href="/pong/room/${room.id}" class="${TCS.pongButton}">
-				Id: ${room.id}
-				</a>
-		    </li>`};
+		<a href="/pong/room/${room.id}" class="${TCS.gameList} block w-full">
+			<span class="text-yellow-600">» </span>
+			<span class="text-stone-50">Id: ${room.id}</span>
+		</a>
+		`;}
 	});
-	listHTML += '</ul></div>';
+		
+	listHTML += `
+		<div class="h-[30px]"></div>
+	</div>`;
 	EL.contentPong.innerHTML = listHTML;
+
+	// <div class="${TCS.pongNav1}">
+	// <div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
+	// <div class="flex-1"><ul>
+	// <li class="flex-1" class="${TCS.pongButton}">
+	// <a href="/pong/room/${room.id}" class="${TCS.pongButton}">
+	// Id: ${room.id}
+	// </a>
+	// </li>`
 }
 
 const PongTournamentListHtml = (tournaments: TournamentInfo[]) => {
-	if (!EL.contentPong)
-		return ;
+	if (!EL.contentPong) return ;
 
 	let listHTML = `
-	<div class="${TCS.pongNav1}">
-		<ul>`;
+	<div class="${TCS.tetrisWindowBkg}">
+		<div class="${TCS.gameTitle}">
+		${imTexts.pongModaleTournamentListTitle2}</div>
+
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
+		<a id="back" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
+		<div class="h-[20px]"></div>
+	`;
+
 	tournaments.forEach((tournament: TournamentInfo) => {
 		listHTML += `
-		  <li class="flex-1" class="${TCS.pongButton}">
-			<a href="/pong/tournament/${tournament.id}" class="${TCS.pongButton}">
-			  Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}
-			</a>
-		  </li>`;
+		<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">
+			<span class="text-yellow-600">» </span>
+			<span class="text-stone-50">
+			Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}</span>
+		</a>
+		`;
 	});
+
 	listHTML += `
-		</ul>
-		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
+		<div class="h-[30px]"></div>
 	</div>`;
 	EL.contentPong.innerHTML = listHTML;
+
+// 	<li class="flex-1" class="${TCS.pongButton}">
+// 	<a href="/pong/tournament/${tournament.id}" class="${TCS.pongButton}">
+// 	  Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}
+// 	</a>
+//   </li>`;
+//   		</ul>
+// 		<div class="flex-1"><button id="back" class="${TCS.pongButton}">Back</button></div>
+// 	</div>`;
 }
 
 const   pongTournamentNameHtml = () => {
@@ -389,44 +423,99 @@ const   pongTournamentNameHtml = () => {
 		return ;
 
 	EL.contentPong.innerHTML = `
-	<div class="${TCS.pongNav1}">
-		<div class="flex-1"><p class="${TCS.pongText}">Enter the name of the tournament</p></div>
-		<form class="flex-1">
-			<input type="text" id="tournamentName" placeholder="Tournament Name" class="${TCS.pongButton}">
-			<button id="submit" class="${TCS.pongButton}">Submit</button>
+
+	<div class="${TCS.tetrisWindowBkg}">
+		<div class="${TCS.gameTitle}">
+		${imTexts.pongModalesTournamentCreateTitle}</div>
+
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
+		<a id="back" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
+		<div class="h-[20px]"></div>
+
+		<form id="inviteForm">
+			<input type="text" id="inviteCode" placeholder="${imTexts.pongModalesTournamentCreateText}" class="${TCS.formInputTetrisMultiplayer}">
+			<div class="h-[10px]"></div>
+			<button type="submit" id="submit" class="${TCS.gameBlockLink} w-full h-[40px] flex items-end pb-[1px]">${imTexts.pongModalesVersusJoinSubmit}</button>
 		</form>
-		<div class="flex-1"><button id="back" class="${TCS.pongButton} pb-[30px]">Back</button></div>
+
+		<div class="h-[30px]"></div>
 	</div>`;
+
+	// <div class="${TCS.pongNav1}">
+	// 	<div class="flex-1"><p class="${TCS.pongText}">Enter the name of the tournament</p></div>
+	// 	<form class="flex-1">
+	// 		<input type="text" id="tournamentName" placeholder="Tournament Name" class="${TCS.pongButton}">
+	// 		<button id="submit" class="${TCS.pongButton}">Submit</button>
+	// 	</form>
+	// 	<div class="flex-1"><button id="back" class="${TCS.pongButton} pb-[30px]">Back</button></div>
+	// </div>`;
+
 }
 
 const   pongTournamentEndPage = (winner: number) => {
-	if (!EL.contentPong)
-		return ;
+	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
-	<div class="${TCS.pongNav1}">
-		<div class="flex-1"><button id="home" class="${TCS.pongButton}">Home</button></div>
-		<div class="flex-1"><h1 class="${TCS.pongText}">Tournament Over</h1></div>
-		<div class="flex-1"><p class="${TCS.pongText}">Winner: Player ${winner}</p></div>
+	<div class="${TCS.tetrisWindowBkg}">
+		<div class="${TCS.gameTitle}">
+		${imTexts.pongModalesTournamentEndTitle}</div>
+
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
+		<a id="home" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
+		<div class="h-[20px]"></div>
+
+		<div class="${TCS.gameTexte}">${winner}${imTexts.pongModalesTournamentEndWinner}</div>
+
+		<div class="h-[30px]"></div>
 	</div>`;
+
+	// <div class="${TCS.pongNav1}">
+	// <div class="flex-1"><button id="home" class="${TCS.pongButton}">Home</button></div>
+	// <div class="flex-1"><h1 class="${TCS.pongText}">Tournament Over</h1></div>
+	// <div class="flex-1"><p class="${TCS.pongText}">Winner: Player ${winner}</p></div>
+
 }
 
 const   pongTournamentFoundHtml = () => {
-	if (!EL.contentPong)
-		return ;
-	if (!pongGameInfo.getTournament())
-		return ;
+	if (!EL.contentPong || !pongGameInfo.getTournament()) return ;
 
 	EL.contentPong.innerHTML= `
-	<div class="${TCS.pongNav1}">
-		<div class="flex-1"><p class="${TCS.pongText}">Tournament found!</p></div>
-		<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Tournament</button></div>`;
+	<div class="${TCS.tetrisWindowBkg}">
+		<div class="${TCS.gameTitle}">
+		${imTexts.pongModalesTournamentFoundTitle}</div>
+
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
+		<a id="quit" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
+		<div class="h-[20px]"></div>
+
+		<div class="${TCS.gameTexte}">${imTexts.pongModalesTournamentFoundText}</div>
+		<div class="h-[10px]"></div>
+	`;
+
 	if (pongGameInfo.getTournament()?.getIsOwner()) {
 		EL.contentPong.innerHTML += `
-		<div class="flex-1"><button id="start-tournament" class="${TCS.pongButton}">Start Tournament</button></div>
-		<div class="flex-1"><button id="shuffle-tree" class="${TCS.pongButton}">Shuffle Tree</button></div>`;
+
+		<div id="start-tournament" class="${TCS.gameBlockLink}">${imTexts.pongModalesTournamentFoundStart}</div>
+		<div class="h-[10px]"></div>
+		<div id="shuffle-tree" class="${TCS.gameBlockLink}">${imTexts.pongModalesTournamentFoundShuffle}</div>
+		<div class="h-[10px]"></div>
+		<div id="quit2" class="${TCS.gameBlockLink}">${imTexts.pongModalesTournamentFoundQuit}</div>`;
 	}
-	EL.contentPong.innerHTML += `</div>`;
+	EL.contentPong.innerHTML += `
+		<div class="h-[30px]"></div>
+	</div>`;
+
+	//todo quit2 event
+
+	// <div class="${TCS.pongNav1}">
+	// 	<div class="flex-1"><p class="${TCS.pongText}">Tournament found!</p></div>
+	// 	<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Tournament</button></div>`;
+	// if (pongGameInfo.getTournament()?.getIsOwner()) {
+	// 	EL.contentPong.innerHTML += `
+	// 	<div class="flex-1"><button id="start-tournament" class="${TCS.pongButton}">Start Tournament</button></div>
+	// 	<div class="flex-1"><button id="shuffle-tree" class="${TCS.pongButton}">Shuffle Tree</button></div>`;
+
+
 }
 
 
@@ -455,17 +544,34 @@ const   pongDrawBoardHtml = () => {
 }
 
 const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
-	if (!EL.contentPong)
-		return ;
+	if (!EL.contentPong) return ;
 
 	// TODO: Add quit button
+	// TODO no quit/back ?
 
 	EL.contentPong.innerHTML = `
-	<div class="${TCS.pongNav1}">
-		<div class="flex-1"><p>Game Found, Confirm?</p></div>
-		<div class="flex-1"><button id="confirm-game" class="${TCS.pongButton}">Confirm Game</button></div>
-		<div class="flex-1"><p id="timer">Time remaining: 10s</p></div>
+	<div class="${TCS.tetrisWindowBkg}">
+		<div class="${TCS.gameTitle}">
+		${imTexts.pongModalesTournamentJoinConfirm}</div>
+
+		<div class="${TCS.gameTexte} translate-y-[-5px]">
+		<a id="quit" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
+		<div class="h-[20px]"></div>
+
+		<div class="${TCS.gameTexte}">${imTexts.pongModalesTournamentJoinConfirmText}</div>
+		<div class="h-[10px]"></div>
+
+		<div class="${TCS.gameBlockLink} h-[36px] text-[24px]" id="confirm-game">${imTexts.pongModalesTournamentJoinConfirmStart}</div>
+		<div class="h-[10px]"></div>
+
+		<div class="${TCS.gameTexte}" id="timer">${imTexts.pongModalesTournamentJoinConfirmTimer}</div>
 	</div>`;
+
+	// <div class="${TCS.pongNav1}">
+	// <div class="flex-1"><p>Game Found, Confirm?</p></div>
+	// <div class="flex-1"><button id="confirm-game" class="${TCS.pongButton}">Confirm Game</button></div>
+	// <div class="flex-1"><p id="timer">Time remaining: 10s</p></div>
+
 }
 
 const   pongQuitButton = () => {
