@@ -98,10 +98,18 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 export const   getTournamentName = async () => {
 	loadPongPage("tournament-name");
 
-	document.getElementById("submit")?.addEventListener("click", () => {
-        const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
-        createTournament(name);
-    });
+	const   tournamentNameForm = document.getElementById("tournamentNameForm") as HTMLFormElement;
+
+	tournamentNameForm.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
+		createTournament(name);
+	})
+
+	// document.getElementById("submit")?.addEventListener("click", () => {
+    //     const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
+    //     createTournament(name);
+    // });
 }
 
 const   createTournament = async (name: string) => {

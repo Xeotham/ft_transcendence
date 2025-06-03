@@ -10,7 +10,7 @@ import { joinRoom } from "../tetris/gameManagement.ts";
 import  { loadPongPage } from "../pong/pong.ts";
 import  { getTournamentInfo, getTourRoomInfo, listTournaments } from "../pong/tournament.ts";
 import  { getRoomInfo, listRoomsSpectator } from "../pong/spectate.ts";
-//import {signUpUser} from "../userManagement/userManagement.ts";
+//import { signUpUser } from "../userManagement/userManagement.ts";
 //import { userKeys } from "../tetris/tetris.ts";
 
 // Start the router
@@ -93,7 +93,8 @@ const pongRouter = () => {
 
 const tetrisRouter = () => {
 	// TETRIS IDLE
-	page("/tetris", () => {		
+	page("/tetris", () => {
+		console.log("nique ta mere");
 		zoneSet("TETRIS");
 		loadTetrisPage("idle");	
 	});
@@ -102,11 +103,7 @@ const tetrisRouter = () => {
 		zoneSet("TETRIS");
 		gameListPage();
 	});
-	// TETRIS CREATE ROOM
-	page("/tetris/create-room", () => {
-		zoneSet("TETRIS");
-		tetrisCreateRoomPage();
-	});
+
 	// TETRIS SETTINGS
 	page("/tetris/settings", () => {
 		zoneSet("TETRIS");
@@ -114,15 +111,44 @@ const tetrisRouter = () => {
 		tetrisSettingsPage();
 	});
 
+	// TETRIS CREATE ROOM
+	// page("/tetris/create-room", () => {
+	// 	zoneSet("TETRIS");
+	// 	console.log("Mother fucker change the url")
+	// 	page.show("/tetris");
+	// 	loadTetrisPage("idle");
+	// 	tetrisCreateRoomPage();
+	// });
+
 	// @ts-ignore TETRIS MULTIPLAYER ROOM JOIN
 	page("/tetris/room:code", ({params}) => {
 		let roomCode: string = params.code.toString().substring(1);
-		// console.log("In the router. Room code: " + roomCode);
+		console.log("In the router. Room code: " + roomCode);
+		zoneSet("TETRIS"); // TODO: BABOZO
+		page.show("/tetris");
+		// window.history.pushState({}, "", "/tetris");
 		if (tetrisGameInformation.getRoomCode() === "")
 			joinRoom(roomCode);
-		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
-		zoneSet("TETRIS"); // TODO: BABOZO
+		// loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
 	})
+
+	// export const tetrisRouter = () => {
+	// 	page("/tetris", () => loadTetrisPage("idle"));
+	//
+	// 	// @ts-ignore
+	// 	page("/tetris/room:code", async ({params}) => {
+	// 		let roomCode: string = params.code.toString().substring(1);
+	// 		const n = async ()  => {
+	// 			page.show("/tetris")
+	// 		};
+	//
+	// 		await n();
+	// 		// console.log("In the router. Room code: " + roomCode);
+	// 		if (tetrisGameInfo.getRoomCode() === "")
+	// 			joinRoom(roomCode);
+	// 		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
+	// 	})
+
 }
 
 // const loginRouter = () => {

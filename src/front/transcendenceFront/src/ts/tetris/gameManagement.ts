@@ -255,17 +255,18 @@ const   messageHandler = (event: MessageEvent)=> {
 			gameControllers();
 			return ;
 		case 'MULTIPLAYER_JOIN':
+			console.log("MULTIPLAYER_JOIN : " + res.argument);
 			if (res.argument === "OWNER") {
 				// console.log("MULTIPLAYER_OWNER");
 				tetrisGameInformation.setRoomOwner(true);
 			}
 			else if(res.argument === "SETTINGS") {
 				tetrisGameInformation.setSettings(res.value);
+				console.log("settings saved: " + JSON.stringify(res.value));
 			}
 			else {
 				// console.log("MULTIPLAYER_JOIN");
 				tetrisGameInformation.setRoomCode(res.argument as string);
-				// page.show("/tetris"); // TODO: BABOZO
 				console.log("Joining room: " + res.argument);
 			}
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInformation.getRoomCode()}]});
@@ -291,7 +292,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("The multiplayer game has finished. You ended up at place " + res.argument);
 			return ;
 		case "MULTIPLAYER_OPPONENTS_GAMES":
-			console.log("MULTIPLAYER_OPPONENTS_GAMES");
+			// console.log("MULTIPLAYER_OPPONENTS_GAMES");
 			tetrisGameInformation.setOpponentsGames(res.argument as any[]);
 			return ;
 		case "GAME_FINISH":

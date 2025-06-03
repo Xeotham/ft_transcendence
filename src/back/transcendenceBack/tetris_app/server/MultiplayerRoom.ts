@@ -21,7 +21,7 @@ export class MultiplayerRoom {
 		console.log("The code of the new room is " + this.code);
 		this.playersRemaining = 0;
 		this.addPlayer(socket, username);
-		this.settings = {isPrivate: false, isLevelling: false, level: 4, canRetry: true};
+		this.settings = {isPrivate: false, isLevelling: false, level: 4, canRetry: true}; // TODO : set isPrivate to true
 	}
 
 	public isPrivate(): boolean						{ return this.settings.isPrivate == undefined ? false : this.settings.isPrivate; }
@@ -135,8 +135,7 @@ export class MultiplayerRoom {
 			this.players.forEach((player) => {
 				if (!player.getGame()?.getHasForfeit())
 					player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
-				if (player.isOwner()) // TODO : Send this to everyone?
-					player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
+				player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
 				player.setGame(undefined);
 			});
 			this.isInGame = false;

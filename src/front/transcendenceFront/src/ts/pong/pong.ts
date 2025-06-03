@@ -3,7 +3,7 @@ import { createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, qu
 import { getTournamentName } from "./tournament.ts";
 import { loadPongHtml } from "./pongHTML.ts";
 import { drawGame } from "./pongDraw.ts";
-
+import { copyToClipboard } from "../tetris/tetrisMultiplayerCreateHTML.ts";
 // @ts-ignore
 import  page from "page"
 import {resetGamesSocket} from "../utils.ts";
@@ -128,18 +128,27 @@ const   tourInfoPage = (tourId: number, started: boolean, name: string) => {
 
 const   tourRoomListPage = (rooms: RoomInfo[]) => {
 	loadPongHtml("tour-rooms-list", { roomLst: rooms });
+
+	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/tournament"));
+	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => { tourRoomListPage(rooms) }); //TODO a verifier
 }
 
 const   privRoomCreate = (inviteCode: string) => {
 	loadPongHtml("priv-room-create", { inviteCode: inviteCode });
 
 	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
+
+	document.getElementById("clipboardCopy")?.addEventListener("click", async (e) => {
+		e.preventDefault();
+		await copyToClipboard(inviteCode);		
+	});
 }
 
 const   privRoomCode = () => {
 	loadPongHtml("priv-room-code");
 
-	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong"); });
+	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong");});
+
 }
 
 const roomListPage = (rooms: RoomInfo[]) => {
