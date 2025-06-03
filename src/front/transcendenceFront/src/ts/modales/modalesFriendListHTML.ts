@@ -11,18 +11,35 @@ interface friendList {
 	avatar:     string;
 	connected:  boolean;
 }
+//
+// interface GameUserInfo
+// {
+// 	date: 	 string;
+// 	username : string;
+// 	userId: number;
+// 	score: 	number;
+// 	winner: boolean;
+// 	type: 	string;
+// }
 
-interface GameUserInfo
-{
-	date: 	 string;
-	username : string;
-	userId: number;
-	score: 	number;
-	winner: boolean;
-	type: 	string;
+export const friendList = new class {
+	private friendList: friendList[];
+	constructor() {
+		this.friendList = [];
+	}
+
+	getFriendList() {
+		return this.friendList;
+	}
+
+	setFriendList(friendList: friendList[]) {
+		this.friendList = friendList;
+	}
+
+	resetFriendList() {
+		this.friendList = [];
+	}
 }
-
-let friendList: friendList[] = []
 
 // const formatPongStat = (gameId: number, history: { gameId: number, username: string, date: string, score: number, winner: boolean, type: string }[]) => {
 
@@ -44,8 +61,14 @@ let friendList: friendList[] = []
 // }
 
 export const  loadFriendList = async () => {
-	const get: any = await  getFromApi(`http://${address}/api/user/get-friends?username=${user.getUsername()}`);
-	friendList = get.friendList;
+	try {
+		const get: any = await getFromApi(`http://${address}/api/user/get-friends?username=${user.getUsername()}`);
+		friendList.setFriendList(get.friendList);
+	}
+	catch (error) {
+		console.error("Error loading friend list:", error);
+		friendList.resetFriendList();
+	}
 }
 
 export const modaleFriendListHTML = (page: number) => {
@@ -73,7 +96,7 @@ export const modaleFriendListHTML = (page: number) => {
 }
 
 const formatFriendListLine = (index: number) => {
-	const   friend = friendList[index + (friendListPage * 10)];
+	const   friend = friendList.getFriendList()[index + (friendListPage * 10)];
 	if (!friend) {
 		return "";
 	}
