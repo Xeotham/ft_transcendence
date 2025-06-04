@@ -1,5 +1,5 @@
 // Events & core
-import {address, postToApi, resetGamesSocket, syncKeys, user} from "./utils.ts";
+import {address, postToApi, resetGamesSocket, user} from "./utils.ts";
 //import { evAddDocResize } from './zone/zoneEvents.ts'
 import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'

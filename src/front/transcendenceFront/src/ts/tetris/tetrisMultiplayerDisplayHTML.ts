@@ -46,8 +46,11 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 				${imTexts.tetrisDisplayMultiplayerRoomCodeLabel}</label>
 			</div>
 			
-			<div><button id="tetrisDisplayMultiplayerRoomCodeSubmit" class="${TCS.gameBlockLink} w-full">
-			${imTexts.tetrisDisplayMultiplayerRoomCodeSubmit}</button></div>
+			<div>
+				<button id="tetrisDisplayMultiplayerRoomCodeSubmit" class="${TCS.gameBlockLink} w-full">
+				${imTexts.tetrisDisplayMultiplayerRoomCodeSubmit}
+				</button>
+			</div>
 
 		</form>
 		

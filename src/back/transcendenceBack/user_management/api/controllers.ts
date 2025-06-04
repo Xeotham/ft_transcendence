@@ -40,6 +40,17 @@ const generateDefaultAvatar = () => {
 	return fileBuffer;
 };
 
+export const    getAvatars = async (request: FastifyRequest, reply: FastifyReply) => {
+	const avatars: string[] = [];
+
+	for (let i = 1; i <= 24; ++i) {
+		const filePath = path.join(__dirname, `../medias/avatar${i}.png`); // Adjust the relative path
+		const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
+		avatars.push(fileBuffer); // Convert the Buffer to a Blob
+	}
+	reply.status(200).send({ avatars: avatars });
+}
+
 export const registerUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
 	const { username, password } = request.body as { username: string, password: string };
@@ -95,6 +106,7 @@ export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =
 	}
 	else
 	{
+		console.log(update);
 		updateUserById( user.id as number, type, update);
 
 		return reply.status(201).send({ message: 'User updated successfully' });

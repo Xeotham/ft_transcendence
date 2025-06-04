@@ -1,7 +1,6 @@
 import { tetrisGameInformation } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
 import { setZoneAvatar } from "./zone/zoneHTML.ts";
-import {setKey} from "./tetris/utils.ts";
 
 export class UserInfo {
 	private username: string;
@@ -47,7 +46,7 @@ export class UserInfo {
 		const   url = URL.createObjectURL(avatarBlob);
 
 
-		// console.log(url);
+		console.log(url);
 		document.getElementById("avatarImg")?.setAttribute("src", `${url}`);
 		this.avatarImg = url;
 	}
