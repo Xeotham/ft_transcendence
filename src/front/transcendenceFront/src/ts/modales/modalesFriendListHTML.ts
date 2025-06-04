@@ -24,8 +24,20 @@ interface friendList {
 
 export const friendList = new class {
 	private friendList: friendList[];
+	private actualFriend: friendList | null;
 	constructor() {
 		this.friendList = [];
+		this.actualFriend = null;
+	}
+
+	getActualFriend() {
+		return this.actualFriend;
+	}
+
+	setActualFriend(actualFriend: number | null) {
+		if (actualFriend === null)
+			return this.actualFriend = null;
+		this.actualFriend = this.friendList[actualFriend];
 	}
 
 	getFriendList() {
@@ -38,27 +50,9 @@ export const friendList = new class {
 
 	resetFriendList() {
 		this.friendList = [];
+		this.actualFriend = null;
 	}
 }
-
-// const formatPongStat = (gameId: number, history: { gameId: number, username: string, date: string, score: number, winner: boolean, type: string }[]) => {
-
-// const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) => {
-//   let stat: pongStats = {date: '', username: '', opponent: '', score: 0, scoreOpponent: 0, winner: false};
-//   const game1 = history.players[0];
-//   const game2 = history.players[1];
-//   if (!game1 || !game2) {
-//     return null;
-//   }
-//   stat.date = game1.date;
-//   stat.username = user.getUsername();
-//   stat.opponent = game1.username === user.getUsername() ? game2.username : game1.username;
-//   stat.score = game1.username === user.getUsername() ? game1.score : game2.score;
-//   stat.scoreOpponent = game1.username === user.getUsername() ? game2.score : game1.score;
-//   stat.winner = game1.username === user.getUsername() ? game1.winner : game2.winner;
-//   return stat;
-
-// }
 
 export const  loadFriendList = async () => {
 	try {
@@ -101,9 +95,9 @@ const formatFriendListLine = (index: number) => {
 		return "";
 	}
 
-	friend.avatar = URL.createObjectURL(UserInfo.base64ToBlob(friend.avatar));
+	const   avatar = URL.createObjectURL(UserInfo.base64ToBlob(friend.avatar));
 	let formattedFriend = `
-	<img src="${friend.avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
+	<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
 	<span class="${TCS.modaleFriendList}" id="friendListLine${index}">
 		${friend.username}
 	</span>`; // TODO: remplacer par le nom de l'ami
@@ -171,7 +165,7 @@ export const modaleFriendListEvents = () => {
 	friendListNext.addEventListener('click', () => {
 		if (friendListPage >= 10) // TODO: remplacer par le nombre de pages
 			return;
-		if ((friendListPage + 1) * 10 <= friendList.length)
+		if ((friendListPage + 1) * 10 <= friendList.getFriendList().length)
 			modaleFriendListHTML(++friendListPage);
 	});
 
@@ -180,6 +174,7 @@ export const modaleFriendListEvents = () => {
 		const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
 		friendListLine.addEventListener('click', () => {
 			// console.log("friendListLine <<<<<<<<");
+			friendList.setActualFriend(i + (friendListPage * 10));
 			modaleDisplay(ModaleType.FRIEND_PROFILE);
 		});
 	}

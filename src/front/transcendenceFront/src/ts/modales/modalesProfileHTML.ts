@@ -28,8 +28,7 @@ const pongWinRate = async () => {
 
 const tetrisBestScore = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-  history.filter((e) => e.players[0].type !== 'tetris');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
   if (!history.length)
     return `${imTexts.modalesProfileBestScore}: No game played`;
   let score: number = 0;
