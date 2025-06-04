@@ -2,7 +2,7 @@
 import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation } from "./tetris.ts";
 import { postToApi, address, user, userKeys } from "../utils.ts";
-import { tetrisBoardHtml } from "./tetrisHTML.ts";
+import {tetrisBoardHtml, tetrisIdleHtml} from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 
 // @ts-ignore
@@ -298,8 +298,10 @@ const   messageHandler = (event: MessageEvent)=> {
 			return ;
 		case "GAME_FINISH":
 			console.log("Game Over");
-			resetSocket();
+			resetSocket("game");
 			bgmPlayer.stop();
+			hideZoneGame();
+			// loadTetrisPage("idle");
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);

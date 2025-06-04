@@ -3,9 +3,7 @@ import { TCS } from "../TCS.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { tetrisGameInformation } from "./tetris.ts";
 import { startRoom } from "./gameManagement.ts";
-import { resetGamesSocket, postToApi, address } from "../utils.ts";
-// @ts-ignore
-import  page from 'page';
+import {resetGamesSocket, postToApi, address, getFromApi} from "../utils.ts";
 import { abs, clamp } from "./utils.ts";
 
 ////////////////////////////////////////////////////////
@@ -48,6 +46,8 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 			${code}</div>
 			<div id="clipboardCopy" class="${TCS.modaleTexteLink} text-[14px] text-left">
 				${imTexts.tetrisCreateMultiplayerRoomCopyCode}</div>
+			<div class="${TCS.gameTexteGris} text-[14px] text-left translate-y-[-5px] col-span-4">
+			5 ${imTexts.tetrisCreateMultiplayerRoomNbPlayers}</div>
 		</div>
 
 
@@ -131,10 +131,11 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 				${imTexts.tetrisCreateMultiplayerRoomIsLeveling}</div>
 			<div><label class="custom-checkbox"><input type="checkbox" id="is-leveling" 
 			${s.isLevelling ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
-
+			
 		</div></form>
 		
 		<div class="h-[30px]"></div>
+	</div>
 
 	`;
 }

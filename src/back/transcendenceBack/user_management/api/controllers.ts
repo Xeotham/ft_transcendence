@@ -695,7 +695,7 @@ export const updateParameter = async (request: FastifyRequest, reply: FastifyRep
 {
 	const { username, control, key } = request.body as { username: string, control: string, key: string };
 
-	console.log("Updating parameter for user:", username, "Control:", control, "Key:", key);
+	// console.log("Updating parameter for user:", username, "Control:", control, "Key:", key);
 
 	const user = getUserByUsername(username);
 
@@ -719,7 +719,6 @@ export const    getParameter = async (request: FastifyRequest, reply: FastifyRep
 	if (user.id)
 	{
 		const parameter = getParamById(user.id);
-		console.log(parameter);
 		return  reply.status(201).send({ message: 'Parameter sended', parameter: parameter });
 	}
 };

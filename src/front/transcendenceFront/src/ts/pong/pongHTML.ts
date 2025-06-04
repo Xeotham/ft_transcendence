@@ -594,13 +594,8 @@ const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
 		<div class="${TCS.gameBlockLink} h-[36px] text-[24px]" id="confirm-game">${imTexts.pongModalesTournamentJoinConfirmStart}</div>
 		<div class="h-[10px]"></div>
 
-		<div class="${TCS.gameTexte}" id="timer">${imTexts.pongModalesTournamentJoinConfirmTimer}</div>
+		<div class="${TCS.gameTexte}" id="timer">${imTexts.pongModalesTournamentJoinConfirmTimer}: 10s</div>
 	</div>`;
-
-	// <div class="${TCS.pongNav1}">
-	// <div class="flex-1"><p>Game Found, Confirm?</p></div>
-	// <div class="flex-1"><button id="confirm-game" class="${TCS.pongButton}">Confirm Game</button></div>
-	// <div class="flex-1"><p id="timer">Time remaining: 10s</p></div>
 
 }
 

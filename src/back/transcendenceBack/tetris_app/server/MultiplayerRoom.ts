@@ -45,7 +45,7 @@ export class MultiplayerRoom {
 	public getCode(): string						{ return this.code; }
 
 	public changeCode(): void						{ this.code = this.generateInviteCode(); }
-	public setSettings(settings: any): void			{ this.settings = settings; console.log("settings changed in the back"); this.sendSettingsToPlayers(); }
+	public setSettings(settings: any): void			{ this.settings = settings; this.sendSettingsToPlayers(); }
 	public addSetting(key: string, value: any): void{ this.settings[key] = value; this.sendSettingsToPlayers(); }
 
 	public addPlayer(socket: WebSocket, username: string): void		{
@@ -58,6 +58,7 @@ export class MultiplayerRoom {
 			this.players.push(new MultiplayerRoomPlayer(socket, username));
 			this.settings.canRetry = false;
 		}
+		console.log("canRetry is set to " + this.settings.canRetry);
 		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
 		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
 	}
@@ -126,7 +127,7 @@ export class MultiplayerRoom {
 					j %= this.players.length;
 					if (j === i)
 						break ;
-					if (this.players[j].getGame()?.isOver()) {
+					if (this.players[j].getGame()?.isOver() || this.players[j].getGame() === undefined) {
 						++lost;
 						continue;
 					}
@@ -137,7 +138,7 @@ export class MultiplayerRoom {
 				this.players[i].getSocket().send(JSON.stringify({ type: "MULTIPLAYER_OPPONENTS_GAMES", argument: games }));
 			}
 		}
-		const interval = setInterval(sendOpponentsGames, 1000 / 30);
+		const interval = setInterval(sendOpponentsGames, 1000 / 10);
 
 		const endOfGame = (player: MultiplayerRoomPlayer) => {
 			// console.log("End of game for player " + player.getUsername() + " is at place " + this.playersRemaining);

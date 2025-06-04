@@ -46,7 +46,7 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 				${imTexts.tetrisDisplayMultiplayerRoomCodeLabel}</label>
 			</div>
 			
-			<div><button id="tetrisDisplayMultiplayerRoomCodeSubmit" class="${TCS.gameBlockLink} w-full">
+			<div><button type="submit" id="tetrisDisplayMultiplayerRoomCodeSubmit" class="${TCS.gameBlockLink} w-full">
 			${imTexts.tetrisDisplayMultiplayerRoomCodeSubmit}</button></div>
 
 		</form>
@@ -96,10 +96,16 @@ const tetrisDisplayMultiplayerRoomEvents = () => {
 		page("/tetris");
 		//loadTetrisPage("idle"); //TODO why ???
 	});
-	
-	document.getElementById("tetrisDisplayMultiplayerRoomCodeSubmit")?.addEventListener("click", () => {
-		joinRoom((document.getElementById("room-code") as HTMLInputElement).value);
+
+	(document.getElementById("tetrisDisplayMultiplayerRoomFormCode") as HTMLFormElement)?.addEventListener("submit", (e) => {
+		e.preventDefault();
+		joinRoom((document.getElementById("tetrisDisplayMultiplayerRoomCodeText") as HTMLInputElement).value);
 	});
+
+	// document.getElementById("tetrisDisplayMultiplayerRoomCodeSubmit")?.addEventListener("click", () => {
+	// 	console.log("HERERERE?");
+	// 	joinRoom((document.getElementById("room-code") as HTMLInputElement).value);
+	// });
 
 	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => 
 		getMultiplayerRooms());

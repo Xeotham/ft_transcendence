@@ -11,7 +11,7 @@ import {
 
 import { tetrisDisplayMultiplayerRoom } from "./tetrisMultiplayerDisplayHTML.ts";
 import { tetrisMultiplayerRoom } from "./tetrisMultiplayerCreateHTML.ts";
-import { tetrisEmptyHtml, tetrisBoardHtml, tetrisLogoHtml, tetrisIdleHtml } from "./tetrisHTML.ts";
+import { tetrisEmptyHtml, tetrisLogoHtml, tetrisIdleHtml } from "./tetrisHTML.ts";
 import { tetrisSettings } from "./tetrisSettingsHTML.ts";
 
 // @ts-ignore
@@ -23,9 +23,9 @@ import {
 	searchGame,
 } from "./gameManagement.ts";
 
-import {getFromApi, patchToApi, resetGamesSocket, address, user, keys} from "../utils.ts";
+import { patchToApi, resetGamesSocket, address, user } from "../utils.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
-import {zoneSet} from "../zone/zoneCore.ts";
+import { zoneSet } from "../zone/zoneCore.ts";
 
 
 // userKeys.getKeysFromApi().then().catch();
@@ -64,6 +64,7 @@ const   logoPage = () => {
 }
 
 const   idlePage = () => {
+	// console.log("Loading idle page");
 	resetGamesSocket("home");
 	tetrisIdleHtml();
 
@@ -316,7 +317,7 @@ const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number
 
 	opponentsBoardInfo.forEach((boardInfo, index) => {
 		ctx.drawImage(matrixTexture, boardInfo.x - (margin / opponentsNumber), boardInfo.y - (margin / opponentsNumber), boardInfo.width, boardInfo.height);
-		drawMatrix(ctx, opponents[index].matrix, boardInfo.x, boardInfo.y, (minoSize * boardInfo.width) / matrixTexture.width);
+		drawMatrix(ctx, opponents[index]?.matrix, boardInfo.x, boardInfo.y, (minoSize * boardInfo.width) / matrixTexture.width);
 	});
 }
 

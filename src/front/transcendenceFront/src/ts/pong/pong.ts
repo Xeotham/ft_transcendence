@@ -6,7 +6,7 @@ import { drawGame } from "./pongDraw.ts";
 import { copyToClipboard } from "../tetris/tetrisMultiplayerCreateHTML.ts";
 // @ts-ignore
 import  page from "page"
-import {resetGamesSocket} from "../utils.ts";
+import { resetGamesSocket } from "../utils.ts";
 
 export const	pongGameInfo: gameInformation = new gameInformation();
 

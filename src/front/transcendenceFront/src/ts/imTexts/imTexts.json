@@ -148,7 +148,7 @@
         "tournamentJoinConfirm": "Rejoindre Versus",
         "tournamentJoinConfirmText": "Vous avez un adversaire !",
         "tournamentJoinConfirmStart": "Jouer !",
-        "tournamentJoinConfirmTimer": "Temps restant: 10 s",
+        "tournamentJoinConfirmTimer": "Temps restant",
         "SettingsTitle": "Réglages"
       }
     },
@@ -243,6 +243,7 @@
         "back": "Retour",
         "copyCode": "copier",
         "start": "Démarrer",
+        "nbPlayers": "participants",
         "settingsTitle": "Réglages",
         "isPrivate": "Privé",
         "isVersus": "Versus",

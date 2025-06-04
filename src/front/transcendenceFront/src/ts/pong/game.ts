@@ -7,6 +7,7 @@ import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
 import  page from "page";
 // @ts-ignore
 import { loadPongHtml } from "./pongHTML.ts";
+import {imTexts} from "../imTexts/imTexts.ts";
 
 
 export class PongRoom {
@@ -453,7 +454,7 @@ const   confirmGame = () => {
 	pongGameInfo.getRoom()?.setQueueInterval(setInterval(() => {
 		remainingTime--;
 		if (document.getElementById("timer"))
-			document.getElementById("timer")!.innerText = `Time remaining: ${remainingTime}s`;
+			document.getElementById("timer")!.innerText = `${imTexts.pongModalesTournamentJoinConfirmTimer}: ${remainingTime}s`;
 		if (remainingTime <= 0) {
 			clearInterval(pongGameInfo.getRoom()?.getQueueInterval() as number);
 			quit("QUEUE_TIMEOUT");

@@ -278,6 +278,6 @@ export let userKeys: keys | null = null;
 	const   newKeys = new keys();
 
 	userKeys = await newKeys.build();
-	console.log("Loaded keys: ", newKeys);
+	// console.log("Loaded keys: ", newKeys);
 })()
 

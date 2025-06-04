@@ -16,7 +16,6 @@ import {requestBody, delay, getRoomById, player} from "../utils";
 import { botLogic, resetBot } from "./bot";
 import { Room } from "./Room";
 import {createPongGame} from "../../user_management/api/controllers";
-// impoer { Timeout } from
 
 interface   playerScore {
 	username:   string;
