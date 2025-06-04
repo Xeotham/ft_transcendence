@@ -52,17 +52,11 @@ export const modaleInit = () => {
   modale.zone = EL.zoneModale as HTMLDivElement;
   modale.content = EL.contentModale as HTMLDivElement;
 
-  // const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
-  // if (!bkgModale)
-  //   return;
-  // bkgModale.addEventListener('click', () => {
-  //   modaleHide();
-  // });
-
-  if (!user.isAuthenticated())
+  if (!user.isAuthenticated()) {
     modaleDisplay(ModaleType.SIGNIN);
-  else
+  } else {
     modaleHide();
+  }
 }
 
 export const modaleDisplay = async (modaleType: ModaleType) => {

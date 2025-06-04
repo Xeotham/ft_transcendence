@@ -74,13 +74,14 @@ export const setHtmlFront = () => {
   let app = document.querySelector<HTMLDivElement>('#app');
   if(app) {
     app.classList.add('h-full');
+
     app.innerHTML = 
     `
 <div name="zonePong" id="zonePong" class="${TCS.zonePong}">
     <div id="contentPong" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
     <div id="bkgPong" class="w-full h-full absolute z-0 flex items-start justify-center">
         <img src="${img_pong_bkg}" class="w-[1024px] h-[1024px] object-none" />
-    </div>
+    </div>  
 </div>
 
 <div name="zoneTetris" id="zoneTetris" class="${TCS.zoneTetris} ${TCS.zoneTetrisShadow}">
@@ -115,7 +116,6 @@ export const setZoneAvatar = (show: boolean = true) => {
     } else {
       EL.zoneAvatar.classList.remove(TCS.avatarHidden);
       EL.zoneAvatar.addEventListener('click', () => {
-        // console.log("setZoneAvatar: click");
         modaleDisplay(ModaleType.PROFILE);
       });
     }

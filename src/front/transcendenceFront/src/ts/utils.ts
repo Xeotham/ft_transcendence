@@ -1,7 +1,6 @@
 import { tetrisGameInformation } from "./tetris/tetris.ts";
 import { pongGameInfo } from "./pong/pong.ts";
 import { setZoneAvatar } from "./zone/zoneHTML.ts";
-import {setKey} from "./tetris/utils.ts";
 
 export class UserInfo {
 	private username: string;
@@ -58,7 +57,7 @@ export class UserInfo {
 
 	isAuthenticated() {
 		const result = this.token !== null && this.token !== undefined && this.token !== "";
-		//console.log("isAuthenticated: ", result, "token: ", this.token); // TODO: remove
+		console.log("isAuthenticated: ", result, "token: ", this.token); // TODO: remove
 		setZoneAvatar(result);
 
 		return result;

@@ -1,11 +1,9 @@
 // Events & core
-import {address, postToApi, resetGamesSocket, syncKeys, user} from "./utils.ts";
-//import { evAddDocResize } from './zone/zoneEvents.ts'
+import { address, postToApi, resetGamesSocket, user } from "./utils.ts";
 import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'
-//import { zoneSet } from './zone/zoneCore.ts'
 import { startRouter } from "./page/router.ts";
-
+import { evAddDocResize } from './zone/zoneEvents.ts';
 // @ts-ignore page
 import page from 'page';
 
@@ -18,10 +16,11 @@ const main = () => {
     EL.init();
     if (!EL.check())
       return;
-    setZoneAvatar(false); //TODO: false -> true 
+    setZoneAvatar(false);
     awaitMedias();
     startRouter();
     modaleInit();
+    evAddDocResize();
 }
 
 window.onload = async () => {

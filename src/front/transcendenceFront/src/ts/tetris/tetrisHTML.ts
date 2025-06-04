@@ -3,6 +3,7 @@ import { TCS } from "../TCS.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { showZoneGame } from "../zone/zoneCore.ts";
 import { forfeit } from "./gameManagement.ts";
+import img_logo_tetris from '/src/medias/images/zones/logoTetris.png';
 
 export const   tetrisEmptyHtml = () => {
 	if (!EL.contentTetris)
@@ -16,8 +17,13 @@ export const tetrisLogoHtml = () => {
 		return;
 
 	EL.contentTetris.innerHTML = `
-		<div id="logoTetris" class="${TCS.tetrisLogo}">Tetris</div>
-	`
+		<div class="w-full h-full m-40 flex justify-center items-center">
+			<img id="logoTetris" src="${img_logo_tetris}" alt="tetris" class="w-full h-auto" />
+		</div>
+	`; //w-[400px]
+	// EL.contentTetris.innerHTML = `
+	// 	<div id="logoTetris" class="${TCS.tetrisLogo}">Tetris</div>
+	// `
 }
 
 export const tetrisIdleHtml = () => {

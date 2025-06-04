@@ -3,7 +3,7 @@
 // @ts-ignore
 import  page from "page"
 // HTML
-import { EL, setZoneAvatar } from './zoneHTML.ts';
+import { EL } from './zoneHTML.ts';
 //import { TCS } from '../TCS.ts';
 import { loadPongPage } from '../pong/pong.ts';
 import { loadTetrisPage } from '../tetris/tetris.ts';
@@ -21,8 +21,8 @@ import {
   evRemOverPong,
   evAdOverTetris,
   evRemOverTetris,
-  evAdClickLogoHome,
-  evRemClickLogoHome,
+  // evAdClickLogoHome,
+  // evRemClickLogoHome,
  } from './zoneEvents.ts'
 // Modales
 import { modaleHide } from '../modales/modalesCore.ts';
@@ -46,7 +46,7 @@ export const zone: Zone = {
   separatorCenter: Math.floor(document.documentElement.clientWidth / 2),
   separatorPos: Math.floor(document.documentElement.clientWidth / 2),
   separatorPosTogo: Math.floor(document.documentElement.clientWidth / 2),
-  separatorShift: Math.floor(document.documentElement.clientWidth / 24),
+  separatorShift: Math.floor(document.documentElement.clientWidth / 12),
   sepRatioCenter: 50,
   sepRatio: 50,
   sepRatioTogo: 50,
@@ -65,6 +65,19 @@ const stateProxy = new Proxy<Zone>(zone, {
         const intervalId = setInterval(() => {
           if (zoneAnimGhost(1.2)) {
             clearInterval(intervalId);
+            if (zone.state === 'PONG') {
+              loadPongPage("idle");
+              loadTetrisPage("empty");
+            }
+            else if (zone.state === 'TETRIS') {
+              loadTetrisPage("idle");
+              loadPongPage("empty");
+            }
+            else {
+              loadPongPage("logo");
+              loadTetrisPage("logo");
+            }
+
           }
         }, 16);
       }
@@ -101,12 +114,13 @@ const zoneResize = () => {
 }
 
 export const documentResize = () => {
-  if (zone.state === 'HOME') {
+  // TODO le resize c est ICI
+  if (zone.state === 'HOME' || zone.state === 'OVER_PONG' || zone.state === 'OVER_TETRIS') {
       zone.separatorCenter = Math.floor(document.documentElement.clientWidth / 2);
       stateProxy.separatorPos = zone.separatorCenter; // a verifier quand fd clique
       zone.separatorShift = Math.floor(document.documentElement.clientWidth / zone.sepRatioShift);
   }
-  // TODO mettre en place un pourcentage... puis le multiplier pour avoir les positions  
+  // TODO mettre en place un pourcentage... puis le multiplier pour avoir les positions
 }
 
 ///////////////////////////////////////////
@@ -139,7 +153,7 @@ export const zoneSet = (state: string) => {
 
 const zoneSetHOME = () => {
   evAdOutDocument();
-  evRemClickLogoHome();
+  //evRemClickLogoHome();
   evAdOverPong();
   evAdOverTetris();
   evAdClickPong();
@@ -164,7 +178,7 @@ const zoneSetOVER_TETRIS = () => {
 
 const zoneSetPONG = () => {
   evRemOutDocument();
-  evAdClickLogoHome();
+  //evAdClickLogoHome();
   evRemOverPong();
   evRemClickPong();
   evRemOverTetris();
@@ -177,12 +191,12 @@ const zoneSetPONG = () => {
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.91);
   zone.state = "PONG";
   loadTetrisPage("empty");
-  loadPongPage("idle");
+  //loadPongPage("idle");
 }
 
 const zoneSetTETRIS = () => {
   evRemOutDocument();
-  evAdClickLogoHome();
+  //evAdClickLogoHome();
   evRemOverPong();
   evAdClickPong();
   evRemOverTetris();
@@ -195,7 +209,7 @@ const zoneSetTETRIS = () => {
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.09);
   zone.state = "TETRIS";
   loadPongPage("empty");
-  loadTetrisPage("idle");
+  //loadTetrisPage("idle");
 }
 
 export const	hideZoneGame = () => {

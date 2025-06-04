@@ -8,7 +8,6 @@ import  page from "page"
 import {signUpUser, signInUser} from "../userManagement/userManagement.ts";
 
 let outDocumentHandler: EventListener | null = null;
-let overzoneTopHandler: EventListener | null = null;
 let overPongHandler: EventListener | null = null;
 let overTetrisHandler: EventListener | null = null;
 let clickPongHandler: EventListener | null = null;
@@ -45,6 +44,7 @@ export const evRemOutDocument = () => {
 // click - PONG
 export const evAdClickPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
+  // const target = document.getElementById('logoPong');
   if (target && !clickPongHandler) {
     clickPongHandler = () => {
       page.show("/pong");
@@ -54,6 +54,7 @@ export const evAdClickPong = () => {
 }
 export const evRemClickPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
+  // const target = document.getElementById('logoPong');
   if (target && clickPongHandler) {
     target.removeEventListener('click', clickPongHandler);  
     clickPongHandler = null;
@@ -64,6 +65,7 @@ export const evRemClickPong = () => {
 // click - Tetris
 export const evAdClickTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
+  // const target = document.getElementById('logoTetris');
   if (target && !clickTetrisHandler) {
     clickTetrisHandler = () => {
       page.show("/tetris");
@@ -73,6 +75,7 @@ export const evAdClickTetris = () => {
 }
 export const evRemClickTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
+  // const target = document.getElementById('logoTetris');
   if (target && clickTetrisHandler) {
     target.removeEventListener('click', clickTetrisHandler);
     clickTetrisHandler = null;
@@ -83,6 +86,7 @@ export const evRemClickTetris = () => {
 // over - Pong
 export const evAdOverPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
+  //const target = document.getElementById('logoPong');
   if (target && !overPongHandler) {
     overPongHandler = () => {
       zoneSet('OVER_PONG');
@@ -92,6 +96,7 @@ export const evAdOverPong = () => {
 }
 export const evRemOverPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
+  // const target = document.getElementById('logoPong');
   if (target && overPongHandler) {
     target.removeEventListener('mouseover', overPongHandler);
     overPongHandler = null;
@@ -102,6 +107,7 @@ export const evRemOverPong = () => {
 // over - Tetris
 export const evAdOverTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
+  // const target = document.getElementById('logoTetris');
   if (target && !overTetrisHandler) {
     overTetrisHandler = () => {
       zoneSet('OVER_TETRIS');
@@ -111,6 +117,7 @@ export const evAdOverTetris = () => {
 }
 export const evRemOverTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
+  // const target = document.getElementById('logoTetris');
   if (target && overTetrisHandler) {
     target.removeEventListener('mouseover', overTetrisHandler);
     overTetrisHandler = null;
@@ -119,6 +126,7 @@ export const evRemOverTetris = () => {
 
 ///////////////////////////////////////////
 // click - Home
+
 export const evAdClickLogoHome = () => {
   const target = document.querySelector<HTMLImageElement>('#logoImmanence');
   if (target && !clickLogoHomeHandler) {
@@ -145,7 +153,8 @@ export const evAddDocResize = () => {
 // click - SignUp
 
 export const  evAdClickSignUp = () => {
-  const target = document.querySelector<HTMLButtonElement>('#signup_button');
+  //const target = document.querySelector<HTMLButtonElement>('#signup_button');
+  const target = document.getElementById('signup_button');
   if (target && !clickSignUpHandler) {
     clickSignUpHandler = () => {
       signUpUser();
@@ -158,7 +167,8 @@ export const  evAdClickSignUp = () => {
 // click - SigIn
 
 export const evAdClickSignIn = () => {
-  const target = document.querySelector<HTMLButtonElement>('#signin_button');
+  // const target = document.querySelector<HTMLButtonElement>('#signin_button');
+  const target = document.getElementById('signin_button');
   if (target && !clickSignInHandler) {
     clickSignInHandler = () => {
       signInUser();
