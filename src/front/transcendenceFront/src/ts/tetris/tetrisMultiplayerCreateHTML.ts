@@ -4,7 +4,7 @@ import { TCS } from "../TCS.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { tetrisGameInformation } from "./tetris.ts";
 import { startRoom } from "./gameManagement.ts";
-import { resetGamesSocket, postToApi } from "../utils.ts";
+import {resetGamesSocket, postToApi, getFromApi} from "../utils.ts";
 // @ts-ignore
 import  page from 'page';
 import { abs, clamp } from "./utils.ts";
@@ -24,13 +24,11 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 
 	// console.log("code: ", code);
 	// if (!tetrisGameInformation.getRoomOwner())
-	// 	return ; // TODO ben ??
+	// 	return ;
 	let dis: string = tetrisGameInformation.getRoomOwner() ? "" : "disabled";
 
-
-
 	const s = tetrisGameInformation.getSettings();
-	// console.log("Settings: ", s);
+	// console.log("Printing Settings: ", s);
 
 	EL.contentTetris.innerHTML = `
 	<div class="${TCS.tetrisWindowBkg}">
@@ -63,13 +61,18 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 		<div class='h-[10px]'></div>
 
 
-
+		<form id="tetrisSettingsForm">
 		<div class="${TCS.tetrisWindowText} grid grid-cols-4 gap-x-[20px] gap-y-[6px]">
 
-			<div id="createMultiplayerRoomisPrivate" class="col-span-3">
+			<div id="createMultiplayerRoomIsPrivate" class="col-span-3">
 				${imTexts.tetrisCreateMultiplayerRoomIsPrivate}</div>
 			<div><label class="custom-checkbox"><input type="checkbox" id="is-private" 
 			${s.isPrivate ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
+			
+			<div id="createMultiplayerRoomIsVersus" class="col-span-3">
+				${imTexts.tetrisCreateMultiplayerRoomIsVersus}</div>
+			<div><label class="custom-checkbox"><input type="checkbox" id="is-versus" 
+			${s.isVersus ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 
 			<div id="createMultiplayerRoomShowShadow" class="col-span-3">
 				${imTexts.tetrisCreateMultiplayerRoomShowShadow}</div>
@@ -130,18 +133,10 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 			<div><label class="custom-checkbox"><input type="checkbox" id="is-leveling" 
 			${s.isLevelling ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 
-
+		</div></form>
 		
-		<div class="col-span-3"></div>
-		<div class="text-left" ><a id="saveCustom" class="${TCS.modaleTexteLink}">
-			${imTexts.tetrisCreateMultiplayerRoomSave}</a></div>			
-		</div>
-
-
-
 		<div class="h-[30px]"></div>
 
-	</div>
 	`;
 }
 
@@ -155,9 +150,11 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 	if (!tetrisGameInformation.getRoomOwner()) 
 		return ;
 
-	document.getElementById("startCustom")?.addEventListener("click", () => {
+	document.getElementById("startCustom")?.addEventListener("click", async () => {
+		await saveMultiplayerRoomSettings();
+		await postToApi(`http://${address}/api/tetris/roomCommand`,
+			{ argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() });
 		startRoom();
-		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() });
 	});
 
 	document.getElementById("clipboardCopy")?.addEventListener("click", async (e) => {
@@ -165,32 +162,31 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 		await copyToClipboard(code);
 	});
 
-	document.getElementById("is-private")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("show-shadow")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("show-bags")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("infinite-hold")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("infinite-movement")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("lock-time")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("spawn-ARE")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("soft-drop-amp")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("level")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("is-leveling")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-
-	document.getElementById("saveCustom")?.addEventListener("click", saveMultiplayerRoomSettings);
+	const form = document.getElementById("tetrisSettingsForm");
+	form?.addEventListener("input", () => {
+		saveMultiplayerRoomSettings();
+	});
+	form?.addEventListener("change", () => {
+		saveMultiplayerRoomSettings();
+	});
 }
 
-const saveMultiplayerRoomSettings = () => {
-	let values: {[key: string]: number} = {};
+export const saveMultiplayerRoomSettings = async () => {
+	let values: {[key: string]: any} = {};
+	values["versus"] = (document.getElementById("is-versus") as HTMLInputElement)?.checked;
 	values["0"] = parseInt((document.getElementById("lock-time") as HTMLInputElement).value, 10);
 	values["1"] = parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value, 10);
 	values["2"] = parseFloat((document.getElementById("soft-drop-amp") as HTMLInputElement).value);
 	values["3"] = parseInt((document.getElementById("level") as HTMLInputElement).value, 10);
+	const nbPlayers = ((await getFromApi(`http://${address}/api/tetris/getMultiplayerRooms`))
+		.find((room: any) => room?.roomCode === tetrisGameInformation.getRoomCode())?.nbPlayers) || 0;
+	values["versus"] === true && nbPlayers > 2 ? values["versus"] = false : true;
 	typeof values["1"] !== "number" || isNaN(values["0"]) ? values["0"] = 500 : true;
-	typeof values["1"] !== "number" || isNaN(values["1"]) ? values["1"] = 0 : values["1"] = clamp(values["1"], 0, abs(values["1"])); // Spawn ARE must be between 0 and positive
-	typeof values["2"] !== "number" || isNaN(values["2"]) ? values["2"] = 1.5 : values["2"] = clamp(values["2"], 0.1, abs(values["2"])); // Soft drop amp must be positive
+	typeof values["1"] !== "number" || isNaN(values["1"]) ? values["1"] = 0 : values["1"] = clamp(values["1"], 0, abs(values["1"])); // Spawn ARE must be >= 0 and positive
+	typeof values["2"] !== "number" || isNaN(values["2"]) ? values["2"] = 1.5 : values["2"] = clamp(values["2"], 0.1, abs(values["2"])); // Soft drop amp must be > 0 && positive
 	typeof values["3"] !== "number" || isNaN(values["3"]) ? values["3"] = 4 : values["3"] = clamp(values["3"], 1, 15); // Level must be between 1 and 15
 
+	(document.getElementById("is-versus") as HTMLInputElement)!.checked = values["versus"];
 	(document.getElementById("lock-time") as HTMLInputElement)!.value = values["0"].toString();
 	(document.getElementById("spawn-ARE") as HTMLInputElement)!.value = values["1"].toString();
 	(document.getElementById("soft-drop-amp") as HTMLInputElement)!.value = values["2"].toString();
@@ -198,6 +194,7 @@ const saveMultiplayerRoomSettings = () => {
 
 	tetrisGameInformation.setSettings({
 		"isPrivate": (document.getElementById("is-private") as HTMLInputElement)?.checked,
+		"isVersus": values["versus"],
 		"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
 		"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
 		"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,
@@ -211,10 +208,7 @@ const saveMultiplayerRoomSettings = () => {
 		"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked
 	});
 
-	tetrisGameInformation.setNeedSave(false);
-
 	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() });
-
 }
 export const copyToClipboard = async (code: string) => {
 	if (code.length > 0) {
@@ -235,37 +229,3 @@ export const copyToClipboard = async (code: string) => {
 		}
 	}
 }
-
-// export const multiplayerRoomHtmlOLD = (code: string) => {
-// 	if (!EL.contentTetris)
-// 		return;
-
-// 	EL.contentTetris.innerHTML = `
-// 	<h1>Tetris</h1>
-// 	<h3>Code ${code}</h3>
-// 	<nav>
-// 		<button id="idle">Back</button>
-// 	`
-// 	if (!tetrisGameInformation.getRoomOwner())
-// 		return ;
-// 	const s = tetrisGameInformation.getSettings();
-// 	// console.log("Settings: ", s);
-// 	// TODO : Make the non owner able to see but not change the settings (like transparent)
-// 	EL.contentTetris.innerHTML += `
-// 		<button id="start">Start</button>
-// 		<input type="checkbox" id="show-shadow" ${s.showShadowPiece ? "checked" : ""}>Show Shadow</input>
-// 		<input type="checkbox" id="show-bags" ${s.showBags ? "checked" : ""}>Show bags</input>
-// 		<input type="checkbox" id="hold-allowed" ${s.holdAllowed ? "checked" : ""}>Hold allowed</input>
-// 		<input type="checkbox" id="show-hold" ${s.showHold ? "checked" : ""}>Show hold</input>
-// 		<input type="checkbox" id="infinite-hold" ${s.infiniteHold ? "checked" : ""}>Infinite hold</input>
-// 		<input type="checkbox" id="infinite-movement" ${s.infiniteMovement ? "checked" : ""}>Infinite movement</input>
-// 		<input type="number" id="lock-time" value="${s.lockTime !== undefined ? s.lockTime : "500"}">Lock time</input>
-// 		<input type="number" id="spawn-ARE" min="0" value="${s.spawnARE !== undefined ? s.spawnARE : "0"}">Spawn ARE</input>
-// 		<input type="number" id="soft-drop-amp" min="0" value="${s.softDropAmp !== undefined ? s.softDropAmp : "1.5"}">Soft drop multiplier</input>
-// 		<input type="number" id="level" min="1" max="15" value="${s.level ? s.level : "4"}">Starting level</input>
-// 		<input type="checkbox" id="is-leveling" ${s.isLevelling ? "checked" : ""}>Is leveling</input>
-// 		<button id="save">Save settings</button>
-// 	</nav>
-// 	`
-
-// }

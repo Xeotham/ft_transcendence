@@ -615,11 +615,11 @@ export class TetrisGame {
 		switch (type) {
 			case "Normal":
 				this.fallSpeed = tc.FALL_SPEED(this.level);
-				console.log("Changing fall speed to Normal: " + this.fallSpeed);
+				// console.log("Changing fall speed to Normal: " + this.fallSpeed);
 				break;
 			case "Soft":
 				this.fallSpeed = tc.SOFT_DROP_SPEED(this.level) / this.softDropAmp;
-				console.log("soft drop speed: " + tc.SOFT_DROP_SPEED(this.level) + " / " + this.softDropAmp + " = " + this.fallSpeed);
+				// console.log("soft drop speed: " + tc.SOFT_DROP_SPEED(this.level) + " / " + this.softDropAmp + " = " + this.fallSpeed);
 				break;
 			case "Hard":
 				this.fallSpeed = tc.HARD_DROP_SPEED;

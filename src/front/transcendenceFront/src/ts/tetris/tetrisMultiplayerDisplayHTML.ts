@@ -6,6 +6,9 @@ import { roomInfo } from "./utils.ts";
 import { resetGamesSocket } from "../utils.ts";
 // @ts-ignore
 import  page from 'page';
+import { saveMultiplayerRoomSettings } from "./tetrisMultiplayerCreateHTML.ts";
+
+(window as any).joinRoom = joinRoom;
 
 ////////////////////////////////////////////////////////
 // JOIN ROOM === displayMultiplayerRoomHtml
@@ -65,12 +68,11 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 		// List of rooms
 		rooms.forEach((room: roomInfo) => {
 		html += `
-<!--		<a href="/tetris/room:${room?.roomCode}" class="${TCS.gameList} block w-full">-->
 <!-- TODO fix the button I am a bozo-->
-		<button onclick="joinRoom('${room?.roomCode}')" class="${TCS.gameList} block w-full">
+		<div onclick="joinRoom('${room?.roomCode}')" class="${TCS.gameList} block w-full">
 		<span class="text-yellow-600">» </span>${room.roomCode}
 		<span class="text-stone-50">${imTexts.tetrisDisplayMultiplayerRoomJoin}</span>
-		</a>`;
+		</div>`;
 		});
 	}
 
@@ -101,38 +103,22 @@ const tetrisDisplayMultiplayerRoomEvents = () => {
 
 	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => 
 		getMultiplayerRooms());
+
+
+
+
+	// document.getElementById("is-private")?.addEventListener("click", () => {
+	// 	console.log("Saving is private setting?");
+	// });
+	// document.getElementById("is-versus")?.addEventListener("click", () => saveMultiplayerRoomSettings());
+	// document.getElementById("show-shadow")?.addEventListener("click", () => saveMultiplayerRoomSettings());
+	// document.getElementById("show-bags")?.addEventListener("click", () => saveMultiplayerRoomSettings());
+	// document.getElementById("hold-allowed")?.addEventListener("click", () => saveMultiplayerRoomSettings());
+	// document.getElementById("infinite-hold")?.addEventListener("click", () => saveMultiplayerRoomSettings());
+	// document.getElementById("infinite-movement")?.addEventListener("click", () => saveMultiplayerRoomSettings());
+	// document.getElementById("lock-time")?.addEventListener("change", () => saveMultiplayerRoomSettings());
+	// document.getElementById("spawn-ARE")?.addEventListener("change", () => saveMultiplayerRoomSettings());
+	// document.getElementById("soft-drop-amp")?.addEventListener("change", () => saveMultiplayerRoomSettings());
+	// document.getElementById("level")?.addEventListener("change", () => saveMultiplayerRoomSettings());
+	// document.getElementById("is-leveling")?.addEventListener("click", () => saveMultiplayerRoomSettings());
 }
-
-
-// const displayMultiplayerRoomHtmlOLD = (rooms: roomInfo[]) => {
-// 	if (!EL.contentTetris)
-// 		return;
-
-// 	EL.contentTetris.innerHTML = `
-// 	<h1>Tetris</h1>
-// 	<button id="idle" >Back</button>
-// 	<h1>Enter the code of the room or join an open room:</h1>
-// 	<form id="codeForm">
-// 		<input type="text" id="room-code" placeholder="Room Code">
-// 	</form>
-// 	<button id="submit">Submit</button>
-// 	<button id="refresh">Refresh List</button>
-// 	`
-
-// 	if (rooms.length === 0) {
-// 		EL.contentTetris.innerHTML += `<p>No rooms available</p>`;
-// 		return;
-// 	}
-// 	let listHTML = `<ul>`;
-
-// 	rooms.forEach((room: roomInfo) => {
-// 		listHTML += `
-// 		  		<li>
-// 					<a href="/tetris/room:${room?.roomCode}">
-// 					Room with code: ${room.roomCode}</a>
-// 		  		</li>
-// 			`;
-// 	});
-// 	listHTML += '</ul>';
-// 	EL.contentTetris.innerHTML += listHTML;
-// }

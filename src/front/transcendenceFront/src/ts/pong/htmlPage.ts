@@ -239,7 +239,6 @@
 // 	if (!content)
 // 		return ;
 //
-// 	// TODO: Add quit button
 //
 // 	content.innerHTML = `
 //     <p>Game Found, Confirm?</p>

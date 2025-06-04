@@ -234,7 +234,6 @@ export class Tournament {
 			this.sendToAll({
 				type: "ALERT", message: "The Grand winner is " + winner?.username,
 			});
-			// TODO : Change players to name
 			// TODO : Special screen for the end of the tournament
 			this.sendToAll({type: "LEAVE", data: "TOURNAMENT", winner: (winner !== undefined ? winner?.username : "Nobody")});
 			deleteTournament(this.id);
