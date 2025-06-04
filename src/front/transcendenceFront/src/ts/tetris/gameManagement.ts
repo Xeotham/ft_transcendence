@@ -352,77 +352,77 @@ const gameControllers = async (finish: boolean = false) => {
 		}
 
 		switch (key) {
-			case userKeys.getMoveLeft().toUpperCase():
-			case userKeys.getMoveLeft().toLowerCase():
-			case userKeys.getMoveLeft():
+			case userKeys?.getMoveLeft().toUpperCase():
+			case userKeys?.getMoveLeft().toLowerCase():
+			case userKeys?.getMoveLeft():
 				if (event.repeat || keyStates.moveLeft)
 					return ;
 				keyStates.moveLeft = true;
 				// console.log("moving piece left");
 				movePiece("moveLeft");
 				return ;
-			case userKeys.getMoveRight():
-			case userKeys.getMoveRight().toLowerCase():
-			case userKeys.getMoveRight().toUpperCase():
+			case userKeys?.getMoveRight():
+			case userKeys?.getMoveRight().toLowerCase():
+			case userKeys?.getMoveRight().toUpperCase():
 				if (event.repeat || keyStates.moveRight)
 					return ;
 				keyStates.moveRight = true;
 				// console.log("moving piece right");
 				movePiece("moveRight");
 				return ;
-			case userKeys.getClockwiseRotate():
-			case userKeys.getClockwiseRotate().toLowerCase():
-			case userKeys.getClockwiseRotate().toUpperCase():
+			case userKeys?.getClockwiseRotate():
+			case userKeys?.getClockwiseRotate().toLowerCase():
+			case userKeys?.getClockwiseRotate().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "clockwise", gameId: tetrisGameInformation.getGameId() });
 				return ;
-			case userKeys.getCounterclockwise():
-			case userKeys.getCounterclockwise().toLowerCase():
-			case userKeys.getCounterclockwise().toUpperCase():
+			case userKeys?.getCounterclockwise():
+			case userKeys?.getCounterclockwise().toLowerCase():
+			case userKeys?.getCounterclockwise().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "counter-clockwise", gameId: tetrisGameInformation.getGameId() });
 				return ;
-			case userKeys.getRotate180():
-			case userKeys.getRotate180().toLowerCase():
-			case userKeys.getRotate180().toUpperCase():
+			case userKeys?.getRotate180():
+			case userKeys?.getRotate180().toLowerCase():
+			case userKeys?.getRotate180().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "180", gameId: tetrisGameInformation.getGameId() });
 				return ;
-			case userKeys.getHardDrop():
-			case userKeys.getHardDrop().toLowerCase():
-			case userKeys.getHardDrop().toUpperCase():
+			case userKeys?.getHardDrop():
+			case userKeys?.getHardDrop().toLowerCase():
+			case userKeys?.getHardDrop().toUpperCase():
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Hard", gameId: tetrisGameInformation.getGameId() });
 				return ;
-			case userKeys.getSoftDrop():
-			case userKeys.getSoftDrop().toLowerCase():
-			case userKeys.getSoftDrop().toUpperCase():
+			case userKeys?.getSoftDrop():
+			case userKeys?.getSoftDrop().toLowerCase():
+			case userKeys?.getSoftDrop().toUpperCase():
 				if (event.repeat || keyStates.softDrop)
 					return ;
 				keyStates.softDrop = true;
 				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Soft", gameId: tetrisGameInformation.getGameId() });
 				return ;
-			case userKeys.getHold():
-			case userKeys.getHold().toLowerCase():
-			case userKeys.getHold().toUpperCase():
+			case userKeys?.getHold():
+			case userKeys?.getHold().toLowerCase():
+			case userKeys?.getHold().toUpperCase():
 				// console.log("holding Piece.");
 				if (event.repeat)
 					return ;
 				postToApi(`http://${address}/api/tetris/holdPiece`, { argument: "hold", gameId: tetrisGameInformation.getGameId() });
 				loadTetrisPage("board");
 				return ;
-			case userKeys.getForfeit():
-			case userKeys.getForfeit().toLowerCase():
-			case userKeys.getForfeit().toUpperCase():
+			case userKeys?.getForfeit():
+			case userKeys?.getForfeit().toLowerCase():
+			case userKeys?.getForfeit().toUpperCase():
 				forfeit();
 				return;
-			case userKeys.getRetry():
-			case userKeys.getRetry().toLowerCase():
-			case userKeys.getRetry().toUpperCase():
+			case userKeys?.getRetry():
+			case userKeys?.getRetry().toLowerCase():
+			case userKeys?.getRetry().toUpperCase():
 				postToApi(`http://${address}/api/tetris/retry`, { argument: "retry", gameId: tetrisGameInformation.getGameId() });
 				return;
 		}
@@ -432,9 +432,9 @@ const gameControllers = async (finish: boolean = false) => {
 		const key = event.key;
 
 		switch (key) {
-			case userKeys.getMoveLeft():
-			case userKeys.getMoveLeft().toLowerCase():
-			case userKeys.getMoveLeft().toUpperCase():
+			case userKeys?.getMoveLeft():
+			case userKeys?.getMoveLeft().toLowerCase():
+			case userKeys?.getMoveLeft().toUpperCase():
 				// console.log("Not moving piece left");
 				tetrisGameInformation.getKeyTimeout("moveLeft")?.clear();
 				tetrisGameInformation.setKeyTimeout("moveLeft", null);
@@ -445,9 +445,9 @@ const gameControllers = async (finish: boolean = false) => {
 					tetrisGameInformation.getKeyTimeout("moveRight")?.resume();
 				}
 				return ;
-			case userKeys.getMoveRight():
-			case userKeys.getMoveRight().toLowerCase():
-			case userKeys.getMoveRight().toUpperCase():
+			case userKeys?.getMoveRight():
+			case userKeys?.getMoveRight().toLowerCase():
+			case userKeys?.getMoveRight().toUpperCase():
 				// console.log("Not moving piece right");
 				tetrisGameInformation.getKeyTimeout("moveRight")?.clear();
 				tetrisGameInformation.setKeyTimeout("moveRight", null);
@@ -457,9 +457,9 @@ const gameControllers = async (finish: boolean = false) => {
 					tetrisGameInformation.getKeyTimeout("moveLeft")?.resume();
 				}
 				return ;
-			case userKeys.getSoftDrop():
-			case userKeys.getSoftDrop().toLowerCase():
-			case userKeys.getSoftDrop().toUpperCase():
+			case userKeys?.getSoftDrop():
+			case userKeys?.getSoftDrop().toLowerCase():
+			case userKeys?.getSoftDrop().toUpperCase():
 				keyStates.softDrop = false;
 				return postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Normal", gameId: tetrisGameInformation.getGameId() });
 		}
