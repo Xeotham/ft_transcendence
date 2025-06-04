@@ -269,7 +269,6 @@ const   messageHandler = (event: MessageEvent)=> {
 			else {
 				// console.log("MULTIPLAYER_JOIN");
 				tetrisGameInformation.setRoomCode(res.argument as string);
-				// page.show("/tetris"); // TODO: BABOZO
 				console.log("Joining room: " + res.argument);
 			}
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInformation.getRoomCode()}]});
