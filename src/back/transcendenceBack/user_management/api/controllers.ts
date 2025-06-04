@@ -217,7 +217,7 @@ export const    getFriends = async (request: FastifyRequest, reply: FastifyReply
 		}));
 
 		if (!contacts.length)
-			return reply.status(401).send({ message: 'Client does not have any contact.' });
+			return reply.status(201).send({ message: 'Client does not have any contact.', friendList: [] });
 
 		return reply.status(201).send({ message: "Contacts found", friendList: contactsUsername })
 	}
@@ -539,9 +539,12 @@ export const createPongGame = (players: {player1: player | null, player2: player
 	if (players.player1?.username === players.player2?.username)
 		return;
 
-	if (bot === true)
-	{
-		const   player1 = getUserByUsername(players.player1?.username!) as Users;
+    if (players.player1?.username === players.player2?.username)
+        return;
+
+    if (bot === true)
+    {
+        const   player1 = getUserByUsername(players.player1?.username!) as Users;
 
 		if (!player1)
 		{
@@ -692,6 +695,8 @@ export const updateParameter = async (request: FastifyRequest, reply: FastifyRep
 {
 	const { username, control, key } = request.body as { username: string, control: string, key: string };
 
+	console.log("Updating parameter for user:", username, "Control:", control, "Key:", key);
+
 	const user = getUserByUsername(username);
 
 	if (!user)
@@ -714,6 +719,7 @@ export const    getParameter = async (request: FastifyRequest, reply: FastifyRep
 	if (user.id)
 	{
 		const parameter = getParamById(user.id);
-		return  reply.status(201).send({ message: 'Parameter sended', parameter });
+		console.log(parameter);
+		return  reply.status(201).send({ message: 'Parameter sended', parameter: parameter });
 	}
 };

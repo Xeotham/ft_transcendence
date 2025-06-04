@@ -18,7 +18,7 @@ import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './moda
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
 import {modaleFriendListHTML, modaleFriendListEvents, loadFriendList} from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
-import { user } from '../immanence.ts';
+import { user } from '../utils.ts';
 
 ///////////////////////////////////////////
 // Variables

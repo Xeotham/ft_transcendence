@@ -11,7 +11,7 @@ import  { loadTetrisTextures } from "../tetris/tetris.ts";
 
 //TMP
 import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
-import {user} from "../immanence.ts";
+import {user} from "../utils.ts";
 
 ///////////////////////////////////////////
 // Exports

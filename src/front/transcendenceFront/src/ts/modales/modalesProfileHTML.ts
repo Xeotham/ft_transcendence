@@ -3,8 +3,7 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi, postToApi} from "../utils.ts";
-import {address, user} from "../immanence.ts";
+import {getFromApi, postToApi, address, user} from "../utils.ts";
 // @ts-ignore
 import  page from "page";
 import {friendList} from "./modalesFriendListHTML.ts";
@@ -28,8 +27,7 @@ const pongWinRate = async () => {
 
 const tetrisBestScore = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-  history.filter((e) => e.players[0].type !== 'tetris');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
   if (!history.length)
     return `${imTexts.modalesProfileBestScore}: No game played`;
   let score: number = 0;

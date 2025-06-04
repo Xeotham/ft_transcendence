@@ -26,7 +26,7 @@ import {
  } from './zoneEvents.ts'
 // Modales
 import { modaleHide } from '../modales/modalesCore.ts';
-import {user} from "../immanence.ts";
+import {user} from "../utils.ts";
 
 ///////////////////////////////////////////
 // Variables

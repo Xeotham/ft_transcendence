@@ -2,8 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 
 import { modaleAlert } from './modalesCore.ts';
-import {postToApi} from "../utils.ts";
-import {address} from "../immanence.ts";
+import {postToApi, address} from "../utils.ts";
 // @ts-ignore
 import  page from "page";
 

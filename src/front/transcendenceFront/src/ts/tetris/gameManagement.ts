@@ -1,8 +1,7 @@
 //import { loadTetrisHtml } from "./tetrisHTML.ts";
 import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
-import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
-import { address, user } from "../immanence.ts";
-import { postToApi } from "../utils.ts";
+import { loadTetrisPage, tetrisGameInformation } from "./tetris.ts";
+import { postToApi, address, user, userKeys } from "../utils.ts";
 import { tetrisBoardHtml } from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 

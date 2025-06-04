@@ -1,19 +1,21 @@
 import { EL } from "../zone/zoneHTML.ts";
 import { TCS } from "../TCS.ts";
 import { imTexts, imTextsJson } from "../imTexts/imTexts.ts";
-import { keys } from "./utils.ts";
 import { changeKeys } from "./tetris.ts";
 // @ts-ignore
 import  page from 'page';
+import {userKeys, keys} from "../utils.ts";
 
-export const tetrisSettings = (keys: keys) => {
-	tetrisSettingsHtml(keys);
+export const tetrisSettings = async () => {
+	await tetrisSettingsHtml();
 	tetrisSettingsEvents();
 }
 
-const tetrisSettingsHtml = (keys: keys) => {
+const tetrisSettingsHtml = async () => {
 	if (!EL.contentTetris)
 		return;
+
+	const   newKeys = userKeys || await (new keys()).build();
 
 	let html = `
 	<div class="${TCS.tetrisWindowBkg}">
@@ -75,31 +77,31 @@ const tetrisSettingsHtml = (keys: keys) => {
 
 <!-- Keybindings -->
 			<div id="moveLeftName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyMoveLeft}</div>
-			<div id="moveLeftKey" class="${TCS.gameBlockLink}">${keys.getMoveLeft()}</div>
+			<div id="moveLeftKey" class="${TCS.gameBlockLink}">${newKeys?.getMoveLeft()}</div>
 			
 			<div id="moveRightName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyMoveRight}</div>
-			<div id="moveRightKey" class="${TCS.gameBlockLink}">${keys.getMoveRight()}</div>
+			<div id="moveRightKey" class="${TCS.gameBlockLink}">${newKeys?.getMoveRight()}</div>
 			
 			<div id="rotClockName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRotateClockwise}</div>
-			<div id="rotClockKey" class="${TCS.gameBlockLink}">${keys.getClockwiseRotate()}</div>
+			<div id="rotClockKey" class="${TCS.gameBlockLink}">${newKeys?.getClockwiseRotate()}</div>
 			
 			<div id="rotCountClockName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRotateCounterclockwise}</div>
-			<div id="rotCountClockKey" class="${TCS.gameBlockLink}">${keys.getCounterclockwise()}</div>
+			<div id="rotCountClockKey" class="${TCS.gameBlockLink}">${newKeys?.getCounterclockwise()}</div>
 			
 			<div id="rot180Name" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRotate180}</div>
-			<div id="rot180Key" class="${TCS.gameBlockLink}">${keys.getRotate180()}</div>
+			<div id="rot180Key" class="${TCS.gameBlockLink}">${newKeys?.getRotate180()}</div>
 			
 			<div id="hardDropName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyHardDrop}</div>
-			<div id="hardDropKey" class="${TCS.gameBlockLink}">${keys.getHardDrop()}</div>
+			<div id="hardDropKey" class="${TCS.gameBlockLink}">${newKeys?.getHardDrop()}</div>
 			
 			<div id="softDropName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeySoftDrop}</div>
-			<div id="softDropKey" class="${TCS.gameBlockLink}">${keys.getSoftDrop()}</div>
+			<div id="softDropKey" class="${TCS.gameBlockLink}">${newKeys?.getSoftDrop()}</div>
 			
 			<div id="holdName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyHold}</div>
-			<div id="holdKey" class="${TCS.gameBlockLink}">${keys.getHold()}</div>
+			<div id="holdKey" class="${TCS.gameBlockLink}">${newKeys?.getHold()}</div>
 			
 			<div id="forfeitName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyForfeit}</div>
-			<div id="forfeitKey" class="${TCS.gameBlockLink}">${keys.getForfeit()}</div>
+			<div id="forfeitKey" class="${TCS.gameBlockLink}">${newKeys?.getForfeit()}</div>
 
 			<div class="col-span-2 h-[10px]"></div>
 
@@ -134,9 +136,23 @@ const tetrisSettingsEvents = () => {
 	// Vérifier si tous les éléments existent
 	if (Object.values(elements).some(el => !el)) {
 		console.error("tetrisSettingsEvents: certains éléments n'ont pas été trouvés");
+		Object.entries(elements).forEach(([key, value]) => {
+			if (!value) {
+				console.error(`Element not found: ${key}`);
+			}
+		});
 		page("/tetris");
 		return;
 	}
+
+	// left                VARCHAR(50) DEFAULT 'a',
+	// 	right               VARCHAR(50) DEFAULT 'd',
+	// 	clockwiseRot		VARCHAR(50) DEFAULT 'ArrowRight',
+	// 	countClockwiseRot	VARCHAR(50) DEFAULT 'ArrowLeft',
+	// 	hardDrop			VARCHAR(50) DEFAULT 'ArrowUp',
+	// 	softDrop			VARCHAR(50) DEFAULT 'ArrowDown',
+	// 	hold                VARCHAR(50) DEFAULT 'Shift',
+	// 	forfeit             VARCHAR(50) DEFAULT 'Escape',
 
 	// Ajouter les event listeners
 	elements.moveLeft?.addEventListener("click", () => {
@@ -144,9 +160,9 @@ const tetrisSettingsEvents = () => {
 		changeKeys("moveLeft")
 	});
 	elements.moveRight?.addEventListener("click", () => changeKeys("moveRight"));
-	elements.rotClock?.addEventListener("click", () => changeKeys("rotClock"));
-	elements.rotCountClock?.addEventListener("click", () => changeKeys("rotCountClock"));
-	elements.rot180?.addEventListener("click", () => changeKeys("rot180"));
+	elements.rotClock?.addEventListener("click", () => changeKeys("rotateClockwise"));
+	elements.rotCountClock?.addEventListener("click", () => changeKeys("rotateCounterClockwise"));
+	elements.rot180?.addEventListener("click", () => changeKeys("rotate180"));
 	elements.hardDrop?.addEventListener("click", () => changeKeys("hardDrop"));
 	elements.softDrop?.addEventListener("click", () => changeKeys("softDrop"));
 	elements.hold?.addEventListener("click", () => changeKeys("hold"));

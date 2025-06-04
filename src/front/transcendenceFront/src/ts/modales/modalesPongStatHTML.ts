@@ -1,8 +1,7 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
-import {getFromApi} from "../utils.ts";
-import {address, user} from "../immanence.ts";
+import {getFromApi,address, user} from "../utils.ts";
 
 let pongStatPage = 0;
 

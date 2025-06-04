@@ -28,6 +28,12 @@ fastify.register(fastifyCors, {
 fastify.register(userRoutes, { prefix: '/api/user' });
 fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 fastify.register(pongRoutes, { prefix: '/api/pong' });
+fastify.register((fastify)=>{
+	fastify.get('/health', async (request, reply) => {
+		// You can add more complex health checks here if needed
+		return { status: 'ok' };
+	});
+})
 
 fastify.addHook('onRequest', (request, reply, done) => {
 	const token = request.headers.authorization?.split(' ')[1];

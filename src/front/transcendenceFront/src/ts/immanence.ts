@@ -1,18 +1,16 @@
 // Events & core
-import { postToApi, resetGamesSocket, UserInfo } from "./utils.ts";
+import {address, postToApi, resetGamesSocket, syncKeys, user} from "./utils.ts";
 //import { evAddDocResize } from './zone/zoneEvents.ts'
 import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'
 //import { zoneSet } from './zone/zoneCore.ts'
 import { startRouter } from "./page/router.ts";
-// adress
-export const	address = import.meta.env.VITE_API_ADDRESS;
-export const	user = new UserInfo();
 
 // @ts-ignore page
 import page from 'page';
 
 ///////////////////////////////////////////
+
 // MAIN  
 const main = () => {
     resetGamesSocket("HOME");
@@ -53,4 +51,5 @@ window.onbeforeunload = async () => {
 // Start the app
 document.addEventListener('DOMContentLoaded', () => {
     main();
-  });
+    // syncKeys()
+});

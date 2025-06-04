@@ -1,5 +1,5 @@
 import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
-import {address, user} from "../immanence.ts";
+import {address, user} from "../utils.ts";
 import { loadPongPage, pongGameInfo } from "./pong.ts";
 import {quit, messageHandler, PongRoom} from "./game.ts";
 // @ts-ignore

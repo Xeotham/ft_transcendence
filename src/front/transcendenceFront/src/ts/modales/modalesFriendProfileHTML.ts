@@ -3,8 +3,8 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modale, modaleDisplay } from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi, postToApi} from "../utils.ts";
-import {address, user} from "../immanence.ts";
+import {getFromApi, UserInfo, address, user} from "../utils.ts";
+import {friendList} from "./modalesFriendListHTML.ts";
 // @ts-ignore
 import  page from "page";
 
@@ -20,22 +20,23 @@ interface GameUserInfo
 }
 
 const pongWinRate = async () => {
-  const stats = await getFromApi(`http://${address}/api/user/get-stat?username=${user.getUsername()}`);
+  const stats = await getFromApi(`http://${address}/api/user/get-stat?username=${friendList.getActualFriend()?.username}`);
   const victories: number = stats.stats.pongWin;
   let defeats: number = stats.stats.pongLose;
   return `${imTexts.modalesProfileWinrate}: ${victories} ${imTexts.modalesProfileVictories} / ${defeats} ${imTexts.modalesProfileDefeats}`;
 }
 
 const tetrisBestScore = async () => {
-  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-  history.filter((e) => e.players[0].type !== 'tetris');
+  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${friendList.getActualFriend()?.username}`);
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
   if (!history.length)
     return `${imTexts.modalesProfileBestScore}: No game played`;
   let score: number = 0;
   history.forEach((game) => {
     game.players.forEach((player) => {
+      console.log(player);
       if (user.getUsername() === player.username && player.score > score)
+        console.log(player.score, score);
         score = player.score;
     })
   })
@@ -53,10 +54,10 @@ export const modaleFriendProfileHTML = async () => {
 
   <div class="flex flex-row items-start justify-start gap-4">
     <div id="friendProfileAvatar" class="${TCS.modaleAvatarProfil} ">
-      <img src="${user.getAvatar()}"/>
+      <img src="${URL.createObjectURL(UserInfo.base64ToBlob(friendList.getActualFriend()?.avatar!))}"/>
     </div>
     <div>
-      <div id="friendProfileName" class="${TCS.modaleTitre}">${user.getUsername()}</div>
+      <div id="friendProfileName" class="${TCS.modaleTitre}">${friendList.getActualFriend()?.username}</div>
       <div id="friendProfileStatus" class="${TCS.modaleTexte}">
         <span id="friendProfileConnected" class="text-green-500">${imTexts.modalesFriendProfileConnected}</span>
         <span id="friendProfileDisconnected" class="text-red-500">${imTexts.modalesFriendProfileDisconnected}</span>
@@ -98,6 +99,7 @@ export const modaleFriendProfileEvents = () => {
   const friendProfileFriendRemove =   document.getElementById('friendProfileFriendRemove') as HTMLAnchorElement;
 
   friendProfileBack?.addEventListener('click', () => {
+    friendList.setActualFriend(null);
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
@@ -105,7 +107,7 @@ export const modaleFriendProfileEvents = () => {
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  const isConnected = true; // TODO: connecté ?
+  const isConnected = friendList.getActualFriend()?.connected; // TODO: connecté ?
   if (isConnected) {
     friendProfileConnected.style.display = 'block';
     friendProfileDisconnected.style.display = 'none';
