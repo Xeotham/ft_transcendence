@@ -96,7 +96,7 @@ export const    pongTextureHandler = new class {
 				"BALL":             '/src/medias/textures/pong/TVWorld/pongBall.png',
 			},
 			"retro1975": {
-				"BACKGROUND":       '/src/medias/textures/pong/retro1975/background.jpg',
+				"BACKGROUND":       '/src/medias/textures/pong/retro1975/background.png',
 				"BOARD":            '/src/medias/textures/pong/retro1975/pongBoard.png',
 				"USER_PADDLE":      '/src/medias/textures/pong/retro1975/userPaddle.png',
 				"OPPONENT_PADDLE":  '/src/medias/textures/pong/retro1975/opponentPaddle.png',
