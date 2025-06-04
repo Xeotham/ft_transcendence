@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* ANIMATIONS */
+@layer utilities {
+    @keyframes fade-in-up {
+        from {
+        opacity: 0;
+        transform: translateY(10px);
+        /*transform: scale(0.9);*/
+    }
+        to {
+        opacity: 1;
+        transform: translateY(0);
+        /*transform: scale(1);*/
+        }
+    }
+
+    .fade-in-up {
+        animation: fade-in-up 0.3s ease-out forwards;
+    }
+}
+
+/* FONTS */
 @font-face {
     font-family: 'Fontsona3';
     src: url('../medias/fonts/ttf/Fontsona3FES.ttf') format('truetype');
@@ -80,7 +101,82 @@
 }
 .font-pixelcode { font-family: 'PixelCode', sans-serif; }
 
+@font-face {
+    font-family: 'PhantomFont';
+    src: url('../medias/fonts/ttf/phantomFont.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+.font-earwig { font-family: 'PhantomFont', sans-serif; }
+
+
+
+
+/* SELECTION */
 .custom-selection::selection {
     background: #fbbf24; /* Couleur de fond de la sélection */
     /*color: #18181b; */    /* Couleur du texte sélectionné */
+}
+
+
+/* BLINK */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink 1s step-end infinite;
+}
+
+
+/* CHECKBOX */
+/* Cacher la case à cocher par défaut */
+.custom-checkbox input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+}
+
+/* Créer une case à cocher personnalisée */
+.custom-checkbox .checkmark {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #d6d3d1;
+    cursor: pointer;
+}
+
+/* Style de la case à cocher lorsque la case est cochée */
+.custom-checkbox input[type="checkbox"]:checked + .checkmark {
+    background-color: #d97706; /* Couleur yellow-600 */
+    border-color: #d97706;
+}
+
+/* Style du signe de coche */
+.custom-checkbox .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Afficher le signe de coche lorsque la case est cochée */
+.custom-checkbox input[type="checkbox"]:checked + .checkmark:after {
+    display: block;
+}
+
+/* Style du signe de coche */
+.custom-checkbox .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }

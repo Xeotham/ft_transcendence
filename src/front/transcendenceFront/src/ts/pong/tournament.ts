@@ -98,10 +98,18 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 export const   getTournamentName = async () => {
 	loadPongPage("tournament-name");
 
-	document.getElementById("submit")?.addEventListener("click", () => {
-        const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
-        createTournament(name);
-    });
+	const   tournamentNameForm = document.getElementById("tournamentNameForm") as HTMLFormElement;
+
+	tournamentNameForm.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
+		createTournament(name);
+	})
+
+	// document.getElementById("submit")?.addEventListener("click", () => {
+    //     const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
+    //     createTournament(name);
+    // });
 }
 
 const   createTournament = async (name: string) => {
@@ -135,7 +143,7 @@ export const    listTournaments = () => {
 
 //
 export const getTournamentInfo = (id: number) => {
-	console.log("Id: " + id);
+	// console.log("Id: " + id);
     fetch(`http://${address}/api/pong/get_tournament_info?id=${id}`, {
         method: "GET",
         headers: {
@@ -154,7 +162,7 @@ export const getTournamentInfo = (id: number) => {
 
 			if (tournamentName === undefined || started === undefined)
 				throw new Error("Tournament does not exist");
-			console.log("started: " + started + ", name: " + tournamentName);
+			// console.log("started: " + started + ", name: " + tournamentName);
 			loadPongPage("tour-info", { tourId: id, started: started, tourName: tournamentName });
             if (!started) {
                 document.getElementById('joinTournament')?.addEventListener("click", () => {

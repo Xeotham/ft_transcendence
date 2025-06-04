@@ -1,183 +1,78 @@
-import {TCS} from "../TCS.ts";
-import {EL} from "../zone/zoneHTML.ts";
-import { keys, loadTetrisArgs, loadTetrisType, roomInfo } from "./utils.ts";
-import { content } from "../main.ts";
-import {tetrisGameInformation} from "./tetris.ts";
+import { EL } from "../zone/zoneHTML.ts";
+import { TCS } from "../TCS.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
+import { showZoneGame } from "../zone/zoneCore.ts";
+import { forfeit } from "./gameManagement.ts";
 
-export const loadTetrisHtml = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
-	switch (page) {
-		case "empty":
-			return emptyHtml();
-		case "logo":
-			return logoHtml();
-		case "idle":
-			return idleHtml();
-		case "setting":
-			return settingHtml();
-		case "keybindings":
-			return keyBindsHtml(arg?.keys!);
-		case "board":
-			return boardHtml();
-		case "multiplayer-room":
-			return multiplayerRoomHtml((arg?.rooms!)[0]!.roomCode!);
-		case "display-multiplayer-room":
-			return displayMultiplayerRoomHtml(arg?.rooms!);
-	}
-}
-
-const   emptyHtml = () => {
+export const   tetrisEmptyHtml = () => {
 	if (!EL.contentTetris)
 		return ;
+	
 	EL.contentTetris.innerHTML = ``;
 }
 
-const logoHtml = () => {
+export const tetrisLogoHtml = () => {
 	if (!EL.contentTetris)
 		return;
+
 	EL.contentTetris.innerHTML = `
 		<div id="logoTetris" class="${TCS.tetrisLogo}">Tetris</div>
 	`
 }
 
-const idleHtml = () => {
+export const tetrisIdleHtml = () => {
 	if (!EL.contentTetris)
 		return;
 
 	EL.contentTetris.innerHTML = `
 	<div class="tetris">
 		<nav class="${TCS.tetrisNav0}">
-			<div id="tetris" class="${TCS.tetrisTitre} flex-1">Tetris</div>
-			<div class="flex-1"><button id="arcade" class="${TCS.tetrisNavButton}">Play solo mode</button></div>
-			<div class="flex-1"><button id="matchmaking" class="${TCS.tetrisNavButton}">Play vs mode</button></div>
-			<div class="flex-1"><button id="get-multiplayer-rooms" class="${TCS.tetrisNavButton}">Join a Room</button></div>
-			<div class="flex-1"><button id="create-room" class="${TCS.tetrisNavButton}">Create Room</button></div>
-			<div class="flex-1"><button id="setting" class="${TCS.tetrisNavButton}">Settings</button></div>
-			<div class="flex-1"><button id="home" class="${TCS.tetrisNavButton}">Return Home</button></div>
+			<div id="tetris" class="${TCS.tetrisTitre} flex-1">${imTexts.tetrisNavTitle}</div>
+			<div class="flex-1"><button id="arcade" class="${TCS.tetrisNavButton}">${imTexts.tetrisNavSolo}</button></div>
+			<div class="flex-1"><button id="matchmaking" class="${TCS.tetrisNavButton}">${imTexts.tetrisNavVersus}</button></div>
+			<div class="flex-1"><button id="get-multiplayer-rooms" class="${TCS.tetrisNavButton}">${imTexts.tetrisNavJoin}</button></div>
+			<div class="flex-1"><button id="create-room" class="${TCS.tetrisNavButton}">${imTexts.tetrisNavCreate}</button></div>
+			<div class="flex-1"><button id="setting" class="${TCS.tetrisNavButton}">${imTexts.tetrisNavSettings}</button></div>
+			<div class="flex-1"><button id="home" class="${TCS.tetrisNavButton}">${imTexts.tetrisNavHome}</button></div>
 		</nav>
 	</div>`
+
+	tetrisQuitButton();
 }
 
-const settingHtml = () => {
-	if (!EL.contentTetris)
+export const tetrisBoardHtml = () => {
+	if (!EL.zoneGame) {
 		return;
+	}
 
-	EL.contentTetris.innerHTML = `
-	<h1>Tetris</h1>
-	<nav>
-		<button id="idle">Back</button>
-		<button id="keybindings">Keybindings</button>
-		<button id="music">Music</button>
-	</nav>
-	`
-}
+	showZoneGame();
 
-const keyBindsHtml = (keys: keys) => {
-	if (!EL.contentTetris)
-		return;
+	EL.zoneGame.innerHTML = `
 
-	loadTetrisHtml("setting");
+	<div class="absolute z-50 w-full h-full">
 
-	EL.contentTetris.innerHTML += `
-		<h2>Keybindings</h2>
-		<div>
-			<p>Move Piece Left:</p>
-			<button id="moveLeft">${keys.getMoveLeft()}</button>
-			<p>Move Piece Right:</p>
-			<button id="moveRight">${keys.getMoveRight()}</button>
-			<p>Rotate Piece Clockwise:</p>
-			<button id="rotClock">${keys.getClockwiseRotate()}</button>
-			<p>Rotate Piece CounterClockwise:</p>
-			<button id="rotCountClock">${keys.getCounterclockwise()}</button>
-			<p>Rotate Piece 180</p>
-			<button id="rot180">${keys.getRotate180()}</button>
-			<p>Hard Drop Piece:</p>
-			<button id="hardDrop">${keys.getHardDrop()}</button>
-			<p>Soft Drop Piece:</p>
-			<button id="softDrop">${keys.getSoftDrop()}</button>
-			<p>Hold Piece:</p>
-			<button id="hold">${keys.getHold()}</button>
-			<p>Forfeit:</p>
-			<button id="forfeit">${keys.getForfeit()}</button>
+		<div class="absolute z-50 top-[10px] right-[10px]">
+			<button class="${TCS.pongButton}" id="quit">Quit</button>
 		</div>
-	`
+
+		<div class="absolute z-10 align-center justify-center"> Incoming Garbage: 0</div>
+
+		<div id="board" class="absolute z-25 w-full h-full flex items-center justify-center bg-black">		
+			<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
+		</div>
+
+	</div>`;
+
+	tetrisQuitButton();
 }
 
-const boardHtml = () => {
-	if (!EL.contentTetris) {
-		return;
-	}
+const   tetrisQuitButton = () => {
+	const quitButton = document.getElementById("quit") as HTMLButtonElement;
 
-	EL.contentTetris.innerHTML = `
-<!--		<p id="score">Score: 0</p>-->
-		<p id="awaitingGarbage">Incoming Garbage: 0</p>
-		<div id="board">
-		<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
-		</div>`
-}
-
-const multiplayerRoomHtml = (code: string) => {
-	if (!EL.contentTetris)
-		return;
-
-	EL.contentTetris.innerHTML = `
-	<h1>Tetris</h1>
-	<h3>Code ${code}</h3>
-	<nav>
-		<button id="idle">Back</button>
-	`
-	if (!tetrisGameInformation.getRoomOwner())
+	if (!quitButton)
 		return ;
-	const s = tetrisGameInformation.getSettings();
-	// console.log("Settings: ", s);
-	// TODO : Make the non owner able to see but not change the settings (like transparent)
-	EL.contentTetris.innerHTML += `
-		<button id="start">Start</button>
-		<input type="checkbox" id="show-shadow" ${s.showShadowPiece ? "checked" : ""}>Show Shadow</input>
-		<input type="checkbox" id="show-bags" ${s.showBags ? "checked" : ""}>Show bags</input>
-		<input type="checkbox" id="hold-allowed" ${s.holdAllowed ? "checked" : ""}>Hold allowed</input>
-		<input type="checkbox" id="show-hold" ${s.showHold ? "checked" : ""}>Show hold</input>
-		<input type="checkbox" id="infinite-hold" ${s.infiniteHold ? "checked" : ""}>Infinite hold</input>
-		<input type="checkbox" id="infinite-movement" ${s.infiniteMovement ? "checked" : ""}>Infinite movement</input>
-		<input type="number" id="lock-time" value="${s.lockTime !== undefined ? s.lockTime : "500"}">Lock time</input>
-		<input type="number" id="spawn-ARE" min="0" value="${s.spawnARE !== undefined ? s.spawnARE : "0"}">Spawn ARE</input>
-		<input type="number" id="soft-drop-amp" min="0" value="${s.softDropAmp !== undefined ? s.softDropAmp : "1.5"}">Soft drop multiplier</input>
-		<input type="number" id="level" min="1" max="15" value="${s.level ? s.level : "4"}">Starting level</input>
-		<input type="checkbox" id="is-leveling" ${s.isLevelling ? "checked" : ""}>Is leveling</input>
-		<button id="save">Save settings</button>
-	</nav>
-	`
 
-}
-
-const displayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
-	if (!EL.contentTetris)
-		return;
-
-	EL.contentTetris.innerHTML = `
-	<h1>Tetris</h1>
-	<button id="idle" >Back</button>
-	<h1>Enter the code of the room or join an open room:</h1>
-	<form id="codeForm">
-		<input type="text" id="room-code" placeholder="Room Code">
-	</form>
-	<button id="submit">Submit</button>
-	<button id="refresh">Refresh List</button>
-	`
-
-	if (rooms.length === 0) {
-		EL.contentTetris.innerHTML += `<p>No rooms available</p>`;
-		return;
-	}
-	let listHTML = `<ul>`;
-
-	rooms.forEach((room: roomInfo) => {
-		listHTML += `
-		  		<li>
-					<a href="/tetris/room:${room?.roomCode}">
-					Room with code: ${room.roomCode}</a>
-		  		</li>
-			`;
+	quitButton.addEventListener("click", () => {
+		forfeit();
 	});
-	listHTML += '</ul>';
-	EL.contentTetris.innerHTML += listHTML;
 }

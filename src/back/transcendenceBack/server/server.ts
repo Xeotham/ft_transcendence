@@ -8,6 +8,9 @@ import { config } from "dotenv";
 import tetrisRoutes from "../tetris_app/api/routes";
 import pongRoutes from '../pong_app/api/routes';
 import userRoutes from '../user_management/api/routes';
+import {tokenBlacklist} from "../user_management/api/controllers";
+import jwt from "jsonwebtoken";
+import {createObject} from "rxjs/internal/util/createObject";
 
 config();
 
@@ -17,7 +20,7 @@ fastify.register(fastifyWebsocket);
 // Register the CORS plugin
 fastify.register(fastifyCors, {
 	origin: `*`, // Allow all origins, or specify your frontend's origin
-	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', "PATCH"],
 	// allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
@@ -27,6 +30,27 @@ fastify.register(userRoutes, { prefix: '/api/user' });
 fastify.register(tetrisRoutes, { prefix: '/api/tetris' });
 fastify.register(pongRoutes, { prefix: '/api/pong' });
 
+fastify.addHook('onRequest', (request, reply, done) => {
+	const token = request.headers.authorization?.split(' ')[1];
+
+
+	if (token && tokenBlacklist.has(token)) {
+		reply.status(401).send({ message: 'Token is invalid', disconnect: true });
+	} else {
+		if (token) {
+			jwt.verify(token, process.env.AUTH_KEY!, (err, decoded) => {
+				if (err) {
+					console.log(err);
+					reply.status(401).send({message: 'Token is invalid', disconnect: true});
+				} else {
+					// request.user = decoded; // Attach user info to request
+					done();
+				}
+			});
+		}
+		done();
+	}
+});
 
 // TODO: Make it the rout to the SPA
 // fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {

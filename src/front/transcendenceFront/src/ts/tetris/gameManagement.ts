@@ -1,25 +1,14 @@
-import { loadTetrisHtml } from "./tetrisHTML.ts";
-import {bgmPlayer, roomInfo, sfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
+//import { loadTetrisHtml } from "./tetrisHTML.ts";
+import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation, userKeys } from "./tetris.ts";
-import { address } from "../immanence.ts";
+import { address, user } from "../immanence.ts";
 import { postToApi } from "../utils.ts";
+import { tetrisBoardHtml } from "./tetrisHTML.ts";
+import { hideZoneGame } from "../zone/zoneCore.ts";
 // @ts-ignore
 import page from "page";
 
 let socket: WebSocket | null = null;
-const generateUserName = () => {
-	const   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	const   length = 8;
-	let     result: string = "";
-
-	for (let i = 0; i < length; i++)
-		result += characters.charAt(Math.floor(Math.random() * characters.length));
-	console.log("Generated username: " + result);
-	return result;
-}
-
-
-export const username = /*localStorage.getItem("username");*/ generateUserName(); // TODO: Change this to use the username from the local storage
 
 const socketInit = (socket: WebSocket) => {
 	tetrisGameInformation.setSocket(socket);
@@ -32,15 +21,27 @@ const socketInit = (socket: WebSocket) => {
 		else
 			console.error('WebSocket connection died. Code:', event.code, 'Reason:', event.reason);
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
-			username: username, roomCode: tetrisGameInformation.getRoomCode() });
+			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
 		tetrisGameInformation.setGameId(-1);
 		tetrisGameInformation.setGame(null);
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.setRoomOwner(false);
-		console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+		if (tetrisGameInformation.getRoomCode() !== "")
+			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
 		loadTetrisPage("idle");
 	};
+	window.onbeforeunload = () => {
+		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
+			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
+		tetrisGameInformation.setGameId(-1);
+		tetrisGameInformation.setGame(null);
+		tetrisGameInformation.setSocket(null);
+		tetrisGameInformation.setRoomOwner(false);
+		if (tetrisGameInformation.getRoomCode() !== "")
+			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+		tetrisGameInformation.setRoomCode("");
+	}
 }
 
 export const resetSocket = (leaveType: string = "game") => {
@@ -51,6 +52,7 @@ export const resetSocket = (leaveType: string = "game") => {
 		tetrisGameInformation.getSocket()?.close();
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.resetSettings();
+		window.onbeforeunload = null;
 	}
 	tetrisGameInformation.setGameId(-1);
 	tetrisGameInformation.setGame(null);
@@ -68,11 +70,11 @@ export const    searchGame = () => {
 
 export const    arcadeGame = () => {
 	// console.log("arcadeGame");
-	socket = new WebSocket(`ws://${address}/api/tetris/arcade?username=${username}`);
+	socket = new WebSocket(`ws://${address}/api/tetris/arcade?username=${user.getUsername()}`);
 
 	socketInit(socket);
 	tetrisGameInformation.setSocket(socket);
-	loadTetrisHtml("board");
+	tetrisBoardHtml();
 	window.addEventListener("beforeunload", () => {
 		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
 		if (tetrisGameInformation.getSocket()) {
@@ -83,7 +85,7 @@ export const    arcadeGame = () => {
 }
 
 export const createRoom = () => {
-	socket = new WebSocket(`ws://${address}/api/tetris/createRoom?username=${username}`);
+	socket = new WebSocket(`ws://${address}/api/tetris/createRoom?username=${user.getUsername()}`);
 	socketInit(socket);
 	tetrisGameInformation.setRoomOwner(true);
 }
@@ -108,7 +110,7 @@ export const getMultiplayerRooms = () => {
 }
 
 export const joinRoom = (roomCode: string) => {
-	socket = new WebSocket(`ws://${address}/api/tetris/joinRoom?code=${roomCode}&username=${username}`);
+	socket = new WebSocket(`ws://${address}/api/tetris/joinRoom?code=${roomCode}&username=${user.getUsername()}`);
 	socketInit(socket);
 }
 
@@ -122,25 +124,25 @@ export const startRoom = () => {
 
 const   btbEffect = (btb: string) => {
 	if (btb === "break")
-		return sfxPlayer.play("btb_break")
+		return tetrisSfxPlayer.play("btb_break")
 	else if (Number(btb) <= 3 )
-		return sfxPlayer.play(`btb_${btb}`);
+		return tetrisSfxPlayer.play(`btb_${btb}`);
 	else
-		return sfxPlayer.play("btb_3");
+		return tetrisSfxPlayer.play("btb_3");
 }
 
 const   clearEffect = (clear: string) => {
 	switch (clear) {
 		case "all":
-			return sfxPlayer.play("allclear");
+			return tetrisSfxPlayer.play("allclear");
 		case "btb":
-			return sfxPlayer.play("clearbtb");
+			return tetrisSfxPlayer.play("clearbtb");
 		case "line":
-			return sfxPlayer.play("clearline");
+			return tetrisSfxPlayer.play("clearline");
 		case "quad":
-			return sfxPlayer.play("clearquad");
+			return tetrisSfxPlayer.play("clearquad");
 		case "spin":
-			return sfxPlayer.play("clearspin");
+			return tetrisSfxPlayer.play("clearspin");
 		default:
 			return ;
 	}
@@ -148,33 +150,33 @@ const   clearEffect = (clear: string) => {
 
 const   comboEffect = (combo: string) => {
 	if (combo === "break")
-		return sfxPlayer.play("combobreak");
+		return tetrisSfxPlayer.play("combobreak");
 	else if (Number(combo) <= 16)
-		return sfxPlayer.play(`combo_${combo}`);
+		return tetrisSfxPlayer.play(`combo_${combo}`);
 	else
-		return sfxPlayer.play("combo_16");
+		return tetrisSfxPlayer.play("combo_16");
 }
 
 const   garbageEffect = (garbage: string) => {
-	return sfxPlayer.play(garbage);
+	return tetrisSfxPlayer.play(garbage);
 }
 
 const   userEffect = (user: string) => {
-	return sfxPlayer.play(user);
+	return tetrisSfxPlayer.play(user);
 }
 
 const   levelEffect = (level: string) => {
 	switch (level) {
 		case "up":
-			return sfxPlayer.play("levelup");
+			return tetrisSfxPlayer.play("levelup");
 		case "1":
-			return sfxPlayer.play("level1");
+			return tetrisSfxPlayer.play("level1");
 		case "5":
-			return sfxPlayer.play("level5");
+			return tetrisSfxPlayer.play("level5");
 		case "10":
-			return sfxPlayer.play("level10");
+			return tetrisSfxPlayer.play("level10");
 		case "15":
-			return sfxPlayer.play("level15");
+			return tetrisSfxPlayer.play("level15");
 		default:
 			return ;
 	}
@@ -183,9 +185,9 @@ const   levelEffect = (level: string) => {
 const   lockEffect = (lock: string) => {
 	switch (lock) {
 		case "lock":
-			return sfxPlayer.play("lock");
+			return tetrisSfxPlayer.play("lock");
 		case "spinend":
-			return sfxPlayer.play("spinend");
+			return tetrisSfxPlayer.play("spinend");
 		default:
 			return ;
 	}
@@ -194,12 +196,12 @@ const   lockEffect = (lock: string) => {
 const   spinEffect = (spin: string) => {
 	switch (spin) {
 		default:
-			return sfxPlayer.play("spin");
+			return tetrisSfxPlayer.play("spin");
 	}
 }
 
 const   boardEffect = (board: string) => {
-	return sfxPlayer.play(board);
+	return tetrisSfxPlayer.play(board);
 }
 
 const effectPlayer = (type: string, argument: string | null = null) => {
@@ -245,36 +247,31 @@ const   messageHandler = (event: MessageEvent)=> {
 		case 'GAME_START':
 			console.log("GAME_START");
 			tetrisGameInformation.setGame(res.game);
-			// console.log("Game: ", res.game);
 			tetrisGameInformation.setGameId(res.game.gameId);
 			bgmPlayer.choseBgm("bgm1");
-			// bgmPlayer.play();
-			loadTetrisHtml("board");
+			bgmPlayer.play();
+			tetrisBoardHtml();
 			loadTetrisPage("board");
 			gameControllers();
 			return ;
 		case 'MULTIPLAYER_JOIN':
 			if (res.argument === "OWNER") {
-				console.log("MULTIPLAYER_OWNER");
+				// console.log("MULTIPLAYER_OWNER");
 				tetrisGameInformation.setRoomOwner(true);
 			}
 			else if(res.argument === "SETTINGS") {
 				tetrisGameInformation.setSettings(res.value);
 			}
 			else {
-				console.log("MULTIPLAYER_JOIN");
+				// console.log("MULTIPLAYER_JOIN");
 				tetrisGameInformation.setRoomCode(res.argument as string);
-				page.show("/tetris");
+				// page.show("/tetris"); // TODO: BABOZO
 				console.log("Joining room: " + res.argument);
 			}
 			loadTetrisPage("multiplayer-room", {rooms:[{roomCode: tetrisGameInformation.getRoomCode()}]});
 			return ;
 		case 'MULTIPLAYER_LEAVE':
-			console.log("MULTIPLAYER_LEAVE");
-			resetSocket("room");
-			return ;
-		case 'MULTIPLAYER_LEAVE':
-			console.log("MULTIPLAYER_LEAVE");
+			// console.log("MULTIPLAYER_LEAVE");
 			resetSocket("room");
 			return ;
 		case 'INFO':
@@ -421,20 +418,13 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys.getForfeit():
 			case userKeys.getForfeit().toLowerCase():
 			case userKeys.getForfeit().toUpperCase():
-				postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
-				// tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
-				// tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
-				// document.removeEventListener('keydown', keydownHandler);
-				// document.removeEventListener('keyup', keyupHandler);
-				// bgmPlayer.stop();
-				// page.show("/tetris")
+				forfeit();
 				return;
 			case userKeys.getRetry():
 			case userKeys.getRetry().toLowerCase():
 			case userKeys.getRetry().toUpperCase():
 				postToApi(`http://${address}/api/tetris/retry`, { argument: "retry", gameId: tetrisGameInformation.getGameId() });
 				return;
-
 		}
 	}
 
@@ -490,4 +480,16 @@ const gameControllers = async (finish: boolean = false) => {
 		document.addEventListener("keydown", keydownHandler, { signal });
 		document.addEventListener("keyup", keyupHandler, { signal });
 	}
+}
+
+export const   forfeit = () => {
+	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
+	hideZoneGame();
+
+	// tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
+	// tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
+	// document.removeEventListener('keydown', keydownHandler);
+	// document.removeEventListener('keyup', keyupHandler);
+	// bgmPlayer.stop();
+	// page.show("/tetris")	
 }

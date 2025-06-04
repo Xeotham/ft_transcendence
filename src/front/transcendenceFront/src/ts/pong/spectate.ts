@@ -4,6 +4,7 @@ import  { address } from "../immanence.ts";
 import  { pongGameInfo, loadPongPage } from "./pong.ts";
 import  { PongRoom, messageHandler } from "./game.ts";
 import { RoomInfo } from "./utils.ts";
+import {loadPongHtml} from "./pongHTML.ts";
 
 export const getRoomInfo = (id: number) => {
 
@@ -60,6 +61,8 @@ export const listRoomsSpectator = () => {
 }
 
 export async function	joinSpectate(roomId: Number) {
+	loadPongHtml("board");
+
 	const   socket = new WebSocket(`ws://${address}/api/pong/addSpectatorToRoom?id=${roomId}`);
 
 	pongGameInfo.setRoom(new PongRoom(socket));

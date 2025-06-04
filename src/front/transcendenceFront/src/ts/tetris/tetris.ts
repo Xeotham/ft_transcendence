@@ -7,23 +7,25 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame, tetrisGoalInfo, tetrisGameInfo, boardHeight
+	tetrisGame, tetrisGoalInfo, tetrisGameInfo
 } from "./utils.ts";
 
-import { loadTetrisHtml } from "./tetrisHTML.ts";
+import { tetrisDisplayMultiplayerRoom } from "./tetrisMultiplayerDisplayHTML.ts";
+import { tetrisMultiplayerRoom } from "./tetrisMultiplayerCreateHTML.ts";
+import { tetrisEmptyHtml, tetrisBoardHtml, tetrisLogoHtml, tetrisIdleHtml } from "./tetrisHTML.ts";
+import { tetrisSettings } from "./tetrisSettingsHTML.ts";
+
 // @ts-ignore
 import page from "page"
 import {
 	arcadeGame,
 	createRoom,
 	getMultiplayerRooms,
-	joinRoom,
-	startRoom
+	searchGame,
 } from "./gameManagement.ts";
 
-import {postToApi, resetGamesSocket} from "../utils.ts";
-import { zoneSet } from "../zone/zoneCore.ts";
-import { address } from "../immanence.ts";
+import {resetGamesSocket} from "../utils.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
 
 export const userKeys: keys = new keys();
 export const tetrisGameInformation: tetrisGame = new tetrisGame();
@@ -37,9 +39,7 @@ export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | nul
 		case "idle":
 			return idlePage();
 		case "setting":
-			return settingPage();
-		case "keybindings":
-			return keyBindsPage(arg!);
+			return tetrisSettingsPage();
 		case "board":
 			return drawGame();
 		case "multiplayer-room":
@@ -50,64 +50,81 @@ export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | nul
 }
 
 const   emptyPage = () => {
-	loadTetrisHtml("empty");
+	tetrisEmptyHtml();
+
 	//tetrisGameInfo.setRoomOwner(false);
 	//resetGamesSocket();
 }
 
 const   logoPage = () => {
-	loadTetrisHtml("logo");
+	tetrisLogoHtml();
 	//tetrisGameInfo.setRoomOwner(false);
 	//resetGamesSocket();
 }
 
 const   idlePage = () => {
-	loadTetrisHtml("idle");
-
 	resetGamesSocket("home");
+	tetrisIdleHtml();
+
+	document.getElementById("arcade")?.addEventListener("click", () => tetrisSoloPage());
+	document.getElementById("matchmaking")?.addEventListener("click", () => tetrisVersusPage());
+	document.getElementById("get-multiplayer-rooms")?.addEventListener("click", () => page.show("/tetris/room-list"));
+	document.getElementById("create-room")?.addEventListener("click", () => page.show("/tetris/create-room"));
+	document.getElementById("setting")?.addEventListener("click", () => page.show("/tetris/settings"));
+
 	document.getElementById("home")?.addEventListener("click", (e) => {
 		e.stopPropagation();
 		page.show("/");
-		// zoneSet("HOME");
 	});
-	// document.getElementById("matchmaking")?.addEventListener("click", () => searchGame())
-	document.getElementById("arcade")?.addEventListener("click", () => arcadeGame());
-	document.getElementById("create-room")?.addEventListener("click", () => createRoom());
-	document.getElementById("get-multiplayer-rooms")?.addEventListener("click", () => getMultiplayerRooms());
-	document.getElementById("setting")?.addEventListener("click", () => loadTetrisPage("keybindings", { keys: userKeys }));
 }
 
-const   settingPage = () => {
-	loadTetrisHtml("setting");
-
-	document.getElementById("idle")?.addEventListener("click", () => loadTetrisPage("idle"));
-	document.getElementById("keybindings")?.addEventListener("click", () => loadTetrisPage("keybindings", { keys: userKeys }));
-
+const   tetrisSoloPage = () => {
+	arcadeGame();
 }
 
-const  keyBindsPage = (keys: loadTetrisArgs) => {
-	loadTetrisHtml("keybindings", keys);
+const   tetrisVersusPage = () => {
+	searchGame();
+}
 
-	document.getElementById("idle")?.addEventListener("click", () => loadTetrisPage("idle"));
-	document.getElementById("keybindings")?.addEventListener("click", () => loadTetrisPage("keybindings", { keys: userKeys }));
+export const   gameListPage = () => {
+	getMultiplayerRooms();
+}
 
-	document.getElementById("moveLeft")?.addEventListener("click", () => changeKeys("moveLeft"));
-	document.getElementById("moveRight")?.addEventListener("click", () => changeKeys("moveRight"));
-	document.getElementById("rotClock")?.addEventListener("click", () => changeKeys("rotClock"));
-	document.getElementById("rotCountClock")?.addEventListener("click", () => changeKeys("rotCountClock"));
-	document.getElementById("rot180")?.addEventListener("click", () => changeKeys("rot180"));
-	document.getElementById("hardDrop")?.addEventListener("click", () => changeKeys("hardDrop"));
-	document.getElementById("softDrop")?.addEventListener("click", () => changeKeys("softDrop"));
-	document.getElementById("hold")?.addEventListener("click", () => changeKeys("hold"));
-	document.getElementById("forfeit")?.addEventListener("click", () => changeKeys("forfeit"));
+export const   tetrisCreateRoomPage = () => {
+	createRoom();
+	//tetrisMultiplayerRoom();
+}
+
+const multiplayerRoom = (arg: loadTetrisArgs) => {
+	///// ??????????????????????????
+	// console.log("multiplayerRoom called with arg:", arg);
+	tetrisMultiplayerRoom(arg.rooms?.[0]?.roomCode || ""); // TODO modif ben est ce que c est bo
+	//tetrisMultiplayerRoom(arg); //TODO before marchais pas ...
+}
+
+export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
+	tetrisDisplayMultiplayerRoom(rooms);
+}
+
+export const   tetrisSettingsPage = () => {
+	//(keys: loadTetrisArgs)
+	//loadTetrisHtml("setting", keys);
+	//tetrisSettingsPage({keys: userKeys});
+	//tetrisSettings(keys);
+	// {keys: userKeys}
+	tetrisSettings(userKeys);
 }
 
 let  modify: boolean = false;
 
-const changeKeys = (keyType: string) => {
+export const changeKeys = (keyType: string) => {
 	if (modify)
 		return ;
-	document.getElementById(keyType)!.innerText = "Press a key";
+
+	const pressKey = document.createElement('div');
+	pressKey.className = 'fixed inset-0 w-full h-full bg-black/80 z-[9999] flex justify-center items-center text-white text-2xl';
+	pressKey.textContent = imTexts.tetrisSettingsKeyChange + " ("+ keyType + ")";
+	document.body.appendChild(pressKey);
 
 	modify = true;
 
@@ -115,9 +132,12 @@ const changeKeys = (keyType: string) => {
 		const newKey = event.key;
 		modify = false;
 		setKey(keyType, newKey);
-		console.log("New key set:", newKey);
+		// console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
-		document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
+		//TODO marche pas  ?
+		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
+		pressKey.remove();
+		tetrisSettingsPage();
 	};
 
 	document.addEventListener("keydown", getNewKey);
@@ -346,7 +366,7 @@ const   drawGame = () => {
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
 	drawInfo(ctx, infoCoord.x, infoCoord.y, gameInfo);
-	// if (opponents && opponents.length > 0)
+	if (opponents && opponents.length > 0)
 	drawOpponents(ctx, opponentsCoord.x, opponentsCoord.y, opponents);
 
 	if (tetrisGameInformation.getSettingsValue("showBags") && game.bags)
@@ -355,47 +375,50 @@ const   drawGame = () => {
 		drawHold(ctx, game.hold, holdCoord);
 }
 
-const multiplayerRoom = (arg: loadTetrisArgs) => {
-	loadTetrisHtml("multiplayer-room", arg);
-	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
-	if (!tetrisGameInformation.getRoomOwner())
-		return ;
-	document.getElementById("start")?.addEventListener("click", () => startRoom());
-	document.getElementById("show-shadow")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("show-bags")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("infinite-hold")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("infinite-movement")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("lock-time")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("spawn-ARE")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("soft-drop-amp")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("level")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
-	document.getElementById("is-leveling")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+// const multiplayerRoom = (arg: loadTetrisArgs) => {
+// 	loadTetrisHtml("multiplayer-room", arg);
+	
+// 	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
+// 	if (!tetrisGameInformation.getRoomOwner())
+// 		return ;
+// 	document.getElementById("start")?.addEventListener("click", () => startRoom());
+// 	document.getElementById("show-shadow")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("show-bags")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("hold-allowed")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("infinite-hold")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("infinite-movement")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("lock-time")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("spawn-ARE")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("soft-drop-amp")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("level")?.addEventListener("change", () => tetrisGameInformation.setNeedSave(true));
+// 	document.getElementById("is-leveling")?.addEventListener("click", () => tetrisGameInformation.setNeedSave(true));
 
-	document.getElementById("save")?.addEventListener("click", () => {
-		tetrisGameInformation.setSettings({
-			"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
-			"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
-			"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,
-			"showHold": (document.getElementById("show-hold") as HTMLInputElement)?.checked,
-			"infiniteHold": (document.getElementById("infinite-hold") as HTMLInputElement)?.checked,
-			"infiniteMovement": (document.getElementById("infinite-movement") as HTMLInputElement)?.checked,
-			"lockTime": parseInt((document.getElementById("lock-time") as HTMLInputElement).value),
-			"spawnARE": parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value),
-			"softDropAmp": parseInt((document.getElementById("soft-drop-amp") as HTMLInputElement).value),
-			"level": parseInt((document.getElementById("level") as HTMLInputElement).value),
-			"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
-		});
-		tetrisGameInformation.setNeedSave(false);
-		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() })});
+// 	document.getElementById("save")?.addEventListener("click", () => {
+// 		tetrisGameInformation.setSettings({
+// 			"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
+// 			"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
+// 			"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,
+// 			"showHold": (document.getElementById("show-hold") as HTMLInputElement)?.checked,
+// 			"infiniteHold": (document.getElementById("infinite-hold") as HTMLInputElement)?.checked,
+// 			"infiniteMovement": (document.getElementById("infinite-movement") as HTMLInputElement)?.checked,
+// 			"lockTime": parseInt((document.getElementById("lock-time") as HTMLInputElement).value),
+// 			"spawnARE": parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value),
+// 			"softDropAmp": parseInt((document.getElementById("soft-drop-amp") as HTMLInputElement).value),
+// 			"level": parseInt((document.getElementById("level") as HTMLInputElement).value),
+// 			"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
+// 		});
+// 		tetrisGameInformation.setNeedSave(false);
+// 		postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() })});
 
-}
+// }
 
-export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
-	loadTetrisHtml("display-multiplayer-room", { rooms: rooms });
-	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
-	document.getElementById("submit")?.addEventListener("click", () =>
-		joinRoom((document.getElementById("room-code") as HTMLInputElement).value));
-	document.getElementById("refresh")?.addEventListener("click", () => getMultiplayerRooms());
 
-}
+// export const displayMultiplayerRooms = (rooms: roomInfo[]) => {
+// 	loadTetrisHtml("display-multiplayer-room", { rooms: rooms });
+	
+// 	document.getElementById("idle")?.addEventListener("click", () => { resetGamesSocket("home"); loadTetrisPage("idle") });
+// 	document.getElementById("submit")?.addEventListener("click", () =>
+// 		joinRoom((document.getElementById("room-code") as HTMLInputElement).value));
+// 	document.getElementById("refresh")?.addEventListener("click", () => getMultiplayerRooms());
+
+// }

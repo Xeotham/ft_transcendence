@@ -3,9 +3,11 @@
 // @ts-ignore
 import  page from "page"
 // HTML
-import { EL } from './zoneHTML.ts';
+import { EL, setZoneAvatar } from './zoneHTML.ts';
+//import { TCS } from '../TCS.ts';
 import { loadPongPage } from '../pong/pong.ts';
 import { loadTetrisPage } from '../tetris/tetris.ts';
+import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
 
 // Events
 import {  
@@ -23,8 +25,8 @@ import {
   evRemClickLogoHome,
  } from './zoneEvents.ts'
 // Modales
-import { modaleDisplay, modaleHide, ModaleType } from '../modales/modalesCore.ts';
-import { modale_signin, modale_signup } from '../modales/modalesHTML.ts';
+import { modaleHide } from '../modales/modalesCore.ts';
+import {user} from "../immanence.ts";
 
 ///////////////////////////////////////////
 // Variables
@@ -39,7 +41,7 @@ interface Zone {
   sepRatioTogo: number;
   sepRatioShift: number;
 }
-let zone: Zone = {
+export const zone: Zone = {
   state: 'NO',
   separatorCenter: Math.floor(document.documentElement.clientWidth / 2),
   separatorPos: Math.floor(document.documentElement.clientWidth / 2),
@@ -90,6 +92,9 @@ const zoneResize = () => {
   if (EL.zoneTetris) {
     EL.zoneTetris.style.width = `${document.documentElement.clientWidth - zone.separatorPos}px`;
   }
+  if (EL.zoneAvatar) {
+    EL.zoneAvatar.style.left = `${zone.separatorPos - 50}px`;
+  }
   // if (EL.zoneModale) {
   //   EL.zoneModale.style.left = `${zone.separatorPos}px`;
   // }
@@ -101,7 +106,7 @@ export const documentResize = () => {
       stateProxy.separatorPos = zone.separatorCenter; // a verifier quand fd clique
       zone.separatorShift = Math.floor(document.documentElement.clientWidth / zone.sepRatioShift);
   }
-  // a faire mettre en place un pourcentage... puis le multiplier pour avoir les positions  
+  // TODO mettre en place un pourcentage... puis le multiplier pour avoir les positions  
 }
 
 ///////////////////////////////////////////
@@ -111,6 +116,9 @@ export const zoneSet = (state: string) => {
   if (!zone) {
     console.error('zoneSet: Unknown state');
     return;
+  }
+  if (!user.isAuthenticated()) {
+    modaleDisplay(ModaleType.SIGNIN);
   }
   if (zone.state === state) {
     return;
@@ -137,16 +145,13 @@ const zoneSetHOME = () => {
   evAdClickPong();
   evAdClickTetris();
 
-  // modaleHide();
-  modaleDisplay(ModaleType.SIGNIN, modale_signin);
-  // modaleDisplay(ModaleType.SIGNUP, modale_signup);
-
+  if (EL.zonePong ) { EL.zonePong.style.cursor = "pointer"; }
+  if (EL.zoneTetris) { EL.zoneTetris.style.cursor = "pointer"; }
 
   stateProxy.separatorPosTogo = zone.separatorCenter;
   zone.state = "HOME";
   loadPongPage("logo");
   loadTetrisPage("logo");
-  //page.show("/"); 
 }
 
 const zoneSetOVER_PONG = () => {
@@ -164,13 +169,14 @@ const zoneSetPONG = () => {
   evRemClickPong();
   evRemOverTetris();
   evAdClickTetris();
+  if (EL.zonePong ) EL.zonePong.style.cursor = "default";
+  if (EL.zoneTetris) EL.zoneTetris.style.cursor = "pointer";
 
   modaleHide();
 
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.91);
   zone.state = "PONG";
   loadTetrisPage("empty");
-  //page.show("/PONG");
   loadPongPage("idle");
 }
 
@@ -181,12 +187,35 @@ const zoneSetTETRIS = () => {
   evAdClickPong();
   evRemOverTetris();
   evRemClickTetris();
+  if (EL.zonePong ) EL.zonePong.style.cursor = "pointer";
+  if (EL.zoneTetris) EL.zoneTetris.style.cursor = "default";
 
   modaleHide();
 
   stateProxy.separatorPosTogo = Math.floor(document.documentElement.clientWidth * 0.09);
   zone.state = "TETRIS";
   loadPongPage("empty");
-  //page.show("/TETRIS");
   loadTetrisPage("idle");
+}
+
+export const	hideZoneGame = () => {
+	if (EL.zoneGame && !EL.zoneGame.classList.contains("hidden"))
+		EL.zoneGame.classList.add("hidden");
+	if (EL.zonePong && EL.zonePong.classList.contains("hidden"))
+		EL.zonePong.classList.remove("hidden");
+	if (EL.zoneTetris && EL.zoneTetris.classList.contains("hidden"))
+		EL.zoneTetris.classList.remove("hidden");
+	if (EL.zoneAvatar && EL.zoneAvatar.classList.contains("hidden"))
+		EL.zoneAvatar.classList.remove("hidden");
+}
+
+export const	showZoneGame = () => {
+	if (EL.zoneGame && EL.zoneGame.classList.contains("hidden"))
+		EL.zoneGame.classList.remove("hidden");
+	if (EL.zonePong && !EL.zonePong.classList.contains("hidden"))
+		EL.zonePong.classList.add("hidden");
+	if (EL.zoneTetris && !EL.zoneTetris.classList.contains("hidden"))
+		EL.zoneTetris.classList.add("hidden");
+	if (EL.zoneAvatar && !EL.zoneAvatar.classList.contains("hidden"))
+		EL.zoneAvatar.classList.add("hidden");	
 }

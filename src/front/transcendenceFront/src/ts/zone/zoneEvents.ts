@@ -5,6 +5,7 @@ import {
 
 // @ts-ignore
 import  page from "page"
+import {signUpUser, signInUser} from "../userManagement/userManagement.ts";
 
 let outDocumentHandler: EventListener | null = null;
 let overzoneTopHandler: EventListener | null = null;
@@ -13,6 +14,8 @@ let overTetrisHandler: EventListener | null = null;
 let clickPongHandler: EventListener | null = null;
 let clickTetrisHandler: EventListener | null = null;
 let clickLogoHomeHandler: EventListener | null = null;
+let clickSignUpHandler: EventListener | null = null;
+let clickSignInHandler: EventListener | null = null;
 
 ///////////////////////////////////////////
 // mouseout - HOME
@@ -20,35 +23,21 @@ export const evAdOutDocument = () => {
   if (window && !outDocumentHandler) {
     outDocumentHandler = (event: Event) => {
       const mouseEvent = event as MouseEvent;
-      if (!mouseEvent.relatedTarget) {
+      
+      const activeElement = document.activeElement;
+      const isInModale = activeElement?.closest('#contentModale') !== null;
+      
+      if (!mouseEvent.relatedTarget && !isInModale) {
         zoneSet('HOME');
       }
     };
     window.addEventListener('mouseout', outDocumentHandler);
-  }
-
-  const target = document.querySelector<HTMLDivElement>('div[name="zoneTop"]');
-  if (target && !overzoneTopHandler) {
-    overzoneTopHandler = (event: Event) => {
-      const mouseEvent = event as MouseEvent;
-      if (mouseEvent.relatedTarget !== target) {
-        page.show("/");
-      }
-    };
-      
-    target.addEventListener('mouseover', overzoneTopHandler);    
   }
 }
 export const evRemOutDocument = () => {
   if (window && outDocumentHandler) {
     window.removeEventListener('mouseout', outDocumentHandler);
     outDocumentHandler = null;
-  }
-
-  const target = document.querySelector<HTMLDivElement>('div[name="zoneTop"]');
-  if (target && overzoneTopHandler) {
-    target.removeEventListener('mouseover', overzoneTopHandler);
-    overzoneTopHandler = null;
   }
 }
 
@@ -134,7 +123,7 @@ export const evAdClickLogoHome = () => {
   const target = document.querySelector<HTMLImageElement>('#logoImmanence');
   if (target && !clickLogoHomeHandler) {
     clickLogoHomeHandler = () => {
-      zoneSet('HOME');
+      page.show("/");
     };
     target.addEventListener('click', clickLogoHomeHandler);
   }
@@ -150,4 +139,30 @@ export const evRemClickLogoHome = () => {
 // Écouteur d'événement pour redimensionner
 export const evAddDocResize = () => {
   window.addEventListener('resize', documentResize);
+}
+
+///////////////////////////////////////////
+// click - SignUp
+
+export const  evAdClickSignUp = () => {
+  const target = document.querySelector<HTMLButtonElement>('#signup_button');
+  if (target && !clickSignUpHandler) {
+    clickSignUpHandler = () => {
+      signUpUser();
+    };
+    target.addEventListener('click', clickSignUpHandler);
+  }
+}
+
+///////////////////////////////////////////
+// click - SigIn
+
+export const evAdClickSignIn = () => {
+  const target = document.querySelector<HTMLButtonElement>('#signin_button');
+  if (target && !clickSignInHandler) {
+    clickSignInHandler = () => {
+      signInUser();
+    }
+    target.addEventListener('click', clickSignInHandler);
+  }
 }

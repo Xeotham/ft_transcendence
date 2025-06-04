@@ -1,0 +1,673 @@
+{
+  "fr": {
+    "modales": {
+      "signin": {
+        "titre": "Immanence",
+        "texte": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À droite Pong pour jouer en solo contre notre IA, en multijoueur ou en tournoi.<br>À gauche Tetris est disponible en solo, en multijoueur ou en tournoi.",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "enter": "Entrer",
+        "noAccount": "Tu n'as pas de compte ?",
+        "register": "Enregistre-toi !"
+      },
+      "signup": {
+        "titre": "Inscription",
+        "texte": "Texte de l'inscription",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "passwordConfirm": "Confirmer le mot de passe",
+        "enter": "Continuer"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "éditer",
+        "deconect": "déconecter",
+        "pongStats": "50 victoires pour 100 parties.",
+        "tetrisStats": "Best score : 1000000pt",
+        "pongStatsLink": "Voir plus de Stats Pong",
+        "tetrisStatsLink": "Voir plus de Stats Tetris"
+      },
+      "pongStats": {
+        "titre": "Pong historique",
+        "back": "retour au profil",
+        "line0": "20/05/24 - 9/8 <span class='text-green-500'>Victoire</span> vs Amolbert ",
+        "line1": "19/05/24 - 7/9 <span class='text-red-500'>Défaite</span>&nbsp vs Zephyr ",
+        "line2": "18/05/24 - 9/5 <span class='text-green-500'>Victoire</span> vs PongBot ",
+        "line3": "16/05/24 - 9/3 <span class='text-green-500'>Victoire</span> vs GameLord ",
+        "line4": "15/05/24 - 6/9 <span class='text-red-500'>Défaite</span>&nbsp vs PongKing ",
+        "line5": "14/05/24 - 9/7 <span class='text-green-500'>Victoire</span> vs RetroGamer ",
+        "line6": "13/05/24 - 8/9 <span class='text-red-500'>Défaite</span>&nbsp vs ArcadeHero ",
+        "line7": "12/05/24 - 9/4 <span class='text-green-500'>Victoire</span> vs ByteMaster ",
+        "line8": "11/05/24 - 5/9 <span class='text-red-500'>Défaite</span>&nbsp vs CyberNinja ",
+        "line9": "10/05/24 - 9/6 <span class='text-green-500'>Victoire</span> vs TechWizard ",
+        "prev": "précedent",
+        "next": "suivant"
+      },
+      "tetrisStats": {
+        "titre": "Tetris historique",
+        "back": "retour au profil",
+        "link": "détails",
+        "line0": "20/05/24 - 12 586 pt",
+        "line1": "19/05/24 - 10 000 pt",
+        "line2": "18/05/24 - 11 000 pt",
+        "line3": "17/05/24 - 12 000 pt",
+        "line4": "16/05/24 - 13 000 pt",
+        "line5": "15/05/24 - 14 000 pt",
+        "line6": "14/05/24 - 15 000 pt",
+        "line7": "13/05/24 - 16 000 pt",
+        "line8": "12/05/24 - 17 000 pt",
+        "line9": "11/05/24 - 18 000 pt",
+        "prev": "précedent",
+        "next": "suivant"
+      }
+    },
+    "tetris": {
+      "logo": {
+        "titre": "Tetris",
+        "sousTitre": "Le jeu de puzzle légendaire"
+      },
+      "idle": {
+        "titre": "Tetris",
+        "solo": "Solo",
+        "multi": "Multijoueur",
+        "tournoi": "Tournoi",
+        "stats": "Statistiques",
+        "classement": "Classement"
+      },
+      "settings": {
+        "titre": "Paramètres",
+        "son": "Son",
+        "musique": "Musique",
+        "effets": "Effets",
+        "volume": "Volume",
+        "graphismes": "Graphismes",
+        "pleinEcran": "Plein écran",
+        "appliquer": "Appliquer",
+        "annuler": "Annuler"
+      },
+      "keybindings": {
+        "titre": "Touches",
+        "gauche": "Gauche",
+        "droite": "Droite",
+        "rotation": "Rotation",
+        "descente": "Descente rapide",
+        "pause": "Pause",
+        "reinitialiser": "Réinitialiser"
+      },
+      "board": {
+        "score": "Score",
+        "niveau": "Niveau",
+        "lignes": "Lignes",
+        "suivant": "Suivant",
+        "pause": "Pause",
+        "reprendre": "Reprendre",
+        "quitter": "Quitter",
+        "gameOver": "Game over",
+        "nouvellePartie": "Nouvelle partie"
+      },
+      "multiplayerRoom": {
+        "titre": "Salle multijoueur",
+        "creer": "Créer une salle",
+        "rejoindre": "Rejoindre",
+        "liste": "Liste des salles",
+        "joueurs": "Joueurs",
+        "pret": "Prêt",
+        "attente": "En attente",
+        "commencer": "Commencer"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "Salle multijoueur",
+        "joueurs": "Joueurs",
+        "statut": "Statut",
+        "quitter": "Quitter la salle",
+        "chat": "Chat",
+        "envoyer": "Envoyer"
+      }
+    },
+    "pong": {
+      "logo": {
+        "titre": "Pong",
+        "sousTitre": "Le classique du tennis de table"
+      },
+      "idle": {
+        "titre": "Pong",
+        "offline": "Mode Solo",
+        "online": "Mode Versus",
+        "tournament": "Mode Tournoi",
+        "setting": "Réglages",
+        "home": "Retour"
+      },
+      "offline": {
+        "titre": "Pong Solo",
+        "solo": "Partie locale",
+        "bot": "Partie contre le Bot",
+        "return": "Retour"
+      },
+      "online": {
+        "titre": "Pong Vs",
+        "join": "Rejoindre une partie",
+        "private": "Créer une partie privée",
+        "join-priv-room": "Rejoindre une partie privée",
+        "spectate": "Mode spectateur",
+        "return": "Retour"
+      },
+      "tournament": {
+        "titre": "Pong en tournoi",
+        "create": "Créer",
+        "play": "Jouer",
+        "return": "Retour"
+      },
+      "setting": {
+        "titre": "Réglages",
+        "ok": "Ok"
+      },
+      "matchfound": {
+        "titre": "Match trouvé",
+        "quit": "Quitter"
+      }
+    }
+  },
+  "en": {
+    "modales": {
+      "signin": {
+        "titre": "Immanence",
+        "texte": "We offer you to play two games, in two rooms, with two different atmospheres.<br>On the right, Pong to play solo against our AI, multiplayer or tournament.<br>On the left, Tetris is available in solo, multiplayer or tournament.",
+        "username": "Username",
+        "password": "Password",
+        "enter": "Enter",
+        "noAccount": "Don't have an account?",
+        "register": "Register!"
+      },
+      "signup": {
+        "titre": "Registration",
+        "texte": "Registration text",
+        "username": "Username",
+        "password": "Password",
+        "passwordConfirm": "Confirm password",
+        "enter": "Continue"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "edit",
+        "deconect": "disconnect",
+        "pongStats": "50 victories out of 100 games.",
+        "tetrisStats": "Best score: 1,000,000 pts",
+        "pongStatsLink": "See more Pong Stats",
+        "tetrisStatsLink": "See more Tetris Stats"
+      },
+      "pongStats": {
+        "titre": "Pong history",
+        "back": "back to profile",
+        "line0": "20/05/24 - 9/8 <span class='text-green-500'>Victory</span> vs Amolbert ",
+        "line1": "19/05/24 - 7/9 <span class='text-red-500'>Defeat</span>&nbsp vs Zephyr ",
+        "line2": "18/05/24 - 9/5 <span class='text-green-500'>Victory</span> vs PongBot ",
+        "line3": "16/05/24 - 9/3 <span class='text-green-500'>Victory</span> vs GameLord ",
+        "line4": "15/05/24 - 6/9 <span class='text-red-500'>Defeat</span>&nbsp vs PongKing ",
+        "line5": "14/05/24 - 9/7 <span class='text-green-500'>Victory</span> vs RetroGamer ",
+        "line6": "13/05/24 - 8/9 <span class='text-red-500'>Defeat</span>&nbsp vs ArcadeHero ",
+        "line7": "12/05/24 - 9/4 <span class='text-green-500'>Victory</span> vs ByteMaster ",
+        "line8": "11/05/24 - 5/9 <span class='text-red-500'>Defeat</span>&nbsp vs CyberNinja ",
+        "line9": "10/05/24 - 9/6 <span class='text-green-500'>Victory</span> vs TechWizard ",
+        "prev": "previous",
+        "next": "next"
+      },
+      "tetrisStats": {
+        "titre": "Tetris history",
+        "back": "back to profile",
+        "link": "details",
+        "line0": "20/05/24 - 12,586 pts",
+        "line1": "19/05/24 - 10,000 pts",
+        "line2": "18/05/24 - 11,000 pts",
+        "line3": "17/05/24 - 12,000 pts",
+        "line4": "16/05/24 - 13,000 pts",
+        "line5": "15/05/24 - 14,000 pts",
+        "line6": "14/05/24 - 15,000 pts",
+        "line7": "13/05/24 - 16,000 pts",
+        "line8": "12/05/24 - 17,000 pts",
+        "line9": "11/05/24 - 18,000 pts",
+        "prev": "previous",
+        "next": "next"
+      }
+    },
+    "tetris": {
+      "logo": {
+        "titre": "Tetris",
+        "sousTitre": "The legendary puzzle game"
+      },
+      "idle": {
+        "solo": "Solo",
+        "multi": "Multiplayer",
+        "tournoi": "Tournament",
+        "stats": "Statistics",
+        "classement": "Ranking"
+      },
+      "settings": {
+        "titre": "Settings",
+        "son": "Sound",
+        "musique": "Music",
+        "effets": "Effects",
+        "volume": "Volume",
+        "graphismes": "Graphics",
+        "pleinEcran": "Fullscreen",
+        "appliquer": "Apply",
+        "annuler": "Cancel"
+      },
+      "keybindings": {
+        "titre": "Controls",
+        "gauche": "Left",
+        "droite": "Right",
+        "rotation": "Rotate",
+        "descente": "Fast Drop",
+        "pause": "Pause",
+        "reinitialiser": "Reset"
+      },
+      "board": {
+        "score": "Score",
+        "niveau": "Level",
+        "lignes": "Lines",
+        "suivant": "Next",
+        "pause": "Pause",
+        "reprendre": "Resume",
+        "quitter": "Quit",
+        "gameOver": "Game Over",
+        "nouvellePartie": "New Game"
+      },
+      "multiplayerRoom": {
+        "titre": "Multiplayer Room",
+        "creer": "Create Room",
+        "rejoindre": "Join",
+        "liste": "Room List",
+        "joueurs": "Players",
+        "pret": "Ready",
+        "attente": "Waiting",
+        "commencer": "Start"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "Multiplayer Room",
+        "joueurs": "Players",
+        "statut": "Status",
+        "quitter": "Leave Room",
+        "chat": "Chat",
+        "envoyer": "Send"
+      }
+    },
+    "pong": {
+      "logo": {
+        "titre": "Pong",
+        "sousTitre": "The classic table tennis game"
+      },
+      "idle": {
+        "titre": "Pong",
+        "offline": "Offline",
+        "online": "Online",
+        "tournament": "Tournament",
+        "setting": "Settings",
+        "home": "Home"
+      },
+      "offline": {
+        "titre": "Pong offline",
+        "solo": "Solo",
+        "bot": "Bot",
+        "return": "Back"
+      },
+      "online": {
+        "titre": "Pong online",
+        "join": "Join",
+        "private": "Private",
+        "join-priv-room": "Join Private",
+        "spectate": "Spectate",
+        "return": "Back"
+      },
+      "tournament": {
+        "titre": "Pong tournament",
+        "create": "Create",
+        "play": "Play",
+        "return": "Back"
+      },
+      "setting": {
+        "titre": "Settings",
+        "ok": "OK"
+      },
+      "matchfound": {
+        "titre": "Match Found",
+        "quit": "Quit"
+      }
+    }
+  },
+  "de": {
+    "modales": {
+      "signin": {
+        "titre": "Immanenz",
+        "texte": "Wir bieten Ihnen zwei Spiele in zwei Räumen mit zwei verschiedenen Atmosphären.<br>Rechts Pong zum Spielen gegen unsere KI, im Mehrspielermodus oder im Turnier.<br>Links ist Tetris im Einzelspieler-, Mehrspieler- oder Turniermodus verfügbar.",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "enter": "Eintreten",
+        "noAccount": "Kein Konto?",
+        "register": "Registrieren!"
+      },
+      "signup": {
+        "titre": "Registrierung",
+        "texte": "Registrierungstext",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "passwordConfirm": "Passwort bestätigen",
+        "enter": "Weiter"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "bearbeiten",
+        "deconect": "abmelden",
+        "pongStats": "50 Siege bei 100 Spielen.",
+        "tetrisStats": "Beste Punktzahl: 1.000.000 Pkt",
+        "pongStatsLink": "Mehr Pong-Statistiken",
+        "tetrisStatsLink": "Mehr Tetris-Statistiken"
+      },
+      "pongStats": {
+        "titre": "Pong Verlauf",
+        "back": "zurück zum Profil",
+        "line0": "20/05/24 - 9/8 <span class='text-green-500'>Sieg</span> vs Amolbert ",
+        "line1": "19/05/24 - 7/9 <span class='text-red-500'>Niederlage</span>&nbsp vs Zephyr ",
+        "line2": "18/05/24 - 9/5 <span class='text-green-500'>Sieg</span> vs PongBot ",
+        "line3": "16/05/24 - 9/3 <span class='text-green-500'>Sieg</span> vs GameLord ",
+        "line4": "15/05/24 - 6/9 <span class='text-red-500'>Niederlage</span>&nbsp vs PongKing ",
+        "line5": "14/05/24 - 9/7 <span class='text-green-500'>Sieg</span> vs RetroGamer ",
+        "line6": "13/05/24 - 8/9 <span class='text-red-500'>Niederlage</span>&nbsp vs ArcadeHero ",
+        "line7": "12/05/24 - 9/4 <span class='text-green-500'>Sieg</span> vs ByteMaster ",
+        "line8": "11/05/24 - 5/9 <span class='text-red-500'>Niederlage</span>&nbsp vs CyberNinja ",
+        "line9": "10/05/24 - 9/6 <span class='text-green-500'>Sieg</span> vs TechWizard ",
+        "prev": "zurück",
+        "next": "weiter"
+      },
+      "tetrisStats": {
+        "titre": "Tetris Verlauf",
+        "back": "zurück zum Profil",
+        "link": "Details",
+        "line0": "20/05/24 - 12.586 Pkt",
+        "line1": "19/05/24 - 10.000 Pkt",
+        "line2": "18/05/24 - 11.000 Pkt",
+        "line3": "17/05/24 - 12.000 Pkt",
+        "line4": "16/05/24 - 13.000 Pkt",
+        "line5": "15/05/24 - 14.000 Pkt",
+        "line6": "14/05/24 - 15.000 Pkt",
+        "line7": "13/05/24 - 16.000 Pkt",
+        "line8": "12/05/24 - 17.000 Pkt",
+        "line9": "11/05/24 - 18.000 Pkt",
+        "prev": "zurück",
+        "next": "weiter"
+      }
+    },
+    "tetris": {
+      "logo": {
+        "titre": "Tetris",
+        "sousTitre": "Das legendäre Puzzle-Spiel"
+      },
+      "idle": {
+        "titre": "Tetris",
+        "solo": "Einzelspieler",
+        "multi": "Mehrspieler",
+        "tournoi": "Turnier",
+        "stats": "Statistiken",
+        "classement": "Rangliste"
+      },
+      "settings": {
+        "titre": "Einstellungen",
+        "son": "Ton",
+        "musique": "Musik",
+        "effets": "Effekte",
+        "volume": "Lautstärke",
+        "graphismes": "Grafik",
+        "pleinEcran": "Vollbild",
+        "appliquer": "Anwenden",
+        "annuler": "Abbrechen"
+      },
+      "keybindings": {
+        "titre": "Steuerung",
+        "gauche": "Links",
+        "droite": "Rechts",
+        "rotation": "Drehen",
+        "descente": "Schnell Fallen",
+        "pause": "Pause",
+        "reinitialiser": "Zurücksetzen"
+      },
+      "board": {
+        "score": "Punkte",
+        "niveau": "Level",
+        "lignes": "Linien",
+        "suivant": "Nächster",
+        "pause": "Pause",
+        "reprendre": "Fortsetzen",
+        "quitter": "Beenden",
+        "gameOver": "Game Over",
+        "nouvellePartie": "Neues Spiel"
+      },
+      "multiplayerRoom": {
+        "titre": "Mehrspieler-Raum",
+        "creer": "Raum erstellen",
+        "rejoindre": "Beitreten",
+        "liste": "Raumliste",
+        "joueurs": "Spieler",
+        "pret": "Bereit",
+        "attente": "Warten",
+        "commencer": "Starten"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "Mehrspieler-Raum",
+        "joueurs": "Spieler",
+        "statut": "Status",
+        "quitter": "Raum verlassen",
+        "chat": "Chat",
+        "envoyer": "Senden"
+      }
+    },
+    "pong": {
+      "logo": {
+        "titre": "Pong",
+        "sousTitre": "Das klassische Tischtennis-Spiel"
+      },
+      "idle": {
+        "titre": "Pong",
+        "offline": "Offline",
+        "online": "Online",
+        "tournament": "Turnier",
+        "setting": "Einstellungen",
+        "home": "Startseite"
+      },
+      "offline": {
+        "titre": "Pong Offline",
+        "solo": "Einzelspieler",
+        "bot": "Computer",
+        "return": "Zurück"
+      },
+      "online": {
+        "titre": "Pong Online",
+        "join": "Beitreten",
+        "private": "Privat",
+        "join-priv-room": "Privaten Raum beitreten",
+        "spectate": "Zuschauen",
+        "return": "Zurück"
+      },
+      "tournament": {
+        "titre": "Pong Turnier",
+        "create": "Erstellen",
+        "play": "Spielen",
+        "return": "Zurück"
+      },
+      "setting": {
+        "titre": "Einstellungen",
+        "ok": "OK"
+      },
+      "matchfound": {
+        "titre": "Spiel gefunden",
+        "quit": "Beenden"
+      }
+    }
+  },
+  "ja": {
+    "modales": {
+      "signin": {
+        "titre": "イマネンス",
+        "texte": "2つのゲーム、2つの部屋、2つの異なる雰囲気で遊べます。<br>右側のポンはAIとのソロプレイ、マルチプレイヤー、トーナメントが可能です。<br>左側のテトリスはソロ、マルチプレイヤー、トーナメントで遊べます。",
+        "username": "ユーザー名",
+        "password": "パスワード",
+        "enter": "入る",
+        "noAccount": "アカウントをお持ちでないですか？",
+        "register": "登録する！"
+      },
+      "signup": {
+        "titre": "登録",
+        "texte": "登録テキスト",
+        "username": "ユーザー名",
+        "password": "パスワード",
+        "passwordConfirm": "パスワード確認",
+        "enter": "続ける"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "編集",
+        "deconect": "切断",
+        "pongStats": "100試合中50勝。",
+        "tetrisStats": "最高スコア：1,000,000点",
+        "pongStatsLink": "ポンの統計を見る",
+        "tetrisStatsLink": "テトリスの統計を見る"
+      },
+      "pongStats": {
+        "titre": "ポン履歴",
+        "back": "プロフィールに戻る",
+        "line0": "20/05/24 - 9/8 <span class='text-green-500'>勝利</span> vs Amolbert ",
+        "line1": "19/05/24 - 7/9 <span class='text-red-500'>敗北</span>&nbsp vs Zephyr ",
+        "line2": "18/05/24 - 9/5 <span class='text-green-500'>勝利</span> vs PongBot ",
+        "line3": "16/05/24 - 9/3 <span class='text-green-500'>勝利</span> vs GameLord ",
+        "line4": "15/05/24 - 6/9 <span class='text-red-500'>敗北</span>&nbsp vs PongKing ",
+        "line5": "14/05/24 - 9/7 <span class='text-green-500'>勝利</span> vs RetroGamer ",
+        "line6": "13/05/24 - 8/9 <span class='text-red-500'>敗北</span>&nbsp vs ArcadeHero ",
+        "line7": "12/05/24 - 9/4 <span class='text-green-500'>勝利</span> vs ByteMaster ",
+        "line8": "11/05/24 - 5/9 <span class='text-red-500'>敗北</span>&nbsp vs CyberNinja ",
+        "line9": "10/05/24 - 9/6 <span class='text-green-500'>勝利</span> vs TechWizard ",
+        "prev": "前へ",
+        "next": "次へ"
+      },
+      "tetrisStats": {
+        "titre": "テトリス履歴",
+        "back": "プロフィールに戻る",
+        "link": "詳細",
+        "line0": "20/05/24 - 12,586点",
+        "line1": "19/05/24 - 10,000点",
+        "line2": "18/05/24 - 11,000点",
+        "line3": "17/05/24 - 12,000点",
+        "line4": "16/05/24 - 13,000点",
+        "line5": "15/05/24 - 14,000点",
+        "line6": "14/05/24 - 15,000点",
+        "line7": "13/05/24 - 16,000点",
+        "line8": "12/05/24 - 17,000点",
+        "line9": "11/05/24 - 18,000点",
+        "prev": "前へ",
+        "next": "次へ"
+      }
+    },
+    "tetris": {
+      "logo": {
+        "titre": "テトリス",
+        "sousTitre": "伝説のパズルゲーム"
+      },
+      "idle": {
+        "titre": "テトリス",
+        "solo": "ソロ",
+        "multi": "マルチプレイヤー",
+        "tournoi": "トーナメント",
+        "stats": "統計",
+        "classement": "ランキング"
+      },
+      "settings": {
+        "titre": "設定",
+        "son": "サウンド",
+        "musique": "音楽",
+        "effets": "エフェクト",
+        "volume": "音量",
+        "graphismes": "グラフィック",
+        "pleinEcran": "全画面",
+        "appliquer": "適用",
+        "annuler": "キャンセル"
+      },
+      "keybindings": {
+        "titre": "操作",
+        "gauche": "左",
+        "droite": "右",
+        "rotation": "回転",
+        "descente": "高速落下",
+        "pause": "一時停止",
+        "reinitialiser": "リセット"
+      },
+      "board": {
+        "score": "スコア",
+        "niveau": "レベル",
+        "lignes": "ライン",
+        "suivant": "次へ",
+        "pause": "一時停止",
+        "reprendre": "再開",
+        "quitter": "終了",
+        "gameOver": "ゲームオーバー",
+        "nouvellePartie": "新しいゲーム"
+      },
+      "multiplayerRoom": {
+        "titre": "マルチプレイヤールーム",
+        "creer": "ルーム作成",
+        "rejoindre": "参加",
+        "liste": "ルーム一覧",
+        "joueurs": "プレイヤー",
+        "pret": "準備完了",
+        "attente": "待機中",
+        "commencer": "開始"
+      },
+      "displayMultiplayerRoom": {
+        "titre": "マルチプレイヤールーム",
+        "joueurs": "プレイヤー",
+        "statut": "ステータス",
+        "quitter": "ルームを退出",
+        "chat": "チャット",
+        "envoyer": "送信"
+      }
+    },
+    "pong": {
+      "logo": {
+        "titre": "ポン",
+        "sousTitre": "クラシックな卓球ゲーム"
+      },
+      "idle": {
+        "titre": "ポン",
+        "offline": "オフライン",
+        "online": "オンライン",
+        "tournament": "トーナメント",
+        "setting": "設定",
+        "home": "ホーム"
+      },
+      "offline": {
+        "titre": "ポンオフライン",
+        "solo": "ソロ",
+        "bot": "ボット",
+        "return": "戻る"
+      },
+      "online": {
+        "titre": "ポンオンライン",
+        "join": "参加",
+        "private": "プライベート",
+        "join-priv-room": "プライベートルームに参加",
+        "spectate": "観戦",
+        "return": "戻る"
+      },
+      "tournament": {
+        "titre": "ポントーナメント",
+        "create": "作成",
+        "play": "プレイ",
+        "return": "戻る"
+      },
+      "setting": {
+        "titre": "設定",
+        "ok": "OK"
+      },
+      "matchfound": {
+        "titre": "マッチング完了",
+        "quit": "終了"
+      }
+    }
+  }
+}

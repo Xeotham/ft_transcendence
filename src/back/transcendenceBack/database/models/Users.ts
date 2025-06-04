@@ -1,4 +1,5 @@
 import db from '../db';
+// @ts-ignore
 import bcrypt from 'bcrypt';
 
 interface User
@@ -11,16 +12,15 @@ interface User
     createdAt?:     string;
 }
 
-export const createUser = (username:string, password:string, avatar:string): number =>
-{
-    let stmt = db.prepare('\
+export const createUser = async (username: string, password: string, avatar: string) => {
+	let stmt = db.prepare('\
         INSERT INTO user (username, password, avatar) \
         VALUES (?, ?, ?)\
         ');
 
-    const result = stmt.run(username, password, avatar);
+	const result = stmt.run(username, password, avatar);
 
-    return result.lastInsertRowid as number;
+	return result.lastInsertRowid;
 };
 
 export const updateUserById = (id: number, type: string, update: string): void =>
@@ -89,6 +89,7 @@ export const logOutUserById = (id : number): void =>
 
 export const getUserByUsername = (username: string): User | undefined =>
 {
+	// console.log("Username:", username);
     const stmt = db.prepare('\
         SELECT * \
         FROM user \

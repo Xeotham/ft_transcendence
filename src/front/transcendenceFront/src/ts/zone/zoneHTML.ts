@@ -4,11 +4,14 @@
 // Syles
 import { TCS } from '../TCS.ts';
 // Images
-import img_logo_immanence from '/src/medias/images/zones/flamingtext_3.png';
 import img_pong_bkg from '/src/medias/images/zones/fond_test_pong.png';
 import img_tetris_bkg from '/src/medias/images/zones/fond_test_tetris.png';
 import  { loadTetrisTextures } from "../tetris/tetris.ts";
-import {loadPongTextures} from "../pong/pong.ts";
+// import {loadPongTextures} from "../pong/pong.ts";
+
+//TMP
+import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
+import {user} from "../immanence.ts";
 
 ///////////////////////////////////////////
 // Exports
@@ -18,10 +21,11 @@ export const	address = import.meta.env.VITE_API_ADDRESS;
 // EL
 export const	EL = {
   app: null as HTMLElement | null,
-  zoneTop: null as HTMLElement | null,
   zonePong: null as HTMLElement | null,
   zoneTetris: null as HTMLElement | null,
+  zoneAvatar: null as HTMLElement | null,
   zoneModale: null as HTMLElement | null,
+  zoneGame: null as HTMLElement | null,
   contentPong: null as HTMLElement | null,
   contentTetris: null as HTMLElement | null,
   contentModale: null as HTMLElement | null,
@@ -30,10 +34,11 @@ export const	EL = {
   oldVersion: false,
   init: () => {
     EL.app = document.getElementById("app");
-    EL.zoneTop = document.getElementById("zoneTop");
     EL.zonePong = document.getElementById("zonePong");
     EL.zoneTetris = document.getElementById("zoneTetris");
+    EL.zoneAvatar = document.getElementById("zoneAvatar");
     EL.zoneModale = document.getElementById("zoneModale");
+    EL.zoneGame = document.getElementById("zoneGame");
     EL.contentPong = document.getElementById("contentPong");
     EL.contentTetris = document.getElementById("contentTetris");
     EL.contentModale = document.getElementById("contentModale");
@@ -41,7 +46,7 @@ export const	EL = {
     EL.bkgTetris = document.getElementById("bkgTetris");
   },
   check: () => {
-    if (EL.app && EL.zoneTop && EL.zonePong && EL.zoneTetris && EL.zoneModale && EL.contentPong && EL.contentTetris && EL.contentModale && EL.bkgPong && EL.bkgTetris) {
+    if (EL.app && EL.zonePong && EL.zoneTetris && EL.zoneModale && EL.contentPong && EL.contentTetris && EL.contentModale && EL.bkgPong && EL.bkgTetris && EL.zoneAvatar) {
       return true;
     }
     return false;
@@ -52,6 +57,12 @@ export const	EL = {
   printf: () => {
     console.log("EL: " + EL);
   }
+}
+
+// definir une palce pour le chargement des medias
+export const awaitMedias = async () => {
+	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
+    // await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
 }
 
 export const setHtmlFront = () => {
@@ -65,10 +76,6 @@ export const setHtmlFront = () => {
     app.classList.add('h-full');
     app.innerHTML = 
     `
-<div name="zoneTop" id="zoneTop" class="${TCS.zoneTop}">
-    <img id="logoImmanence" src="${img_logo_immanence}" alt="Immanence" class="${TCS.immanenceLogo}" />
-</div>
-
 <div name="zonePong" id="zonePong" class="${TCS.zonePong}">
     <div id="contentPong" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
     <div id="bkgPong" class="w-full h-full absolute z-0 flex items-start justify-center">
@@ -76,24 +83,41 @@ export const setHtmlFront = () => {
     </div>
 </div>
 
-<div name="zoneTetris" id="zoneTetris" class="${TCS.zoneTetris}">
+<div name="zoneTetris" id="zoneTetris" class="${TCS.zoneTetris} ${TCS.zoneTetrisShadow}">
     <div id="contentTetris" class="w-full h-full absolute z-10 flex items-center justify-center"></div>
     <div id="bkgTetris" class="w-full h-full absolute z-0 flex items-start justify-center">
         <img src="${img_tetris_bkg}" class="w-[1024px] h-[1024px] object-none" />
     </div>
 </div>
 
-<div name="zoneModale" id="zoneModale" class="${TCS.modale} hidden">
-    <div id="contentModale" class="w-full h-full absolute"></div>
+<div name="zoneAvatar" id="zoneAvatar" class="${TCS.avatar}">
+    <div id="avatarMask" class="${TCS.avatarMask}">
+      <img id="avatarImg" src="${user.getAvatar()/*"http://localhost:5000/src/medias/avatars/avatar1.png"*/}" class="${TCS.avatarImg}"/>
+    </div>
 </div>
 
+<div name="zoneModale" id="zoneModale" class="${TCS.zoneModale} hidden">
+    <div id="bkgModale" class="${TCS.bkgModale}"></div>
+    <div id="contentModale" class="${TCS.contentModale}"></div>
+</div>
+
+<div name="zoneGame" id="zoneGame" class="${TCS.zoneGame} hidden"></div>
   `
   }
 }
 
-// definir une palce pour le chargement des medias
-export const awaitMedias = async () => {
-	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
-    await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
+export const setZoneAvatar = (show: boolean = true) => {
+  if(EL.zoneAvatar) {
+    if(!show) {
+      EL.zoneAvatar.classList.add(TCS.avatarHidden);
+      EL.zoneAvatar.removeEventListener('click', () => {
+      });
+    } else {
+      EL.zoneAvatar.classList.remove(TCS.avatarHidden);
+      EL.zoneAvatar.addEventListener('click', () => {
+        // console.log("setZoneAvatar: click");
+        modaleDisplay(ModaleType.PROFILE);
+      });
+    }
+  }
 }
-

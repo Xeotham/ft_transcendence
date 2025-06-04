@@ -4,16 +4,18 @@ import  page from 'page';
 // ZONE
 import { zoneSet } from "../zone/zoneCore.ts";
 // TETRIS
-import { loadTetrisPage, tetrisGameInformation } from "../tetris/tetris.ts";
-import { getMultiplayerRooms, joinRoom } from "../tetris/gameManagement.ts";
+import { loadTetrisPage, tetrisGameInformation, gameListPage, tetrisCreateRoomPage, tetrisSettingsPage } from "../tetris/tetris.ts";
+import { joinRoom } from "../tetris/gameManagement.ts";
 // PONG
 import  { loadPongPage } from "../pong/pong.ts";
 import  { getTournamentInfo, getTourRoomInfo, listTournaments } from "../pong/tournament.ts";
 import  { getRoomInfo, listRoomsSpectator } from "../pong/spectate.ts";
-import {loginUser, signUpUser} from "../userManagement/userManagement.ts";
+//import {signUpUser} from "../userManagement/userManagement.ts";
+//import { userKeys } from "../tetris/tetris.ts";
 
 // Start the router
 export const startRouter = () => {
+
 	// ROOT
 	page('/', () => zoneSet("HOME"));
 	// PONG
@@ -21,41 +23,42 @@ export const startRouter = () => {
 	// TETRIS
 	tetrisRouter();
 	// LOGIN
-	loginRouter();
+	// loginRouter();
 	// 404
 	page('*', () => {
 		console.log('404 Not Found');
 		page.show("/")
 	});
+
 	// start the router
 	page();
-}
-
-const tetrisRouter = () => {
-	// TETRIS IDLE
-	page("/tetris", () => {
-		zoneSet("TETRIS");
-	});
-	// TETRIS MULTIPLAYER ROOM LIST
-	page("/tetris/room-list", () => {
-		getMultiplayerRooms();
-		zoneSet("TETRIS");
-	});
-	// @ts-ignore TETRIS MULTIPLAYER ROOM JOIN
-	page("/tetris/room:code", ({params}) => {
-		let roomCode: string = params.code.toString().substring(1);
-		// console.log("In the router. Room code: " + roomCode);
-		if (tetrisGameInformation.getRoomCode() === "")
-			joinRoom(roomCode);
-		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
-		zoneSet("TETRIS");
-	})
 }
 
 const pongRouter = () => {
 	// PONG IDLE
 	page('/pong', () => {
 		zoneSet("PONG");
+		loadPongPage("idle");
+	});
+	// PONG OFFLINE
+	page("/pong/solo", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-offline");
+	});
+	// PONG ONLINE
+	page("/pong/versus", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-online");
+	});
+	// PONG TOURNAMENT
+	page("/pong/tournament", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-tournament");
+	});
+	// PONG SETTING
+	page("/pong/settings", () => {
+		zoneSet("PONG");
+		loadPongPage("nav-setting");
 	});
 	// PONG TOURNAMENT LIST
 	page("/pong/list/tournaments", () => {
@@ -88,14 +91,48 @@ const pongRouter = () => {
 	})
 }
 
-const loginRouter = () => {
-	page('/login', () => {
-		loginUser();
-		zoneSet("HOME");
+const tetrisRouter = () => {
+	// TETRIS IDLE
+	page("/tetris", () => {		
+		zoneSet("TETRIS");
+		loadTetrisPage("idle");	
 	});
-	
-	page('/sign-up', () => {
-		signUpUser();
-		zoneSet("HOME");
+	// TETRIS MULTIPLAYER ROOM LIST
+	page("/tetris/room-list", () => {
+		zoneSet("TETRIS");
+		gameListPage();
 	});
+	// TETRIS CREATE ROOM
+	page("/tetris/create-room", () => {
+		zoneSet("TETRIS");
+		tetrisCreateRoomPage();
+	});
+	// TETRIS SETTINGS
+	page("/tetris/settings", () => {
+		zoneSet("TETRIS");
+		//tetrisSettingsPage({keys: userKeys});
+		tetrisSettingsPage();
+	});
+
+	// @ts-ignore TETRIS MULTIPLAYER ROOM JOIN
+	page("/tetris/room:code", ({params}) => {
+		let roomCode: string = params.code.toString().substring(1);
+		// console.log("In the router. Room code: " + roomCode);
+		if (tetrisGameInformation.getRoomCode() === "")
+			joinRoom(roomCode);
+		loadTetrisPage("multiplayer-room", {rooms:[{roomCode: roomCode}]});
+		zoneSet("TETRIS"); // TODO: BABOZO
+	})
 }
+
+// const loginRouter = () => {
+// 	page('/login', () => {
+// 		loginUser();
+// 		zoneSet("HOME");
+// 	});
+	
+// 	page('/sign-up', () => {
+// 		signUpUser();
+// 		zoneSet("HOME");
+// 	});
+// }

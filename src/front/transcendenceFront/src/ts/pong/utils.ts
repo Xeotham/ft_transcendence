@@ -1,5 +1,178 @@
 import {PongRoom} from "./game.ts";
 import {Tournament} from "./tournament.ts";
+// import {pongTextures} from "./pong.ts";
+
+
+export const    pongSfxPlayer = new class {
+	private readonly    sfx: {
+		[key: string]:{
+			[key: string]: HTMLAudioElement }
+};
+	private             pack: string;
+	constructor() {
+		this.sfx = {
+			"retro": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/retro/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/retro/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/retro/goal.mp3"),
+			},
+			"phantom": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/phantom/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/phantom/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/phantom/goal.mp3"),
+			},
+			"tv_world": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/TVWorld/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/TVWorld/goal.mp3"),
+			},
+			"retro1975": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/retro/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/retro/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/retro/goal.mp3"),
+			},
+			"dark_hour": {
+				"hitPaddle": new Audio("/src/medias/sfx/pong/DarkHour/hitPaddle.mp3"),
+				"hitOpponentPaddle": new Audio("/src/medias/sfx/pong/DarkHour/hitOpponentPaddle.mp3"),
+				"goal": new Audio("/src/medias/sfx/pong/DarkHour/goal.mp3"),
+			}
+		}
+		this.pack = "retro";
+	}
+
+	play(name: string) {
+		if (this.sfx[this.pack][name] !== undefined) {
+			const   sound = new Audio(this.sfx[this.pack][name].src);
+			sound.play();
+		}
+		else
+			console.error("Sound not found: " + name);
+	}
+	setPack(pack: string) {
+		if (this.sfx[pack] !== undefined)
+			this.pack = pack;
+		else
+			console.error("Sound pack not found: " + pack);
+	}
+}
+
+export const    pongTextureHandler = new class {
+	private pack: string;
+	private textures: {[key: string]: {[key: string]: HTMLImageElement}};
+	private fonts: {[key: string]: string}
+	constructor() {
+		this.pack = "retro";
+		this.textures = {};
+		this.generateTextures();
+		this.fonts = {
+			"retro": "30px Arial",
+			"phantom": "30px 'PhantomFont', Arial, sans-serif",
+			"tv_world": "30px 'Fontsona4', Arial, sans-serif",
+			"retro1975": "30px 'C64Pro', Arial, sans-serif",
+			"dark_hour": "30px 'DarkHourFont', Arial, sans-serif"
+		}
+	}
+	private generateTextures() {
+		const   texturePaths = {
+			"retro": {
+				"BACKGROUND":       '/src/medias/textures/pong/retro/background.png',
+				"BOARD":            '/src/medias/textures/pong/retro/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/retro/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/retro/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/retro/pongBall.png',
+			},
+			"phantom": {
+				"BACKGROUND":       '/src/medias/textures/pong/phantom/background.png',
+				"BOARD":            '/src/medias/textures/pong/phantom/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/phantom/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/phantom/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/phantom/pongBall.png',
+			},
+			"tv_world": {
+				"BACKGROUND":       '/src/medias/textures/pong/TVWorld/background.png',
+				"BOARD":            '/src/medias/textures/pong/TVWorld/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/TVWorld/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/TVWorld/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/TVWorld/pongBall.png',
+			},
+			"retro1975": {
+				"BACKGROUND":       '/src/medias/textures/pong/retro1975/background.png',
+				"BOARD":            '/src/medias/textures/pong/retro1975/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/retro1975/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/retro1975/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/retro1975/pongBall.png',
+			},
+			"dark_hour": {
+				"BACKGROUND":       '/src/medias/textures/pong/DarkHour/background.png',
+				"BOARD":            '/src/medias/textures/pong/DarkHour/pongBoard.png',
+				"USER_PADDLE":      '/src/medias/textures/pong/DarkHour/userPaddle.png',
+				"OPPONENT_PADDLE":  '/src/medias/textures/pong/DarkHour/opponentPaddle.png',
+				"BALL":             '/src/medias/textures/pong/DarkHour/pongBall.png',
+			}
+		}
+
+		return Promise.all(
+			Object.entries(texturePaths).map(([pack, path]) => {
+				this.textures[pack] = {};
+				Object.entries(path).map(([key, path]) => {
+					return new Promise<void>((resolve, reject) => {
+						const img = new Image();
+						// console.log(`Loading texture: ${key} from ${path}`);
+						img.src = path;
+						img.onload = () => {
+							this.textures[pack][key] = img;
+							resolve();
+						};
+						img.onerror = (err) => {
+							console.error(`Failed to load texture: ${key} from ${path}`, err);
+							reject(err)
+						};
+					})
+				})
+			})
+		);
+	}
+
+	getTexture(name: string): HTMLImageElement | null {
+		// TODO: verifier si texture est bien chargée
+		if (this.textures[this.pack] && this.textures[this.pack][name])
+			return this.textures[this.pack][name];
+		console.error("Texture not found: " + name);
+		return null;
+	}
+
+	setPack(pack: string): string | null {
+		if (this.textures[pack] !== undefined)
+			return this.pack = pack;
+		console.error("Texture pack not found: " + pack);
+		return null;
+	}
+
+	getFont(): string | null {
+		if (this.fonts[this.pack] !== undefined)
+			return this.fonts[this.pack];
+		console.error("Font pack not found: " + this.pack);
+		return null;
+	}
+}
+
+export const    pongPackHandler = new class {
+	private pack: string;
+	constructor() {
+		this.pack = "dark_hour"; // Default pack retro, phantom, tv_world, retro1975
+		pongSfxPlayer.setPack(this.pack);
+		pongTextureHandler.setPack(this.pack);
+	}
+
+	setPack(pack: string) {
+		if (this.pack !== pack) {
+			this.pack = pack;
+			pongSfxPlayer.setPack(pack);
+			pongTextureHandler.setPack(pack);
+		}
+	}
+	getPack() { return this.pack; }
+}
 
 export class   gameInformation {
 	private room: PongRoom | null;
@@ -95,11 +268,20 @@ export interface    loadHtmlArg {
 	inviteCode?:    string;
 }
 
+
 export type loadPongHtmlType = "empty" | "logo" | "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name"
 	| "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game" | "tournament-end"
-	| "tour-rooms-list" | "priv-room-create" | "priv-room-code";
+	| "tour-rooms-list" | "priv-room-create" | "priv-room-code" | "nav-offline" | "nav-online" | "nav-tournament" | "nav-setting";
 
-
+/*
+export type loadPongHtmlType = 
+"empty" | "logo" | "idle" | 
+"pongSolo" | "pongVersus" | "pongTournament" | "pongSettings" | 
+"pongDrawBoard" | "pongDrawGame" | 
+"pongVersusJoin" | "pongVersusJoinConfirm" | "pongVersusJoinPrivRoom"| "pongVersusSpectate" | "pongVersusList" | "pongVersusPrivate" |
+"pongTournamentInfo"  | "pongTournamentPlay" | "pongTournamentList" | "pongTournamentFound" | "pongTournamentName" | "pongTournamentEnd" |
+"pongconfirm" | "list-rooms" | "tour-rooms-list" | "tournament-end";
+*/
 
 export const    boardWidth = 800;
 export const    boardHeight = 400;

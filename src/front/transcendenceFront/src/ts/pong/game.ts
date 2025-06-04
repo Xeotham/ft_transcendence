@@ -1,7 +1,8 @@
-import  { Game, score, buttons, intervals, responseFormat } from "./utils.ts";
+import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./utils.ts";
 import {address, user} from "../immanence.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
+import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore
@@ -145,6 +146,12 @@ export class PongRoom {
 			quit(pongGameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
 		};
 		this.socket.addEventListener("message", messageHandler);
+		window.onbeforeunload = () => {
+			if (this.socket) {
+				quit();
+				this.socket.close();
+			}
+		}
 	}
 
 	prepareGame(roomId: number, player: string | null) {
@@ -164,11 +171,16 @@ export const    createPrivateRoom = () => {
 export const    joinPrivRoom = () => {
 	loadPongPage("priv-room-code");
 
+	const form = document.getElementById("inviteForm") as HTMLFormElement;
+	form?.addEventListener("submit", (event) => {
+		event.preventDefault(); // Prevent the page from reloading
 
-	document.getElementById("submit")?.addEventListener("click", () => {
-		const   inviteCode: string = (document.getElementById("inviteCode") as HTMLInputElement).value;
-		const   socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}&username=${user.getUsername()}`);
-
+		const inviteCode = (document.getElementById("inviteCode") as HTMLInputElement).value;
+		if (!inviteCode) {
+			console.error("Invite code is required");
+			return;
+		}
+		const socket = new WebSocket(`ws://${address}/api/pong/joinPrivRoom?inviteCode=${inviteCode}&username=${user.getUsername()}`);
 		pongGameInfo.setRoom(new PongRoom(socket));
 		pongGameInfo.getRoom()?.initSocket();
 	});
@@ -199,7 +211,8 @@ export const   joinBot = async () => {
 export const   quit = (msg: string = "LEAVE", force: string = "", winner: number | null = null) => {
 	const   matchType = force !== "" ? force : pongGameInfo.getMatchType();
 
-	console.log("Quiting room of type: " + matchType);
+	if (matchType != null)
+		console.log("Quiting room of type: " + matchType);
 	if (!matchType)
 		return ;
 	quitRoom(msg);
@@ -209,6 +222,8 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 	if ((matchType === "PONG" && pongGameInfo.getMatchType() === "TOURNAMENT") && !winner) {
 		specTournament(pongGameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
 	}
+
+	hideZoneGame();
 }
 
 const   quitRoom = (msg: string = "LEAVE") => {
@@ -238,6 +253,7 @@ const   quitRoom = (msg: string = "LEAVE") => {
 		socket.close();
 	}
 	pongGameInfo.resetRoom();
+	// TODO hide game zone
 	page.show("/pong");
 }
 
@@ -304,6 +320,20 @@ export const   messageHandler = (event: MessageEvent)=> {
 	}
 }
 
+const   effectHandler = (effect: string) => {
+	switch (effect) {
+		case "hitPaddle":
+			pongSfxPlayer.play("hitPaddle");
+			return ;
+		case "hitOpponentPaddle":
+			pongSfxPlayer.play("hitOpponentPaddle");
+			return ;
+		case "goal":
+			pongSfxPlayer.play("goal");
+			return ;
+	}
+}
+
 const	gameMessageHandler = (res: responseFormat) => {
 	switch (res.message) {
 		case "PREP":
@@ -312,9 +342,8 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  pongGameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
-			console.log("Starting game");
+			// console.log("Starting game");
 			loadPongHtml("board");
-			loadPongPage("board");
 			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.addEventListener("keydown", keyHandler);
@@ -351,9 +380,13 @@ const	gameMessageHandler = (res: responseFormat) => {
 			if (res.data >= 0)
 				pongGameInfo.getRoom()?.setSpecPlacement(res.data);
 			pongGameInfo?.getRoom()?.setRoomNumber(res?.roomId!);
-			console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
+			console.log("Starting Spectator mode");
+			// console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
 			loadPongPage("board");
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
+		case "EFFECT":
+			effectHandler(res.data);
+			return ;
 		default:
 			pongGameInfo?.getRoom()?.setGame(res.data);
 			loadPongPage("board", { game: res.data });
@@ -372,7 +405,6 @@ export const keyHandler = (event: KeyboardEvent) => {
 	if (event.code === "Escape") {
 		quit();
 	}
-
 
 	async function sendPaddleMovement(key: string, p: string) {
 		if (!game)
@@ -439,12 +471,5 @@ const   confirmGame = () => {
 			body: JSON.stringify({ roomId: pongGameInfo.getRoom()?.getRoomNumber(), P: pongGameInfo.getRoom()?.getPlayer() })
 		})
 	});
-}
-
-export const    createPrivRoom = () => {
-	loadPongHtml("priv-room-create");
-	document.getElementById("quit")?.addEventListener("click", () => {
-		quit("LEAVE");
-	})
 }
 

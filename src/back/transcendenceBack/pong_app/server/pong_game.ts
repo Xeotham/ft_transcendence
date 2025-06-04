@@ -18,10 +18,15 @@ import { Room } from "./Room";
 import {createPongGame} from "../../user_management/api/controllers";
 // impoer { Timeout } from
 
+interface   playerScore {
+	username:   string;
+	score:      number;
+}
+
 export class Game {
 	readonly id:number;
 	players:	{ player1: player | null, player2: player | null };
-	score:		{ player1: number, player2: number };
+	score:		{ player1: playerScore, player2: playerScore };
 	paddle1:	{ x: number, y: number, x_size: number, y_size: number };
 	paddle2:	{ x: number, y: number, x_size: number, y_size: number };
 	ball:		{ x: number, y: number, size: number, orientation: number, speed: number };
@@ -38,7 +43,7 @@ export class Game {
 	constructor(id: number, player1: player | null, player2: player | null, isSolo: boolean, spectators: WebSocket[] = [], isBot: boolean = false) {
 		this.id = id;
 		this.players = { player1, player2 };
-		this.score = { player1: 0, player2: 0 };
+		this.score = { player1: {username: player1?.username!, score: 0}, player2: {username: player2?.username!, score: 0} };
 		this.paddle1 = { x: PADDLE1_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
 		this.paddle2 = { x: PADDLE2_X, y: PADDLE_Y, x_size: PADDLE_WIDTH, y_size: PADDLE_HEIGHT };
 		this.ball = { x: WIDTH / 2, y: HEIGHT / 2, size: BALL_SIZE, orientation: 0, speed: BALL_SPEED };
@@ -58,6 +63,7 @@ export class Game {
 			paddle1: { ...this.paddle1 },
 			paddle2: { ...this.paddle2 },
 			ball: { ...this.ball},
+			score: this.score,
 		};
 	}
 
@@ -74,13 +80,13 @@ export class Game {
 				spectator?.send(JSON.stringify(data));
 	}
 
-	public sendScore() {
-		this.sendData({ type: "GAME", data: this.score, message: "SCORE" }, true);
+	private sendSpectator(data: any) {
+		for (let spectator of this.spectators)
+			spectator?.send(JSON.stringify(data));
 	}
 
 	private async spawnBall(side: string | "P1" | "P2") {
 		resetBot(this.id, 0);
-		this.sendScore();
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
@@ -91,7 +97,7 @@ export class Game {
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
-		if (this.score.player1 < 10 && this.score.player2 < 10)
+		if (this.score.player1.score < 10 && this.score.player2.score < 10)
 			await delay(1250);
 			// await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
@@ -108,12 +114,12 @@ export class Game {
 			let botInterval: number = 0;
 			if (this.isBot)
 				botInterval = setInterval(() => {
-			console.log("rotation in calss Game is " + this.ball.orientation)
+			// console.log("rotation in calss Game is " + this.ball.orientation)
 				botLogic(this.toJSON(), this.id);
 			}, 1000) as unknown as number; // once per second
 
 			const gameLoopIteration = async () => {
-				if (this.score.player1 < 10 && this.score.player2 < 10 && !this.over) {
+				if (this.score.player1.score < 10 && this.score.player2.score < 10 && !this.over) {
 					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
 					return ;
@@ -123,16 +129,17 @@ export class Game {
 				clearInterval(botInterval);
 				this.finishTime = performance.now();
 				if (!this.over) // If the game didn't end because of a forfeit
-					this.winner = (this.score.player1 >= 10) ? this.players.player1 : this.players.player2;
+					this.winner = (this.score.player1.score >= 10) ? this.players.player1 : this.players.player2;
 				this.over = true;
 				let winner = this.winner?.username;
 				if (this.isSolo)
-					winner = this.score.player1 >= 10 ? "P1" : "P2";
+					winner = this.score.player1.score >= 10 ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
 				// HEERE
+				// console.log(this.players.player1?.username);
 				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
 				resolve();
 			};
@@ -159,11 +166,24 @@ export class Game {
 		if (player === "P1" && this.ball.x - this.ball.size / 2 < paddle.x + paddle.x_size) {
 			this.ball.x = paddle.x + paddle.x_size + this.ball.size;
 			this.hitPaddle(player, paddle);
+			if (this.isSolo || this.isBot)
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+			else {
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+				this.sendSpectator({ type: "GAME", message: "EFFECT", data: "hitPaddle" });
+				this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }))
+			}
 		}
 		if (player === "P2" && this.ball.x + this.ball.size / 2 > paddle.x) {
 			this.ball.x = paddle.x - this.ball.size;
-			console.log("paddle hit at y ", this.ball.y)
 			this.hitPaddle(player, paddle);
+			if (this.isSolo || this.isBot) {
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
+			} else {
+				this.players.player1?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" }));
+				this.sendSpectator({ type: "GAME", message: "EFFECT", data: "hitOpponentPaddle" })
+				this.players.player2?.socket.send(JSON.stringify({ type: "GAME", message: "EFFECT", data: "hitPaddle" }));
+			}
 		}
 	}
 
@@ -186,12 +206,14 @@ export class Game {
 		this.ball.x += speed * Math.cos(this.ball.orientation);
 		this.ball.y += speed * Math.sin(this.ball.orientation);
 
-		if (this.ball.x - this.ball.size < 0) {
-			this.score.player2++;
+		if (this.ball.x < 0) {
+			this.score.player2.score++;
+			this.sendData({type: "GAME", message: "EFFECT", data: "goal"}, true);
 			await this.spawnBall("P1");
 		}
 		if (this.ball.x + this.ball.size >= WIDTH) {
-			this.score.player1++;
+			this.score.player1.score++;
+			this.sendData({type: "GAME", message: "EFFECT", data: "goal"}, true);
 			await this.spawnBall("P2");
 		}
 	}
@@ -213,8 +235,6 @@ export class Game {
 			this.winner = this.players.player2;
 		else
 			this.winner = this.players.player1;
-		// let winner = this.winner === this.players.player1 ? "P1" : "P2";
-		// console.log("Winner set to:", winner);
 		this.over = true;
 	}
 

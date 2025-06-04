@@ -135,8 +135,8 @@ export class Tournament {
 			// this.positions[i] = this.positions[j];
 			// this.positions[j] = temp;
 		}
-		for (let i = 0; i < this.positions.length; ++i)
-			this.players[this.positions[i]].socket.send(JSON.stringify({ type: "INFO", message: "You are in position " + i }));
+		// for (let i = 0; i < this.positions.length; ++i)
+		// 	this.players[this.positions[i]].socket.send(JSON.stringify({ type: "INFO", message: "You are in position " + i }));
 		console.log("\x1b[38;5;82mTournament shuffled\x1b[0m");
 		this.needShuffle = false;
 		this.printTree();
