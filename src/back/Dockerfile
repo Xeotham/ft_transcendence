@@ -3,6 +3,7 @@ FROM node:18-alpine
 
 # Set the working directory
 WORKDIR /app
+RUN     apk add curl
 
 #COPY    ./transcendenceBack/package.json .
 #COPY    ./transcendenceBack/package-lock.json .

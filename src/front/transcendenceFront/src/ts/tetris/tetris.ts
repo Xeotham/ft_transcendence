@@ -1,7 +1,6 @@
 import {
 	bagWidth,
 	getMinoTexture, holdWidth, holdHeight,
-	keys,
 	loadTetrisArgs,
 	loadTetrisType,
 	minoInfo,
@@ -24,10 +23,11 @@ import {
 	searchGame,
 } from "./gameManagement.ts";
 
-import {resetGamesSocket} from "../utils.ts";
+import {getFromApi, patchToApi, resetGamesSocket, address, user, keys} from "../utils.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 
-export const userKeys: keys = new keys();
+
+// userKeys.getKeysFromApi().then().catch();
 export const tetrisGameInformation: tetrisGame = new tetrisGame();
 
 export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
@@ -112,7 +112,7 @@ export const   tetrisSettingsPage = () => {
 	//tetrisSettingsPage({keys: userKeys});
 	//tetrisSettings(keys);
 	// {keys: userKeys}
-	tetrisSettings(userKeys);
+	tetrisSettings();
 }
 
 let  modify: boolean = false;
@@ -128,10 +128,12 @@ export const changeKeys = (keyType: string) => {
 
 	modify = true;
 
-	const getNewKey = (event: KeyboardEvent) => {
+	const getNewKey = async (event: KeyboardEvent) => {
 		const newKey = event.key;
 		modify = false;
+		await patchToApi(`http://${address}/api/user/update-parameter`, {username: user.getUsername(), control: keyType, key: newKey})
 		setKey(keyType, newKey);
+
 		// console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
 		//TODO marche pas  ?

@@ -4,7 +4,7 @@ import { modaleDisplay } from './modalesCore.ts';
 import { ModaleType } from './modalesCore.ts';
 // import {indexGame} from "./modalesTetrisStatHTML.ts";
 import {tetrisGames} from "./modalesTetrisStatHTML.ts";
-import {user} from "../immanence.ts";
+import {user} from "../utils.ts";
 
 interface GameUserInfo
 {

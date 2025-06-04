@@ -1,8 +1,7 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay, modaleAlert, modaleHide } from './modalesCore.ts';
-import {postToApi} from "../utils.ts";
-import {address, user} from "../immanence.ts";
+import {getFromApi, postToApi, address, user} from "../utils.ts";
 
 
 export const modaleSignInHTML = () => {
@@ -62,7 +61,7 @@ export const modaleSignInEvents = () => {
     const   data = { username: username, password:  password };
     // console.log(data);
     postToApi(`http://${address}/api/user/login`, data)
-        .then((info: any) => {
+        .then(async (info: any) => {
             localStorage.setItem("username", username);
             user.setToken(info.token);
             user.setUsername(info.user.username);

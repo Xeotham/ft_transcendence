@@ -1,10 +1,9 @@
-import { address } from "../immanence.ts";
 import { EL } from "../zone/zoneHTML.ts";
 import { TCS } from "../TCS.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { tetrisGameInformation } from "./tetris.ts";
 import { startRoom } from "./gameManagement.ts";
-import { resetGamesSocket, postToApi } from "../utils.ts";
+import { resetGamesSocket, postToApi, address } from "../utils.ts";
 // @ts-ignore
 import  page from 'page';
 

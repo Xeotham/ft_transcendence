@@ -3,9 +3,8 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modale, modaleDisplay } from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi, postToApi, UserInfo} from "../utils.ts";
+import {getFromApi, UserInfo, address, user} from "../utils.ts";
 import {friendList} from "./modalesFriendListHTML.ts";
-import {address, user} from "../immanence.ts";
 // @ts-ignore
 import  page from "page";
 

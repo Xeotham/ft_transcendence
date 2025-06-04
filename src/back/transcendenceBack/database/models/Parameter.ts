@@ -2,16 +2,17 @@ import db from '../db';
 
 interface Parameter
 {
-	id?:					number;
-	userId:					number;
-	left:					string;
-	right:					string;
-	clockwiseRot:			string;
-	countClockwiseRot:	string;
-	hardDrop:				string;
-	softDrop:				string;
-	hold:					string;
-	forfeit:				string;
+	id?:					    number;
+	userId:					    number;
+	moveLeft:					string;
+	moveRight:					string;
+	rotateClockwise:			string;
+	rotateCounterClockwise: 	string;
+	rotate180:                  string;
+	hardDrop:				    string;
+	softDrop:				    string;
+	hold:					    string;
+	forfeit:				    string;
 }
 
 export const createParam = (id: number): void =>
@@ -27,7 +28,7 @@ export const createParam = (id: number): void =>
 export const getParamById = (id: number): Parameter | undefined =>
 {
 	const stmt = db.prepare('\
-		SELECT p.left, p.right, p.clockwiseRot, p.countClockwiseRot, p.hardDrop, p.softDrop, p.hold, p.forfeit \
+		SELECT p.moveLeft, p.moveRight, p.rotateClockwise, p.rotateCounterClockwise, p.hardDrop, p.softDrop, p.hold, p.forfeit, p.rotate180 \
 		FROM user u \
 		JOIN parameter p  ON p.userId = u.id \
 		WHERE u.id = ? \
@@ -38,7 +39,7 @@ export const getParamById = (id: number): Parameter | undefined =>
 
 export const updateParam = (id: number, command: string, key: string ): void =>
 {
-    const comm = ["left", "right", "clockwiseRot", "countClockwiseRot", "hardDrop", "softDrop", "hold", "forfeit"];
+    const comm = ["moveLeft", "moveRight", "rotateClockwise", "rotateCounterClockwise", "hardDrop", "softDrop", "hold", "forfeit", "rotate180"];
 	let i = 0;
 	let stmt;
 
@@ -53,7 +54,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 0:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET left = ? \
+				SET moveLeft = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -61,7 +62,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 1:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET right = ? \
+				SET moveRight = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -69,7 +70,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 2:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET  clockwiseRot = ? \
+				SET  rotateClockwise = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -77,7 +78,7 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 		case 3:
 			stmt = db.prepare('\
 				UPDATE parameter \
-				SET countClockwiseRot = ? \
+				SET rotateCounterClockwise = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);
@@ -110,6 +111,14 @@ export const updateParam = (id: number, command: string, key: string ): void =>
 			stmt = db.prepare('\
 				UPDATE parameter \
 				SET forfeit = ? \
+				WHERE id = ?\
+				');
+			stmt.run(key, id);
+			break;
+		case 8:
+			stmt = db.prepare('\
+				UPDATE parameter \
+				SET rotate180 = ? \
 				WHERE id = ?\
 				');
 			stmt.run(key, id);

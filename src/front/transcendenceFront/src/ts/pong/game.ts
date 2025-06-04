@@ -1,5 +1,5 @@
 import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./utils.ts";
-import {address, user} from "../immanence.ts";
+import {address, user} from "../utils.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
 import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";

@@ -1,6 +1,5 @@
 // import  { loginHtml, logoutHtml,signUpHtml } from "./htmlPage.ts";
-import {postToApi} from "../utils.ts";
-import {address, user} from "../immanence.ts";
+import {postToApi, address, user} from "../utils.ts";
 // @ts-ignore
 import page from "page";
 

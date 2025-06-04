@@ -1,65 +1,6 @@
-import {tetrisTextures, userKeys} from "./tetris.ts";
-
-export class   keys {
-	private moveLeft:               string;
-	private moveRight:              string;
-	private clockwise_rotate:       string;
-	private count_clockwise_rotate: string;
-	private rotate_180:             string;
-	private hard_drop:              string;
-	private soft_drop:              string;
-	private hold:                   string;
-	private forfeit:                string;
-	private retry:                	string;
-
-	constructor() {
-		this.moveLeft               = "a";
-		this.moveRight              = "d";
-		this.clockwise_rotate       = "ArrowRight";
-		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "w";
-		this.hard_drop              = "ArrowUp";
-		this.soft_drop              = "ArrowDown";
-		this.hold                   = "Shift";
-		this.forfeit                = "Escape";
-		this.retry                  = "r";
-	}
-	// Getters
-	getMoveLeft(): string { return this.moveLeft ; }
-	getMoveRight(): string { return this.moveRight ; }
-	getClockwiseRotate(): string { return this.clockwise_rotate; }
-	getCounterclockwise(): string { return this.count_clockwise_rotate; }
-	getRotate180(): string { return this.rotate_180; }
-	getHardDrop(): string { return this.hard_drop; }
-	getSoftDrop(): string { return this.soft_drop; }
-	getHold(): string { return this.hold; }
-	getForfeit(): string { return this.forfeit; }
-	getRetry(): string { return this.retry; }
-	// Setters
-	setMoveLeft(moveLeft: string): void { this.moveLeft = moveLeft; }
-	setMoveRight(moveRight: string): void { this.moveRight = moveRight; }
-	setClockWiseRotate(clockwise_rotate: string): void { this.clockwise_rotate = clockwise_rotate; }
-	SetClockWiseRotate(count_clockwise_rotate: string): void { this.count_clockwise_rotate = count_clockwise_rotate; }
-	setRotate180(rotate_180: string): void { this.rotate_180 = rotate_180; }
-	setHardDrop(hard_drop: string): void { this.hard_drop = hard_drop; }
-	setSoftDrop(soft_drop: string): void { this.soft_drop = soft_drop; }
-	setHold(hold: string): void { this.hold = hold; }
-	setForfeit(forfeit: string): void { this.forfeit = forfeit; }
-	setRetry(retry: string): void { this.retry = retry; }
-	// Methods
-	resetKeys(): void {
-		this.moveLeft               = "a";
-		this.moveRight              = "d";
-		this.clockwise_rotate       = "ArrowRight";
-		this.count_clockwise_rotate = "ArrowLeft";
-		this.rotate_180             = "w";
-		this.hard_drop              = "ArrowUp";
-		this.soft_drop              = "ArrowDown";
-		this.hold                   = "Shift";
-		this.forfeit                = "Escape";
-		this.retry					= "r";
-	}
-}
+import {tetrisTextures} from "./tetris.ts";
+// import {syncKeys} from "../utils.ts";
+import {userKeys} from "../utils.ts"
 
 export interface tetriminoInfo {
 	name:       string;
@@ -99,14 +40,12 @@ export interface        tetrisGameInfo {
 export class    TimeoutKey {
 	private start:      number;
 	private timer:      number;
-	private delay:      number;
 	private remaining:  number;
 	private callback:   () => void;
 
 	constructor(callback: () => void, delay: number) {
 		this.start = Date.now();
 		this.timer = setTimeout(callback, delay);
-		this.delay = delay;
 		this.remaining = delay;
 		this.callback = callback;
 	}
@@ -129,7 +68,6 @@ export class    TimeoutKey {
 		this.timer = 0;
 		this.remaining = 0;
 		this.start = 0;
-		this.delay = 0;
 		this.callback = () => {};
 	}
 }
@@ -369,16 +307,17 @@ export interface    tetrisRes {
 export type loadTetrisType = "empty" | "logo" | "idle" | "setting" | "keybindings" | "change-key" | "board" | "multiplayer-room" | "display-multiplayer-room";
 
 export const    setKey = (keyType: string, value: string) => {
+	//TODO: Add Retry key
 	switch (keyType) {
 		case "moveLeft":
 			return userKeys.setMoveLeft(value);
 		case "moveRight":
 			return userKeys.setMoveRight(value);
-		case "rotClock":
+		case "rotateClockwise":
 			return userKeys.setClockWiseRotate(value);
-		case "rotCountClock":
+		case "rotateCounterClockwise":
 			return userKeys.SetClockWiseRotate(value);
-		case "rot180":
+		case "rotate180":
 			return userKeys.setRotate180(value);
 		case "hardDrop":
 			return userKeys.setHardDrop(value);
@@ -389,7 +328,7 @@ export const    setKey = (keyType: string, value: string) => {
 		case "forfeit":
 			return userKeys.setForfeit(value);
 		default:
-			console.error("Invalid key type");
+			console.error("Invalid key type: ", keyType);
 	}
 }
 

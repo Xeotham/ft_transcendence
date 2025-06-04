@@ -1,8 +1,7 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
-import {getFromApi, UserInfo} from "../utils.ts";
-import {address, user} from "../immanence.ts";
+import {getFromApi, UserInfo, address, user} from "../utils.ts";
 
 let friendListPage = 0;
 
