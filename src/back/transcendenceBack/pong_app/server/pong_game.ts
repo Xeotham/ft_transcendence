@@ -90,8 +90,6 @@ export class Game {
 		this.ball.y = Math.random() * HEIGHT / 2 + HEIGHT / 4;
 		this.ball.x = WIDTH / 2;
 		this.ball.orientation = Math.random() * Math.PI / 2 - Math.PI / 4;
-		// this.ball.y = HEIGHT / 2; // TODO : Remove this line
-		// this.ball.orientation = 0; // TODO : Remove this line
 		if (side === "P1")
 			this.ball.orientation += Math.PI;
 		this.ball.speed = BALL_SPEED;
@@ -99,7 +97,6 @@ export class Game {
 		this.paddle2.y = PADDLE_Y;
 		if (this.score.player1.score < 10 && this.score.player2.score < 10)
 			await delay(1250);
-			// await delay(0); // TODO : Remove this line
 		this.lastTime = performance.now();
 	}
 

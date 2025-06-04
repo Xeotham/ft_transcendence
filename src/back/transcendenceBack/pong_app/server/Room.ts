@@ -23,7 +23,7 @@ export class Room {
 	private	started:		boolean;
 	private isInTournament:	boolean;
 	private tourId:			number;
-	private privRoom:   	boolean; // TODO: Implement private rooms
+	private privRoom:   	boolean;
 	private inviteCode: 	string | null;
 
 	constructor(id:	number, isSolo: boolean = false, isInTournament: boolean = false, tourId: number = -1, privRoom: boolean = false) {

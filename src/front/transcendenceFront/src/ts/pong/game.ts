@@ -371,7 +371,6 @@ const	gameMessageHandler = (res: responseFormat) => {
 			console.log("%c[Score]%c : " + score.player1 + " - " + score.player2, "color: purple", "color: reset");
 			if (document.getElementById("score"))
 				document.getElementById("score")!.innerText = `Score: ${score.player1} | ${score.player2}`;
-			//  TODO : display score on screen
 			return ;
 		case "PRIVOWNER":
 			console.log("Invite code: " + res.inviteCode);

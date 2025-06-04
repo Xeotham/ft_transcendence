@@ -3,27 +3,34 @@ import { WebSocket } from "ws";
 import { deleteTetrisGame, getTetrisGame, getTetrisRoom, tetrisReq } from "../utils";
 import { TetrisGame } from "../server/Game/TetrisGame";
 import { MultiplayerRoom } from "../server/MultiplayerRoom";
-import {delay} from "../server/Game/utils";
-
-
-// fastify.get('/joinMatchmaking', {websocket: true}, joinMatchmaking); TODO: Join a Random Room
 
 export let   arcadeGamesLst: TetrisGame[] = [];
 export let   multiplayerRoomLst: MultiplayerRoom[] = [];
 
-export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest) => {
+export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
+	if (!req.query.username)
+		return console.log("No username");
+
+	// console.log("Joining matchmaking for username: " + req.query.username);
+	for (const room of multiplayerRoomLst) {
+		if (room.getIsInGame() || room.isPrivate() || !room.getIsVersus())
+			continue ;
+		console.log("Joining existing room with code: " + room.getCode());
+		room.addPlayer(socket, req.query.username);
+		return ;
+	}
+
+	console.log("No room found, creating a new room");
+
+	const room = new MultiplayerRoom(socket, req.query.username, false);
+	room.addSetting("isVersus", true);
+	multiplayerRoomLst.push(room);
 }
 
 export const tetrisArcade = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string}}>) => {
-	try {
-		const tetrisGame = new TetrisGame(socket, req.query.username);
-		arcadeGamesLst.push(tetrisGame);
-
-		tetrisGame.gameLoop();
-	}
-	catch (error) {
-		console.error("Error in tetrisArcade handler:", error);
-	}
+	const tetrisGame = new TetrisGame(socket, req.query.username);
+	arcadeGamesLst.push(tetrisGame);
+	tetrisGame.gameLoop();
 };
 
 export const    tetrisCreateRoom = async (socket: WebSocket, req: FastifyRequest<{Querystring: {username: string, code?: string | undefined}}>) => {
@@ -37,12 +44,12 @@ export const    tetrisCreateRoom = async (socket: WebSocket, req: FastifyRequest
 }
 
 export const	getMultiplayerRooms = async (request: FastifyRequest, reply: FastifyReply) => {
-	let rooms: {roomCode: string}[] = [];
+	let rooms: {roomCode: string, nbPlayers: number}[] = [];
 
 	for (const room of multiplayerRoomLst) {
 		if (room.isPrivate())
 			continue ;
-		rooms.push({roomCode: room.getCode()});
+		rooms.push({roomCode: room.getCode(), nbPlayers: room.getPlayers().length});
 	}
 	return reply.send(rooms);
 }

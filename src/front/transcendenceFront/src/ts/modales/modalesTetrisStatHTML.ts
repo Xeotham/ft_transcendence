@@ -133,8 +133,6 @@ const getModaleTetrisStatListHTML = (page: number) => {
 
   let listHTML = ``;
 
-  // console.log("getModaleTetrisStatListHTML", page); // TODO: enlever
-
   for (let i = 0; i < 10 && tetrisHistory[(page * 10) + i]; i++) {
     listHTML += `
       <div id="tetrisStatLine${i}" class="${TCS.modaleTexte}">

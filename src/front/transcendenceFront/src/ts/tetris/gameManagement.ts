@@ -31,7 +31,7 @@ const socketInit = (socket: WebSocket) => {
 			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
 		if (zone.state === "TETRIS")
-			loadTetrisPage("idle"); // TODO : If changing to pong do not!
+			loadTetrisPage("idle");
 	};
 	window.onbeforeunload = () => {
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
@@ -68,6 +68,9 @@ export const resetSocket = (leaveType: string = "game") => {
 }
 
 export const    searchGame = () => {
+	socket = new WebSocket(`ws://${address}/api/tetris/matchmaking?username=${user.getUsername()}`);
+	socketInit(socket);
+	// TODO : Before unload?
 }
 
 export const    arcadeGame = () => {
@@ -75,7 +78,6 @@ export const    arcadeGame = () => {
 	socket = new WebSocket(`ws://${address}/api/tetris/arcade?username=${user.getUsername()}`);
 
 	socketInit(socket);
-	tetrisGameInformation.setSocket(socket);
 	tetrisBoardHtml();
 	window.addEventListener("beforeunload", () => {
 		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
@@ -119,8 +121,6 @@ export const joinRoom = (roomCode: string) => {
 export const startRoom = () => {
 	if (!tetrisGameInformation.getRoomOwner())
 		return console.log("You are not the owner of the room");
-	if (tetrisGameInformation.getNeedSave())
-		return console.log("Need to save the game before starting the room");
 	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "start", gameId: 0, roomCode: tetrisGameInformation.getRoomCode() });
 }
 
@@ -206,7 +206,7 @@ const   boardEffect = (board: string) => {
 	return tetrisSfxPlayer.play(board);
 }
 
-const effectPlayer = (type: string, argument: string | null = null) => {
+const	effectPlayer = (type: string, argument: string | null = null) => {
 	switch (type) {
 		/* ==== BTB ==== */
 		case "BTB":
@@ -264,7 +264,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			}
 			else if(res.argument === "SETTINGS") {
 				tetrisGameInformation.setSettings(res.value);
-				console.log("settings saved: " + JSON.stringify(res.value));
+				// console.log("settings saved: " + JSON.stringify(res.value));
 			}
 			else {
 				// console.log("MULTIPLAYER_JOIN");
@@ -351,8 +351,6 @@ const gameControllers = async (finish: boolean = false) => {
 			abortController?.abort(); // Remove all listeners
 			return ;
 		}
-
-		// TODO: Check to make the key spammable but with an interval
 
 		switch (key) {
 			case userKeys.getMoveLeft().toUpperCase():
