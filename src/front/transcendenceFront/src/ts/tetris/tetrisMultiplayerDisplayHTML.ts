@@ -92,9 +92,8 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 const tetrisDisplayMultiplayerRoomEvents = () => {
 
 	document.getElementById("tetrisDisplayMultiplayerRoomBack")?.addEventListener("click", () => { 
-		resetGamesSocket("home"); //TODO what is that ?????
+		resetGamesSocket("home");
 		page("/tetris");
-		//loadTetrisPage("idle"); //TODO why ???
 	});
 
 	(document.getElementById("tetrisDisplayMultiplayerRoomFormCode") as HTMLFormElement)?.addEventListener("submit", (e) => {

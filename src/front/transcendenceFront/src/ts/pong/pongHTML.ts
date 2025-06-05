@@ -3,8 +3,8 @@ import { EL } from "../zone/zoneHTML.ts";
 import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils.ts";
 import { pongGameInfo } from "./pong.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
-import { quit } from "./game.ts"; // TODO a valider 
-import {hideZoneGame, showZoneGame} from "../zone/zoneCore.ts";
+import { quit } from "./game.ts";
+import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
 import { pongSettingsHtml } from "./pongSettingsHTML.ts";
 
 // @ts-ignore
@@ -118,7 +118,7 @@ const   pongTournamentHtml = () => {
 	</nav>`;
 }
 
-const   pongVersusJoinHtml = () => { //TODO pong join versus
+const   pongVersusJoinHtml = () => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML =`
@@ -147,7 +147,7 @@ const   pongVersusJoinHtml = () => { //TODO pong join versus
 	//		<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Room</button></div>
 }
 
-const   pongVersusSpectateHtml = (roomId: number) => { //TODO pong versus spectate qd on a clic sur la partie a spectate
+const   pongVersusSpectateHtml = (roomId: number) => { // TODO pong versus spectate qd on a clic sur la partie a spectate
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -331,7 +331,7 @@ const   pongVersusJoinPrivRoomHtml = () => { //TODO pong versus join private roo
 		<div class="h-[30px]"></div>
 	</div>`;
 
-	// TODO alert code invalide
+	// TODO alert code invalide plutot que revenir au menu
 
 	// EL.contentPong.innerHTML = `
 	// <div class="${TCS.pongNav1}">
@@ -554,9 +554,6 @@ const   pongTournamentFoundHtml = () => {
 
 }
 
-
-// TODO: Add spec tournament board
-
 const   pongDrawBoardHtml = () => {
 	if (!EL.zoneGame)
 		return
@@ -609,8 +606,7 @@ const   pongQuitButton = () => {
 		return ;
 
 	quitButton.addEventListener("click", () => {
-		// TODO quit server game ?
-		quit();// TODO a valider
+		quit();
 		page("/pong");
 	});
 }

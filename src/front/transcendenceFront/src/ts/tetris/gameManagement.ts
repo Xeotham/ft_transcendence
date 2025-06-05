@@ -33,8 +33,11 @@ const socketInit = (socket: WebSocket) => {
 			loadTetrisPage("idle");
 	};
 	window.onbeforeunload = () => {
+		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
 			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
+		if (tetrisGameInformation.getSocket()) {
+			tetrisGameInformation.getSocket()?.close();
 		tetrisGameInformation.setGameId(-1);
 		tetrisGameInformation.setGame(null);
 		tetrisGameInformation.setSocket(null);
@@ -42,6 +45,7 @@ const socketInit = (socket: WebSocket) => {
 		if (tetrisGameInformation.getRoomCode() !== "")
 			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
+		}
 	}
 }
 
@@ -69,7 +73,6 @@ export const resetSocket = (leaveType: string = "game") => {
 export const    searchGame = () => {
 	socket = new WebSocket(`ws://${address}/api/tetris/matchmaking?username=${user.getUsername()}`);
 	socketInit(socket);
-	// TODO : Before unload?
 }
 
 export const    arcadeGame = () => {
@@ -78,12 +81,7 @@ export const    arcadeGame = () => {
 
 	socketInit(socket);
 	tetrisBoardHtml();
-	window.addEventListener("beforeunload", () => {
-		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
-		if (tetrisGameInformation.getSocket()) {
-			tetrisGameInformation.getSocket()?.close();
-		}
-	})
+
 	// gameControllers();
 }
 
@@ -300,8 +298,6 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("Unknown message type: " + res.type);
 	}
 }
-
-// TODO: Need to make the timeout pause when the opposite key is pressed ( https://stackoverflow.com/questions/3969475/javascript-pause-settimeout )
 
 const   movePiece = (direction: string) => {
 	const   arg = direction === "moveLeft" ? "left" : "right";

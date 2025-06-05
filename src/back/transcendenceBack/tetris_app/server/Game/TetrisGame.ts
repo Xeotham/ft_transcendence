@@ -187,9 +187,9 @@ export class TetrisGame {
 		this.showBags = true;
 		this.holdAllowed = true;
 		this.showHold = true;
-		this.infiniteHold = true; // TODO : reset values : false, false, 500
-		this.infiniteMovement = true;
-		this.lockTime = -1; // Amount of time in ms in between a piece reaching the ground and locking down
+		this.infiniteHold = false;
+		this.infiniteMovement = false;
+		this.lockTime = 500; // Amount of time in ms in between a piece reaching the ground and locking down
 		this.spawnARE = 0; // Amount of time in ms in between the piece spawning and starting to move // 250 in the guideline
 		this.softDropAmp = 1;
 		this.isLevelling = true;

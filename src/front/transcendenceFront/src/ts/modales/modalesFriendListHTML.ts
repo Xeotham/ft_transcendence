@@ -89,7 +89,7 @@ const formatFriendListLine = (index: number) => {
 	<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
 	<span class="${TCS.modaleFriendList}" id="friendListLine${index}">
 		${friend.username}
-	</span>`; // TODO: remplacer par le nom de l'ami
+	</span>`;
 
 	return formattedFriend;
 }

@@ -108,7 +108,7 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       modaleTetrisStatLineEvents();
       break;
     case ModaleType.TETRIS_STATS_DETAIL:
-      modale.content.innerHTML = modaleTetrisStatDetailHTML(indexGame); // TODO: mettre id de la partie
+      modale.content.innerHTML = modaleTetrisStatDetailHTML(indexGame);
       modaleTetrisStatDetailEvents();
       break;
     case ModaleType.AVATAR:
@@ -175,7 +175,7 @@ export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
   if (!bkgModale)
     return;
 
-  if (modaleType===ModaleType.SIGNIN || modaleType===ModaleType.SIGNUP || modaleType===ModaleType.NONE) {
+  if (modaleType === ModaleType.SIGNIN || modaleType === ModaleType.SIGNUP || modaleType === ModaleType.NONE) {
     bkgModale.removeEventListener('click', () => {
       // TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
       // e.stopPropagation();

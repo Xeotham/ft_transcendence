@@ -16,16 +16,6 @@ if (!fs.existsSync(dbDir)) {
 
 const db = new Database(dbPath); /* process.env.DATABASE_URL */
 
-// TODO: Create the right tables with the right references
-
-// Create tables (if they don't exist)
-  // DROP TABLE IF EXISTS parameter;
-  // DROP TABLE IF EXISTS gamesUsers;
-  // DROP TABLE IF EXISTS message;
-  // DROP TABLE IF EXISTS contact;
-  // DROP TABLE IF EXISTS statsUsers;
-  // DROP TABLE IF EXISTS game;
-  // DROP TABLE IF EXISTS user;
 db.exec(` \
 
   

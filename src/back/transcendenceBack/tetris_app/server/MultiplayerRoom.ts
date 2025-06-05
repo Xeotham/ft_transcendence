@@ -21,15 +21,15 @@ export class MultiplayerRoom {
 		console.log("The code of the new room is " + this.code);
 		this.playersRemaining = 0;
 		this. settings = {
-			"isPrivate": false, // TODO : change to true
+			"isPrivate": true,
 			"isVersus": false,
 			"showShadowPiece": true,
 			"showBags": true,
 			"holdAllowed": true,
 			"showHold": true,
-			"infiniteHold": true, // TODO : change to false
-			"infiniteMovement": true, // TODO : change to false
-			"lockTime": -1, // TODO : change to 500
+			"infiniteHold": false,
+			"infiniteMovement": false,
+			"lockTime": 500,
 			"spawnARE": 0,
 			"softDropAmp": 1.5,
 			"level": 4,

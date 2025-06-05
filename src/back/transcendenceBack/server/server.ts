@@ -63,11 +63,6 @@ fastify.addHook('onRequest', (request, reply, done) => {
 	}
 });
 
-// TODO: Make it the rout to the SPA
-// fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-// 	return reply.sendFile('index.html');
-// });
-
 // Start the server
 fastify.listen({ port: parseInt(process.env.BACK_PORT!), host: "0.0.0.0" }, (err: Error | null, address: string) => {
 	if (err) {

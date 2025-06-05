@@ -187,8 +187,6 @@ const   tournamentFoundPage = () => {
 	document.getElementById("quit")?.addEventListener("click", () => quit("LEAVE"));
 }
 
-// TODO: Add spec tournament board
-
 const   confirmPage = () => {
 	loadPongHtml("confirm");
 }
