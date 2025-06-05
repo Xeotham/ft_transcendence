@@ -683,9 +683,7 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
 		const fullGameHistory = await Promise.all(gamesId.map(async (id) => {
 			const gameDetails = await getGameDetailsById(id); // Pass individual ID
 			gameDetails.forEach((gameDetail) => {
-				if (gameDetail.type === "tetris")
-					// console.log("Game Detail:", gameDetail);
-					gameDetail.username = getUsernameById(gameDetail.userId);
+				gameDetail.username = getUsernameById(gameDetail.userId);
 				gameDetail.userId = -1;
 				gameDetail.date = getGameById(id)?.date!;
 			})

@@ -34,6 +34,9 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) =
   if (!game1 || !game2) {
     return null;
   }
+  console.log("Game1:", game1);
+  console.log("Game2:", game2);
+
   stat.date = game1.date;
   stat.username = user.getUsername();
   stat.opponent = game1.username === user.getUsername() ? game2.username : game1.username;
@@ -47,7 +50,7 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) =
 export const  loadPongStat = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
   const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-  history.filter((e) => e.players[0].type !== 'pong');
+  history.filter((e) => e.players[0].type === 'pong');
   // console.log(history);
   const newHistory: pongStats[] = [];
   history.forEach((game) => {

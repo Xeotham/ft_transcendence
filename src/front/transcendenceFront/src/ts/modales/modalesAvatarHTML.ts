@@ -144,6 +144,7 @@ export const modaleAvatarEvents = async () => {
 			try {
 				avatarBase64 = await processUploadedAvatar(file);
 				patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: avatarBase64});
+				user.setAvatar(avatarBase64);
 				modaleDisplay(ModaleType.PROFILE);
 			} catch (error) {
 				console.error('Error processing uploaded avatar:', error);

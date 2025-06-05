@@ -272,6 +272,8 @@ export class   keys {
 export let userKeys: keys | null = null;
 
 (async () => {
+	if (!user.isAuthenticated())
+		return ;
 	const   newKeys = new keys();
 
 	userKeys = await newKeys.build();
