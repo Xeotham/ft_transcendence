@@ -12,7 +12,7 @@ import { O } from "./Pieces/O";
 import { I } from "./Pieces/I";
 import { clamp, delay, mod } from "./utils";
 import { idGenerator } from "../../../pong_app/utils";
-import {createTetrisGame} from "../../../user_management/api/controllers";
+import { createTetrisGame } from "../../../user_management/api/controllers";
 
 const   idGen = idGenerator()
 

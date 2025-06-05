@@ -47,7 +47,7 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 			<div id="clipboardCopy" class="${TCS.modaleTexteLink} text-[14px] text-left">
 				${imTexts.tetrisCreateMultiplayerRoomCopyCode}</div>
 			<div class="${TCS.gameTexteGris} text-[14px] text-left translate-y-[-5px] col-span-4">
-			5 ${imTexts.tetrisCreateMultiplayerRoomNbPlayers}</div>
+			${s.nbPlayers} ${imTexts.tetrisCreateMultiplayerRoomNbPlayers}</div>
 		</div>
 
 
@@ -205,7 +205,8 @@ export const saveMultiplayerRoomSettings = async () => {
 		"spawnARE": values["1"],
 		"softDropAmp": values["2"],
 		"level": values["3"],
-		"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked
+		"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
+		"canRetry": tetrisGameInformation.getSettings().canRetry,
 	});
 
 	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() });

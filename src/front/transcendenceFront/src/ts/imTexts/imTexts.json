@@ -243,11 +243,11 @@
         "back": "Retour",
         "copyCode": "copier",
         "start": "Démarrer",
-        "nbPlayers": "participants",
+        "nbPlayers": "participant.e.s",
         "settingsTitle": "Réglages",
         "isPrivate": "Privé",
         "isVersus": "Versus",
-        "showShadow": "Afficher les pièces",
+        "showShadow": "Afficher l'ombre",
         "showBags": "Afficher les sacs",
         "holdAllowed": "Autoriser le maintien",
         "showHold": "Afficher le maintien",
@@ -257,8 +257,7 @@
         "spawnARE": "Spawn ARE",
         "softDropAmp": "Multiplicateur de descente lente",
         "level": "Niveau de départ",
-        "isLeveling": "Niveau progressif",
-        "save": "Sauver"
+        "isLeveling": "Niveau progressif"
       },
       "displayMultiplayerRoom": {
         "title": "Tetris rooms",

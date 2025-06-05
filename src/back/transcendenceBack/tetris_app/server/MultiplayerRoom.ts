@@ -34,6 +34,7 @@ export class MultiplayerRoom {
 			"softDropAmp": 1.5,
 			"level": 4,
 			"isLevelling": false,
+			"canRetry": true,
 		}
 		this.addPlayer(socket, username);
 	}
@@ -49,6 +50,8 @@ export class MultiplayerRoom {
 	public addSetting(key: string, value: any): void{ this.settings[key] = value; this.sendSettingsToPlayers(); }
 
 	public addPlayer(socket: WebSocket, username: string): void		{
+		if (this.players.find((player) => player.getUsername() === username))
+			return console.log("Player " + username + " already exists in room " + this.code);
 		if (this.players.length <= 0) {
 			socket.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: "OWNER"}));
 			this.players.push(new MultiplayerRoomPlayer(socket, username, true));
@@ -58,9 +61,8 @@ export class MultiplayerRoom {
 			this.players.push(new MultiplayerRoomPlayer(socket, username));
 			this.settings.canRetry = false;
 		}
-		console.log("canRetry is set to " + this.settings.canRetry);
 		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
-		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
+		this.sendSettingsToPlayers();
 	}
 
 	public removePlayer(username: string): void	{
@@ -80,6 +82,7 @@ export class MultiplayerRoom {
 		}
 		if (this.players.length === 1)
 			this.settings.canRetry = true;
+		this.sendSettingsToPlayers();
 	}
 
 	public isEmpty(): boolean {
@@ -176,6 +179,7 @@ export class MultiplayerRoom {
 	}
 
 	private sendSettingsToPlayers(): void {
+		this.settings.nbPlayers = this.players.length;
 		for (const player of this.players) {
 			player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
 		}
