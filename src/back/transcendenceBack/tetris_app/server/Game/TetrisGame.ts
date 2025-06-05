@@ -61,6 +61,7 @@ export class TetrisGame {
 	// statistics
 
 	private beginningTime:				number;
+	private totalTime:					number;
 	private gameTime:					number;
 	private	combo:						number;
 	private	maxCombo:					number;
@@ -143,6 +144,7 @@ export class TetrisGame {
 		// statistics
 
 		this.beginningTime = Date.now();
+		this.totalTime = this.beginningTime;
 		this.gameTime = 0;
 		this.maxCombo = 0;
 		this.piecesPlaced = 0;
@@ -713,6 +715,7 @@ export class TetrisGame {
 				this.linesPerMinute = parseFloat((this.linesCleared / (this.gameTime / 1000 / 60)).toFixed(2));
 				this.attacksSentPerMinute = parseFloat((this.attacksSent / (this.gameTime / 1000 / 60)).toFixed(2));
 				this.attacksReceivedPerMinute = parseFloat((this.attacksReceived / (this.gameTime / 1000 / 60)).toFixed(2));
+				this.totalTime = Date.now() - this.beginningTime;
 				resolve();
 			}
 			Iteration();
@@ -743,8 +746,10 @@ export class TetrisGame {
 	}
 
 	getStats() {
-		const   stats: {[key: string]: number} = {
+		console.log("Total Time:", this.totalTime);
+		const   stats: {[key: string]: any} = {
 			gameTime: this.gameTime,
+			totalTime: (new Date(this.totalTime || 0).toISOString().substring(14, 23)),
 			maxCombo: this.maxCombo,
 			piecesPlaced: this.piecesPlaced,
 			piecesPerSecond: this.piecesPerSecond,

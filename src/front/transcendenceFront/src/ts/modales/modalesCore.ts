@@ -6,17 +6,28 @@ import { EL } from '../zone/zoneHTML.ts';
 import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
-import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
+import {
+  modalePongStatHTML,
+  modalePongStatEvents,
+  loadPongStat,
+  pongHistory,
+  modaleDislpayPrevNextPong
+} from './modalesPongStatHTML.ts';
 import {
   modaleTetrisStatHTML,
   modaleTetrisStatEvents,
   loadTetrisStat,
   modaleTetrisStatLineEvents,
-  modaleDislpayPrevNext, indexGame
+  modaleDislpayPrevNextTetris, indexGame, tetrisHistory
 } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
-import {modaleFriendListHTML, modaleFriendListEvents, loadFriendList} from './modalesFriendListHTML.ts';
+import {
+  modaleFriendListHTML,
+  modaleFriendListEvents,
+  loadFriendList,
+  modaleDislpayPrevNextFriend
+} from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../utils.ts';
 
@@ -66,7 +77,7 @@ export const modaleInit = () => {
 }
 
 export const modaleDisplay = async (modaleType: ModaleType) => {
-  if (!modale.content || !modale.zone || modale.type === modaleType) { return; }
+  if (!modale.content || !modale.zone || (modale.type === modaleType && modaleType !== ModaleType.FRIEND_LIST)) { return; }
 
   modale.type = modaleType;
   switch (modaleType) {
@@ -79,19 +90,20 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       modaleSignUpEvents();
       break;
     case ModaleType.PROFILE:
-      await loadFriendList()
+      await loadFriendList();
       modale.content.innerHTML = await modaleProfileHTML();
       modaleProfileEvents();
       break;
     case ModaleType.PONG_STATS:
       await loadPongStat();
-      modale.content.innerHTML = modalePongStatHTML(0); 
+      modale.content.innerHTML = modalePongStatHTML(0);
+      modaleDislpayPrevNextPong();
       modalePongStatEvents();
       break;
     case ModaleType.TETRIS_STATS:
       await loadTetrisStat();
       modale.content.innerHTML = modaleTetrisStatHTML(0);
-      modaleDislpayPrevNext();
+      modaleDislpayPrevNextTetris();
       modaleTetrisStatEvents();
       modaleTetrisStatLineEvents();
       break;
@@ -105,6 +117,7 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       break;
     case ModaleType.FRIEND_LIST:
       modale.content.innerHTML = modaleFriendListHTML(0);
+      modaleDislpayPrevNextFriend();
       modaleFriendListEvents();
       break;
     case ModaleType.FRIEND_PROFILE:

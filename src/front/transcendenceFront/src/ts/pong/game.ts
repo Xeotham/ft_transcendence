@@ -2,7 +2,7 @@ import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./
 import {address, user} from "../utils.ts";
 import  { loadPongPage, pongGameInfo } from "./pong.ts";
 import { specTournament, tourMessageHandler } from "./tournament.ts";
-import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
+import { hideZoneGame } from "../zone/zoneCore.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore

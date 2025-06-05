@@ -34,11 +34,20 @@ export const   tokenBlacklist = new Set();
 
 const generateDefaultAvatar = () => {
 	const filePath = path.join(__dirname, '../medias/defaultAvatar.png'); // Adjust the relative path
-	// console.log(filePath);
 	const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
-	// console.log(fileBuffer);
 	return fileBuffer;
 };
+
+export const    getAvatars = async (request: FastifyRequest, reply: FastifyReply) => {
+	const avatars: string[] = [];
+
+	for (let i = 1; i <= 24; ++i) {
+		const filePath = path.join(__dirname, `../medias/avatar${i}.png`); // Adjust the relative path
+		const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
+		avatars.push(fileBuffer); // Convert the Buffer to a Blob
+	}
+	reply.status(200).send({ avatars: avatars });
+}
 
 export const registerUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
@@ -72,32 +81,31 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
 
 export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-	const { username, type, update } = request.body as { username: string, type: string, update: string };
+	try {
+		const {username, type, update} = request.body as { username: string, type: string, update: string };
 
-	const user = getUserByUsername(username);
-	if (!user)
-		return reply.status(400).send({ message: 'User doesn\'t exist' });
+		const user = getUserByUsername(username);
+		if (!user)
+			return reply.status(400).send({message: 'User doesn\'t exist'});
 
-	if (type === "password")
-	{
-		try
-		{
-			const hashedPassword = await hashPassword(update);
+		if (type === "password") {
+			try {
+				const hashedPassword = await hashPassword(update);
 
-			updateUserById(user.id!, type, hashedPassword as string);
+				updateUserById(user.id!, type, hashedPassword as string);
 
-			return reply.status(201).send({ message: 'User updated successfully' });
-		}
-		catch (err)
-		{
-			return reply.status(400).send({ error: (err as Error).message });
+				return reply.status(201).send({message: 'User updated successfully'});
+			} catch (err) {
+				return reply.status(400).send({error: (err as Error).message});
+			}
+		} else {
+			updateUserById(user.id as number, type, update);
+
+			return reply.status(201).send({message: 'User updated successfully'});
 		}
 	}
-	else
-	{
-		updateUserById( user.id as number, type, update);
-
-		return reply.status(201).send({ message: 'User updated successfully' });
+	catch (e) {
+		console.error('Error updating user', e);
 	}
 };
 
@@ -173,8 +181,6 @@ export const    connectUser = async (request: FastifyRequest, reply: FastifyRepl
 
 	logUserById(user.id as number);
 
-	console.log("Connecting user:", user.username);
-
 	return reply.status(201).send({ message: 'User connected successfully', user: { username: user.username, avatar: user.avatar } });
 }
 
@@ -190,8 +196,6 @@ export const    disconnectUser = async (request: FastifyRequest, reply: FastifyR
 		return reply.status(401).send({ message: 'User already disconnected' });
 
 	logOutUserById(user.id as number);
-
-	console.log("Disconnecting user:", user.username);
 
 	return reply.status(201).send({ message: 'User disconnected successfully' });
 }
@@ -237,8 +241,10 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 
 	const   userFriend = getUserByUsername(usernameFriend);
 
-	if (!user || !userFriend)
-		return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username', disconnect: true });
+	if (!userFriend)
+		return reply.status(401).send({ message: "User with this username doesn't exist" });
 
 	if (user.id === userFriend.id)
 		return reply.status(401).send({ message: 'User cannot add himself' });
@@ -250,6 +256,7 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 
 		createContact( user1Id, user2Id );
 	}
+	return reply.status(201).send({ message: 'Friend request sent' });
 };
 
 
@@ -333,8 +340,8 @@ export const    deleteFriend = async (request: FastifyRequest, reply: FastifyRep
 		const   user2Id = userFriend.id as number;
 
 		deleteContact(user1Id, user2Id);
-
 	}
+	return reply.status(201).send({ message: 'Friend deleted' });
 };
 
 // export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) =>
@@ -614,25 +621,10 @@ export const createTetrisGame = (data: TetrisGame) =>
 
 		const gameTetrisId = data.getGameId();
 
+		// console.log(data.getStats());
 		createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, data.getStats());
 		updateStats(player1.id);
 
-		// else
-		// {
-		//     const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
-		//     const tetrisStatP1J = JSON.parse(validJsonString);
-		//     const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
-		//     const tetrisStatP2J = JSON.parse(validJsonString2);
-		//     const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
-		//     const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
-		//     console.log(StatP1);
-		//     console.log(StatP2);
-		//     createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
-		//     createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
-		//     updateStats(player1.id);
-		//     updateStats(player2.id);
-		//     return reply.status(401).send({ message: 'Tetris game saved'});
-		// }
 	}
 };
 
@@ -675,9 +667,7 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
 		const fullGameHistory = await Promise.all(gamesId.map(async (id) => {
 			const gameDetails = await getGameDetailsById(id); // Pass individual ID
 			gameDetails.forEach((gameDetail) => {
-				if (gameDetail.type === "tetris")
-					// console.log("Game Detail:", gameDetail);
-					gameDetail.username = getUsernameById(gameDetail.userId);
+				gameDetail.username = getUsernameById(gameDetail.userId);
 				gameDetail.userId = -1;
 				gameDetail.date = getGameById(id)?.date!;
 			})

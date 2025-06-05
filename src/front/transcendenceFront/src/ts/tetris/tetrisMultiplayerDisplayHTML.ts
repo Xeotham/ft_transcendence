@@ -102,11 +102,6 @@ const tetrisDisplayMultiplayerRoomEvents = () => {
 		joinRoom((document.getElementById("tetrisDisplayMultiplayerRoomCodeText") as HTMLInputElement).value);
 	});
 
-	// document.getElementById("tetrisDisplayMultiplayerRoomCodeSubmit")?.addEventListener("click", () => {
-	// 	console.log("HERERERE?");
-	// 	joinRoom((document.getElementById("room-code") as HTMLInputElement).value);
-	// });
-
 	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => 
 		getMultiplayerRooms());
 

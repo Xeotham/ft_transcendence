@@ -86,6 +86,7 @@ db.exec(` \
     type						VARCHAR(50) NOT NULL,
     gameTetrisId				INTEGER NOT NULL DEFAULT 0,
     gameTime 					INTEGER DEFAULT 0,
+    totalTime 				    VARCHAR(50) DEFAULT '00:00:00',
     maxCombo 					INTEGER DEFAULT 0,
     piecesPlaced 				INTEGER DEFAULT 0,
     piecesPerSecond				INTEGER DEFAULT 0,
