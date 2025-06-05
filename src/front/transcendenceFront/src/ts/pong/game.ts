@@ -1,13 +1,13 @@
-import {Game, score, buttons, intervals, responseFormat, pongSfxPlayer} from "./utils.ts";
-import {address, user} from "../utils.ts";
-import  { loadPongPage, pongGameInfo } from "./pong.ts";
-import { specTournament, tourMessageHandler } from "./tournament.ts";
-import { hideZoneGame } from "../zone/zoneCore.ts";
+import { Game, score, buttons, intervals, responseFormat, pongSfxPlayer } from "./utils.ts";
+import { address, user} from "../utils.ts";
+import { loadPongPage, pongGameInfo } from "./pong.ts";
+import { tourMessageHandler } from "./tournament.ts";
+import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 // @ts-ignore
 import  page from "page";
 // @ts-ignore
 import { loadPongHtml } from "./pongHTML.ts";
-import {imTexts} from "../imTexts/imTexts.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
 
 
 export class PongRoom {
@@ -219,12 +219,12 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 	quitRoom(msg);
 	if (matchType === "TOURNAMENT")
 		quitTournament(msg, winner);
-
-	if ((matchType === "PONG" && pongGameInfo.getMatchType() === "TOURNAMENT") && !winner) {
-		specTournament(pongGameInfo.getTournament()?.getId() as number) // TODO : Change Idle to spectator list of tournaments round room
+	if (pongGameInfo.getMatchType() === "TOURNAMENT" && matchType === "PONG") {
+		loadPongPage("match-found")
 	}
 
 	hideZoneGame();
+
 }
 
 const   quitRoom = (msg: string = "LEAVE") => {
@@ -276,7 +276,8 @@ const quitTournament = (msg: string = "LEAVE", winner: number | null) => {
 		console.log("Connection closed");
 		socket.onclose = null; // Remove any existing onclose handler
 		socket.close();
-		loadPongPage("idle");
+		if (zone.state === "PONG")
+			loadPongPage("idle");
 	}
 	pongGameInfo.resetTournament();
 	console.log("Leaving tournament");
@@ -296,7 +297,7 @@ export const   messageHandler = (event: MessageEvent)=> {
 				console.log("data: " + res.data);
 			return ;
 		case "ALERT":
-			alert(res.message);
+			// alert(res.message);
 			return console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
 		case "ERROR":
 			//fallthrough
@@ -349,17 +350,15 @@ const	gameMessageHandler = (res: responseFormat) => {
 				return ;
 			document.addEventListener("keydown", keyHandler);
 			document.addEventListener("keyup", keyHandler);
+
 			return ;
 		case "FINISH":
 			if (pongGameInfo.getRoom()?.getPlayer() === "SPEC")
 				return quit("LEAVE", "PONG");
 			if (pongGameInfo.getRoom()?.getIsSolo())
-				alert(res.data + " won!");
+				console.log(res.data + " won!");
 			else {
-				if (pongGameInfo.getMatchType() === "TOURNAMENT")
-					res.data === pongGameInfo.getRoom()?.getPlayer() ? console.log("You won!") : console.log("You lost!");
-				else
-					res.data === pongGameInfo.getRoom()?.getPlayer() ? alert("You won!") : alert("You lost!");
+				res.data === pongGameInfo.getRoom()?.getPlayer() ? console.log("You won!") : console.log("You lost!");
 			}
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
@@ -449,6 +448,10 @@ const   confirmGame = () => {
 	loadPongPage("confirm");
 
 	let remainingTime = 10;
+
+	document.getElementById("quit")?.addEventListener("click", () => quit());
+
+
 	pongGameInfo.getRoom()?.clearIntervals();
 	// console.log("Room? : " + gameInfo.getRoom());
 	pongGameInfo.getRoom()?.setQueueInterval(setInterval(() => {

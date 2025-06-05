@@ -746,7 +746,6 @@ export class TetrisGame {
 	}
 
 	getStats() {
-		console.log("Total Time:", this.totalTime);
 		const   stats: {[key: string]: any} = {
 			gameTime: this.gameTime,
 			totalTime: (new Date(this.totalTime || 0).toISOString().substring(14, 23)),

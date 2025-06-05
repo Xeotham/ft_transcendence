@@ -1,12 +1,13 @@
 import { RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInformation } from "./utils.ts";
 import { createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit } from "./game.ts";
-import { getTournamentName } from "./tournament.ts";
+import {getTournamentName, listTournaments} from "./tournament.ts";
 import { loadPongHtml } from "./pongHTML.ts";
 import { drawGame } from "./pongDraw.ts";
 import { copyToClipboard } from "../tetris/tetrisMultiplayerCreateHTML.ts";
 // @ts-ignore
 import  page from "page"
 import { resetGamesSocket } from "../utils.ts";
+import {listRoomsSpectator} from "./spectate.ts";
 
 export const	pongGameInfo: gameInformation = new gameInformation();
 
@@ -156,12 +157,14 @@ const roomListPage = (rooms: RoomInfo[]) => {
 	loadPongHtml("list-rooms", { roomLst: rooms });
 
 	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong/versus"); });
+	document.getElementById("pongSpectateRefresh")?.addEventListener("click", () => { listRoomsSpectator() });
 }
 
 const tournamentListPage = (tournaments: TournamentInfo[]) => {
 	loadPongHtml("list-tournaments", { tourLst: tournaments });
 
 	document.getElementById("back")?.addEventListener("click", () => { page.show("/pong/tournament"); });
+	document.getElementById("pongSpectateRefresh")?.addEventListener("click", () => { listTournaments(); });
 }
 
 const   tournamentNamePage = () => {

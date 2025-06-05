@@ -50,8 +50,10 @@ export class MultiplayerRoom {
 	public addSetting(key: string, value: any): void{ this.settings[key] = value; this.sendSettingsToPlayers(); }
 
 	public addPlayer(socket: WebSocket, username: string): void		{
-		if (this.players.find((player) => player.getUsername() === username))
+		if (this.players.find((player) => player.getUsername() === username)) {
+			socket.send(JSON.stringify({ type: "MULTIPLAYER_LEAVE" }));
 			return console.log("Player " + username + " already exists in room " + this.code);
+		}
 		if (this.players.length <= 0) {
 			socket.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: "OWNER"}));
 			this.players.push(new MultiplayerRoomPlayer(socket, username, true));

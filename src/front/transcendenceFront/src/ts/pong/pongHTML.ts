@@ -4,7 +4,7 @@ import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils
 import { pongGameInfo } from "./pong.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { quit } from "./game.ts"; // TODO a valider 
-import { showZoneGame} from "../zone/zoneCore.ts";
+import {hideZoneGame, showZoneGame} from "../zone/zoneCore.ts";
 import { pongSettingsHtml } from "./pongSettingsHTML.ts";
 
 // @ts-ignore
@@ -167,6 +167,7 @@ const   pongVersusSpectateHtml = (roomId: number) => { //TODO pong versus specta
 
 		<div><button id="spectate" class="${TCS.gameBlockLink}">${imTexts.pongModalesSpecRoomButton}</button></div>
 		<div class="h-[30px]"></div>
+		
 	</div>`;
 
 	// <div><button id="return" class="${TCS.pongButton}">Return to Room List</button></div>
@@ -376,7 +377,9 @@ const pongVersusListHtml = (rooms: RoomInfo[]) => { // TOTO liste de rooms (spec
 		
 	listHTML += `
 		<div class="h-[30px]"></div>
-	</div>`;
+		<div class="text-left"><a id="pongSpectateRefresh" class="${TCS.modaleTexteLink}">
+			${imTexts.tetrisDisplayMultiplayerRoomRefresh}</a></div>
+		</div>`;
 	EL.contentPong.innerHTML = listHTML;
 
 	// <div class="${TCS.pongNav1}">
@@ -408,21 +411,24 @@ const PongTournamentListHtml = (tournaments: TournamentInfo[]) => {
 		`;
 	}
 	else {
-	tournaments.forEach((tournament: TournamentInfo) => {
-		listHTML += `
-		<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">
-			<span class="text-yellow-600">» </span>
-			<span class="text-stone-950">
-			Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}</span>
-		</a>
-		<div class="h-[10px]"></div>
-		`;
-	});
+		tournaments.forEach((tournament: TournamentInfo) => {
+			listHTML += `
+			<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">
+				<span class="text-yellow-600">» </span>
+				<span class="text-stone-950">
+				Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}</span>
+			</a>
+			<div class="h-[10px]"></div>
+			`;
+		});
 	}
 
 	listHTML += `
 		<div class="h-[20px]"></div>
-	</div>`;
+			<div class="text-left"><a id="pongSpectateRefresh" class="${TCS.modaleTexteLink}">
+				${imTexts.tetrisDisplayMultiplayerRoomRefresh}</a></div>
+			</div>
+		</div>`;
 	EL.contentPong.innerHTML = listHTML;
 
 // 	<li class="flex-1" class="${TCS.pongButton}">
@@ -561,9 +567,9 @@ const   pongDrawBoardHtml = () => {
 	<div class="absolute z-50 w-full h-full">
 
 		<div class="absolute z-50 top-[10px] right-[10px]">
-			<button class="${TCS.pongButton}" id="quit">Quit</button>
+			<button class="${TCS.pongButton}" id="quitPong">Quit</button>
 		</div>
-		
+
 		<div id="pongGameCanvas" class="absolute z-25 w-full h-full flex items-center justify-center bg-black">		
 			<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
 		</div>
@@ -575,9 +581,6 @@ const   pongDrawBoardHtml = () => {
 
 const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
 	if (!EL.contentPong) return ;
-
-	// TODO: Add quit button
-	// TODO no quit/back ?
 
 	EL.contentPong.innerHTML = `
 	<div class="${TCS.tetrisWindowBkg}">
@@ -600,14 +603,14 @@ const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
 }
 
 const   pongQuitButton = () => {
-	const quitButton = document.getElementById("quit") as HTMLButtonElement;
+	const quitButton = document.getElementById("quitPong") as HTMLButtonElement;
 
 	if (!quitButton)
 		return ;
 
 	quitButton.addEventListener("click", () => {
 		// TODO quit server game ?
-		quit();// TODO a valider 
+		quit();// TODO a valider
 		page("/pong");
 	});
 }

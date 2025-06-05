@@ -83,12 +83,6 @@ const pongRouter = () => {
 		getRoomInfo(roomId);
 		zoneSet("PONG");
 	})
-	// @ts-ignore PONG TOURNAMENT ROOM INFO
-	page("/pong/tournament/room/:id", ({ params } ) => {
-		const   roomId = Number(params.id);
-		getTourRoomInfo(roomId);
-		zoneSet("PONG");
-	})
 }
 
 const tetrisRouter = () => {

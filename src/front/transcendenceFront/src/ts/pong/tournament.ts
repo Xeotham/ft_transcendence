@@ -81,10 +81,6 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 			pongGameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
 			// loadPage("room-found");
 			return ;
-		case "SPECLST":
-			if (!pongGameInfo.getTournament()?.getLostTournament())
-				return ;
-			return await specTournament(pongGameInfo.getTournament()?.getId() as number);
 		case "CREATE":
 			console.log("Creating a pong room for a tournament instance");
 			pongGameInfo.setRoom(new PongRoom(pongGameInfo?.getTournament()?.getSocket()!), false);
@@ -213,63 +209,3 @@ const   tournamentFound = () => {
 	}
 	document.getElementById("quit-room")?.addEventListener("click", () => quit("Leaving room"));
 }
-
-export const    specTournament = async (tournamentId: number) => {
-	fetch(`http://${address}/api/pong/get_tournament_round_rooms?id=${tournamentId}`, {
-		method: "GET",
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	})
-	.then(response => {
-		if (!response.ok) {
-			throw new Error('Network response was not ok ' + response.statusText);
-		}
-		return response.json();
-	})
-	.then((data: RoomInfo[])  => {
-		if (data.length === undefined) {
-			return ;
-		}
-		loadPongPage("tour-rooms-list", { roomLst: data });
-		// console.log("Testing this bullshit");
-	})
-	.catch(error => {
-		alert(error);
-		page.show("/pong");
-	});
-}
-
-
-export const getTourRoomInfo = (roomId: number) => {
-
-	fetch(`http://${address}/api/pong/get_tournament_room_info?roomId=${roomId}&id=${pongGameInfo.getTournament()?.getId()}`, {
-		method: "GET",
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok ' + response.statusText);
-			}
-			return response.json();
-		})
-		.then((data: RoomInfo) => {
-			const   full = data.full;
-			const   isSolo = data.isSolo;
-
-			if (full === undefined || isSolo === undefined)
-				throw new Error("Room does not exist");
-			loadPongPage("spec-room-info", { roomId: roomId });
-
-			document.getElementById('spectate')?.addEventListener("click", () => {
-				joinSpectate(roomId);
-			});
-		})
-		.catch(error => {
-			alert(error);
-			specTournament(roomId);
-		});
-}
-

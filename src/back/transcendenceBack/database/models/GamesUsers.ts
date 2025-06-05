@@ -110,7 +110,6 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 	// 		`);
 	// 	stmt.run(value, userId, gameId);
 	// })
-	console.log("Finishing Update Tetris Stats");
 
 	//
 	// Object.keys(tetrisStat as object).forEach((key) => {

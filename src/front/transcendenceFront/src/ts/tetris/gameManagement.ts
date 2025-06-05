@@ -1,7 +1,7 @@
 //import { loadTetrisHtml } from "./tetrisHTML.ts";
 import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation } from "./tetris.ts";
-import { postToApi, address, user, userKeys } from "../utils.ts";
+import {postToApi, address, user, userKeys, getFromApi} from "../utils.ts";
 import {tetrisBoardHtml, tetrisIdleHtml} from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 
@@ -93,23 +93,16 @@ export const createRoom = () => {
 	tetrisGameInformation.setRoomOwner(true);
 }
 
-export const getMultiplayerRooms = () => {
-	fetch(`http://${address}/api/tetris/getMultiplayerRooms`, {
-		method: "GET",
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok ' + response.statusText);
-			}
-			return response.json();
-		})
-		.then((data: roomInfo[]) => {
-			loadTetrisPage("display-multiplayer-room", {rooms: data});
-		})
-		.catch(error => { alert(error); });
+export const getMultiplayerRooms = async () => {
+
+	try {
+		const res = await getFromApi(`http://${address}/api/tetris/getMultiplayerRooms`);
+
+		loadTetrisPage("display-multiplayer-room", {rooms: res});
+	}
+	catch (error) {
+		alert(error);
+	}
 }
 
 export const joinRoom = (roomCode: string) => {
@@ -287,7 +280,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			effectPlayer(res.argument as string, res.value);
 			return ;
 		case "STATS":
-			console.log("Stats: " + JSON.stringify(res.argument));
+			// console.log("Stats: " + JSON.stringify(res.argument));
 			return;
 		case "MULTIPLAYER_FINISH":
 			console.log("The multiplayer game has finished. You ended up at place " + res.argument);

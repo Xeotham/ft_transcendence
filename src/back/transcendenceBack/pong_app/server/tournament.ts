@@ -231,10 +231,9 @@ export class Tournament {
 
 			console.log("\x1b[38;5;204mThe Grand winner is " + winner?.username + "\x1b[0m");
 			this.sendToAll({type: "INFO", message: "Tournament ended"});
-			this.sendToAll({
-				type: "ALERT", message: "The Grand winner is " + winner?.username,
-			});
-			// TODO : Special screen for the end of the tournament
+			// this.sendToAll({
+			// 	type: "ALERT", message: "The Grand winner is " + winner?.username,
+			// });
 			this.sendToAll({type: "LEAVE", data: "TOURNAMENT", winner: (winner !== undefined ? winner?.username : "Nobody")});
 			deleteTournament(this.id);
 			return;
