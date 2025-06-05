@@ -2,13 +2,13 @@ import {
 	Game,
 	boardWidth,
 	boardHeight, ballSize, pongTextureHandler,
-	gameInformation
 } from "./utils.ts";
 
-export const pongGameInfo: gameInformation = new gameInformation();
+// export const pongGameInfo: gameInformation = new gameInformation();
 
 // @ts-ignore
 import  page from "page"
+import {pongGameInfo} from "./pong.ts";
 
 
 const   drawBackground = (ctx: CanvasRenderingContext2D, width: number, height: number ) => {
@@ -77,7 +77,7 @@ export const drawGame =  (game: Game) => {
 		paddle1Coord = {x: game.paddle1.x + boardCoord.x, y: game.paddle1.y + boardCoord.y};
 		paddle2Coord = {x: game.paddle2.x + boardCoord.x, y: game.paddle2.y + boardCoord.y};
 		ballCoord = {x: game.ball.x + boardCoord.x - ballSize, y: game.ball.y + boardCoord.y - ballSize};
-		if (pongGameInfo.getRoom()?.getPlayer() == "P2") {
+		if (pongGameInfo.getRoom()?.getPlayer() === "P2") {
 			paddle1Coord = { x: canvas.width - paddle1Coord.x - 10, y: paddle1Coord.y };
 			paddle2Coord = { x: canvas.width - paddle2Coord.x - 10, y: paddle2Coord.y };
 			ballCoord = { x: canvas.width - ballCoord.x - 20, y: ballCoord.y };
@@ -96,14 +96,8 @@ export const drawGame =  (game: Game) => {
 	// Draw score
 	if (game.score)
 		drawScore(ctx, game.score.player1, game.score.player2, canvas);
-	// c.fillStyle = "black";
-	// c.fillRect(0, 0, canvas.width, canvas.height);
 	// Draw ball
 	drawBall(ctx, ballCoord!);
-	// ctx.fillStyle = "white";
-	// ctx.beginPath();
-	// ctx.arc(game.ball.x + boardCoord.x, game.ball.y + boardCoord.y, game.ball.size, 0, Math.PI * 2);
-	// ctx.fill();
 
 	// Draw paddles
 	drawPaddle(ctx, paddle1Coord!, false); // User paddle
