@@ -249,12 +249,16 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 	if (user.id === userFriend.id)
 		return reply.status(401).send({ message: 'User cannot add himself' });
 
-	if (userFriend.id)
-	{
-		const   user1Id = user.id as number;
-		const   user2Id = userFriend.id as number;
+	try {
+		if (userFriend.id) {
+			const user1Id = user.id as number;
+			const user2Id = userFriend.id as number;
 
-		createContact( user1Id, user2Id );
+			createContact(user1Id, user2Id);
+		}
+	}
+	catch (error) {
+		return reply.status(401).send({ message: 'User already added as a friend' });
 	}
 	return reply.status(201).send({ message: 'Friend request sent' });
 };
