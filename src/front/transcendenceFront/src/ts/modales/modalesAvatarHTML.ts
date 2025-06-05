@@ -4,10 +4,17 @@ import { modaleDisplay, ModaleType } from './modalesCore.ts';
 import {patchToApi, address, user, UserInfo, getFromApi} from "../utils.ts";
 import { modaleAlert } from './modalesCore.ts';
 
-let   defaultAvatars: string[] = [];
+let   defaultAvatars: { url: string, base64: string }[] = [];
 
 export const    loadDefaultAvatars = async () => {
-	defaultAvatars = (await getFromApi(`http://${address}/api/user/get-avatars`)).avatars;
+	const   avatars: string[] = (await getFromApi(`http://${address}/api/user/get-avatars`)).avatars;
+
+	avatars.forEach((avatar) => {
+		defaultAvatars.push({
+			url: URL.createObjectURL(UserInfo.base64ToBlob(avatar)),
+			base64: avatar
+		})
+	})
 }
 
 export let modaleAvatarHTML = () => {
@@ -51,7 +58,7 @@ const   showDefaultAvatars = () => {
 	let     avatarHTML = '';
 
 	defaultAvatars.forEach((avatar, index) => {
-		const   url = URL.createObjectURL(UserInfo.base64ToBlob(avatar));
+		const   url = avatar.url;
 		avatarHTML += `
 			<div id="profileAvatar${index}" class="${TCS.modaleAvatarChoose}">
 				<img id="avatar${index}" src="${url}"/>
@@ -152,7 +159,7 @@ export const modaleAvatarEvents = async () => {
 		avatar.addEventListener('click', async () => {
 			if (!avatar)
 				return;
-			user.setAvatar(defaultAvatars[i]);
+			user.setAvatar(defaultAvatars[i].base64);
 			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: defaultAvatars[i]});
 			modaleDisplay(ModaleType.PROFILE);
 		})
