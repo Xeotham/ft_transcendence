@@ -11,6 +11,7 @@ import userRoutes from '../user_management/api/routes';
 import {tokenBlacklist} from "../user_management/api/controllers";
 import jwt from "jsonwebtoken";
 import {createObject} from "rxjs/internal/util/createObject";
+import {getUserByUsername} from "../database/models/Users";
 
 config();
 
@@ -36,7 +37,8 @@ fastify.register((fastify)=>{
 })
 
 fastify.addHook('onRequest', (request, reply, done) => {
-	const token = request.headers.authorization?.split(' ')[1];
+	const   username = request.headers.username;
+	const   token = request.headers.authorization?.split(' ')[1];
 
 
 	if (token && tokenBlacklist.has(token)) {
@@ -45,9 +47,13 @@ fastify.addHook('onRequest', (request, reply, done) => {
 		if (token) {
 			jwt.verify(token, process.env.AUTH_KEY!, (err, decoded) => {
 				if (err) {
-					console.log(err);
 					reply.status(401).send({message: 'Token is invalid', disconnect: true});
-				} else {
+				}
+				else if (!getUserByUsername(username as string)) {
+					reply.status(401).send({message: 'User does not exist', disconnect: true});
+				}
+				else {
+					if (getUserByUsername(username as string))
 					// request.user = decoded; // Attach user info to request
 					done();
 				}

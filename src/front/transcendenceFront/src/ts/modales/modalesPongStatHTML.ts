@@ -34,8 +34,6 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) =
   if (!game1 || !game2) {
     return null;
   }
-  console.log("Game1:", game1);
-  console.log("Game2:", game2);
 
   stat.date = game1.date;
   stat.username = user.getUsername();
@@ -49,8 +47,7 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) =
 
 export const  loadPongStat = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-  history.filter((e) => e.players[0].type === 'pong');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'pong');
   // console.log(history);
   const newHistory: pongStats[] = [];
   history.forEach((game) => {
@@ -116,7 +113,7 @@ const getModalePongStatListHTML = (page: number) => {
     <span id="PongPrev"><a id="PongStatsPrev" class="${TCS.modaleTexteLink}">
     ${imTexts.modalesPongStatsPrev}</a></span>
     <span id="PongSlash">/</span>
-    <span id="PongPrev"><a id="PongStatsNext" class="${TCS.modaleTexteLink}">
+    <span id="PongNext"><a id="PongStatsNext" class="${TCS.modaleTexteLink}">
     ${imTexts.modalesPongStatsNext}</a></span>
   </div>`;
 
@@ -144,6 +141,7 @@ export const modalePongStatEvents = () => {
     if (pongStatPage <= 0 || !modale.content)
       return;
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
+    modaleDislpayPrevNextPong();
     modalePongStatEvents();
   });
 
@@ -153,7 +151,32 @@ export const modalePongStatEvents = () => {
     if ((pongStatPage + 1) * 10 < pongHistory.length)
     {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
+      modaleDislpayPrevNextPong();
       modalePongStatEvents();
     }
   });
 }
+
+export const modaleDislpayPrevNextPong = () => {
+
+  const prev = document.getElementById('PongPrev');
+  const next = document.getElementById('PongNext');
+  const slash = document.getElementById('PongSlash');
+
+  const isNext = pongHistory.length - (pongStatPage * 10) > 10;
+
+  // console.log("PREV " + isNext);
+  // console.log("Prev " + prev);
+  // console.log("Next " + next);
+  // console.log("slash " + slash);
+
+
+  if (!isNext)
+    next?.classList.add('hidden');
+  if (pongStatPage === 0)
+    prev?.classList.add('hidden');
+  if (!isNext || pongStatPage === 0)
+    slash?.classList.add('hidden');
+
+}
+

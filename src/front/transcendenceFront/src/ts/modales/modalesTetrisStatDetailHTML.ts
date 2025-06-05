@@ -9,6 +9,7 @@ import {user} from "../utils.ts";
 interface GameUserInfo
 {
   date: 	 string;
+  totalTime: 	string;
   username?: string;
   userId: number;
   score: 	number;
@@ -49,52 +50,78 @@ interface GameUserInfo
 
 const getModaleTetrisStatListDetailsHTML = (gameIndex: number) => {
   const game = tetrisGames[gameIndex];
-  console.log(tetrisGames);
   const player = game.players.find((p: GameUserInfo) => p.username === user.getUsername());
+
 
   let listHTML = `
   <div id="tetrisStatsDetailText" class="${TCS.modaleTexte}">
     <p>Date: ${player?.date}</p>
     <p>Score: ${player?.score}</p>
+    <p>Total Time: ${player?.totalTime}</p>
     <p>Max Combo: ${player?.maxCombo}</p>
-    <p>Pieces Placed: ${player?.piecesPlaced}</p>
-    <p>Pieces Per Second: ${player?.piecesPerSecond}</p>
-    <p>Attacks Sent: ${player?.attacksSent}</p>
-    <p>Attacks Sent Per Minute: ${player?.attacksSentPerMinute}</p>
-    <p>Attacks Received: ${player?.attacksReceived}</p>
-    <p>Attacks Received Per Minute: ${player?.attacksReceivedPerMinute}</p>
-    <p>Keys Pressed: ${player?.keysPressed}</p>
-    <p>Keys Per Piece: ${player?.keysPerPiece}</p>
-    <p>Keys Per Second: ${player?.keysPerSecond}</p>
-    <p>Holds: ${player?.holds}</p>
-    <p>Lines Cleared: ${player?.linesCleared}</p>
-    <p>Lines Per Minute: ${player?.linesPerMinute}</p>
     <p>Max B2B: ${player?.maxB2B}</p>
     <p>Perfect Clears: ${player?.perfectClears}</p>
-    <p>Single: ${player?.single}</p>
-    <p>Double: ${player?.double}</p>
-    <p>Triple: ${player?.triple}</p>
-    <p>Quad: ${player?.quad}</p>
-    <p>Tspin Zero: ${player?.tspinZero}</p>
-    <p>Tspin Single: ${player?.tspinSingle}</p>
-    <p>Tspin Double: ${player?.tspinDouble}</p>
-    <p>Tspin Triple: ${player?.tspinTriple}</p>
-    <p>Mini Tspin Zero: ${player?.miniTspinZero}</p>
-    <p>Mini Tspin Single: ${player?.miniTspinSingle}</p>
-    <p>Mini Spin Zero: ${player?.miniSpinZero}</p>
-    <p>Mini Spin Single: ${player?.miniSpinSingle}</p>
-    <p>Mini Spin Double: ${player?.miniSpinDouble}</p>
-    <p>Mini Spin Triple: ${player?.miniSpinTriple}</p>
-    <p>Mini Spin Quad: ${player?.miniSpinQuad}</p>
+    <p>Pieces: ${player?.piecesPlaced} placed | ${player?.piecesPerSecond}/s</p>
+    <p>Attacks Sent: ${player?.attacksSent} | ${player?.attacksSentPerMinute}/min</p>
+    <p>Attacks Received: ${player?.attacksReceived} | ${player?.attacksReceivedPerMinute}/min</p>
+    <p>Keys: ${player?.keysPressed} pressed | ${player?.keysPerPiece}/pieces | ${player?.keysPerSecond}/s</p>
+    <p>Holds: ${player?.holds}</p>
+    <p>Lines: ${player?.linesCleared} cleared | ${player?.linesPerMinute}/min</p>
+    
+    <table class="${TCS.modaleTexte}">
+    <thead>
+      <tr>
+        <th>TYPE</th>
+        <th>Zero</th>
+        <th>Single</th>
+        <th>Double</th>
+        <th>Triple</th>
+        <th>Quad</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <td>Clears</td>
+        <td>X</td>
+        <td>${player?.single}</td>
+        <td>${player?.double}</td>
+        <td>${player?.triple}</td>
+        <td>${player?.quad}</td>
+        </tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <td>Tspin</td>
+        <td>${player?.tspinZero}</td>
+        <td>${player?.tspinSingle}</td>
+        <td>${player?.tspinDouble}</td>
+        <td>${player?.tspinTriple}</td>
+        <td>X</td>
+      </tr>
+      <tr>
+        <td>Mini Tspin</td>
+        <td>${player?.miniTspinZero}</td>
+        <td>${player?.miniTspinSingle}</td>
+        <td>X</td>
+        <td>X</td>
+        <td>X</td>
+      </tr>
+      <tr>
+        <td>Mini Spin</td>
+        <td>${player?.miniSpinZero}</td>
+        <td>${player?.miniSpinSingle}</td>
+        <td>${player?.miniSpinDouble}</td>
+        <td>${player?.miniSpinTriple}</td>
+        <td>${player?.miniSpinQuad}</td>
+      </tr>
+    </tbody>
+  </table>
   </div>
   `;
   return listHTML;
 };
 
 export const modaleTetrisStatDetailHTML = (id: number) => {
-
-  // TODO: récupérer les données de la partie
-  console.log("modaleTetrisStatDetailHTML", id); // TODO: enlever
 
   let TetrisStatDetailHTML = `
     <div id="tetrisStatsDetailTitle" class="${TCS.modaleTitre}">

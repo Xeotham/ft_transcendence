@@ -181,8 +181,6 @@ export const    connectUser = async (request: FastifyRequest, reply: FastifyRepl
 
 	logUserById(user.id as number);
 
-	console.log("Connecting user:", user.username);
-
 	return reply.status(201).send({ message: 'User connected successfully', user: { username: user.username, avatar: user.avatar } });
 }
 
@@ -198,8 +196,6 @@ export const    disconnectUser = async (request: FastifyRequest, reply: FastifyR
 		return reply.status(401).send({ message: 'User already disconnected' });
 
 	logOutUserById(user.id as number);
-
-	console.log("Disconnecting user:", user.username);
 
 	return reply.status(201).send({ message: 'User disconnected successfully' });
 }
@@ -245,8 +241,10 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 
 	const   userFriend = getUserByUsername(usernameFriend);
 
-	if (!user || !userFriend)
-		return reply.status(401).send({ message: 'Invalid username' });
+	if (!user)
+		return reply.status(401).send({ message: 'Invalid username', disconnect: true });
+	if (!userFriend)
+		return reply.status(401).send({ message: "User with this username doesn't exist" });
 
 	if (user.id === userFriend.id)
 		return reply.status(401).send({ message: 'User cannot add himself' });
@@ -258,6 +256,7 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 
 		createContact( user1Id, user2Id );
 	}
+	return reply.status(201).send({ message: 'Friend request sent' });
 };
 
 
@@ -341,8 +340,8 @@ export const    deleteFriend = async (request: FastifyRequest, reply: FastifyRep
 		const   user2Id = userFriend.id as number;
 
 		deleteContact(user1Id, user2Id);
-
 	}
+	return reply.status(201).send({ message: 'Friend deleted' });
 };
 
 // export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) =>
@@ -622,25 +621,10 @@ export const createTetrisGame = (data: TetrisGame) =>
 
 		const gameTetrisId = data.getGameId();
 
+		// console.log(data.getStats());
 		createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, data.getStats());
 		updateStats(player1.id);
 
-		// else
-		// {
-		//     const validJsonString = tetrisStatP1.replace(/(\w+):/g, '"$1":');
-		//     const tetrisStatP1J = JSON.parse(validJsonString);
-		//     const validJsonString2 = tetrisStatP2.replace(/(\w+):/g, '"$1":');
-		//     const tetrisStatP2J = JSON.parse(validJsonString2);
-		//     const StatP1 = JSON.parse(JSON.stringify(tetrisStatP1J));
-		//     const StatP2 = JSON.parse(JSON.stringify(tetrisStatP2J));
-		//     console.log(StatP1);
-		//     console.log(StatP2);
-		//     createUserGameStatsTetris(player1.id, gameId, scoreP1, username1 === winner, type, StatP1);
-		//     createUserGameStatsTetris(player2.id, gameId, scoreP2, username2 === winner, type, StatP2);
-		//     updateStats(player1.id);
-		//     updateStats(player2.id);
-		//     return reply.status(401).send({ message: 'Tetris game saved'});
-		// }
 	}
 };
 

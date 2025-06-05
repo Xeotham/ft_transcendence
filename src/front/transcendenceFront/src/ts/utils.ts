@@ -10,7 +10,7 @@ export class UserInfo {
 		this.token = localStorage.getItem("authToken") || null;
 		if (!this.token)
 			localStorage.clear();
-		this.username = localStorage.getItem("username") || UserInfo.generateUsername();
+		this.username = localStorage.getItem("username") || "";
 		this.avatarImg = "http://localhost:5000/src/medias/avatars/avatar1.png"; // Default avatar
 	}
 
@@ -94,6 +94,7 @@ export const    postToApi = async (url: string, data: any) => {
 		headers: {
 			'Content-Type': 'application/json', // Set the content type to JSON
 			'Authorization': `Bearer ${user.getToken() || ""}`, // Include the token
+			'username': user.getUsername() || "", // Include the username
 		},
 		body: JSON.stringify(data), // Convert the data to a JSON string
 	})
@@ -101,7 +102,6 @@ export const    postToApi = async (url: string, data: any) => {
 	if (!fetched.ok)
 	{
 		let errorData = await fetched.json();
-		console.error('Error in post:', url);
 		if (fetched.status === 401 && errorData.disconnect) {
 			console.log("Disconnecting user due to 401 error");
 			localStorage.clear();
@@ -121,6 +121,7 @@ export const    patchToApi = async (url: string, data: any) => {
 		headers: {
 			'Content-Type': 'application/json', // Set the content type to JSON
 			'Authorization': `Bearer ${user.getToken() || ""}`, // Include the token
+			'username': user.getUsername() || "", // Include the username
 		},
 		body: JSON.stringify(data), // Convert the data to a JSON string
 	})
@@ -143,7 +144,13 @@ export const    patchToApi = async (url: string, data: any) => {
 }
 
 export const    getFromApi = async (url: string) => {
-	const   response = await fetch(url);
+	const   response = await fetch(url, {
+		method: "GET", // Specify the HTTP method
+		headers: {
+			'Authorization': `Bearer ${user.getToken() || ""}`, // Include the token
+			'username': user.getUsername() || "", // Include the username
+		}
+	});
 	if (!response.ok) {
 		console.error("Error:", ((await response.json()).message) || response.statusText);
 		const   errorData = await response.json();

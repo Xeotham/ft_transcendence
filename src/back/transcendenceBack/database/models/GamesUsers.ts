@@ -13,6 +13,7 @@ interface GameUserInfo
 {
 	date: 	 string;
 	username?: string;
+	totalTime: 	string;
 	userId: number;
 	score: 	number;
 	winner: boolean;
@@ -67,7 +68,7 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: {
 	stmt.run(userId, gameId, score.score, win, type);
 };
 	
-export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: number} ): void =>
+export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: any} ): void =>
 {
 	const win = (winner === true ? 1 : 0);
 	// console.log(userId, gameId, score, winner, type, gameTetrisId);
@@ -158,7 +159,7 @@ export const getUserGameHistory = (userId: number): number[] =>
 export const getGameDetailsById = (gameId: number): GameUserInfo[] =>
 {
 	const stmt = db.prepare(`
-		SELECT userId, score, winner, type, gameTime, maxCombo, piecesPlaced, piecesPerSecond, attacksSent, attacksSentPerMinute, attacksReceived, attacksReceivedPerMinute, keysPressed, keysPerPiece, keysPerSecond, holds, linesCleared, linesPerMinute, maxB2b, perfectClears, single, double, triple, quad, tspinZero, tspinSingle, tspinDouble, tspinTriple, tspinQuad, miniTspinZero, miniTspinSingle, miniSpinZero, miniSpinSingle, miniSpinDouble, miniSpinTriple, miniSpinQuad
+		SELECT userId, score, winner, type, gameTime, totalTime, maxCombo, piecesPlaced, piecesPerSecond, attacksSent, attacksSentPerMinute, attacksReceived, attacksReceivedPerMinute, keysPressed, keysPerPiece, keysPerSecond, holds, linesCleared, linesPerMinute, maxB2b, perfectClears, single, double, triple, quad, tspinZero, tspinSingle, tspinDouble, tspinTriple, tspinQuad, miniTspinZero, miniTspinSingle, miniSpinZero, miniSpinSingle, miniSpinDouble, miniSpinTriple, miniSpinQuad
 		FROM gamesUsers
 		WHERE gameId = ?
 	`);

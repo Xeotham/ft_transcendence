@@ -19,6 +19,7 @@ interface tetrisStats {
 interface GameUserInfo
 {
   date: 	 string;
+  totalTime: 	number;
   username?: string;
   userId: number;
   score: 	number;
@@ -37,7 +38,7 @@ interface GameUserInfo
   holds: number;
   linesCleared: number;
   linesPerMinute: number;
-  maxB2b: number;
+  maxB2B: number;
   perfectClears: number;
   single: number;
   double: number;
@@ -76,8 +77,7 @@ const formatTetrisStat = (history:{  gameId: number, players: GameUserInfo[] } )
 
 export const  loadTetrisStat = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history;
-  history.filter((e) => e.players[0].type !== 'tetris');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
   tetrisGames = history;
   const newHistory: tetrisStats[] = [];
   history.forEach((game) => {
@@ -123,7 +123,6 @@ const formatTetrisStatLine = (index: number) => {
     return '';
   let formattedStat = `${stat.date.slice(0,10)} - `;
   formattedStat += `${stat.score} pts`;
-  console.log(formattedStat);
   return formattedStat;
 }
 
@@ -229,7 +228,6 @@ export const modaleTetrisStatLineEvents = () => {
       let index = Number(tetrisStatsLine.id.slice(14, tetrisStatsLine.id.length));
       index += (tetrisStatPage * 10);
       indexGame = index;
-      console.log("INDEXXXXX", index);
        modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);
   })
 }
@@ -253,7 +251,7 @@ export const modaleTetrisStatEvents = () => {
     if (tetrisStatPage <= 0 || !modale.content)
       return;
     modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
-    modaleDislpayPrevNext();
+    modaleDislpayPrevNextTetris();
     modaleTetrisStatEvents();
     modaleTetrisStatLineEvents();
   });
@@ -264,14 +262,14 @@ export const modaleTetrisStatEvents = () => {
     if ((tetrisStatPage + 1) * 10 < tetrisHistory.length)
     {
       modale.content.innerHTML = modaleTetrisStatHTML(++tetrisStatPage);
-      modaleDislpayPrevNext();
+      modaleDislpayPrevNextTetris();
       modaleTetrisStatEvents();
       modaleTetrisStatLineEvents();
     }
   });
 }
 
-export const modaleDislpayPrevNext = () => {
+export const modaleDislpayPrevNextTetris = () => {
 
   const prev = document.getElementById('TetrisPrev');
   const next = document.getElementById('TetrisNext');
