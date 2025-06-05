@@ -25,44 +25,48 @@ export const createUser = async (username: string, password: string, avatar: str
 
 export const updateUserById = (id: number, type: string, update: string): void =>
 {
-    const array = ["username", "password", "avatar"];
-	let i = 0;
-	let stmt;
+	try {
+		const array = ["username", "password", "avatar"];
+		let i = 0;
+		let stmt;
 
-	while (array[i])
-	{
-		if (array[i] == type)
-			break;
-		i++;
-	}
+		while (array[i]) {
+			if (array[i] == type)
+				break;
+			i++;
+		}
 
-	switch (i)
-	{
-		case 0:
-			stmt = db.prepare('\
+		switch (i) {
+			case 0:
+				stmt = db.prepare('\
 				UPDATE USER \
 				SET username = ? \
 				WHERE id = ?\
 				');
-			stmt.run(update, id);
-			break;
-		case 1:
-			stmt = db.prepare('\
+				stmt.run(update, id);
+				break;
+			case 1:
+				stmt = db.prepare('\
 				UPDATE USER \
 				SET password = ? \
 				WHERE id = ?\
 				');
-			stmt.run(update, id);
-			break;
-		case 2:
-			stmt = db.prepare('\
+				stmt.run(update, id);
+				break;
+			case 2:
+				stmt = db.prepare('\
 				UPDATE USER \
 				SET  avatar = ? \
 				WHERE id = ?\
 				');
-			stmt.run(update, id);
-			break;
-    }
+				stmt.run(update, id);
+				break;
+		}
+	}
+	catch (error){
+		console.error('Error updating user:', error);
+		throw new Error('Failed to update user');
+	}
 };
 
 export const logUserById = (id : number): void =>

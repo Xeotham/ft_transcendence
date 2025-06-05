@@ -45,8 +45,6 @@ export class UserInfo {
 		const   avatarBlob = UserInfo.base64ToBlob(avatarImg);
 		const   url = URL.createObjectURL(avatarBlob);
 
-
-		console.log(url);
 		document.getElementById("avatarImg")?.setAttribute("src", `${url}`);
 		this.avatarImg = url;
 	}
@@ -130,7 +128,7 @@ export const    patchToApi = async (url: string, data: any) => {
 	if (!fetched.ok)
 	{
 		let errorData = await fetched.json();
-		console.error('Error in patch:', url);
+		console.error('Error in patch:', errorData);
 		if (fetched.status === 401 && errorData.disconnect) {
 			console.log("Disconnecting user due to 401 error");
 			localStorage.clear();
@@ -277,6 +275,6 @@ export let userKeys: keys | null = null;
 	const   newKeys = new keys();
 
 	userKeys = await newKeys.build();
-	console.log("Loaded keys: ", newKeys);
+	// console.log("Loaded keys: ", newKeys);
 })()
 

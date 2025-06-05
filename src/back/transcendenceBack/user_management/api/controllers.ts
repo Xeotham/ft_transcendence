@@ -34,9 +34,7 @@ export const   tokenBlacklist = new Set();
 
 const generateDefaultAvatar = () => {
 	const filePath = path.join(__dirname, '../medias/defaultAvatar.png'); // Adjust the relative path
-	// console.log(filePath);
 	const fileBuffer = fs.readFileSync(filePath, "base64"); // Read the file as a Buffer
-	// console.log(fileBuffer);
 	return fileBuffer;
 };
 
@@ -83,33 +81,31 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
 
 export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
-	const { username, type, update } = request.body as { username: string, type: string, update: string };
+	try {
+		const {username, type, update} = request.body as { username: string, type: string, update: string };
 
-	const user = getUserByUsername(username);
-	if (!user)
-		return reply.status(400).send({ message: 'User doesn\'t exist' });
+		const user = getUserByUsername(username);
+		if (!user)
+			return reply.status(400).send({message: 'User doesn\'t exist'});
 
-	if (type === "password")
-	{
-		try
-		{
-			const hashedPassword = await hashPassword(update);
+		if (type === "password") {
+			try {
+				const hashedPassword = await hashPassword(update);
 
-			updateUserById(user.id!, type, hashedPassword as string);
+				updateUserById(user.id!, type, hashedPassword as string);
 
-			return reply.status(201).send({ message: 'User updated successfully' });
-		}
-		catch (err)
-		{
-			return reply.status(400).send({ error: (err as Error).message });
+				return reply.status(201).send({message: 'User updated successfully'});
+			} catch (err) {
+				return reply.status(400).send({error: (err as Error).message});
+			}
+		} else {
+			updateUserById(user.id as number, type, update);
+
+			return reply.status(201).send({message: 'User updated successfully'});
 		}
 	}
-	else
-	{
-		console.log(update);
-		updateUserById( user.id as number, type, update);
-
-		return reply.status(201).send({ message: 'User updated successfully' });
+	catch (e) {
+		console.error('Error updating user', e);
 	}
 };
 
@@ -731,7 +727,6 @@ export const    getParameter = async (request: FastifyRequest, reply: FastifyRep
 	if (user.id)
 	{
 		const parameter = getParamById(user.id);
-		console.log(parameter);
 		return  reply.status(201).send({ message: 'Parameter sended', parameter: parameter });
 	}
 };

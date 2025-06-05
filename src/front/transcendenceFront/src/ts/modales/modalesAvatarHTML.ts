@@ -160,7 +160,7 @@ export const modaleAvatarEvents = async () => {
 			if (!avatar)
 				return;
 			user.setAvatar(defaultAvatars[i].base64);
-			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: defaultAvatars[i]});
+			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: defaultAvatars[i].base64});
 			modaleDisplay(ModaleType.PROFILE);
 		})
 	}
