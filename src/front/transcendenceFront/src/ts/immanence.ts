@@ -1,5 +1,5 @@
 // Events & core
-import {address, postToApi, resetGamesSocket, user} from "./utils.ts";
+import { address, postToApi, resetGamesSocket, user } from "./utils.ts";
 //import { evAddDocResize } from './zone/zoneEvents.ts'
 import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts';
 import { modaleInit } from './modales/modalesCore.ts'
@@ -13,7 +13,7 @@ import page from 'page';
 
 // MAIN  
 const main = () => {
-    resetGamesSocket("HOME");
+    resetGamesSocket("home");
     setHtmlFront();
     EL.init();
     if (!EL.check())

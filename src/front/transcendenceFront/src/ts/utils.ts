@@ -166,23 +166,23 @@ export const    getFromApi = async (url: string) => {
 export const    resetGamesSocket = (type: string) => {
 	if (tetrisGameInformation.getSocket() && type !== "tetris") {
 		tetrisGameInformation.getSocket()?.close();
-		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", roomId: tetrisGameInformation.getGameId() });
 	}
 	if (pongGameInfo.getRoom()?.getSocket() && type !== "pong")
 		pongGameInfo.getRoom()?.getSocket()?.close();
 	if (pongGameInfo.getTournament()?.getSocket() && type !== "pong")
 		pongGameInfo.getTournament()?.getSocket()?.close();
+	// window.onunload = null;
 	window.onbeforeunload = null;
 }
 
 export class   keys {
 	private moveLeft:               string;
 	private moveRight:              string;
-	private rotateClockwise:       string;
-	private rotateCounterClockwise: string;
-	private rotate180:             string;
-	private hardDrop:              string;
-	private softDrop:              string;
+	private rotateClockwise:		string;
+	private rotateCounterClockwise:	string;
+	private rotate180:				string;
+	private hardDrop:				string;
+	private softDrop:				string;
 	private hold:                   string;
 	private forfeit:                string;
 	private retry:                	string;

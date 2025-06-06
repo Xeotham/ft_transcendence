@@ -68,7 +68,6 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 		// List of rooms
 		rooms.forEach((room: roomInfo) => {
 		html += `
-<!-- TODO fix the button I am a bozo-->
 		<div onclick="joinRoom('${room?.roomCode}')" class="${TCS.gameList} block w-full">
 		<span class="text-yellow-600">» </span>${room.roomCode}
 		<span class="text-stone-50">${imTexts.tetrisDisplayMultiplayerRoomJoin}</span>

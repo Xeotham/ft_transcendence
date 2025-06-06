@@ -1,17 +1,18 @@
 import { RoomInfo, TournamentInfo, loadPongHtmlType, loadHtmlArg, gameInformation } from "./utils.ts";
 import { createPrivateRoom, joinMatchmaking, joinPrivRoom, joinSolo, joinBot, quit } from "./game.ts";
-import {getTournamentName, listTournaments} from "./tournament.ts";
+import { getTournamentName, listTournaments } from "./tournament.ts";
 import { loadPongHtml } from "./pongHTML.ts";
 import { drawGame } from "./pongDraw.ts";
 import { copyToClipboard } from "../tetris/tetrisMultiplayerCreateHTML.ts";
+import { resetGamesSocket } from "../utils.ts";
+import { listRoomsSpectator } from "./spectate.ts";
 // @ts-ignore
 import  page from "page"
-import { resetGamesSocket } from "../utils.ts";
-import {listRoomsSpectator} from "./spectate.ts";
 
 export const	pongGameInfo: gameInformation = new gameInformation();
 
 export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
+	// console.log("Loading Pong page: " + page);
 	switch (page) {
 		case "empty":
 			return emptyPage();
@@ -41,8 +42,6 @@ export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return tourInfoPage(arg?.tourId!, arg?.started!, arg?.tourName!);
 		case "list-rooms":
 			return roomListPage(arg?.roomLst!);
-		case "tour-rooms-list":
-			return tourRoomListPage(arg?.roomLst!);
 		case "list-tournaments":
 			return tournamentListPage(arg?.tourLst!);
 		case "board":
@@ -97,7 +96,7 @@ const   navTournament = () => {
 	loadPongHtml("nav-tournament");
 
 	document.getElementById("pongTournamentCreate")?.addEventListener("click", getTournamentName);
-	document.getElementById("pongTournamentPlay")?.addEventListener("click", () => { page.show("/pong/list/tournaments"); });
+	document.getElementById("pongTournamentPlay")?.addEventListener("click", () => { page.show("/pong/tournaments/list"); });
 	document.getElementById("pongTournamentBack")?.addEventListener("click", () => { page.show("/pong"); });
 }
 
@@ -124,15 +123,7 @@ const   specRoomInfoPage = (roomId: number) => {
 const   tourInfoPage = (tourId: number, started: boolean, name: string) => {
 	loadPongHtml("tour-info", { tourId: tourId, started: started, tourName: name });
 
-	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/list/tournament-info"));
-}
-
-const   tourRoomListPage = (rooms: RoomInfo[]) => {
-	loadPongHtml("tour-rooms-list", { roomLst: rooms });
-
-	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/tournament"));
-	//TODO a verifier
-	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => { tourRoomListPage(rooms) });
+	document.getElementById("return")?.addEventListener("click", () => page.show("/pong/tournaments/list"));
 }
 
 const   privRoomCreate = (inviteCode: string) => {

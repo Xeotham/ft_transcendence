@@ -105,7 +105,7 @@
         "back": "Retour"
       },
       "tournament": {
-        "title": "Pong Tournoi",
+        "title": "Pong Tournois",
         "create": "Créer",
         "play": "Jouer",
         "back": "Retour"
@@ -153,6 +153,7 @@
       }
     },
     "tetris": {
+      "refreshConfirmation" : "Êtes-vous sûr de vouloir quitter la page ?",
       "logo": {
         "title": "Tetris",
         "subtitle": "Le jeu de puzzle légendaire"

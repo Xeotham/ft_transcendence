@@ -1,52 +1,48 @@
-//import { loadTetrisHtml } from "./tetrisHTML.ts";
-import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
+import { bgmPlayer, tetrisSfxPlayer, tetrisRes, TimeoutKey } from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation } from "./tetris.ts";
-import {postToApi, address, user, userKeys, getFromApi} from "../utils.ts";
-import {tetrisBoardHtml, tetrisIdleHtml} from "./tetrisHTML.ts";
+import { postToApi, address, user, userKeys, getFromApi } from "../utils.ts";
+import { tetrisBoardHtml } from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
+import { imTexts } from "../imTexts/imTexts.ts";
 
 // @ts-ignore
 import page from "page";
 
 let socket: WebSocket | null = null;
 
+const socketClose = async () => {
+	console.log("WebSocket connection closed.");
+	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
+	postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
+		username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
+	tetrisGameInformation.getSocket()?.close();
+	tetrisGameInformation.setSocket(null);
+	tetrisGameInformation.setGameId(-1);
+	tetrisGameInformation.setGame(null);
+	tetrisGameInformation.setRoomOwner(false);
+	if (tetrisGameInformation.getRoomCode() !== "")
+		console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+	tetrisGameInformation.setRoomCode("");
+	tetrisGameInformation.resetSettings();
+	if (zone.state === "TETRIS")
+		loadTetrisPage("idle");
+}
+
 const socketInit = (socket: WebSocket) => {
 	tetrisGameInformation.setSocket(socket);
 	socket.onmessage = messageHandler;
 	socket.onerror = err => { console.error("Error:", err) };
 	socket.onopen = () => { console.log("Connected to server") };
-	socket.onclose = (event) => {
-		if (event.wasClean)
-			console.log('WebSocket connection closed cleanly.');
-		else
-			console.error('WebSocket connection died. Code:', event.code, 'Reason:', event.reason);
-		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
-			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
-		tetrisGameInformation.setGameId(-1);
-		tetrisGameInformation.setGame(null);
-		tetrisGameInformation.setSocket(null);
-		tetrisGameInformation.setRoomOwner(false);
-		if (tetrisGameInformation.getRoomCode() !== "")
-			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
-		tetrisGameInformation.setRoomCode("");
-		if (zone.state === "TETRIS")
-			loadTetrisPage("idle");
-	};
-	window.onbeforeunload = () => {
-		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
-		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
-			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
-		if (tetrisGameInformation.getSocket()) {
-			tetrisGameInformation.getSocket()?.close();
-		tetrisGameInformation.setGameId(-1);
-		tetrisGameInformation.setGame(null);
-		tetrisGameInformation.setSocket(null);
-		tetrisGameInformation.setRoomOwner(false);
-		if (tetrisGameInformation.getRoomCode() !== "")
-			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
-		tetrisGameInformation.setRoomCode("");
-		}
-	}
+	socket.onclose = socketClose;
+
+	window.onunload = socketClose;
+	// Special handling for Chrome
+	if (!navigator.userAgent.includes("Firefox"))
+		window.onbeforeunload = (e) => {
+			socketClose();
+			e.preventDefault();
+			return e.returnValue = imTexts.tetrisRefreshConfirmation;
+		};
 }
 
 export const resetSocket = (leaveType: string = "game") => {
@@ -57,7 +53,6 @@ export const resetSocket = (leaveType: string = "game") => {
 		tetrisGameInformation.getSocket()?.close();
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.resetSettings();
-		window.onbeforeunload = null;
 	}
 	tetrisGameInformation.setGameId(-1);
 	tetrisGameInformation.setGame(null);
@@ -292,7 +287,6 @@ const   messageHandler = (event: MessageEvent)=> {
 			resetSocket("game");
 			bgmPlayer.stop();
 			hideZoneGame();
-			// loadTetrisPage("idle");
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);
@@ -311,9 +305,7 @@ const   movePiece = (direction: string) => {
 		postToApi(`http://${address}/api/tetris/movePiece`, { argument: arg, gameId: tetrisGameInformation.getGameId() });
 		if (tetrisGameInformation.getKeyFirstMove(direction)) {
 			tetrisGameInformation.setKeyFirstMove(direction, false);
-			// console.log("First move")
 			tetrisGameInformation.setKeyTimeout(direction, new TimeoutKey(repeat, 150));
-			// console.log("First move done");
 		}
 		else {
 			tetrisGameInformation.getKeyTimeout(direction)?.clear();
@@ -349,7 +341,6 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat || keyStates.moveLeft)
 					return ;
 				keyStates.moveLeft = true;
-				// console.log("moving piece left");
 				movePiece("moveLeft");
 				return ;
 			case userKeys?.getMoveRight():
@@ -358,7 +349,6 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat || keyStates.moveRight)
 					return ;
 				keyStates.moveRight = true;
-				// console.log("moving piece right");
 				movePiece("moveRight");
 				return ;
 			case userKeys?.getClockwiseRotate():
@@ -432,7 +422,6 @@ const gameControllers = async (finish: boolean = false) => {
 				tetrisGameInformation.setKeyFirstMove("moveLeft", true);
 				keyStates.moveLeft = false;
 				if (!!tetrisGameInformation.getKeyTimeout("moveRight")) {
-					// console.log("Move Right: ", tetrisGameInfo.getKeyTimeout("moveRight"));
 					tetrisGameInformation.getKeyTimeout("moveRight")?.resume();
 				}
 				return ;
@@ -476,11 +465,4 @@ const gameControllers = async (finish: boolean = false) => {
 export const   forfeit = () => {
 	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
 	hideZoneGame();
-
-	// tetrisGameInfo.getKeyTimeout("moveLeft")?.clear();
-	// tetrisGameInfo.getKeyTimeout("moveRight")?.clear();
-	// document.removeEventListener('keydown', keydownHandler);
-	// document.removeEventListener('keyup', keyupHandler);
-	// bgmPlayer.stop();
-	// page.show("/tetris")	
 }

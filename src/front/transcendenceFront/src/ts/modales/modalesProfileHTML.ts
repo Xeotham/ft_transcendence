@@ -3,7 +3,7 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi, postToApi, address, user} from "../utils.ts";
+import { getFromApi, postToApi, address, user, resetGamesSocket } from "../utils.ts";
 // @ts-ignore
 import  page from "page";
 import {friendList} from "./modalesFriendListHTML.ts";
@@ -121,6 +121,7 @@ export const modaleProfileEvents = () => {
 
   profileDeconectLink?.addEventListener('click', () => {
     const username = { username: user.getUsername()};
+    resetGamesSocket("home");
     postToApi(`http://${address}/api/user/logout`, username)
         .then(() => {
           localStorage.clear();
