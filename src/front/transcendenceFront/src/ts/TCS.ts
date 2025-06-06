@@ -33,8 +33,8 @@ export const TCS = {
     modaleTexteGris : "font-sixtyfour text-[14px] relative text-stone-400",
     modaleTexteLink : "font-sixtyfour text-[14px] text-yellow-600 hover:text-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer underline decoration-yellow-600 hover:decoration-amber-400",
     modaleToRegister : "font-sixtyfour text-[14px] relative text-lime-50",
-    modaleAvatarProfil : "w-[100px] h-[100px] border-0 border-1 hover:border-8 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
-    modaleAvatarChoose : "w-[86px] h-[86px] border-0 border-1 hover:border-6 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer relative",
+    modaleAvatarProfil : "w-[100px] h-[100px] border-1 hover:border-8 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+    modaleAvatarChoose : "w-[86px] h-[86px] border-1 hover:border-6 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer relative",
     modaleStatsLine : "font-sixtyfour text-[14px] text-lime-50 grid grid-cols-[120px_1fr_80px] gap-4 items-center",
     modaleFriendList : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-stone-950 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[20px] flex items-center pl-[10px]",
     modaleStatDetail : "font-pixelcode text-[14px] text-lime-50 font-medium text-left",
@@ -42,6 +42,8 @@ export const TCS = {
     statRow1 : "border-b-1 border-stone-400",
     statCol1 : "border-b-1 border-stone-400",
     statData : "border-b-1 border-stone-400",
+    modaleAvatarProfilFriend : "w-[100px] h-[100px] border-1 border-lime-50",
+
 
     // formulaire
     form : "font-sixtyfour text-[14px] relative",

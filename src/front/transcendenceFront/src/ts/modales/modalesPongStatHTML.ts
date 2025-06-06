@@ -1,11 +1,10 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
-import {getFromApi,address, user} from "../utils.ts";
-import {modaleFriendTetrisStatEvents} from "./modalesTetrisStatHTML.ts";
+import {getFromApi,address} from "../utils.ts";
 
 let pongStatPage = 0;
-
+const pongListLength = 10;
 interface pongStats {
   date: string;
   username: string;
@@ -99,10 +98,10 @@ const getModalePongStatListHTML = (page: number) => {
 
   let listHTML = ``;
 
-  for (let i = 0; i < 10 && pongHistory[(page * 10) + i]; i++) {
+  for (let i = 0; i < pongListLength && pongHistory[(page * pongListLength) + i]; i++) {
     listHTML += `
       <div id="pongStatLine${i}" class="${TCS.modaleTexte}">
-      ${formatPongStatLine(i + (page * 10))}</div>
+      ${formatPongStatLine(i + (page * pongListLength))}</div>
     `;
   }
 
@@ -145,9 +144,9 @@ export const modalePongStatEvents = () => {
   });
 
   PongStatsNext.addEventListener('click', () => {
-    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+    if (pongStatPage >= pongListLength || !modale.content)
       return;
-    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    if ((pongStatPage + 1) * pongListLength < pongHistory.length)
     {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
@@ -178,13 +177,13 @@ export const modaleFriendPongStatEvents = () => {
   });
 
   PongStatsNext.addEventListener('click', () => {
-    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+    if (pongStatPage >= pongListLength || !modale.content)
       return;
-    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    if ((pongStatPage + 1) * pongListLength < pongHistory.length)
     {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
-      modaleFriendTetrisStatEvents();
+      modaleFriendPongStatEvents();
     }
   });
 }
@@ -195,13 +194,7 @@ export const modaleDislpayPrevNextPong = () => {
   const next = document.getElementById('PongNext');
   const slash = document.getElementById('PongSlash');
 
-  const isNext = pongHistory.length - (pongStatPage * 10) > 10;
-
-  // console.log("PREV " + isNext);
-  // console.log("Prev " + prev);
-  // console.log("Next " + next);
-  // console.log("slash " + slash);
-
+  const isNext = pongHistory.length - (pongStatPage * pongListLength) > pongListLength;
 
   if (!isNext)
     next?.classList.add('hidden');
