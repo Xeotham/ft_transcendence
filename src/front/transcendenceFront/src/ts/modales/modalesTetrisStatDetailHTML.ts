@@ -3,8 +3,8 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { modaleDisplay } from './modalesCore.ts';
 import { ModaleType } from './modalesCore.ts';
 // import {indexGame} from "./modalesTetrisStatHTML.ts";
-import {tetrisGames} from "./modalesTetrisStatHTML.ts";
-import {user} from "../utils.ts";
+import { tetrisGames } from "./modalesTetrisStatHTML.ts";
+import { user } from "../utils.ts";
 
 interface GameUserInfo
 {
@@ -48,9 +48,9 @@ interface GameUserInfo
   miniSpinQuad: number;
 }
 
-const getModaleTetrisStatListDetailsHTML = (gameIndex: number) => {
+const getModaleTetrisStatListDetailsHTML = (gameIndex: number, playerUsername: string) => {
   const game = tetrisGames[gameIndex];
-  const player = game.players.find((p: GameUserInfo) => p.username === user.getUsername());
+  const player = game.players.find((p: GameUserInfo) => { return p.username === playerUsername });
 
 
   let listHTML = `
@@ -121,7 +121,7 @@ const getModaleTetrisStatListDetailsHTML = (gameIndex: number) => {
   return listHTML;
 };
 
-export const modaleTetrisStatDetailHTML = (id: number) => {
+export const modaleTetrisStatDetailHTML = (id: number, playerUsername: string) => {
 
   let TetrisStatDetailHTML = `
     <div id="tetrisStatsDetailTitle" class="${TCS.modaleTitre}">
@@ -133,7 +133,7 @@ export const modaleTetrisStatDetailHTML = (id: number) => {
     <div class="h-[30px]"></div>
   `
 
-  TetrisStatDetailHTML += getModaleTetrisStatListDetailsHTML(id);
+  TetrisStatDetailHTML += getModaleTetrisStatListDetailsHTML(id, playerUsername);
   TetrisStatDetailHTML += `<div class="h-[30px]"></div>`;
 
   return TetrisStatDetailHTML; 
@@ -147,5 +147,16 @@ export const modaleTetrisStatDetailEvents = () => {
 
   tetrisStatsDetailBack.addEventListener('click', () => {
     modaleDisplay(ModaleType.TETRIS_STATS);
+  });
+}
+
+export const modaleFriendTetrisStatDetailEvents = () => {
+  const tetrisStatsDetailBack = document.getElementById('tetrisStatsDetailBack') as HTMLAnchorElement;
+
+  if (!tetrisStatsDetailBack)
+    return;
+
+  tetrisStatsDetailBack.addEventListener('click', () => {
+    modaleDisplay(ModaleType.FRIEND_TETRIS_STATS);
   });
 }

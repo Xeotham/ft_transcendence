@@ -1,12 +1,12 @@
-import { TCS } from '../TCS.ts';
-import { imTexts } from '../imTexts/imTexts.ts';
-import { ModaleType, modale, modaleDisplay } from './modalesCore.ts';
+import {TCS} from '../TCS.ts';
+import {imTexts} from '../imTexts/imTexts.ts';
+import {modale, modaleDisplay, ModaleType} from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi, UserInfo, address, user, postToApi} from "../utils.ts";
-import {friendList, loadFriendList} from "./modalesFriendListHTML.ts";
+import {address, getFromApi, postToApi, user, UserInfo} from "../utils.ts";
+import {friendList, loadFriendList, modaleDislpayPrevNextFriend} from "./modalesFriendListHTML.ts";
 // @ts-ignore
-import  page from "page";
+import page from "page";
 
 
 interface GameUserInfo
@@ -71,23 +71,21 @@ export const modaleFriendProfileHTML = async () => {
   <span class="${TCS.modaleTexte} text-[24px]">Pong</span>
   <div id="modalePongStats" class="${TCS.modaleTexte}">
   ${await pongWinRate()}</div>
-  <!-- <div id="modalePongStatsLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfilePongStatsLink}</div> -->
+  <div id="modaleFriendPongStatsLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfilePongStatsLink}</div>
 
     <div class="h-[30px]"></div>
 
   <span class="${TCS.modaleTexte} text-[24px]">Tetris</span>
   <div id="modaleTetrisStats" class="${TCS.modaleTexte}">
     ${await tetrisBestScore()}</div>
-  <!-- <div id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfileTetrisStatsLink}</div> -->
+  <div id="modaleFriendTetrisStatsLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfileTetrisStatsLink}</div>
 
   <div class="h-[30px]"></div>
 
 `;
-  if (modale.content)
-  modale.content.innerHTML = ProfileHTML;
-  //return ProfileHTML;
+  return ProfileHTML;
 }
 
 export const modaleFriendProfileEvents = () => {
@@ -96,6 +94,8 @@ export const modaleFriendProfileEvents = () => {
   const friendProfileConnected =   document.getElementById('friendProfileConnected') as HTMLAnchorElement;
   const friendProfileDisconnected =   document.getElementById('friendProfileDisconnected') as HTMLAnchorElement;
   const friendProfileFriendRemove =   document.getElementById('friendProfileFriendRemove') as HTMLAnchorElement;
+  const friendPongStats = document.getElementById('modaleFriendPongStatsLink') as HTMLAnchorElement;
+  const friendTetrisStats = document.getElementById('modaleFriendTetrisStatsLink') as HTMLAnchorElement;
 
   friendProfileBack?.addEventListener('click', () => {
     friendList.setActualFriend(null);
@@ -114,11 +114,20 @@ export const modaleFriendProfileEvents = () => {
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
+  friendPongStats?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.FRIEND_PONG_STATS);
+  })
+
+  friendTetrisStats?.addEventListener('click', () => {
+    modaleDisplay(ModaleType.FRIEND_TETRIS_STATS);
+  });
+
   const isConnected = friendList.getActualFriend()?.connected;
   if (isConnected) {
     friendProfileConnected.style.display = 'block';
     friendProfileDisconnected.style.display = 'none';
-  } else {
+  }
+  else {
     friendProfileConnected.style.display = 'none';
     friendProfileDisconnected.style.display = 'block';
   }
