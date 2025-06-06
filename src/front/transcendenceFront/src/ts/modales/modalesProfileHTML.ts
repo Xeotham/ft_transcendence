@@ -75,25 +75,25 @@ export const modaleProfileHTML = async () => {
   <div class="h-[30px]"></div>
   
   <span class="${TCS.modaleTexte} text-[24px]">
-  ${imTexts.modalesProfileFriendList + `(${friendList.getFriendList().length})`}</span>
-  <div id="modlaleFriendListLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfileFriendListLink}</div>
+  ${imTexts.modalesProfileFriendList + `(${friendList.getFriendList().length})`}</span><br>
+  <span id="modlaleFriendListLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfileFriendListLink}</span>
  
   <div class="h-[30px]"></div>
 
-  <span class="${TCS.modaleTexte} text-[24px]">Pong</span>
-  <div id="modalePongStats" class="${TCS.modaleTexte}">
-  ${await pongWinRate()}</div>
-  <div id="modalePongStatsLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfilePongStatsLink}</div>
+  <span class="${TCS.modaleTexte} text-[24px]">Pong</span><br>
+  <span id="modalePongStats" class="${TCS.modaleTexte}">
+  ${await pongWinRate()}</span><br>
+  <span id="modalePongStatsLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfilePongStatsLink}</span>
 
-    <div class="h-[30px]"></div>
+  <div class="h-[30px]"></div>
 
-  <span class="${TCS.modaleTexte} text-[24px]">Tetris</span>
-  <div id="modaleTetrisStats" class="${TCS.modaleTexte}">
-    ${await tetrisBestScore()}</div>
-  <div id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfileTetrisStatsLink}</div>
+  <span class="${TCS.modaleTexte} text-[24px]">Tetris</span><br>
+  <span id="modaleTetrisStats" class="${TCS.modaleTexte}">
+  ${await tetrisBestScore()}</span><br>
+  <span id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesProfileTetrisStatsLink}</span>
 
   <div class="h-[30px]"></div>
 

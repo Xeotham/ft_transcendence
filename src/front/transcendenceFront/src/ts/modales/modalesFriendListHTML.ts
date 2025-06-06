@@ -86,10 +86,17 @@ const formatFriendListLine = (index: number) => {
 
 	const   avatar = URL.createObjectURL(UserInfo.base64ToBlob(friend.avatar));
 	let formattedFriend = `
-	<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
-	<span class="${TCS.modaleFriendList}" id="friendListLine${index}">
-		${friend.username}
-	</span>`;
+	<div id="friendListLine${index}" class="w-full h-[40px] pb-[5px] flex flex-row-2 mb-[5px]">
+		<div class="w-[40px] h-[40px]">
+			<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
+		</div>
+		<div class="${TCS.modaleFriendList} w-full h-[40px]">
+			${friend.username}
+			<span class="text-stone-950">
+			&nbsp;&nbsp;&nbsp;${imTexts.modalesFriendListView}</span>
+		</div>
+	</div>
+	`;
 
 	return formattedFriend;
 }
@@ -98,17 +105,17 @@ const getModaleFriendListListHTML = (page: number) => {
 
 	friendListPage = page;
 	let listHTML = `
-		<p class="${TCS.modaleTexte}">Add a friend:</p>
 		<form id="friendSearchForm" class="${TCS.form}">
 			<input id="friendSearchInput" name="friendSearch" type="text" placeholder=" " class="${TCS.formInput}">		
-			<label for="friendSearch" class="${TCS.formLabel}">Search a username</label>
-			<button id="friendSearchButton" type="submit" class="${TCS.formButton}">Add</button>
+			<label for="friendSearch" class="${TCS.formLabel}">${imTexts.modalesFriendListUsername}</label>
+			<button id="friendSearchButton" type="submit" class="${TCS.formButton}">${imTexts.modalesFriendListAdd}</button>
 		</form>
 		<div id="modaleAlert" class="${TCS.modaleTexte}"></div>
+		<div class="h-[20px]"></div>
 	`;
 
 
-	for (let i = 0; i < 10; i++) { // TODO: remplacer par le nombre d'amis
+	for (let i = 0; i < 6; i++) { // TODO: remplacer par le nombre d'amis
 		listHTML += `
       <div id="friendListLine${i}" class="${TCS.modaleTexte}">
       ${formatFriendListLine(i)}</div>

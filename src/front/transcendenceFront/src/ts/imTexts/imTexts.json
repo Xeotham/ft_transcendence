@@ -20,8 +20,8 @@
       },
       "profile": {
         "username": "B3n05",
-        "userEdit": "éditer",
-        "deconect": "déconecter",
+        "userEdit": "éditer profile",
+        "deconect": "déconnecter",
         "languageTitle": "Langue",
         "friendList": "Amis",
         "friendListLink": "Voir vos amis",
@@ -35,8 +35,9 @@
       "friendList": {
         "title": "Mes amis",
         "back": "Retour au profil",
-        "connected": "Connecté",
-        "disconnected": "Hors ligne",
+        "username": "Entrez un nom d'utilisateur",
+        "add": "Ajouter à ma liste d'amis",
+        "view": "voir le profil",
         "remove": "Supprimer",        
         "prev": "Précedent",
         "next": "Suivant"
@@ -80,8 +81,8 @@
         "choseUsername": "Changer username",
         "chosePassword": "Changer mot de passe",
         "editUsername": {
-            "title": "Édition du nom d'utilisateur",
-            "text": "Changer votre nom d'utilisateur !",
+            "title": "Édition profile",
+            "text": "Nom d'utilisateur",
             "previous": "Entrez votre ancien nom d'utilisateur",
             "new": "Entrez votre nouveau nom d'utilisateur",
             "sameError": "Votre nouveau nom d'utilisateur est identique a l'ancien !",
@@ -90,11 +91,11 @@
             "cancel": "Annuler"
         },
         "editPassword": {
-            "title": "Édition du mot de passe",
-            "text": "Changer votre mot de passe !",
+            "title": "Édition profile",
+            "text": "Mot de passe",
             "previous": "Entrez votre ancien mot de passe",
             "new": "Entrez votre nouveau mot de passe",
-            "confirm": "Confirmer le changement",
+            "confirm": "Confirmez votre nouveau mot de passe",
             "submit": "Valider",
             "cancel": "Annuler",
             "confirmError": "Les mots de passe ne correspondent pas.",

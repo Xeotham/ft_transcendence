@@ -10,7 +10,6 @@ import {
   modalePongStatHTML,
   modalePongStatEvents,
   loadPongStat,
-  pongHistory,
   modaleDislpayPrevNextPong
 } from './modalesPongStatHTML.ts';
 import {
@@ -18,7 +17,7 @@ import {
   modaleTetrisStatEvents,
   loadTetrisStat,
   modaleTetrisStatLineEvents,
-  modaleDislpayPrevNextTetris, indexGame, tetrisHistory
+  modaleDislpayPrevNextTetris, indexGame
 } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
@@ -30,7 +29,7 @@ import {
 } from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../utils.ts';
-import {modaleEditEvents, modaleEditHTML} from "./modaleEditHTML.ts";
+import {modaleEditEvents, modaleEditHTML} from "./modalesUserEditHTML.ts";
 
 ///////////////////////////////////////////
 // Variables
