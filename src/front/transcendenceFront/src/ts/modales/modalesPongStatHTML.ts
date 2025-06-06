@@ -3,6 +3,7 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
 import {getFromApi,address} from "../utils.ts";
 
+
 let pongStatPage = 0;
 const pongListLength = 10;
 interface pongStats {
@@ -73,6 +74,8 @@ export const modalePongStatHTML = (page: number) => {
 
     <div class="h-[30px]"></div>
   `;
+
+  PongStatHTML += modalePongStatDataViz();
 
   PongStatHTML += getModalePongStatListHTML(pongStatPage);
 
@@ -205,3 +208,12 @@ export const modaleDislpayPrevNextPong = () => {
 
 }
 
+const modalePongStatDataViz = () => {
+
+
+  let dataVizHTML = `
+
+  `;
+
+  return dataVizHTML;
+}
