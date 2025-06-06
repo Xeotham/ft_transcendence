@@ -76,7 +76,7 @@ const formatTetrisStat = (history:{  gameId: number, players: GameUserInfo[] }, 
 
 export const  loadTetrisStat = async (playerUsername: string) => {
 	const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
-	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
+	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e :any)  => e.players[0].type === 'tetris');
 	tetrisGames = history;
 	const newHistory: tetrisStats[] = [];
 	history.forEach((game) => {
@@ -120,8 +120,8 @@ const formatTetrisStatLine = (index: number) => {
 	const stat = tetrisHistory[index];
 	if (!stat)
 		return '';
-	let formattedStat = `${stat.date.slice(0,10)} - `;
-	formattedStat += `${stat.score} pts`;
+	let formattedStat = `<span class="${TCS.modaleTexteGris}">${stat.date} &nbsp;&nbsp;</span>`;
+	formattedStat += `<span class="${TCS.modaleTexte}">${stat.score} pts</span>`;
 	return formattedStat;
 }
 
@@ -132,7 +132,7 @@ const getModaleTetrisStatListHTML = (page: number) => {
 
 	for (let i = 0; i < 10 && tetrisHistory[(page * 10) + i]; i++) {
 		listHTML += `
-      <div id="tetrisStatLine${i}" class="${TCS.modaleTexte}">
+      <div id="tetrisStatLine${i}" class="${TCS.modaleFriendList}">
       ${formatTetrisStatLine(i + (page * 10))}</div>
     `;
 	}

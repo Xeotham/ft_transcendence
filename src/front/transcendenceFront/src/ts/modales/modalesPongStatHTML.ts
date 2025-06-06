@@ -47,7 +47,7 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] }, pl
 
 export const  loadPongStat = async (playerUsername: string) => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'pong');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e: any) => e.players[0].type === 'pong');
   const newHistory: pongStats[] = [];
   history.forEach((game) => {
     if (game.players.length < 2) {
@@ -89,7 +89,7 @@ const formatPongStatLine = (index: number) => {
     const stat = pongHistory[index];
     if (!stat)
       return '';
-    let formattedStat = `${stat.date} - `;
+    let formattedStat = `<span class='text-stone-400'>${stat.date}</span> - `;
     formattedStat += stat.winner ? "<span class='text-green-500'>" : "<span class='text-red-500'>"
     formattedStat += `${stat.score}/${stat.scoreOpponent}</span> - ${stat.opponent}`;
     return formattedStat;

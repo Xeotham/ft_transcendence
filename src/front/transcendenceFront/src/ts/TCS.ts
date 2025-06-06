@@ -30,12 +30,18 @@ export const TCS = {
     modaleClose : "fixed z-50 w-[20px] h-[20px] shadow-xl/30 rounded-xs bg-yellow-600 hover:bg-amber-400 ring-1 ring-amber-400 focus:outline-none flex items-center justify-center absolute top-[10px] right-[10px] cursor-pointer hover:cursor-pointer",
     modaleTitre : "font-sixtyfour text-[28px] relative text-amber-400",
     modaleTexte : "font-sixtyfour text-[14px] relative text-lime-50",
+    modaleTexteGris : "font-sixtyfour text-[14px] relative text-stone-400",
     modaleTexteLink : "font-sixtyfour text-[14px] text-yellow-600 hover:text-amber-400 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer underline decoration-yellow-600 hover:decoration-amber-400",
     modaleToRegister : "font-sixtyfour text-[14px] relative text-lime-50",
     modaleAvatarProfil : "w-[100px] h-[100px] border-0 border-1 hover:border-8 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
     modaleAvatarChoose : "w-[86px] h-[86px] border-0 border-1 hover:border-6 border-yellow-600 transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer relative",
     modaleStatsLine : "font-sixtyfour text-[14px] text-lime-50 grid grid-cols-[120px_1fr_80px] gap-4 items-center",
     modaleFriendList : "font-sixtyfour text-[14px] text-lime-50 font-medium text-left bg-stone-950 hover:bg-amber-400 transition-all duration-250 ease-in-out cursor-pointer hover:cursor-pointer hover:pl-[20px] flex items-center pl-[10px]",
+    modaleStatDetail : "font-pixelcode text-[14px] text-lime-50 font-medium text-left",
+    modaleStatDetailGrey : "font-pixelcode text-[14px] text-stone-400 font-medium text-left",
+    statRow1 : "border-b-1 border-stone-400",
+    statCol1 : "border-b-1 border-stone-400",
+    statData : "border-b-1 border-stone-400",
 
     // formulaire
     form : "font-sixtyfour text-[14px] relative",
@@ -53,7 +59,7 @@ export const TCS = {
 
     pongLogo :   "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-lime-50 text-shadow-lg text-shadow-stone-900/40",
     pongTitre : "font-sixtyfour text-[42px] flex items-center justify-center h-full w-full text-lime-50 text-shadow-lg text-shadow-stone-900/40",
-    pongNav0 : "flex flex-col items-center justify-center fade-in-up",
+    pongNav0 : "flex flex-col items-center justify-center",//fade-in-up
     pongNav1 : "flex flex-col items-center justify-center bg-lime-50 px-[28px] py-[28px] shadow-xl/50",
     pongButton : "font-sixtyfour text-[14px] text-lime-50 bg-yellow-600 shadow-xl/30 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:bg-amber-400 hover:scale-110 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
     pongText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
@@ -63,7 +69,7 @@ export const TCS = {
 
     tetrisLogo : "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-yellow-600 text-shadow-lg text-shadow-stone-900/40",
     tetrisTitre : "font-sixtyfour text-[42px] flex items-center justify-center text-yellow-600 text-shadow-lg text-shadow-stone-900/40",
-    tetrisNav0 : "flex flex-col items-center justify-center fade-in-up",
+    tetrisNav0 : "flex flex-col items-center justify-center",//fade-in-up
     tetrisNav1 : "flex flex-col items-center justify-center bg-yellow-600 px-[28px] py-[28px] shadow-xl/50",
     tetrisButton :   "font-sixtyfour text-[14px] text-black bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
     tetrisText :   "font-sixtyfour text-[14px] text-black font-medium px-5 py-1.5 me-2 mb-2",
