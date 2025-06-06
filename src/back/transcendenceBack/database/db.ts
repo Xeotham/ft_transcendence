@@ -16,16 +16,6 @@ if (!fs.existsSync(dbDir)) {
 
 const db = new Database(dbPath); /* process.env.DATABASE_URL */
 
-// TODO: Create the right tables with the right references
-
-// Create tables (if they don't exist)
-  // DROP TABLE IF EXISTS parameter;
-  // DROP TABLE IF EXISTS gamesUsers;
-  // DROP TABLE IF EXISTS message;
-  // DROP TABLE IF EXISTS contact;
-  // DROP TABLE IF EXISTS statsUsers;
-  // DROP TABLE IF EXISTS game;
-  // DROP TABLE IF EXISTS user;
 db.exec(` \
 
   
@@ -86,6 +76,7 @@ db.exec(` \
     type						VARCHAR(50) NOT NULL,
     gameTetrisId				INTEGER NOT NULL DEFAULT 0,
     gameTime 					INTEGER DEFAULT 0,
+    totalTime 				    VARCHAR(50) DEFAULT '00:00:00',
     maxCombo 					INTEGER DEFAULT 0,
     piecesPlaced 				INTEGER DEFAULT 0,
     piecesPerSecond				INTEGER DEFAULT 0,

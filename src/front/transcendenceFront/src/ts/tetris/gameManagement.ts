@@ -1,8 +1,8 @@
 //import { loadTetrisHtml } from "./tetrisHTML.ts";
 import {bgmPlayer, roomInfo, tetrisSfxPlayer, tetrisRes, TimeoutKey} from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation } from "./tetris.ts";
-import { postToApi, address, user, userKeys } from "../utils.ts";
-import { tetrisBoardHtml } from "./tetrisHTML.ts";
+import {postToApi, address, user, userKeys, getFromApi} from "../utils.ts";
+import {tetrisBoardHtml, tetrisIdleHtml} from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 
 // @ts-ignore
@@ -33,8 +33,11 @@ const socketInit = (socket: WebSocket) => {
 			loadTetrisPage("idle");
 	};
 	window.onbeforeunload = () => {
+		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
 		postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
 			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
+		if (tetrisGameInformation.getSocket()) {
+			tetrisGameInformation.getSocket()?.close();
 		tetrisGameInformation.setGameId(-1);
 		tetrisGameInformation.setGame(null);
 		tetrisGameInformation.setSocket(null);
@@ -42,6 +45,7 @@ const socketInit = (socket: WebSocket) => {
 		if (tetrisGameInformation.getRoomCode() !== "")
 			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
 		tetrisGameInformation.setRoomCode("");
+		}
 	}
 }
 
@@ -69,7 +73,6 @@ export const resetSocket = (leaveType: string = "game") => {
 export const    searchGame = () => {
 	socket = new WebSocket(`ws://${address}/api/tetris/matchmaking?username=${user.getUsername()}`);
 	socketInit(socket);
-	// TODO : Before unload?
 }
 
 export const    arcadeGame = () => {
@@ -78,12 +81,7 @@ export const    arcadeGame = () => {
 
 	socketInit(socket);
 	tetrisBoardHtml();
-	window.addEventListener("beforeunload", () => {
-		postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
-		if (tetrisGameInformation.getSocket()) {
-			tetrisGameInformation.getSocket()?.close();
-		}
-	})
+
 	// gameControllers();
 }
 
@@ -93,23 +91,16 @@ export const createRoom = () => {
 	tetrisGameInformation.setRoomOwner(true);
 }
 
-export const getMultiplayerRooms = () => {
-	fetch(`http://${address}/api/tetris/getMultiplayerRooms`, {
-		method: "GET",
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok ' + response.statusText);
-			}
-			return response.json();
-		})
-		.then((data: roomInfo[]) => {
-			loadTetrisPage("display-multiplayer-room", {rooms: data});
-		})
-		.catch(error => { alert(error); });
+export const getMultiplayerRooms = async () => {
+
+	try {
+		const res = await getFromApi(`http://${address}/api/tetris/getMultiplayerRooms`);
+
+		loadTetrisPage("display-multiplayer-room", {rooms: res});
+	}
+	catch (error) {
+		alert(error);
+	}
 }
 
 export const joinRoom = (roomCode: string) => {
@@ -287,7 +278,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			effectPlayer(res.argument as string, res.value);
 			return ;
 		case "STATS":
-			console.log("Stats: " + JSON.stringify(res.argument));
+			// console.log("Stats: " + JSON.stringify(res.argument));
 			return;
 		case "MULTIPLAYER_FINISH":
 			console.log("The multiplayer game has finished. You ended up at place " + res.argument);
@@ -298,15 +289,15 @@ const   messageHandler = (event: MessageEvent)=> {
 			return ;
 		case "GAME_FINISH":
 			console.log("Game Over");
-			resetSocket();
+			resetSocket("game");
 			bgmPlayer.stop();
+			hideZoneGame();
+			// loadTetrisPage("idle");
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);
 	}
 }
-
-// TODO: Need to make the timeout pause when the opposite key is pressed ( https://stackoverflow.com/questions/3969475/javascript-pause-settimeout )
 
 const   movePiece = (direction: string) => {
 	const   arg = direction === "moveLeft" ? "left" : "right";

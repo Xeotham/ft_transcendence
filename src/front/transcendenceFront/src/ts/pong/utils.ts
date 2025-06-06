@@ -134,7 +134,6 @@ export const    pongTextureHandler = new class {
 	}
 
 	getTexture(name: string): HTMLImageElement | null {
-		// TODO: verifier si texture est bien chargée
 		if (this.textures[this.pack] && this.textures[this.pack][name])
 			return this.textures[this.pack][name];
 		console.error("Texture not found: " + name);

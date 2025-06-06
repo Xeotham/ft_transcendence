@@ -115,7 +115,7 @@ const tetrisSettingsHtml = async () => {
 
 	</div>`;
 	 
-	html = html.replace(/"> <\/div>/g, '">space</div>'); // affichage de space
+	html = html.replace(/"> <\/div>/g, '">Space</div>'); // affichage de space
 
 	EL.contentTetris.innerHTML = html;
 }

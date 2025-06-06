@@ -3,8 +3,8 @@ import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modale, modaleDisplay } from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
-import {getFromApi, UserInfo, address, user} from "../utils.ts";
-import {friendList} from "./modalesFriendListHTML.ts";
+import {getFromApi, UserInfo, address, user, postToApi} from "../utils.ts";
+import {friendList, loadFriendList} from "./modalesFriendListHTML.ts";
 // @ts-ignore
 import  page from "page";
 
@@ -34,7 +34,6 @@ const tetrisBestScore = async () => {
   let score: number = 0;
   history.forEach((game) => {
     game.players.forEach((player) => {
-      console.log(player);
       if (user.getUsername() === player.username && player.score > score)
         console.log(player.score, score);
         score = player.score;
@@ -103,11 +102,19 @@ export const modaleFriendProfileEvents = () => {
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  friendProfileFriendRemove?.addEventListener('click', () => {
+  friendProfileFriendRemove?.addEventListener('click', async () => {
+    try {
+      await postToApi(`http://${address}/api/user/delete-friend`, { username: user.getUsername(), usernameFriend: friendList.getActualFriend()?.username });
+    }
+    catch (e) {
+        console.error("Error removing friend:", e);
+    }
+    friendList.setActualFriend(null);
+    await loadFriendList()
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  const isConnected = friendList.getActualFriend()?.connected; // TODO: connecté ?
+  const isConnected = friendList.getActualFriend()?.connected;
   if (isConnected) {
     friendProfileConnected.style.display = 'block';
     friendProfileDisconnected.style.display = 'none';

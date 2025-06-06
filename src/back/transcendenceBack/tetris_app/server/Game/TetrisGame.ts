@@ -12,7 +12,7 @@ import { O } from "./Pieces/O";
 import { I } from "./Pieces/I";
 import { clamp, delay, mod } from "./utils";
 import { idGenerator } from "../../../pong_app/utils";
-import {createTetrisGame} from "../../../user_management/api/controllers";
+import { createTetrisGame } from "../../../user_management/api/controllers";
 
 const   idGen = idGenerator()
 
@@ -61,6 +61,7 @@ export class TetrisGame {
 	// statistics
 
 	private beginningTime:				number;
+	private totalTime:					number;
 	private gameTime:					number;
 	private	combo:						number;
 	private	maxCombo:					number;
@@ -143,6 +144,7 @@ export class TetrisGame {
 		// statistics
 
 		this.beginningTime = Date.now();
+		this.totalTime = this.beginningTime;
 		this.gameTime = 0;
 		this.maxCombo = 0;
 		this.piecesPlaced = 0;
@@ -185,9 +187,9 @@ export class TetrisGame {
 		this.showBags = true;
 		this.holdAllowed = true;
 		this.showHold = true;
-		this.infiniteHold = true; // TODO : reset values : false, false, 500
-		this.infiniteMovement = true;
-		this.lockTime = -1; // Amount of time in ms in between a piece reaching the ground and locking down
+		this.infiniteHold = false;
+		this.infiniteMovement = false;
+		this.lockTime = 500; // Amount of time in ms in between a piece reaching the ground and locking down
 		this.spawnARE = 0; // Amount of time in ms in between the piece spawning and starting to move // 250 in the guideline
 		this.softDropAmp = 1;
 		this.isLevelling = true;
@@ -713,6 +715,7 @@ export class TetrisGame {
 				this.linesPerMinute = parseFloat((this.linesCleared / (this.gameTime / 1000 / 60)).toFixed(2));
 				this.attacksSentPerMinute = parseFloat((this.attacksSent / (this.gameTime / 1000 / 60)).toFixed(2));
 				this.attacksReceivedPerMinute = parseFloat((this.attacksReceived / (this.gameTime / 1000 / 60)).toFixed(2));
+				this.totalTime = Date.now() - this.beginningTime;
 				resolve();
 			}
 			Iteration();
@@ -743,8 +746,9 @@ export class TetrisGame {
 	}
 
 	getStats() {
-		const   stats: {[key: string]: number} = {
+		const   stats: {[key: string]: any} = {
 			gameTime: this.gameTime,
+			totalTime: (new Date(this.totalTime || 0).toISOString().substring(14, 23)),
 			maxCombo: this.maxCombo,
 			piecesPlaced: this.piecesPlaced,
 			piecesPerSecond: this.piecesPerSecond,

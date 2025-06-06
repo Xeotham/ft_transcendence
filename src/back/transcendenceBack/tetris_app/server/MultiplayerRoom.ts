@@ -21,19 +21,20 @@ export class MultiplayerRoom {
 		console.log("The code of the new room is " + this.code);
 		this.playersRemaining = 0;
 		this. settings = {
-			"isPrivate": false, // TODO : change to true
+			"isPrivate": true,
 			"isVersus": false,
 			"showShadowPiece": true,
 			"showBags": true,
 			"holdAllowed": true,
 			"showHold": true,
-			"infiniteHold": true, // TODO : change to false
-			"infiniteMovement": true, // TODO : change to false
-			"lockTime": -1, // TODO : change to 500
+			"infiniteHold": false,
+			"infiniteMovement": false,
+			"lockTime": 500,
 			"spawnARE": 0,
 			"softDropAmp": 1.5,
 			"level": 4,
 			"isLevelling": false,
+			"canRetry": true,
 		}
 		this.addPlayer(socket, username);
 	}
@@ -45,10 +46,14 @@ export class MultiplayerRoom {
 	public getCode(): string						{ return this.code; }
 
 	public changeCode(): void						{ this.code = this.generateInviteCode(); }
-	public setSettings(settings: any): void			{ this.settings = settings; console.log("settings changed in the back"); this.sendSettingsToPlayers(); }
+	public setSettings(settings: any): void			{ this.settings = settings; this.sendSettingsToPlayers(); }
 	public addSetting(key: string, value: any): void{ this.settings[key] = value; this.sendSettingsToPlayers(); }
 
 	public addPlayer(socket: WebSocket, username: string): void		{
+		if (this.players.find((player) => player.getUsername() === username)) {
+			socket.send(JSON.stringify({ type: "MULTIPLAYER_LEAVE" }));
+			return console.log("Player " + username + " already exists in room " + this.code);
+		}
 		if (this.players.length <= 0) {
 			socket.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: "OWNER"}));
 			this.players.push(new MultiplayerRoomPlayer(socket, username, true));
@@ -59,7 +64,7 @@ export class MultiplayerRoom {
 			this.settings.canRetry = false;
 		}
 		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
-		socket.send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
+		this.sendSettingsToPlayers();
 	}
 
 	public removePlayer(username: string): void	{
@@ -79,6 +84,7 @@ export class MultiplayerRoom {
 		}
 		if (this.players.length === 1)
 			this.settings.canRetry = true;
+		this.sendSettingsToPlayers();
 	}
 
 	public isEmpty(): boolean {
@@ -126,7 +132,7 @@ export class MultiplayerRoom {
 					j %= this.players.length;
 					if (j === i)
 						break ;
-					if (this.players[j].getGame()?.isOver()) {
+					if (this.players[j].getGame()?.isOver() || this.players[j].getGame() === undefined) {
 						++lost;
 						continue;
 					}
@@ -137,7 +143,7 @@ export class MultiplayerRoom {
 				this.players[i].getSocket().send(JSON.stringify({ type: "MULTIPLAYER_OPPONENTS_GAMES", argument: games }));
 			}
 		}
-		const interval = setInterval(sendOpponentsGames, 1000 / 30);
+		const interval = setInterval(sendOpponentsGames, 1000 / 10);
 
 		const endOfGame = (player: MultiplayerRoomPlayer) => {
 			// console.log("End of game for player " + player.getUsername() + " is at place " + this.playersRemaining);
@@ -175,6 +181,7 @@ export class MultiplayerRoom {
 	}
 
 	private sendSettingsToPlayers(): void {
+		this.settings.nbPlayers = this.players.length;
 		for (const player of this.players) {
 			player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "SETTINGS", value: this.settings }));
 		}

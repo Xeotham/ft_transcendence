@@ -1,9 +1,21 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { modaleDisplay, ModaleType } from './modalesCore.ts';
-import { patchToApi, address, user } from "../utils.ts";
+import {patchToApi, address, user, UserInfo, getFromApi} from "../utils.ts";
 import { modaleAlert } from './modalesCore.ts';
 
+let   defaultAvatars: { url: string, base64: string }[] = [];
+
+export const    loadDefaultAvatars = async () => {
+	const   avatars: string[] = (await getFromApi(`http://${address}/api/user/get-avatars`)).avatars;
+
+	avatars.forEach((avatar) => {
+		defaultAvatars.push({
+			url: URL.createObjectURL(UserInfo.base64ToBlob(avatar)),
+			base64: avatar
+		})
+	})
+}
 
 export let modaleAvatarHTML = () => {
 	let AvatarHTML = `
@@ -18,13 +30,7 @@ export let modaleAvatarHTML = () => {
 	<div class="grid grid-cols-6 gap-x-[21px] gap-y-[21px]">
 `;
 
-	for (let i = 0; i < 24; i++) {
-		AvatarHTML += `
-    <div id="profileAvatar${i}" class="${TCS.modaleAvatarChoose}">
-      <img id="avatar${i}" src="/src/medias/avatars/avatar${i+1}.png"/>
-    </div>
-  `;
-	}
+	AvatarHTML += showDefaultAvatars();
 
 	AvatarHTML += `
 	<div class="h-[1Xpx]"></div>
@@ -46,6 +52,20 @@ export let modaleAvatarHTML = () => {
 	`;
 
 	return AvatarHTML;
+}
+
+const   showDefaultAvatars = () => {
+	let     avatarHTML = '';
+
+	defaultAvatars.forEach((avatar, index) => {
+		const   url = avatar.url;
+		avatarHTML += `
+			<div id="profileAvatar${index}" class="${TCS.modaleAvatarChoose}">
+				<img id="avatar${index}" src="${url}"/>
+			</div>
+		`;
+	})
+	return avatarHTML;
 }
 
 const imageToBase64 = (imageElement: HTMLImageElement): string => {
@@ -123,8 +143,8 @@ export const modaleAvatarEvents = async () => {
 			const   file = fileInput.files[0];
 			try {
 				avatarBase64 = await processUploadedAvatar(file);
-				user.setAvatar(avatarBase64);
 				patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: avatarBase64});
+				user.setAvatar(avatarBase64);
 				modaleDisplay(ModaleType.PROFILE);
 			} catch (error) {
 				console.error('Error processing uploaded avatar:', error);
@@ -138,15 +158,10 @@ export const modaleAvatarEvents = async () => {
 		if (!avatar)
 			continue;
 		avatar.addEventListener('click', async () => {
-			const   img = new Image();
-			img.src = `http://localhost:5000/src/medias/avatars/avatar${i+1}.png`;
-
-			const   avatar = imageToBase64(img);
-
 			if (!avatar)
 				return;
-			user.setAvatar(avatar);
-			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: avatar})
+			user.setAvatar(defaultAvatars[i].base64);
+			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: defaultAvatars[i].base64});
 			modaleDisplay(ModaleType.PROFILE);
 		})
 	}

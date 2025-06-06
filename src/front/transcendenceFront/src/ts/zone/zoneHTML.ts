@@ -12,6 +12,7 @@ import  { loadTetrisTextures } from "../tetris/tetris.ts";
 //TMP
 import { modaleDisplay, ModaleType } from '../modales/modalesCore.ts';
 import {user} from "../utils.ts";
+import {loadDefaultAvatars} from "../modales/modalesAvatarHTML.ts";
 
 ///////////////////////////////////////////
 // Exports
@@ -63,6 +64,7 @@ export const	EL = {
 export const awaitMedias = async () => {
 	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
     // await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
+    await loadDefaultAvatars()
 }
 
 export const setHtmlFront = () => {

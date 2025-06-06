@@ -73,7 +73,6 @@ export function quitTournament(request: FastifyRequest<{ Body: requestBody }>) {
 	if (!tour)
 		return console.log("Tournament not found");
 
-	// TODO : Look at that when game already started
 	tour.removePlayer(request.body.tourPlacement)
 }
 

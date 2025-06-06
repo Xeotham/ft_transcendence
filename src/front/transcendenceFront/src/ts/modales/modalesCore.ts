@@ -6,19 +6,31 @@ import { EL } from '../zone/zoneHTML.ts';
 import { modaleSignInHTML, modaleSignInEvents } from './modalesSignInHTML.ts';
 import { modaleSignUpHTML, modaleSignUpEvents } from './modalesSignUpHTML.ts';
 import { modaleProfileHTML, modaleProfileEvents } from './modalesProfileHTML.ts';
-import {modalePongStatHTML, modalePongStatEvents, loadPongStat} from './modalesPongStatHTML.ts';
+import {
+  modalePongStatHTML,
+  modalePongStatEvents,
+  loadPongStat,
+  pongHistory,
+  modaleDislpayPrevNextPong
+} from './modalesPongStatHTML.ts';
 import {
   modaleTetrisStatHTML,
   modaleTetrisStatEvents,
   loadTetrisStat,
   modaleTetrisStatLineEvents,
-  modaleDislpayPrevNext, indexGame
+  modaleDislpayPrevNextTetris, indexGame, tetrisHistory
 } from './modalesTetrisStatHTML.ts';
 import { modaleTetrisStatDetailHTML, modaleTetrisStatDetailEvents } from './modalesTetrisStatDetailHTML.ts';
 import { modaleAvatarHTML, modaleAvatarEvents } from './modalesAvatarHTML.ts';
-import {modaleFriendListHTML, modaleFriendListEvents, loadFriendList} from './modalesFriendListHTML.ts';
+import {
+  modaleFriendListHTML,
+  modaleFriendListEvents,
+  loadFriendList,
+  modaleDislpayPrevNextFriend
+} from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../utils.ts';
+import {modaleEditEvents, modaleEditHTML} from "./modaleEditHTML.ts";
 
 ///////////////////////////////////////////
 // Variables
@@ -33,7 +45,8 @@ export enum ModaleType {
   TETRIS_STATS_DETAIL = 'TETRIS_STATS_DETAIL',
   AVATAR = 'AVATAR',
   FRIEND_LIST = 'FRIEND_LIST',
-  FRIEND_PROFILE = 'FRIEND_PROFILE'
+  FRIEND_PROFILE = 'FRIEND_PROFILE',
+  EDIT_PROFILE = 'EDIT_PROFILE',
 }
 
 export let modale = {
@@ -60,7 +73,7 @@ export const modaleInit = () => {
 }
 
 export const modaleDisplay = async (modaleType: ModaleType) => {
-  if (!modale.content || !modale.zone || modale.type === modaleType) { return; }
+  if (!modale.content || !modale.zone || (modale.type === modaleType && modaleType !== ModaleType.FRIEND_LIST)) { return; }
 
   modale.type = modaleType;
   switch (modaleType) {
@@ -73,24 +86,25 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       modaleSignUpEvents();
       break;
     case ModaleType.PROFILE:
-      await loadFriendList()
+      await loadFriendList();
       modale.content.innerHTML = await modaleProfileHTML();
       modaleProfileEvents();
       break;
     case ModaleType.PONG_STATS:
       await loadPongStat();
-      modale.content.innerHTML = modalePongStatHTML(0); 
+      modale.content.innerHTML = modalePongStatHTML(0);
+      modaleDislpayPrevNextPong();
       modalePongStatEvents();
       break;
     case ModaleType.TETRIS_STATS:
       await loadTetrisStat();
       modale.content.innerHTML = modaleTetrisStatHTML(0);
-      modaleDislpayPrevNext();
+      modaleDislpayPrevNextTetris();
       modaleTetrisStatEvents();
       modaleTetrisStatLineEvents();
       break;
     case ModaleType.TETRIS_STATS_DETAIL:
-      modale.content.innerHTML = modaleTetrisStatDetailHTML(indexGame); // TODO: mettre id de la partie
+      modale.content.innerHTML = modaleTetrisStatDetailHTML(indexGame);
       modaleTetrisStatDetailEvents();
       break;
     case ModaleType.AVATAR:
@@ -99,12 +113,17 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       break;
     case ModaleType.FRIEND_LIST:
       modale.content.innerHTML = modaleFriendListHTML(0);
+      modaleDislpayPrevNextFriend();
       modaleFriendListEvents();
       break;
     case ModaleType.FRIEND_PROFILE:
       //modale.content.innerHTML = modaleFriendProfileHTML(0);
-      await modaleFriendProfileHTML(); // TODO: pourquoi on ne peut pas mettre modaleFriendProfileHTML(0) ? seul fonction asynchrone ???
+      await modaleFriendProfileHTML();
       modaleFriendProfileEvents();
+      break;
+    case ModaleType.EDIT_PROFILE:
+      modale.content.innerHTML = modaleEditHTML();
+      modaleEditEvents("username");
       break;
     default:
       modale.content.innerHTML = '';
@@ -156,7 +175,7 @@ export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
   if (!bkgModale)
     return;
 
-  if (modaleType===ModaleType.SIGNIN || modaleType===ModaleType.SIGNUP || modaleType===ModaleType.NONE) {
+  if (modaleType === ModaleType.SIGNIN || modaleType === ModaleType.SIGNUP || modaleType === ModaleType.NONE) {
     bkgModale.removeEventListener('click', () => {
       // TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
       // e.stopPropagation();

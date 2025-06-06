@@ -3,8 +3,8 @@ import { EL } from "../zone/zoneHTML.ts";
 import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils.ts";
 import { pongGameInfo } from "./pong.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
-import { quit } from "./game.ts"; // TODO a valider 
-import { showZoneGame} from "../zone/zoneCore.ts";
+import { quit } from "./game.ts";
+import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
 import { pongSettingsHtml } from "./pongSettingsHTML.ts";
 
 import img_pong_logo from '/src/medias/images/zones/logoPong.png';
@@ -129,7 +129,7 @@ const   pongTournamentHtml = () => {
 	`;
 }
 
-const   pongVersusJoinHtml = () => { //TODO pong join versus
+const   pongVersusJoinHtml = () => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML =`
@@ -156,7 +156,7 @@ const   pongVersusJoinHtml = () => { //TODO pong join versus
 	`;
 }
 
-const   pongVersusSpectateHtml = (roomId: number) => { //TODO pong versus spectate qd on a clic sur la partie a spectate
+const   pongVersusSpectateHtml = (roomId: number) => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -180,7 +180,7 @@ const   pongVersusSpectateHtml = (roomId: number) => { //TODO pong versus specta
 	`;
 }
 
-const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string) => {  //TODO pong tournament info
+const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string) => {
 	if (!EL.contentPong) return ;
 
 	let html = `
@@ -212,7 +212,7 @@ const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string
 	EL.contentPong.innerHTML = html;
 }
 
-const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => { //TODO pong tournament list ()
+const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => {
 	if (!EL.contentPong) return ;
 
 	let listHTML = `
@@ -253,7 +253,7 @@ const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => { //TODO pong tournament
 
 }
 
-const   pongVersusPrivateHtml = (inviteCode: string) => { //TODO pong versus create private room
+const   pongVersusPrivateHtml = (inviteCode: string) => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -279,7 +279,7 @@ const   pongVersusPrivateHtml = (inviteCode: string) => { //TODO pong versus cre
 	`;
 }
 
-const   pongVersusJoinPrivRoomHtml = () => { //TODO pong versus join private room
+const   pongVersusJoinPrivRoomHtml = () => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -335,8 +335,10 @@ const pongVersusListHtml = (rooms: RoomInfo[]) => { // TOTO liste de rooms (spec
 		
 	listHTML += `
 		<div class="h-[30px]"></div>
-	</div>
-	`;
+		<div class="text-left"><a id="pongSpectateRefresh" class="${TCS.modaleTexteLink}">
+			${imTexts.tetrisDisplayMultiplayerRoomRefresh}</a></div>
+		</div>
+		`;
 	EL.contentPong.innerHTML = listHTML;
 }
 
@@ -359,23 +361,25 @@ const PongTournamentListHtml = (tournaments: TournamentInfo[]) => {
 		`;
 	}
 	else {
-	tournaments.forEach((tournament: TournamentInfo) => {
-		listHTML += `
-		<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">
-			<span class="text-yellow-600">» </span>
-			<span class="text-stone-950">
-			Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}</span>
-		</a>
-		<div class="h-[10px]"></div>
-		`;
-	});
+		tournaments.forEach((tournament: TournamentInfo) => {
+			listHTML += `
+			<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">
+				<span class="text-yellow-600">» </span>
+				<span class="text-stone-950">
+				Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}</span>
+			</a>
+			<div class="h-[10px]"></div>
+			`;
+		});
 	}
 
 	listHTML += `
 		<div class="h-[20px]"></div>
-	</div>
-	`;
-
+			<div class="text-left"><a id="pongSpectateRefresh" class="${TCS.modaleTexteLink}">
+				${imTexts.tetrisDisplayMultiplayerRoomRefresh}</a></div>
+			</div>
+		</div>
+		`;
 	EL.contentPong.innerHTML = listHTML;
 }
 
@@ -447,7 +451,8 @@ const   pongTournamentFoundHtml = () => {
 		<div class="h-[10px]"></div>
 		<div id="quit2" class="${TCS.gameBlockLink}">${imTexts.pongModalesTournamentFoundQuit}</div>
 		`;
-	}else {
+	}
+	else {
 		html += `
 		<div role="status">
 			<svg aria-hidden="true" class="inline w-[24px] h-[24px] text-stone-400 animate-spin fill-amber-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -467,8 +472,6 @@ const   pongTournamentFoundHtml = () => {
 	EL.contentPong.innerHTML = html;
 }
 
-// TODO: Add spec tournament board
-
 const   pongDrawBoardHtml = () => {
 	if (!EL.zoneGame)
 		return
@@ -479,9 +482,9 @@ const   pongDrawBoardHtml = () => {
 	<div class="absolute z-50 w-full h-full">
 
 		<div class="absolute z-50 top-[10px] right-[10px]">
-			<button class="${TCS.pongButton}" id="quit">Quit</button>
+			<button class="${TCS.pongButton}" id="quitPong">Quit</button>
 		</div>
-		
+
 		<div id="pongGameCanvas" class="absolute z-25 w-full h-full flex items-center justify-center bg-black">		
 			<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
 		</div>
@@ -492,11 +495,8 @@ const   pongDrawBoardHtml = () => {
 	pongQuitButton();
 }
 
-const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
+const   pongJoinConfirmPageHtml = () => {
 	if (!EL.contentPong) return ;
-
-	// TODO: Add quit button
-	// TODO no quit/back ?
 
 	EL.contentPong.innerHTML = `
 	<div class="${TCS.tetrisWindowBkg}">
@@ -519,14 +519,13 @@ const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
 }
 
 const   pongQuitButton = () => {
-	const quitButton = document.getElementById("quit") as HTMLButtonElement;
+	const quitButton = document.getElementById("quitPong") as HTMLButtonElement;
 
 	if (!quitButton)
 		return ;
 
 	quitButton.addEventListener("click", () => {
-		// TODO quit server game ?
-		quit();// TODO a valider 
+		quit();
 		page("/pong");
 	});
 }
