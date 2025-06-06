@@ -120,7 +120,7 @@ const formatTetrisStatLine = (index: number) => {
 	const stat = tetrisHistory[index];
 	if (!stat)
 		return '';
-	let formattedStat = `${stat.date.slice(0,10)} - `;
+	let formattedStat = `${stat.date} - `;
 	formattedStat += `${stat.score} pts`;
 	return formattedStat;
 }

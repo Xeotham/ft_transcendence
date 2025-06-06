@@ -6,7 +6,7 @@ import {
 	minoInfo,
 	roomInfo,
 	setKey, tetriminoInfo, tetriminoPatterns,
-	tetrisGame, tetrisGoalInfo, tetrisGameInfo, minoSize
+	tetrisGame, tetrisGoalInfo, tetrisGameInfo, minoSize, backgroundHandler, tetrisTexturesHandler
 } from "./utils.ts";
 
 import { tetrisDisplayMultiplayerRoom } from "./tetrisMultiplayerDisplayHTML.ts";
@@ -145,45 +145,44 @@ export const changeKeys = (keyType: string) => {
 }
 
 
-export const tetrisTextures: { [key: string]: HTMLImageElement } = {};
-
-export const loadTetrisTextures = () => {
-
-	const   texturePaths = {
-		"I":        '/src/medias/textures/tetris/I.png',
-		"J":        '/src/medias/textures/tetris/J.png',
-		"L":        '/src/medias/textures/tetris/L.png',
-		"O":        '/src/medias/textures/tetris/O.png',
-		"S":        '/src/medias/textures/tetris/S.png',
-		"T":        '/src/medias/textures/tetris/T.png',
-		"Z":        '/src/medias/textures/tetris/Z.png',
-		"SHADOW":   '/src/medias/textures/tetris/shadow.png',
-		"BACKGROUND": '/src/medias/textures/tetris/background.jpg',
-		"MATRIX":   '/src/medias/textures/tetris/matrix.png',
-		"HOLD":     '/src/medias/textures/tetris/hold.png',
-		"BAGS":     '/src/medias/textures/tetris/bags.png',
-		"GARBAGE": '/src/medias/textures/tetris/garbage.png',
-	}
-
-	return Promise.all(
-		Object.entries(texturePaths).map(([key, path]) => {
-			return new Promise<void>((resolve, reject) => {
-				const img = new Image();
-				// console.log(`Loading texture: ${key} from ${path}`);
-				img.src = path;
-				img.onload = () => {
-					tetrisTextures[key] = img;
-					resolve();
-				};
-				img.onerror = (err) => {
-					console.error(`Failed to load texture: ${key} from ${path}`, err);
-					reject(err)
-				};
-				// console.log(tetrisTextures[key]);
-			});
-		})
-	);
-};
+// export const tetrisTexturesHandler: { [key: string]: HTMLImageElement } = {};
+//
+// export const loadTetrisTextures = () => {
+//
+// 	const   texturePaths = {
+// 		"I":        '/src/medias/textures/tetris/I.png',
+// 		"J":        '/src/medias/textures/tetris/J.png',
+// 		"L":        '/src/medias/textures/tetris/L.png',
+// 		"O":        '/src/medias/textures/tetris/O.png',
+// 		"S":        '/src/medias/textures/tetris/S.png',
+// 		"T":        '/src/medias/textures/tetris/T.png',
+// 		"Z":        '/src/medias/textures/tetris/Z.png',
+// 		"SHADOW":   '/src/medias/textures/tetris/shadow.png',
+// 		"MATRIX":   '/src/medias/textures/tetris/matrix.png',
+// 		"HOLD":     '/src/medias/textures/tetris/hold.png',
+// 		"BAGS":     '/src/medias/textures/tetris/bags.png',
+// 		"GARBAGE": '/src/medias/textures/tetris/garbage.png',
+// 	}
+//
+// 	return Promise.all(
+// 		Object.entries(texturePaths).map(([key, path]) => {
+// 			return new Promise<void>((resolve, reject) => {
+// 				const img = new Image();
+// 				// console.log(`Loading texture: ${key} from ${path}`);
+// 				img.src = path;
+// 				img.onload = () => {
+// 					tetrisTexturesHandler[key] = img;
+// 					resolve();
+// 				};
+// 				img.onerror = (err) => {
+// 					console.error(`Failed to load texture: ${key} from ${path}`, err);
+// 					reject(err)
+// 				};
+// 				// console.log(tetrisTexturesHandler[key]);
+// 			});
+// 		})
+// 	);
+// };
 
 
 const   drawMino = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, texture: string) => {
@@ -257,13 +256,16 @@ const   drawBag = (ctx: CanvasRenderingContext2D, bags: tetriminoInfo[][], bagCo
 
 const   drawBackground = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height:number) => {
 	ctx.clearRect(x, y, width, height);
-	ctx.drawImage(tetrisTextures["BACKGROUND"], x, y, width, height);
+	const   background = backgroundHandler.getBackgroundTextures();
+	const   newx = (width - background.width) / 2;
+	const   newy = (height - background.height) / 2;
+	ctx.drawImage(background, newx, newy);
 }
 
 const   drawBoard = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-	const   matrixTexture = tetrisTextures["MATRIX"];
-	const   holdTexture = tetrisTextures["HOLD"];
-	const   bagsTexture = tetrisTextures["BAGS"];
+	const   matrixTexture = tetrisTexturesHandler.getTexture("MATRIX");
+	const   holdTexture = tetrisTexturesHandler.getTexture("HOLD");
+	const   bagsTexture = tetrisTexturesHandler.getTexture("BAGS");
 
 	const   matrixCoord: {x: number, y: number} = { x: x, y: y };
 	const   holdCoord: {x: number, y: number} = { x: x - 20 - holdTexture.width, y: y };
@@ -298,7 +300,7 @@ const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number
 	const   opponentsSize = {width: 340, height: 756};
 	const   opponentsNumber = opponents.length;
 	const   opponentsBoardInfo: {x: number, y: number, width: number, height: number}[] = [];
-	const   matrixTexture = tetrisTextures["MATRIX"];
+	const   matrixTexture = tetrisTexturesHandler.getTexture("MATRIX");
 	let     boardSize = {width: 0, height: 0};
 
 	if (opponents.length === 0)
@@ -344,15 +346,19 @@ const   drawGame = () => {
 	const ctx = canvas?.getContext("2d") as CanvasRenderingContext2D;
 	const game = tetrisGameInformation.getGame();
 	const opponents = tetrisGameInformation.getOpponentsGames();
+	const   textures: {[key: string]: HTMLImageElement} = {
+		"MATRIX": tetrisTexturesHandler.getTexture("MATRIX"),
+		"HOLD": tetrisTexturesHandler.getTexture("HOLD"),
+	};
 
 	if (!canvas || !ctx || !game)
 		return ;
 
 	const   minoSize = 32;
-	const   boardCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (tetrisTextures["MATRIX"].width / 2)), y: ((canvas.height / 2) - (tetrisTextures["MATRIX"].height / 2)) };
+	const   boardCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (textures["MATRIX"].width / 2)), y: ((canvas.height / 2) - (textures["MATRIX"].height / 2)) };
 	const   matrixCoord: { x: number, y: number } = { x: ((canvas.width / 2) - (5 * minoSize)), y: ((canvas.height / 2) - (11.5 * minoSize)) };
 	const   matrixSize: { width: number, height: number } = { width: (10 * minoSize), height: (23 * minoSize) };
-	const   holdCoord: { x: number, y: number } = { x: (matrixCoord.x - tetrisTextures["HOLD"].width - 20) + 10, y: (matrixCoord.y + 20) + 10 }
+	const   holdCoord: { x: number, y: number } = { x: (matrixCoord.x - textures["HOLD"].width - 20) + 10, y: (matrixCoord.y + 20) + 10 }
 	const   bagsCoord: { x: number, y: number } = { x: (matrixCoord.x + matrixSize.width + 20) + 30, y: (matrixCoord.y + 20) + 10 }
 	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x - 10), y: (boardCoord.y + 400)}
 	const   gameInfo: tetrisGoalInfo = {score: game.score, level: game.level, time: game.time, lineClearGoal: game.lineClearGoal, linesCleared: game.linesCleared, piecesPerSecond: game.piecesPerSecond, piecesPlaced: game.piecesPlaced };

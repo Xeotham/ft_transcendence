@@ -5,6 +5,7 @@ import { changeKeys } from "./tetris.ts";
 // @ts-ignore
 import  page from 'page';
 import {userKeys, keys} from "../utils.ts";
+import {backgroundHandler, bgmPlayer, tetrisTexturesHandler} from "./utils.ts";
 
 export const tetrisSettings = async () => {
 	await tetrisSettingsHtml();
@@ -35,14 +36,9 @@ const tetrisSettingsHtml = async () => {
 			<div id="minoName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsMinoTitle}</div>
 			<div id="minoKey" class="${TCS.gameSelect}">
 				<select id="minoSelect" class="w-full">
-					<option value="1">${imTextsJson.fr.tetris.settings.mino.name[0]}</option>
-					<option value="2">${imTextsJson.fr.tetris.settings.mino.name[1]}</option>
-					<option value="3">${imTextsJson.fr.tetris.settings.mino.name[2]}</option>
-					<option value="4">${imTextsJson.fr.tetris.settings.mino.name[3]}</option>
-					<option value="5">${imTextsJson.fr.tetris.settings.mino.name[4]}</option>
-					<option value="6">${imTextsJson.fr.tetris.settings.mino.name[5]}</option>
-					<option value="7">${imTextsJson.fr.tetris.settings.mino.name[6]}</option>
-					<option value="8">${imTextsJson.fr.tetris.settings.mino.name[7]}</option>
+					<option value="classic" class="${TCS.gameOption}" ${tetrisTexturesHandler.getActualTexture() === "classic" ? "selected" : "" }>Classic</option>
+					<option value="minetris" class="${TCS.gameOption}" ${tetrisTexturesHandler.getActualTexture() === "minetris" ? "selected" : "" }>Minetris</option>
+					<option value="minimalist" class="${TCS.gameOption}" ${tetrisTexturesHandler.getActualTexture() === "minimalist" ? "selected" : "" }>Minimalist</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
@@ -51,12 +47,11 @@ const tetrisSettingsHtml = async () => {
 			<div id="bkgName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsBkgTitle}</div>
 			<div id="bkgKey" class="${TCS.gameSelect}">
 				<select id="bkgSelect" class="w-full">
-					<option value="1">${imTextsJson.fr.tetris.settings.bkg.name[0]}</option>
-					<option value="2">${imTextsJson.fr.tetris.settings.bkg.name[1]}</option>
-					<option value="3">${imTextsJson.fr.tetris.settings.bkg.name[2]}</option>
-					<option value="4">${imTextsJson.fr.tetris.settings.bkg.name[3]}</option>
-					<option value="5">${imTextsJson.fr.tetris.settings.bkg.name[4]}</option>
-					<option value="6">${imTextsJson.fr.tetris.settings.bkg.name[5]}</option>
+					<option class="${TCS.gameOption}" value="bkg_1" ${backgroundHandler.getActualBackground() === "bkg_1" ? "selected" : "" }>Background1</option>
+					<option class="${TCS.gameOption}" value="bkg_2" ${backgroundHandler.getActualBackground() === "bkg_2" ? "selected" : "" }>Background2</option>
+					<option class="${TCS.gameOption}" value="bkg_3" ${backgroundHandler.getActualBackground() === "bkg_3" ? "selected" : "" }>Background3</option>
+					<option class="${TCS.gameOption}" value="bkg_4" ${backgroundHandler.getActualBackground() === "bkg_4" ? "selected" : "" }>Background4</option>
+					<option class="${TCS.gameOption}" value="bkg_5" ${backgroundHandler.getActualBackground() === "bkg_5" ? "selected" : "" }>Background5</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
@@ -65,12 +60,10 @@ const tetrisSettingsHtml = async () => {
 			<div id="musicName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsMusicTitle}</div>
 			<div id="musicKey" class="${TCS.gameSelect}">
 				<select id="musicSelect" class="w-full">
-					<option value="1">${imTextsJson.fr.tetris.settings.music.name[0]}</option>
-					<option value="2">${imTextsJson.fr.tetris.settings.music.name[1]}</option>
-					<option value="3">${imTextsJson.fr.tetris.settings.music.name[2]}</option>
-					<option value="4">${imTextsJson.fr.tetris.settings.music.name[3]}</option>
-					<option value="5">${imTextsJson.fr.tetris.settings.music.name[4]}</option>
-					<option value="6">${imTextsJson.fr.tetris.settings.music.name[5]}</option>
+					<option class="${TCS.gameOption}" value="none" ${bgmPlayer.getActualBgm() === "none" ? "selected" : "" } >No Music</option>
+					<option class="${TCS.gameOption}" value="bgm1" ${bgmPlayer.getActualBgm() === "bgm1" ? "selected" : "" }>Disturbing the peace (PEAK)</option>
+					<option class="${TCS.gameOption}" value="bgm2" ${bgmPlayer.getActualBgm() === "bgm2" ? "selected" : "" }>Brain Power</option>
+					<option class="${TCS.gameOption}" value="bgm3" ${bgmPlayer.getActualBgm() === "bgm3" ? "selected" : "" }>Jump Up, Super Star!</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
@@ -121,7 +114,7 @@ const tetrisSettingsHtml = async () => {
 }
 
 const tetrisSettingsEvents = () => {
-	const elements = {
+	const   elements = {
 		moveLeft: document.getElementById("moveLeftKey"),
 		moveRight: document.getElementById("moveRightKey"),
 		rotClock: document.getElementById("rotClockKey"),
@@ -132,6 +125,26 @@ const tetrisSettingsEvents = () => {
 		hold: document.getElementById("holdKey"),
 		forfeit: document.getElementById("forfeitKey")
 	};
+	const   musicSelct = document.getElementById("musicSelect") as HTMLSelectElement;
+	const   bkgSelect = document.getElementById("bkgSelect") as HTMLSelectElement;
+	const   minoSelect = document.getElementById("minoSelect") as HTMLSelectElement;
+
+	musicSelct?.addEventListener("change", (e) => {
+		const selectedValue = e.target?.value;
+		bgmPlayer.choseBgm(selectedValue);
+	})
+
+	bkgSelect?.addEventListener("change", (e) => {
+		const selectedValue = e.target?.value;
+
+		backgroundHandler.setActualBackground(selectedValue);
+	})
+
+	minoSelect?.addEventListener("change", (e) => {
+		const selectedValue = e.target?.value;
+
+		tetrisTexturesHandler.setTexture(selectedValue);
+	})
 
 	// Vérifier si tous les éléments existent
 	if (Object.values(elements).some(el => !el)) {
@@ -144,15 +157,6 @@ const tetrisSettingsEvents = () => {
 		page("/tetris");
 		return;
 	}
-
-	// left                VARCHAR(50) DEFAULT 'a',
-	// 	right               VARCHAR(50) DEFAULT 'd',
-	// 	clockwiseRot		VARCHAR(50) DEFAULT 'ArrowRight',
-	// 	countClockwiseRot	VARCHAR(50) DEFAULT 'ArrowLeft',
-	// 	hardDrop			VARCHAR(50) DEFAULT 'ArrowUp',
-	// 	softDrop			VARCHAR(50) DEFAULT 'ArrowDown',
-	// 	hold                VARCHAR(50) DEFAULT 'Shift',
-	// 	forfeit             VARCHAR(50) DEFAULT 'Escape',
 
 	// Ajouter les event listeners
 	elements.moveLeft?.addEventListener("click", () => {
@@ -177,33 +181,3 @@ const tetrisSettingsEvents = () => {
 	});
 }
 
-// const keyBindsHtmlOLD = (keys: keys) => {
-// 	if (!EL.contentTetris)
-// 		return;
-
-// 	loadTetrisHtml("setting");
-
-// 	EL.contentTetris.innerHTML += `
-// 		<h2>Keybindings</h2>
-// 		<div>
-// 			<p>Move Piece Left:</p>
-// 			<button id="moveLeft">${keys.getMoveLeft()}</button>
-// 			<p>Move Piece Right:</p>
-// 			<button id="moveRight">${keys.getMoveRight()}</button>
-// 			<p>Rotate Piece Clockwise:</p>
-// 			<button id="rotClock">${keys.getClockwiseRotate()}</button>
-// 			<p>Rotate Piece CounterClockwise:</p>
-// 			<button id="rotCountClock">${keys.getCounterclockwise()}</button>
-// 			<p>Rotate Piece 180</p>
-// 			<button id="rot180">${keys.getRotate180()}</button>
-// 			<p>Hard Drop Piece:</p>
-// 			<button id="hardDrop">${keys.getHardDrop()}</button>
-// 			<p>Soft Drop Piece:</p>
-// 			<button id="softDrop">${keys.getSoftDrop()}</button>
-// 			<p>Hold Piece:</p>
-// 			<button id="hold">${keys.getHold()}</button>
-// 			<p>Forfeit:</p>
-// 			<button id="forfeit">${keys.getForfeit()}</button>
-// 		</div>
-// 	`
-// }
