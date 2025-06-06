@@ -75,6 +75,32 @@
         "cancel":"annuler",
         "uploadTitle": "Charger une image",
         "uploadLink": "Sélectionner un fichier"
+      },
+      "edit": {
+        "choseUsername": "Changer username",
+        "chosePassword": "Changer mot de passe",
+        "editUsername": {
+            "title": "Édition du nom d'utilisateur",
+            "text": "Changer votre nom d'utilisateur !",
+            "previous": "Entrez votre ancien nom d'utilisateur",
+            "new": "Entrez votre nouveau nom d'utilisateur",
+            "sameError": "Votre nouveau nom d'utilisateur est identique a l'ancien !",
+            "previousError": "Votre ancien nom d'utilisateur est incorrect !",
+            "submit": "Valider",
+            "cancel": "Annuler"
+        },
+        "editPassword": {
+            "title": "Édition du mot de passe",
+            "text": "Changer votre mot de passe !",
+            "previous": "Entrez votre ancien mot de passe",
+            "new": "Entrez votre nouveau mot de passe",
+            "confirm": "Confirmer le changement",
+            "submit": "Valider",
+            "cancel": "Annuler",
+            "confirmError": "Les mots de passe ne correspondent pas.",
+            "sameError": "Votre nouveau mot de passe est identique a l'ancien !",
+            "previousError": "Votre ancien mot de passe est incorrect !"
+        }
       }
     },
     "pong": {

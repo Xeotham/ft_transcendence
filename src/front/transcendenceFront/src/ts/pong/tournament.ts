@@ -206,6 +206,7 @@ const   tournamentFound = () => {
 	if (pongGameInfo.getTournament()?.getIsOwner()) {
 		document.getElementById("start-tournament")?.addEventListener("click", startTournament);
 		document.getElementById("shuffle-tree")?.addEventListener("click", shuffleTree);
+		document.getElementById("quit2")?.addEventListener("click", () => quit("Leaving room"));
 	}
 	document.getElementById("quit-room")?.addEventListener("click", () => quit("Leaving room"));
 }

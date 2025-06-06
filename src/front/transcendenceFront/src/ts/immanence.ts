@@ -18,7 +18,7 @@ const main = () => {
     EL.init();
     if (!EL.check())
       return;
-    setZoneAvatar(false); //TODO: false -> true 
+    setZoneAvatar(false);
     awaitMedias();
     startRouter();
     modaleInit();

@@ -114,7 +114,7 @@ export const modaleFriendProfileEvents = () => {
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  const isConnected = friendList.getActualFriend()?.connected; // TODO: connecté ?
+  const isConnected = friendList.getActualFriend()?.connected;
   if (isConnected) {
     friendProfileConnected.style.display = 'block';
     friendProfileDisconnected.style.display = 'none';

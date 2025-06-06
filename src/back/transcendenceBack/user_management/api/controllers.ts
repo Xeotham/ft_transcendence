@@ -79,7 +79,25 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
 	}
 };
 
-export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =>
+export const    updatePassword = async (request: FastifyRequest, reply: FastifyReply) => {
+	try {
+		const   { username, previousPassword, newPassword } = request.body as { username: string, previousPassword: string, newPassword: string };
+		const   user = await getUserByUsername(username);
+
+		if (!user || !(await bcrypt.compare(previousPassword, user.password)))
+			return reply.status(401).send({ message: 'Invalid password' });
+		const hashedPassword = await hashPassword(newPassword);
+
+		updateUserById(user.id!, 'password', hashedPassword as string);
+		return reply.status(201).send({message: 'Password Changed successfully'});
+	}
+	catch (e) {
+		console.error('Error updating password', e);
+		return reply.status(500).send({ message: 'Internal server error' });
+	}
+}
+
+export const    updateUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {
 	try {
 		const {username, type, update} = request.body as { username: string, type: string, update: string };

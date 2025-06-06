@@ -147,7 +147,7 @@ const   pongVersusJoinHtml = () => {
 	//		<div class="flex-1"><button id="quit" class="${TCS.pongButton}">Quit Room</button></div>
 }
 
-const   pongVersusSpectateHtml = (roomId: number) => { // TODO pong versus spectate qd on a clic sur la partie a spectate
+const   pongVersusSpectateHtml = (roomId: number) => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -176,7 +176,7 @@ const   pongVersusSpectateHtml = (roomId: number) => { // TODO pong versus spect
 	// <div><button id="spectate" class="${TCS.pongButton}">Spectate Room</button></div>
 }
 
-const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string) => {  //TODO pong tournament info
+const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string) => {
 	if (!EL.contentPong) return ;
 
 	let html = `
@@ -224,7 +224,7 @@ const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string
 
 }
 
-const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => { //TODO pong tournament list ()
+const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => {
 	if (!EL.contentPong) return ;
 
 	let listHTML = `
@@ -267,7 +267,7 @@ const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => { //TODO pong tournament
 	// </li>`;
 }
 
-const   pongVersusPrivateHtml = (inviteCode: string) => { //TODO pong versus create private room
+const   pongVersusPrivateHtml = (inviteCode: string) => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -309,7 +309,7 @@ const   pongVersusPrivateHtml = (inviteCode: string) => { //TODO pong versus cre
 
 }
 
-const   pongVersusJoinPrivRoomHtml = () => { //TODO pong versus join private room
+const   pongVersusJoinPrivRoomHtml = () => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -523,7 +523,8 @@ const   pongTournamentFoundHtml = () => {
 		<div id="shuffle-tree" class="${TCS.gameBlockLink}">${imTexts.pongModalesTournamentFoundShuffle}</div>
 		<div class="h-[10px]"></div>
 		<div id="quit2" class="${TCS.gameBlockLink}">${imTexts.pongModalesTournamentFoundQuit}</div>`;
-	}else {
+	}
+	else {
 		html += `
 		<div role="status">
 			<svg aria-hidden="true" class="inline w-[24px] h-[24px] text-stone-400 animate-spin fill-amber-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -576,7 +577,7 @@ const   pongDrawBoardHtml = () => {
 	pongQuitButton();
 }
 
-const   pongJoinConfirmPageHtml = () => { //TODO pong join confirm page
+const   pongJoinConfirmPageHtml = () => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `

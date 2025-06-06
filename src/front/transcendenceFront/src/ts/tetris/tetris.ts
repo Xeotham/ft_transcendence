@@ -136,7 +136,6 @@ export const changeKeys = (keyType: string) => {
 
 		// console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
-		//TODO marche pas  ?
 		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
 		pressKey.remove();
 		tetrisSettingsPage();

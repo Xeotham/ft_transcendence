@@ -30,6 +30,7 @@ import {
 } from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../utils.ts';
+import {modaleEditEvents, modaleEditHTML} from "./modaleEditHTML.ts";
 
 ///////////////////////////////////////////
 // Variables
@@ -44,7 +45,8 @@ export enum ModaleType {
   TETRIS_STATS_DETAIL = 'TETRIS_STATS_DETAIL',
   AVATAR = 'AVATAR',
   FRIEND_LIST = 'FRIEND_LIST',
-  FRIEND_PROFILE = 'FRIEND_PROFILE'
+  FRIEND_PROFILE = 'FRIEND_PROFILE',
+  EDIT_PROFILE = 'EDIT_PROFILE',
 }
 
 export let modale = {
@@ -122,8 +124,12 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
       break;
     case ModaleType.FRIEND_PROFILE:
       //modale.content.innerHTML = modaleFriendProfileHTML(0);
-      await modaleFriendProfileHTML(); // TODO: pourquoi on ne peut pas mettre modaleFriendProfileHTML(0) ? seul fonction asynchrone ???
+      await modaleFriendProfileHTML();
       modaleFriendProfileEvents();
+      break;
+    case ModaleType.EDIT_PROFILE:
+      modale.content.innerHTML = modaleEditHTML();
+      modaleEditEvents("username");
       break;
     default:
       modale.content.innerHTML = '';

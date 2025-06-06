@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import {
     registerUser, updateUser, loginUser, logoutUser,
     getUserInfo, getFriends, addFriend, deleteFriend, addMessage, getMessage, createPongGame, getStat,
-    getGameHistory, updateParameter, getParameter, connectUser, disconnectUser, getAvatars
+    getGameHistory, updateParameter, getParameter, connectUser, disconnectUser, getAvatars, updatePassword
 } from './controllers';
 
 
@@ -29,4 +29,5 @@ export default async function userRoutes(fastify: FastifyInstance)
     fastify.post('/connect-user', connectUser);
     fastify.post('/disconnect-user', disconnectUser);
     fastify.get('/get-avatars', getAvatars);
+    fastify.patch('/update-password', updatePassword);
 }

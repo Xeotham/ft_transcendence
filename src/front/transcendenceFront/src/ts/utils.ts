@@ -71,6 +71,7 @@ export class UserInfo {
 		return this.username;
 	}
 	setUsername(username: string) {
+		localStorage.setItem('username', username);
 		this.username = username;
 	}
 

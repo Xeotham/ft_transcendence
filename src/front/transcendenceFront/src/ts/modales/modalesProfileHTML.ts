@@ -116,7 +116,7 @@ export const modaleProfileEvents = () => {
   });
 
   profileUserEditLink?.addEventListener('click', () => {
-    modaleDisplay(ModaleType.SIGNUP); // TODO: remplacer par la modale de modification de profile
+    modaleDisplay(ModaleType.EDIT_PROFILE);
   });
 
   profileDeconectLink?.addEventListener('click', () => {
