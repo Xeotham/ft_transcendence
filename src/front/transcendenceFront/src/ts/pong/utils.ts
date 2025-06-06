@@ -158,7 +158,7 @@ export const    pongTextureHandler = new class {
 export const    pongPackHandler = new class {
 	private pack: string;
 	constructor() {
-		this.pack = "dark_hour"; // Default pack retro, phantom, tv_world, retro1975
+		this.pack = "retro1975"; // Default pack retro, phantom, tv_world, retro1975
 		pongSfxPlayer.setPack(this.pack);
 		pongTextureHandler.setPack(this.pack);
 	}
