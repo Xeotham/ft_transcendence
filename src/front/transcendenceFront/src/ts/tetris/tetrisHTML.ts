@@ -62,6 +62,14 @@ export const tetrisBoardHtml = () => {
 		</div>
 
 		<div class="absolute z-10 align-center justify-center"> Incoming Garbage: 0</div>
+		<div class="absolute z-30 text-right text-[20px] font-pixelcode text-lime-50 text-shadow-lg/100 bg-stone-950/20" id="scoreDiv"></div>
+		<div class="absolute z-30 text-right text-[20px] font-pixelcode text-lime-50 text-shadow-lg/100 bg-stone-950/20" id="levelDiv"></div>
+		<div class="absolute z-30 text-right text-[20px] font-pixelcode text-lime-50 text-shadow-lg/100 bg-stone-950/20" id="timeDiv"></div>
+		<div class="absolute z-30 text-right text-[20px] font-pixelcode text-lime-50 text-shadow-lg/100 bg-stone-950/20" id="goalDiv"></div>
+		<div class="absolute z-30 text-right text-[20px] font-pixelcode text-lime-50 text-shadow-lg/100 bg-stone-950/20" id="piecesDiv"></div>
+
+		<div class=" ${TCS.tetrisEndGame}" id="endGame">
+		</div>
 
 		<div id="board" class="absolute z-25 w-full h-full flex items-center justify-center bg-black">		
 			<canvas id="tetrisCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>

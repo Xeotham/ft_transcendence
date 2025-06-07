@@ -65,14 +65,10 @@ const stateProxy = new Proxy<Zone>(zone, {
         const intervalId = setInterval(() => {
           if (zoneAnimGhost(1.2)) {
             clearInterval(intervalId);
-            if (zone.state === 'PONG') {
-              loadPongPage("idle");
+            if (zone.state === 'PONG')
               loadTetrisPage("empty");
-            }
-            else if (zone.state === 'TETRIS') {
-              loadTetrisPage("idle");
+            else if (zone.state === 'TETRIS')
               loadPongPage("empty");
-            }
             else {
               loadPongPage("logo");
               loadTetrisPage("logo");

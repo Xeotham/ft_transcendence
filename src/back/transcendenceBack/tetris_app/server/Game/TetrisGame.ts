@@ -57,6 +57,7 @@ export class TetrisGame {
 	private opponent:					TetrisGame | undefined;
 	private awaitingGarbage:			number[];
 	private garbageRespite:				boolean;
+	private isInRoom:					boolean;
 
 	// statistics
 
@@ -140,6 +141,7 @@ export class TetrisGame {
 		this.opponent = undefined;
 		this.awaitingGarbage = [];
 		this.garbageRespite = false;
+		this.isInRoom = false;
 
 		// statistics
 
@@ -732,6 +734,7 @@ export class TetrisGame {
 		await this.spawnPiece();
 		this.placeShadow();
 		this.trySetInterval();
+
 		await this.gameLoopIteration();
 
 		clearInterval(this.fallInterval);
@@ -740,9 +743,11 @@ export class TetrisGame {
 		this.sendInterval = -1;
 		this.player.send(JSON.stringify({type: "EFFECT", argument: "BOARD", value: "gameover"}));
 		this.player.send(JSON.stringify({type: "GAME", game: this.toJSON()}));
-		this.sendStats();
+		this.player.send(JSON.stringify({type: "STATS", argument: this.getStats()}));
 		createTetrisGame(this);
-		this.player.send(JSON.stringify({type: "GAME_FINISH"}));
+		console.log("isInRoom: ", this.isInRoom);
+		if (!this.isInRoom)
+			this.player.send(JSON.stringify({type: "GAME_FINISH"}));
 	}
 
 	getStats() {
@@ -764,7 +769,7 @@ export class TetrisGame {
 			linesCleared: this.linesCleared,
 			linesPerMinute: this.linesPerMinute,
 			maxB2B: this.maxB2B,
-			PerfectClears: this.perfectClears,
+			perfectClears: this.perfectClears,
 			single: this.allLinesClear.Single,
 			double: this.allLinesClear.Double,
 			triple: this.allLinesClear.Triple,
@@ -783,10 +788,6 @@ export class TetrisGame {
 			}
 
 		return stats;
-	}
-
-	private sendStats() {
-		this.player.send(JSON.stringify({type: "STATS", argument: this.getStats()}));
 	}
 
 	public forfeit() {

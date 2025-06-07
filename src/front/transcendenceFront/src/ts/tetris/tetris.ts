@@ -26,12 +26,14 @@ import {
 import { patchToApi, resetGamesSocket, address, user } from "../utils.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { zoneSet } from "../zone/zoneCore.ts";
+import {searchForWorkspaceRoot} from "vite";
 
 
 // userKeys.getKeysFromApi().then().catch();
 export const tetrisGameInformation: tetrisGame = new tetrisGame();
 
 export const   loadTetrisPage = (page: loadTetrisType, arg: loadTetrisArgs | null = null) => {
+	// console.log("loadTetrisPage", page);
 	switch (page) {
 		case "empty":
 			return emptyPage();
@@ -138,7 +140,7 @@ export const changeKeys = (keyType: string) => {
 		document.removeEventListener("keydown", getNewKey);
 		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
 		pressKey.remove();
-		tetrisSettingsPage();
+		loadTetrisPage("setting");
 	};
 
 	document.addEventListener("keydown", getNewKey);
@@ -279,20 +281,55 @@ const   drawBoard = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
 
 const drawInfo = (ctx: CanvasRenderingContext2D, x: number, y: number, gameInfo: tetrisGoalInfo) => {
 
-	const   spacing = 50;
-	ctx.textAlign = "right";
-	const   writeText = (text: string, x: number, y: number) => {
-		ctx.font = "25px Arial";
-		ctx.fillStyle = "black";
-		ctx.strokeText(text, x, y);
-		ctx.fillStyle = "white";
-		ctx.fillText(text, x, y);
-	}
-	writeText("Score: " + gameInfo.score, x, y);
-	writeText("Level: " + gameInfo.level, x, y + spacing);
-	writeText("Time: " + (new Date(tetrisGameInformation.getGame()?.time || 0).toISOString().substring(14, 23)), x, y + (spacing * 2));
-	writeText(`Goal: ${gameInfo.linesCleared} / ${gameInfo.lineClearGoal}`, x, y + (spacing * 3));
-	writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
+
+	const   spacing = 31;
+
+	const	scoreDiv = document.getElementById("scoreDiv") as HTMLDivElement;
+	const	levelDiv = document.getElementById("levelDiv") as HTMLDivElement;
+	const	timeDiv = document.getElementById("timeDiv") as HTMLDivElement;
+	const	goalDiv = document.getElementById("goalDiv") as HTMLDivElement;
+	const	piecesDiv = document.getElementById("piecesDiv") as HTMLDivElement;
+
+	scoreDiv.innerText = `Score: ${gameInfo.score}`;
+	levelDiv.innerText = `Level: ${gameInfo.level}`;
+	timeDiv.innerText = `Time: ${new Date(tetrisGameInformation.getGame()?.time || 0).toISOString().substring(14, 23)}`;
+	goalDiv.innerText = `Goal: ${gameInfo.linesCleared} / ${gameInfo.lineClearGoal}`;
+	piecesDiv.innerText = `Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`;
+
+	scoreDiv.style.position = "absolute";
+	scoreDiv.style.left = `${x}px`;
+	scoreDiv.style.top = `${y}px`;
+
+	levelDiv.style.position = "absolute";
+	levelDiv.style.left = `${x}px`;
+	levelDiv.style.top = `${y + spacing}px`;
+
+	timeDiv.style.position = "absolute";
+	timeDiv.style.left = `${x}px`;
+	timeDiv.style.top = `${y + (spacing * 2)}px`;
+
+	goalDiv.style.position = "absolute";
+	goalDiv.style.left = `${x}px`;
+	goalDiv.style.top = `${y + (spacing * 3)}px`;
+
+	piecesDiv.style.position = "absolute";
+	piecesDiv.style.left = `${x}px`;
+	piecesDiv.style.top = `${y + (spacing * 4)}px`;
+	// infosDiv.
+
+	// ctx.textAlign = "right";
+	// const   writeText = (text: string, x: number, y: number) => {
+	// 	ctx.font = "25px Arial";
+	// 	ctx.fillStyle = "black";
+	// 	ctx.strokeText(text, x, y);
+	// 	ctx.fillStyle = "white";
+	// 	ctx.fillText(text, x, y);
+	// }
+	// writeText("Score: " + gameInfo.score, x, y);
+	// writeText("Level: " + gameInfo.level, x, y + spacing);
+	// writeText("Time: " + (new Date(tetrisGameInformation.getGame()?.time || 0).toISOString().substring(14, 23)), x, y + (spacing * 2));
+	// writeText(`Goal: ${gameInfo.linesCleared} / ${gameInfo.lineClearGoal}`, x, y + (spacing * 3));
+	// writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
 }
 
 const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {
@@ -324,7 +361,7 @@ const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number
 
 const   drawOpponents = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {
 	const   rightListCoord: {x: number, y: number} = { x: x, y: y };
-	const   leftListCoord: {x: number, y: number} = { x: x - 1075, y: y };
+	const   leftListCoord: {x: number, y: number} = { x: x - 1250, y: y };
 	const   leftList: tetrisGameInfo[] = [];
 	const   rightList: tetrisGameInfo[] = [];
 
@@ -360,9 +397,9 @@ const   drawGame = () => {
 	const   matrixSize: { width: number, height: number } = { width: (10 * minoSize), height: (23 * minoSize) };
 	const   holdCoord: { x: number, y: number } = { x: (matrixCoord.x - textures["HOLD"].width - 20) + 10, y: (matrixCoord.y + 20) + 10 }
 	const   bagsCoord: { x: number, y: number } = { x: (matrixCoord.x + matrixSize.width + 20) + 30, y: (matrixCoord.y + 20) + 10 }
-	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x - 10), y: (boardCoord.y + 400)}
+	const   infoCoord: {x: number, y: number} = { x: (boardCoord.x + textures["MATRIX"].width +  24), y: (boardCoord.y + 575)}
 	const   gameInfo: tetrisGoalInfo = {score: game.score, level: game.level, time: game.time, lineClearGoal: game.lineClearGoal, linesCleared: game.linesCleared, piecesPerSecond: game.piecesPerSecond, piecesPlaced: game.piecesPlaced };
-	const   opponentsCoord: { x: number, y: number } = { x: (boardCoord.x + matrixSize.width + bagWidth + 100), y: (boardCoord.y)}
+	const   opponentsCoord: { x: number, y: number } = { x: (boardCoord.x + matrixSize.width + bagWidth + 200), y: (boardCoord.y)}
 
 
 	window.addEventListener('resize', () => {

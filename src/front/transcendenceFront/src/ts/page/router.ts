@@ -4,7 +4,7 @@ import  page from 'page';
 // ZONE
 import { zoneSet } from "../zone/zoneCore.ts";
 // TETRIS
-import { loadTetrisPage, tetrisSettingsPage } from "../tetris/tetris.ts";
+import { loadTetrisPage } from "../tetris/tetris.ts";
 // PONG
 import  { loadPongPage } from "../pong/pong.ts";
 import  { listTournaments } from "../pong/tournament.ts";
@@ -85,8 +85,7 @@ const tetrisRouter = () => {
 	// TETRIS SETTINGS
 	page("/tetris/settings", () => {
 		zoneSet("TETRIS");
-		//tetrisSettingsPage({keys: userKeys});
-		tetrisSettingsPage();
+		loadTetrisPage("setting");
 	});
 }
 
