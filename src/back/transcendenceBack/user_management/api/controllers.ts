@@ -561,7 +561,7 @@ export const createPongGame = (players: {player1: player | null, player2: player
 	// console.log(players.player1?.username, score, winner?.username, solo);
 	if (solo === true && bot === false)
 	{
-		console.log("return solo game");
+		// console.log("return solo game");
 		return ;
 	}
 
@@ -591,7 +591,7 @@ export const createPongGame = (players: {player1: player | null, player2: player
 
 			createUserGameStatsPong(player1.id, gameId, score.player1, winner === players.player1, "pong");
 			updateStats(player1.id);
-			console.log("return bot game");
+			// console.log("return bot game");
 		}
 	}
 	else
@@ -615,7 +615,7 @@ export const createPongGame = (players: {player1: player | null, player2: player
 
 			updateStats(player1.id);
 			updateStats(player2.id);
-			console.log("return multiplayer game");
+			// console.log("return multiplayer game");
 		}
 	}
 };

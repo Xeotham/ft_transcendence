@@ -11,7 +11,7 @@ import page from 'page';
 
 // MAIN  
 const main = () => {
-    resetGamesSocket("HOME");
+    resetGamesSocket("home");
     setHtmlFront();
     EL.init();
     if (!EL.check())

@@ -48,6 +48,12 @@ export class MultiplayerRoom {
 	public changeCode(): void						{ this.code = this.generateInviteCode(); }
 	public setSettings(settings: any): void			{ this.settings = settings; this.sendSettingsToPlayers(); }
 	public addSetting(key: string, value: any): void{ this.settings[key] = value; this.sendSettingsToPlayers(); }
+	public addSettings(settings: any): void			{
+		for (const key in settings)
+			this.settings[key] = settings[key];
+		this.sendSettingsToPlayers();
+	}
+
 
 	public addPlayer(socket: WebSocket, username: string): void		{
 		if (this.players.find((player) => player.getUsername() === username)) {

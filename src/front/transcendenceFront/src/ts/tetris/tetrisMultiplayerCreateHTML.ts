@@ -3,7 +3,7 @@ import { TCS } from "../TCS.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { tetrisGameInformation } from "./tetris.ts";
 import { startRoom } from "./gameManagement.ts";
-import {resetGamesSocket, postToApi, address, getFromApi} from "../utils.ts";
+import { resetGamesSocket, postToApi, address, getFromApi } from "../utils.ts";
 import { abs, clamp } from "./utils.ts";
 
 ////////////////////////////////////////////////////////
@@ -144,7 +144,6 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 
 	document.getElementById("tetrisCreateMultiplayerRoomBack")?.addEventListener("click", () => {
 		resetGamesSocket("home"); 
-		// page.show("/tetris");
 	});
 
 	if (!tetrisGameInformation.getRoomOwner()) 
@@ -163,12 +162,7 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 	});
 
 	const form = document.getElementById("tetrisSettingsForm");
-	form?.addEventListener("input", () => {
-		saveMultiplayerRoomSettings();
-	});
-	form?.addEventListener("change", () => {
-		saveMultiplayerRoomSettings();
-	});
+	form?.addEventListener("change", saveMultiplayerRoomSettings);
 }
 
 export const saveMultiplayerRoomSettings = async () => {
@@ -181,7 +175,7 @@ export const saveMultiplayerRoomSettings = async () => {
 	const nbPlayers = ((await getFromApi(`http://${address}/api/tetris/getMultiplayerRooms`))
 		.find((room: any) => room?.roomCode === tetrisGameInformation.getRoomCode())?.nbPlayers) || 0;
 	values["versus"] === true && nbPlayers > 2 ? values["versus"] = false : true;
-	typeof values["1"] !== "number" || isNaN(values["0"]) ? values["0"] = 500 : true;
+	typeof values["1"] !== "number" || isNaN(values["0"]) ? values["0"] = 500 : values["0"] = clamp(values["0"], -1, abs(values["0"]));
 	typeof values["1"] !== "number" || isNaN(values["1"]) ? values["1"] = 0 : values["1"] = clamp(values["1"], 0, abs(values["1"])); // Spawn ARE must be >= 0 and positive
 	typeof values["2"] !== "number" || isNaN(values["2"]) ? values["2"] = 1.5 : values["2"] = clamp(values["2"], 0.1, abs(values["2"])); // Soft drop amp must be > 0 && positive
 	typeof values["3"] !== "number" || isNaN(values["3"]) ? values["3"] = 4 : values["3"] = clamp(values["3"], 1, 15); // Level must be between 1 and 15

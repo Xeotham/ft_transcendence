@@ -1,23 +1,9 @@
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { Tournament } from "../server/tournament";
 import { Room } from "../server/Room";
-import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import { WebSocket } from "ws";
-import {isPlayerInRoom, Rooms} from "./game-controllers";
-import {idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament, RoomInfo} from "../utils";
-
-// const { Tournament } = require('../server/tournament');
-// const Fastify = require('fastify');
-// const { FastifyRequest, FastifyReply } = require('fastify');
-// const { WebSocket } = require("ws");
-// const { isPlayerInRoom } = require("./game-controllers");
-// const { idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament } = require("../utils");
-//
-// type TournamentType = typeof Tournament;
-// type TournamentInfoType = typeof TournamentInfo;
-// type FastifyRequestType = typeof FastifyRequest;
-// type FastifyReplyType = typeof FastifyReply;
-// type requestBodyType = typeof requestBody;
-
+import { isPlayerInRoom} from "./game-controllers";
+import { idGenerator, TournamentInfo, requestBody, getTournamentById, isPlayerInTournament, RoomInfo } from "../utils";
 
 export const Tournaments: Tournament[] = [];
 

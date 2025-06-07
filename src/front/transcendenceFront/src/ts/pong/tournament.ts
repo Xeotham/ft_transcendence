@@ -5,6 +5,7 @@ import {quit, messageHandler, PongRoom} from "./game.ts";
 // @ts-ignore
 import  page from "page";
 import { joinSpectate } from "./spectate.ts";
+import {loadPongHtml} from "./pongHTML.ts";
 
 export class   Tournament {
 	private tournamentId: number;
@@ -54,6 +55,21 @@ export class   Tournament {
 			quit();
 		};
 		this.socket.addEventListener("message", messageHandler);
+
+		window.onunload = () => {
+			if (this.socket) {
+				quit("LEAVE", "TOURNAMENT");
+				this.socket.close();
+			}
+		}
+		// Special handling for Chrome
+		if (!navigator.userAgent.includes("Firefox")) {
+			window.onbeforeunload = (e) => {
+				quit("LEAVE", "TOURNAMENT");
+				e.preventDefault();
+				return '';
+			};
+		}
 	}
 
 	prepTournament(tourId: number, placement: number, isChange: boolean = false) {
@@ -79,6 +95,8 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 			const tourPlacement = typeof res.tourPlacement === "number" ? res.tourPlacement : -1;
 
 			pongGameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
+			if (!pongGameInfo.getTournament()?.getIsOwner())
+				loadPongPage("match-found");
 			// loadPage("room-found");
 			return ;
 		case "CREATE":
@@ -158,7 +176,7 @@ export const getTournamentInfo = (id: number) => {
 
 			if (tournamentName === undefined || started === undefined)
 				throw new Error("Tournament does not exist");
-			// console.log("started: " + started + ", name: " + tournamentName);
+			page.show("/pong/tournament");
 			loadPongPage("tour-info", { tourId: id, started: started, tourName: tournamentName });
             if (!started) {
                 document.getElementById('joinTournament')?.addEventListener("click", () => {
@@ -168,7 +186,7 @@ export const getTournamentInfo = (id: number) => {
         })
         .catch(error => {
 			alert(error);
-			page.show("/pong/list/tournaments");
+			page.show("/pong/tournaments/list");
         });
 }
 
@@ -208,5 +226,6 @@ const   tournamentFound = () => {
 		document.getElementById("shuffle-tree")?.addEventListener("click", shuffleTree);
 		document.getElementById("quit2")?.addEventListener("click", () => quit("Leaving room"));
 	}
-	document.getElementById("quit-room")?.addEventListener("click", () => quit("Leaving room"));
+	document.getElementById("quit-room")?.addEventListener("click", () => quit("Leaving tournament"));
+	document.getElementById("quit2")?.addEventListener("click", () => quit("Leaving tournament"));
 }

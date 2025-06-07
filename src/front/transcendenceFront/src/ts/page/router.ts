@@ -4,14 +4,11 @@ import  page from 'page';
 // ZONE
 import { zoneSet } from "../zone/zoneCore.ts";
 // TETRIS
-import { loadTetrisPage, tetrisGameInformation, gameListPage, tetrisCreateRoomPage, tetrisSettingsPage } from "../tetris/tetris.ts";
-import { joinRoom } from "../tetris/gameManagement.ts";
+import { loadTetrisPage, tetrisSettingsPage } from "../tetris/tetris.ts";
 // PONG
 import  { loadPongPage } from "../pong/pong.ts";
-import  { getTournamentInfo, getTourRoomInfo, listTournaments } from "../pong/tournament.ts";
+import  { listTournaments } from "../pong/tournament.ts";
 import  { getRoomInfo, listRoomsSpectator } from "../pong/spectate.ts";
-//import { signUpUser } from "../userManagement/userManagement.ts";
-//import { userKeys } from "../tetris/tetris.ts";
 
 // Start the router
 export const startRouter = () => {
@@ -26,7 +23,7 @@ export const startRouter = () => {
 	// loginRouter();
 	// 404
 	page('*', () => {
-		console.log('404 Not Found');
+		console.log("404 Not Found: " + document.location.pathname);
 		page.show("/")
 	});
 
@@ -61,7 +58,7 @@ const pongRouter = () => {
 		loadPongPage("nav-setting");
 	});
 	// PONG TOURNAMENT LIST
-	page("/pong/list/tournaments", () => {
+	page("/pong/tournaments/list", () => {
 		listTournaments();
 		zoneSet("PONG");
 	});
@@ -70,14 +67,7 @@ const pongRouter = () => {
 		listRoomsSpectator();
 		zoneSet("PONG");
 	});
-	// @ts-ignore PONG TOURNAMENT INFO	
-	page("/pong/tournament/:id", ({ params } ) => {
-		const   tournamentId = Number(params.id);
-		//console.log("Type: " + typeof tournamentId + " Value: " + tournamentId);
-		getTournamentInfo(tournamentId);
-		zoneSet("PONG");
-	}) // TODO: Modify this route to return to pong idle and join tournament if possible
-	// @ts-ignore PONG ROOM INFO	
+	// @ts-ignore PONG ROOM INFO
 	page("/pong/room/:id", ({ params } ) => {
 		const   roomId = Number(params.id);
 		getRoomInfo(roomId);

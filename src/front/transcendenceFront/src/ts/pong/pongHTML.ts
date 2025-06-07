@@ -4,13 +4,16 @@ import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils
 import { pongGameInfo } from "./pong.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { quit } from "./game.ts";
-import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
+import { showZoneGame } from "../zone/zoneCore.ts";
 import { pongSettingsHtml } from "./pongSettingsHTML.ts";
+import { getTournamentInfo } from "./tournament.ts";
 
 import img_pong_logo from '/src/medias/images/zones/logoPong.png';
 
 // @ts-ignore
 import  page from 'page';
+
+(window as any).getTournamentInfo = getTournamentInfo;
 
 export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
 	switch (page) {
@@ -44,8 +47,6 @@ export const loadPongHtml = (page: loadPongHtmlType, arg: loadHtmlArg | null = n
 			return pongTournamentInfoHtml(arg?.tourId!, arg?.started!, arg?.tourName!);
 		case "list-rooms":
 			return pongVersusListHtml(arg?.roomLst!);
-		case "tour-rooms-list":
-			return pongTournamentPlayHtml(arg?.roomLst!);
 		case "list-tournaments":
 			return PongTournamentListHtml(arg?.tourLst!);
 		case "tournament-end":
@@ -212,48 +213,7 @@ const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string
 	EL.contentPong.innerHTML = html;
 }
 
-const   pongTournamentPlayHtml = (rooms: RoomInfo[]) => {
-	if (!EL.contentPong) return ;
-
-	let listHTML = `
-	<div class="${TCS.tetrisWindowBkg}">
-		<div class="${TCS.gameTitle}">
-		${imTexts.pongModalesTournamentListTitle}</div>
-
-		<div class="${TCS.gameTexte} translate-y-[-5px]">
-		<a id="return" class="${TCS.modaleTexteLink}">${imTexts.pongModalesBack}</a></div>
-		<div class="h-[30px]"></div>
-	`;
-
-	rooms.forEach((room: RoomInfo) => {
-		let roomInfo = [];
-		if (room.full) roomInfo.push("Full");
-		if (room.isSolo) roomInfo.push("Solo");
-		if (room.isBot) roomInfo.push("Bot");
-		
-		listHTML += `
-		<a href="/pong/tournament/room/${room.id}" class="${TCS.gameList} block w-full">
-			<span class="text-yellow-600">» </span>
-			<span class="text-stone-950">Id: ${room.id}${roomInfo.length > 0 ? ' - ' + roomInfo.join(' - ') : ''}</span>
-		</a>
-		`;
-	});
-
-	listHTML +=`
-		<div class="text-left"><a id="tetrisDisplayMultiplayerRefresh" class="${TCS.modaleTexteLink}">
-		${imTexts.tetrisDisplayMultiplayerRoomRefresh}</a></div>
-		`;
-
-	listHTML += `
-		<div class="h-[30px]"></div>
-	</div>
-	`;
-	
-	EL.contentPong.innerHTML = listHTML;
-
-}
-
-const   pongVersusPrivateHtml = (inviteCode: string) => {
+const   pongVersusPrivateHtml = (inviteCode: string) => { //TODO pong versus create private room
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -363,11 +323,12 @@ const PongTournamentListHtml = (tournaments: TournamentInfo[]) => {
 	else {
 		tournaments.forEach((tournament: TournamentInfo) => {
 			listHTML += `
-			<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">
+<!--			<a href="/pong/tournament/${tournament.id}" class="${TCS.gameList} block w-full">-->
+			<div onclick="getTournamentInfo(Number('${tournament.id}'))" class="${TCS.gameList} block w-full">
 				<span class="text-yellow-600">» </span>
 				<span class="text-stone-950">
 				Id: ${tournament.id} Name: ${tournament.name}, Started: ${tournament.started}</span>
-			</a>
+			</div>
 			<div class="h-[10px]"></div>
 			`;
 		});

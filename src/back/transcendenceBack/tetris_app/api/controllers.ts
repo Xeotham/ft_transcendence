@@ -13,7 +13,7 @@ export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyReques
 
 	// console.log("Joining matchmaking for username: " + req.query.username);
 	for (const room of multiplayerRoomLst) {
-		if (room.getIsInGame() || room.isPrivate() || !room.getIsVersus())
+		if (room.getIsInGame() || room.isPrivate() || !room.getIsVersus() || room.getPlayers().length >= 2)
 			continue ;
 		console.log("Joining existing room with code: " + room.getCode());
 		room.addPlayer(socket, req.query.username);
@@ -23,7 +23,7 @@ export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyReques
 	console.log("No room found, creating a new room");
 
 	const room = new MultiplayerRoom(socket, req.query.username, false);
-	room.addSetting("isVersus", true);
+	room.addSettings( {"isVersus": true, "isPrivate": false} );
 	multiplayerRoomLst.push(room);
 }
 
@@ -98,8 +98,9 @@ export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, 
 
 		deleteTetrisGame(request.gameId);
 		const room = getTetrisRoom(request.roomCode);
+		// console.log("Code Given: " + request.roomCode + ", Room found: " + room?.getCode());
 		if (room) {
-			console.log("Tetris QuitRoom with code : " + request?.roomCode);
+			console.log("Tetris QuitRoom with code : " + request?.roomCode + " for " + request?.username);
 			room.removePlayer(request.username);
 			if (room.isEmpty())
 				multiplayerRoomLst.splice(multiplayerRoomLst.indexOf(room), 1);

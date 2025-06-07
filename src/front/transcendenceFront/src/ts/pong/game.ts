@@ -136,22 +136,32 @@ export class PongRoom {
 	initSocket() {
 		if (!this.socket)
 			return ;
-		this.socket.addEventListener("error", (error) => {
-			console.error(error);
-		});
-		this.socket.onopen = () => {
-			console.log("Connected to the server");
-		};
+		this.socket.addEventListener("error", (error) => { console.error(error); });
+		this.socket.onopen = () => { console.log("Connected to the server"); };
 		this.socket.onclose = () => {
 			console.log("Connection closed");
 			quit(pongGameInfo.getRoom()?.getQueueInterval() ? "QUEUE_TIMEOUT" : "LEAVE");
 		};
+
 		this.socket.addEventListener("message", messageHandler);
-		window.onbeforeunload = () => {
+
+		window.onunload = () => {
 			if (this.socket) {
-				quit();
+				quit("LEAVE", "TOURNAMENT");
 				this.socket.close();
 			}
+		}
+		// Special handling for Chrome
+		console.log("User agent: " + navigator.userAgent);
+		localStorage.setItem("nav", JSON.stringify(navigator.userAgent.includes("Firefox")));
+		if (!navigator.userAgent.includes("Firefox")) {
+			window.onbeforeunload = (e) => {
+				localStorage.setItem("Before unload event triggered", "true");
+				console.log("Before unload event triggered");
+				quit("LEAVE", "TOURNAMENT");
+				e.preventDefault();
+				return '';
+			};
 		}
 	}
 

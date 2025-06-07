@@ -10,3 +10,4 @@ export const PADDLE_MARGIN = 10;
 export const PADDLE1_X = PADDLE_MARGIN;
 export const PADDLE2_X = WIDTH - PADDLE_MARGIN - PADDLE_WIDTH;
 export const PADDLE_Y = HEIGHT / 2 - PADDLE_HEIGHT / 2;
+export const WIN_GOAL = 9;

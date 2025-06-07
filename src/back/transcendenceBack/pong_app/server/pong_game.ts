@@ -9,13 +9,14 @@ import {
 	BALL_SIZE,
 	BALL_SPEED,
 	BALL_ACCELERATION_PER_BOUNCE,
-	PADDLE_SPEED
+	PADDLE_SPEED,
+	WIN_GOAL
 } from "./constants"
 import { WebSocket } from "ws";
 import {requestBody, delay, getRoomById, player} from "../utils";
 import { botLogic, resetBot } from "./bot";
 import { Room } from "./Room";
-import {createPongGame} from "../../user_management/api/controllers";
+import { createPongGame } from "../../user_management/api/controllers";
 
 interface   playerScore {
 	username:   string;
@@ -94,7 +95,7 @@ export class Game {
 		this.ball.speed = BALL_SPEED;
 		this.paddle1.y = PADDLE_Y;
 		this.paddle2.y = PADDLE_Y;
-		if (this.score.player1.score < 10 && this.score.player2.score < 10)
+		if (this.score.player1.score < WIN_GOAL && this.score.player2.score < WIN_GOAL)
 			await delay(1250);
 		this.lastTime = performance.now();
 	}
@@ -115,7 +116,7 @@ export class Game {
 			}, 1000) as unknown as number; // once per second
 
 			const gameLoopIteration = async () => {
-				if (this.score.player1.score < 10 && this.score.player2.score < 10 && !this.over) {
+				if (this.score.player1.score < WIN_GOAL && this.score.player2.score < WIN_GOAL && !this.over) {
 					await this.MoveBall();
 					setTimeout(gameLoopIteration, 0); // Schedule the next iteration
 					return ;
@@ -125,11 +126,11 @@ export class Game {
 				clearInterval(botInterval);
 				this.finishTime = performance.now();
 				if (!this.over) // If the game didn't end because of a forfeit
-					this.winner = (this.score.player1.score >= 10) ? this.players.player1 : this.players.player2;
+					this.winner = (this.score.player1.score >= WIN_GOAL) ? this.players.player1 : this.players.player2;
 				this.over = true;
 				let winner = this.winner?.username;
 				if (this.isSolo)
-					winner = this.score.player1.score >= 10 ? "P1" : "P2";
+					winner = this.score.player1.score >= WIN_GOAL ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
