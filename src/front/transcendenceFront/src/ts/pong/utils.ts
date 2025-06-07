@@ -37,7 +37,9 @@ export const    pongSfxPlayer = new class {
 				"goal": new Audio("/src/medias/sfx/pong/DarkHour/goal.mp3"),
 			}
 		}
-		this.pack = "retro";
+		if (!localStorage.getItem("pongPack"))
+			localStorage.setItem("pongPack", "retro1975");
+		this.pack = localStorage.getItem("pongPack")!;
 	}
 
 	play(name: string) {
@@ -51,8 +53,11 @@ export const    pongSfxPlayer = new class {
 	setPack(pack: string) {
 		if (this.sfx[pack] !== undefined)
 			this.pack = pack;
-		else
+		else {
 			console.error("Sound pack not found: " + pack);
+			pongPackHandler.setPack("retro1975");
+
+		}
 	}
 }
 
@@ -61,7 +66,6 @@ export const    pongTextureHandler = new class {
 	private textures: {[key: string]: {[key: string]: HTMLImageElement}};
 	private fonts: {[key: string]: string}
 	constructor() {
-		this.pack = "retro";
 		this.textures = {};
 		this.generateTextures();
 		this.fonts = {
@@ -71,6 +75,9 @@ export const    pongTextureHandler = new class {
 			"retro1975": "30px 'C64Pro', Arial, sans-serif",
 			"dark_hour": "30px 'DarkHourFont', Arial, sans-serif"
 		}
+		if (!localStorage.getItem("pongPack"))
+			localStorage.setItem("pongPack", "retro1975");
+		this.pack = localStorage.getItem("pongPack")!;
 	}
 	private generateTextures() {
 		const   texturePaths = {
@@ -111,26 +118,24 @@ export const    pongTextureHandler = new class {
 			}
 		}
 
-		return Promise.all(
-			Object.entries(texturePaths).map(([pack, path]) => {
-				this.textures[pack] = {};
-				Object.entries(path).map(([key, path]) => {
-					return new Promise<void>((resolve, reject) => {
-						const img = new Image();
-						// console.log(`Loading texture: ${key} from ${path}`);
-						img.src = path;
-						img.onload = () => {
-							this.textures[pack][key] = img;
-							resolve();
-						};
-						img.onerror = (err) => {
-							console.error(`Failed to load texture: ${key} from ${path}`, err);
-							reject(err)
-						};
-					})
+		Object.entries(texturePaths).map(([pack, path]) => {
+			this.textures[pack] = {};
+			Object.entries(path).map(([key, path]) => {
+				return new Promise<void>((resolve, reject) => {
+					const img = new Image();
+					// console.log(`Loading texture: ${key} from ${path}`);
+					img.src = path;
+					img.onload = () => {
+						this.textures[pack][key] = img;
+						resolve();
+					};
+					img.onerror = (err) => {
+						console.error(`Failed to load texture: ${key} from ${path}`, err);
+						reject(err)
+					};
 				})
-			})
-		);
+			});
+		});
 	}
 
 	getTexture(name: string): HTMLImageElement | null {
@@ -144,6 +149,7 @@ export const    pongTextureHandler = new class {
 		if (this.textures[pack] !== undefined)
 			return this.pack = pack;
 		console.error("Texture pack not found: " + pack);
+		pongPackHandler.setPack("retro1975");
 		return null;
 	}
 
@@ -158,7 +164,9 @@ export const    pongTextureHandler = new class {
 export const    pongPackHandler = new class {
 	private pack: string;
 	constructor() {
-		this.pack = "retro1975"; // Default pack retro, phantom, tv_world, retro1975
+		if (!localStorage.getItem("pongPack"))
+			localStorage.setItem("pongPack", "retro1975");
+		this.pack = localStorage.getItem("pongPack")!; // Default pack retro, phantom, tv_world, retro1975
 		pongSfxPlayer.setPack(this.pack);
 		pongTextureHandler.setPack(this.pack);
 	}
@@ -168,6 +176,7 @@ export const    pongPackHandler = new class {
 			this.pack = pack;
 			pongSfxPlayer.setPack(pack);
 			pongTextureHandler.setPack(pack);
+			localStorage.setItem("pongPack", pack);
 		}
 	}
 	getPack() { return this.pack; }

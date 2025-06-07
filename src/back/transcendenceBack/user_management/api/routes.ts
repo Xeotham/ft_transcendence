@@ -12,8 +12,6 @@ import {
     createPongGame,
     getStat,
     getGameHistory,
-    updateParameter,
-    getParameter,
     connectUser,
     disconnectUser,
     getAvatars,
