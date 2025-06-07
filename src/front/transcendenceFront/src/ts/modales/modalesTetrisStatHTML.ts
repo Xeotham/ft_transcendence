@@ -1,9 +1,11 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
-import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
-import {getFromApi, address, user} from "../utils.ts";
+import { ModaleType, modaleDisplay, modale } from './modalesCore.ts';
+import { getFromApi, address } from "../utils.ts";
 
-let tetrisStatPage = 0;
+let 	tetrisStatPage = 0;
+const 	tetrisListLength = 10;
+
 let tetrisHistory: tetrisStats[] = []
 export let indexGame: number = 0;
 export let tetrisGames: { gameId: number, players: GameUserInfo[] }[];
@@ -76,7 +78,7 @@ const formatTetrisStat = (history:{  gameId: number, players: GameUserInfo[] }, 
 
 export const  loadTetrisStat = async (playerUsername: string) => {
 	const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
-	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
+	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e :any)  => e.players[0].type === 'tetris');
 	tetrisGames = history;
 	const newHistory: tetrisStats[] = [];
 	history.forEach((game) => {
@@ -120,8 +122,8 @@ const formatTetrisStatLine = (index: number) => {
 	const stat = tetrisHistory[index];
 	if (!stat)
 		return '';
-	let formattedStat = `${stat.date} - `;
-	formattedStat += `${stat.score} pts`;
+	let formattedStat = `<span class="${TCS.modaleTexteGris}">${stat.date} &nbsp;&nbsp;</span>`;
+	formattedStat += `<span class="${TCS.modaleTexte}">${stat.score} pts</span>`;
 	return formattedStat;
 }
 
@@ -130,10 +132,10 @@ const getModaleTetrisStatListHTML = (page: number) => {
 
 	let listHTML = ``;
 
-	for (let i = 0; i < 10 && tetrisHistory[(page * 10) + i]; i++) {
+	for (let i = 0; i < tetrisListLength && tetrisHistory[(page * tetrisListLength) + i]; i++) {
 		listHTML += `
-      <div id="tetrisStatLine${i}" class="${TCS.modaleTexte}">
-      ${formatTetrisStatLine(i + (page * 10))}</div>
+      <div id="tetrisStatLine${i}" class="${TCS.modaleFriendList}">
+      ${formatTetrisStatLine(i + (page * tetrisListLength))}</div>
     `;
 	}
 	listHTML += `  <div class="h-[10px]"></div>
@@ -156,11 +158,11 @@ const getModaleTetrisStatListHTML = (page: number) => {
 
 export const modaleTetrisStatLineEvents = () => {
 
-	for (let i = 0; i < 10 && tetrisHistory[(tetrisStatPage * 10) + i]; i++) {
+	for (let i = 0; i < tetrisListLength && tetrisHistory[(tetrisStatPage * tetrisListLength) + i]; i++) {
 		const tetrisStatsLine = document.getElementById(`tetrisStatLine${i}`) as HTMLAnchorElement;
 		tetrisStatsLine?.addEventListener('click', () => {
 			let index = Number(tetrisStatsLine.id.slice(14, tetrisStatsLine.id.length));
-			index += (tetrisStatPage * 10);
+			index += (tetrisStatPage * tetrisListLength);
 			indexGame = index;
 			modaleDisplay(ModaleType.TETRIS_STATS_DETAIL);
 		})
@@ -169,11 +171,11 @@ export const modaleTetrisStatLineEvents = () => {
 
 export const modaleFriendTetrisStatLineEvents = () => {
 
-	for (let i = 0; i < 10 && tetrisHistory[(tetrisStatPage * 10) + i]; i++) {
+	for (let i = 0; i < tetrisListLength && tetrisHistory[(tetrisStatPage * tetrisListLength) + i]; i++) {
 		const tetrisStatsLine = document.getElementById(`tetrisStatLine${i}`) as HTMLAnchorElement;
 		tetrisStatsLine?.addEventListener('click', () => {
 			let index = Number(tetrisStatsLine.id.slice(14, tetrisStatsLine.id.length));
-			index += (tetrisStatPage * 10);
+			index += (tetrisStatPage * tetrisListLength);
 			indexGame = index;
 			modaleDisplay(ModaleType.FRIEND_TETRIS_STATS_DETAIL);
 		})
@@ -204,9 +206,9 @@ export const modaleTetrisStatEvents = () => {
 	});
 
 	TetrisStatsNext.addEventListener('click', () => {
-		if (tetrisStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
 			return;
-		if ((tetrisStatPage + 1) * 10 < tetrisHistory.length)
+		if ((tetrisStatPage + 1) * tetrisListLength < tetrisHistory.length)
 		{
 			modale.content.innerHTML = modaleTetrisStatHTML(++tetrisStatPage);
 			modaleDislpayPrevNextTetris();
@@ -226,11 +228,10 @@ export const modaleFriendTetrisStatEvents = () => {
 		return;
 
 
-	TetrisStatsBack.addEventListener('click', () => {
+	TetrisStatsBack?.addEventListener('click', () => {
 		modaleDisplay(ModaleType.FRIEND_PROFILE);
 	});
-
-	TetrisStatsPrev.addEventListener('click', () => {
+	TetrisStatsPrev?.addEventListener('click', () => {
 		if (tetrisStatPage <= 0 || !modale.content)
 			return;
 		modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
@@ -239,10 +240,10 @@ export const modaleFriendTetrisStatEvents = () => {
 		modaleFriendTetrisStatLineEvents();
 	});
 
-	TetrisStatsNext.addEventListener('click', () => {
-		if (tetrisStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+	TetrisStatsNext?.addEventListener('click', () => {
+		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
 			return;
-		if ((tetrisStatPage + 1) * 10 < tetrisHistory.length)
+		if ((tetrisStatPage + 1) * tetrisListLength < tetrisHistory.length)
 		{
 			modale.content.innerHTML = modaleTetrisStatHTML(++tetrisStatPage);
 			modaleDislpayPrevNextTetris();
@@ -258,7 +259,7 @@ export const modaleDislpayPrevNextTetris = () => {
 	const next = document.getElementById('TetrisNext');
 	const slash = document.getElementById('TetrisSlash');
 
-	const isNext = tetrisHistory.length - (tetrisStatPage * 10) > 10;
+	const isNext = tetrisHistory.length - (tetrisStatPage * tetrisListLength) > tetrisListLength;
 
 	if (!isNext)
 		next?.classList.add('hidden');
@@ -266,5 +267,4 @@ export const modaleDislpayPrevNextTetris = () => {
 		prev?.classList.add('hidden');
 	if (!isNext || tetrisStatPage==0)
 		slash?.classList.add('hidden');
-
 }

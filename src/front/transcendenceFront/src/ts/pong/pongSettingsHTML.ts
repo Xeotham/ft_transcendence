@@ -57,11 +57,11 @@ const   pongSettingsEvents = () => {
 	const packSelect5 = document.getElementById("packSelect5");	
 	
 	packSelect1?.addEventListener("click", () => {
-		pongTextureHandler.setPack("retro");
+		pongTextureHandler.setPack("retro1975");
 		page.show("/pong");
 	});
 	packSelect2?.addEventListener("click", () => {
-		pongTextureHandler.setPack("phantom");
+		pongTextureHandler.setPack("retro");
 		page.show("/pong");
 	});
 	packSelect3?.addEventListener("click", () => {
@@ -69,7 +69,7 @@ const   pongSettingsEvents = () => {
 		page.show("/pong");
 	});
 	packSelect4?.addEventListener("click", () => {
-		pongTextureHandler.setPack("retro1975");
+		pongTextureHandler.setPack("phantom");
 		page.show("/pong");
 	});
 	packSelect5?.addEventListener("click", () => {

@@ -1,11 +1,12 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
-import {getFromApi,address, user} from "../utils.ts";
-import {modaleFriendTetrisStatEvents} from "./modalesTetrisStatHTML.ts";
+import {getFromApi,address} from "../utils.ts";
+import ApexCharts from 'apexcharts';
+
 
 let pongStatPage = 0;
-
+const pongListLength = 10;
 interface pongStats {
   date: string;
   username: string;
@@ -47,7 +48,7 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] }, pl
 
 export const  loadPongStat = async (playerUsername: string) => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'pong');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e: any) => e.players[0].type === 'pong');
   const newHistory: pongStats[] = [];
   history.forEach((game) => {
     if (game.players.length < 2) {
@@ -75,6 +76,8 @@ export const modalePongStatHTML = (page: number) => {
     <div class="h-[30px]"></div>
   `;
 
+  PongStatHTML += `<div id="donut-chart"></div>`;
+
   PongStatHTML += getModalePongStatListHTML(pongStatPage);
 
   PongStatHTML += `
@@ -89,7 +92,7 @@ const formatPongStatLine = (index: number) => {
     const stat = pongHistory[index];
     if (!stat)
       return '';
-    let formattedStat = `${stat.date} - `;
+    let formattedStat = `<span class='text-stone-400'>${stat.date}</span> - `;
     formattedStat += stat.winner ? "<span class='text-green-500'>" : "<span class='text-red-500'>"
     formattedStat += `${stat.score}/${stat.scoreOpponent}</span> - ${stat.opponent}`;
     return formattedStat;
@@ -99,10 +102,10 @@ const getModalePongStatListHTML = (page: number) => {
 
   let listHTML = ``;
 
-  for (let i = 0; i < 10 && pongHistory[(page * 10) + i]; i++) {
+  for (let i = 0; i < pongListLength && pongHistory[(page * pongListLength) + i]; i++) {
     listHTML += `
       <div id="pongStatLine${i}" class="${TCS.modaleTexte}">
-      ${formatPongStatLine(i + (page * 10))}</div>
+      ${formatPongStatLine(i + (page * pongListLength))}</div>
     `;
   }
 
@@ -142,16 +145,18 @@ export const modalePongStatEvents = () => {
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modaleDislpayPrevNextPong();
     modalePongStatEvents();
+    modalePongStatPie();
   });
 
   PongStatsNext.addEventListener('click', () => {
-    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+    if (pongStatPage >= pongListLength || !modale.content)
       return;
-    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    if ((pongStatPage + 1) * pongListLength < pongHistory.length)
     {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
       modalePongStatEvents();
+      modalePongStatPie();
     }
   });
 }
@@ -175,16 +180,18 @@ export const modaleFriendPongStatEvents = () => {
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modaleDislpayPrevNextPong();
     modaleFriendPongStatEvents();
+    modalePongStatPie();
   });
 
   PongStatsNext.addEventListener('click', () => {
-    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+    if (pongStatPage >= pongListLength || !modale.content)
       return;
-    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    if ((pongStatPage + 1) * pongListLength < pongHistory.length)
     {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
-      modaleFriendTetrisStatEvents();
+      modaleFriendPongStatEvents();
+      modalePongStatPie();
     }
   });
 }
@@ -195,13 +202,7 @@ export const modaleDislpayPrevNextPong = () => {
   const next = document.getElementById('PongNext');
   const slash = document.getElementById('PongSlash');
 
-  const isNext = pongHistory.length - (pongStatPage * 10) > 10;
-
-  // console.log("PREV " + isNext);
-  // console.log("Prev " + prev);
-  // console.log("Next " + next);
-  // console.log("slash " + slash);
-
+  const isNext = pongHistory.length - (pongStatPage * pongListLength) > pongListLength;
 
   if (!isNext)
     next?.classList.add('hidden');
@@ -212,3 +213,134 @@ export const modaleDislpayPrevNextPong = () => {
 
 }
 
+export const modalePongStatPie = () => {
+
+  const getChartOptions = () => {
+    return {
+      series: [9, 6],
+      colors: ["#a3e635", "#be123c"], //lime-400, rose-700
+      chart: {
+        height: 240, // 320 initiale
+        width: "100%",
+        type: "donut",
+      },
+      stroke: {
+        colors: ["transparent"],
+        lineCap: "",
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            labels: {
+              show: true,
+              name: {
+                show: true,
+                fontFamily: "Sixtyfour, sans-serif",
+                fontSize: "8px",
+                fontWeight: "bold",
+                color: "#facc15", // yellow-400
+                offsetY: 20,
+              },
+              total: {
+                showAlways: true,
+                show: true,
+                label: "Win rate",
+                fontFamily: "sixtyfour, sans-serif",
+                fontSize: "10px",
+                color: "#facc15", // yellow-400
+                formatter: function (w: any) {
+                  const wins = w.globals.seriesTotals[0];
+                  const total = w.globals.seriesTotals[0] + w.globals.seriesTotals[1];
+                  return Math.round((wins / total) * 100) + '%';
+                },
+              },
+              value: {
+                show: true,
+                fontFamily: "sixtyfour, sans-serif",
+                offsetY: -20,
+                fontSize: "20px",
+                color: "#facc15", // yellow-400
+                formatter: function (value: any) {
+                  console.log('value formater', value);
+                  return Math.round((9/6 * 100)) + "%"
+                },
+              },
+            },
+            size: "80%",
+          },
+        },
+      },
+      grid: {
+        padding: {
+          top: -2,
+        },
+      },
+      labels: ["Win", "Loose"],
+      dataLabels: {
+        enabled: false,
+      },
+      legend: {
+        position: "bottom",
+        fontFamily: "Inter, sans-serif",
+        show: false
+      },
+      yaxis: {
+        labels: {
+          formatter: function (value: any) {
+            return value
+          },
+        },
+      },
+      xaxis: {
+        labels: {
+          formatter: function (value: any) {
+            return value
+          },
+        },
+        axisTicks: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+      },
+    }
+  }
+
+  if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined') {
+    const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
+    chart.render();
+
+    // Get all the checkboxes by their class name
+    // const checkboxes = document.querySelectorAll('#devices input[type="checkbox"]');
+
+    // Function to handle the checkbox change event
+    // function handleCheckboxChange(event: any, chart: any) {
+    //     const checkbox = event.target;
+    //     if (checkbox.checked) {
+    //         switch(checkbox.value) {
+    //           case 'desktop':
+    //             chart.updateSeries([15.1, 22.5, 4.4, 8.4]);
+    //             break;
+    //           case 'tablet':
+    //             chart.updateSeries([25.1, 26.5, 1.4, 3.4]);
+    //             break;
+    //           case 'mobile':
+    //             chart.updateSeries([45.1, 27.5, 8.4, 2.4]);
+    //             break;
+    //           default:
+    //             chart.updateSeries([55.1, 28.5, 1.4, 5.4]);
+    //         }
+
+    //     } else {
+    //         chart.updateSeries([35.1, 23.5, 2.4, 5.4]);
+    //     }
+    // }
+
+    // Attach the event listener to each checkbox
+    // checkboxes.forEach((checkbox) => {
+    //     checkbox.addEventListener('change', (event) => handleCheckboxChange(event, chart));
+    // });
+  }
+
+}
