@@ -7,8 +7,53 @@ import { imTexts } from "../imTexts/imTexts.ts";
 
 // @ts-ignore
 import page from "page";
+import {TCS} from "../TCS.ts";
 
 let socket: WebSocket | null = null;
+
+
+
+interface GameUserInfo {
+	date: string;
+	totalTime: number;
+	username?: string;
+	userId: number;
+	score: number;
+	winner: boolean;
+	type: string;
+	maxCombo: number;
+	piecesPlaced: number;
+	piecesPerSecond: number;
+	attacksSent: number;
+	attacksSentPerMinute: number;
+	attacksReceived: number;
+	attacksReceivedPerMinute: number;
+	keysPressed: number;
+	keysPerPiece: number;
+	keysPerSecond: number;
+	holds: number;
+	linesCleared: number;
+	linesPerMinute: number;
+	maxB2B: number;
+	perfectClears: number;
+	single: number;
+	double: number;
+	triple: number;
+	quad: number;
+	tspinZero: number;
+	tspinSingle: number;
+	tspinDouble: number;
+	tspinTriple: number;
+	tspinQuad: number;
+	miniTspinZero: number;
+	miniTspinSingle: number;
+	miniSpinZero: number;
+	miniSpinSingle: number;
+	miniSpinDouble: number;
+	miniSpinTriple: number;
+	miniSpinQuad: number
+}
+
 
 const socketClose = async (type: string) => {
 	console.log("WebSocket connection closed.");
@@ -28,6 +73,8 @@ const socketClose = async (type: string) => {
 	tetrisGameInformation.resetSettings();
 	if (zone.state === "TETRIS")
 		loadTetrisPage("idle");
+	bgmPlayer.stop();
+	resetSocket("game");
 }
 
 const socketInit = (socket: WebSocket) => {
@@ -41,7 +88,6 @@ const socketInit = (socket: WebSocket) => {
 	// Special handling for Chrome
 	if (!navigator.userAgent.includes("Firefox"))
 		window.onbeforeunload = (e) => {
-			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
 			socketClose("unload");
 			e.preventDefault();
 			return e.returnValue = imTexts.tetrisRefreshConfirmation;
@@ -241,6 +287,7 @@ const   messageHandler = (event: MessageEvent)=> {
 			bgmPlayer.play();
 			tetrisBoardHtml();
 			loadTetrisPage("board");
+			document.getElementById("endGame")!.style.display = "none";
 			gameControllers();
 			return ;
 		case 'MULTIPLAYER_JOIN':
@@ -275,7 +322,8 @@ const   messageHandler = (event: MessageEvent)=> {
 			effectPlayer(res.argument as string, res.value);
 			return ;
 		case "STATS":
-			// console.log("Stats: " + JSON.stringify(res.argument));
+			// console.log("Stats:", res.argument);
+			showStats(res.argument);
 			return;
 		case "MULTIPLAYER_FINISH":
 			console.log("The multiplayer game has finished. You ended up at place " + res.argument);
@@ -288,11 +336,114 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("Game Over");
 			resetSocket("game");
 			bgmPlayer.stop();
-			hideZoneGame();
+			// hideZoneGame();
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);
 	}
+}
+
+const	showStats = (stats: GameUserInfo) => {
+	const	endGameDiv = document.getElementById("endGame");
+
+	if (!endGameDiv) {
+		hideZoneGame()
+		return;
+	}
+
+	endGameDiv.style.display = "block";
+
+	endGameDiv.innerHTML = `
+		<div id="tetrisStatsDetailText" class="${TCS.modaleStatDetail}">
+		<div class="${TCS.modaleTitre} text-center">GAME OVER</div>
+		<div class="h-[15px]"></div>
+		<div class="${TCS.tetrisEndGameScore}">Score: ${stats?.score}</div>
+		<div class="h-[30px]"></div>
+		<div class="grid grid-cols-6 gap-[2px]">
+	
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Total Time: </div>
+		  <div class="col-span-4">${stats?.totalTime}</div>
+	
+		  <div class="col-span-6 h-[5px]"></div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Max Combo: </div>
+		  <div class="col-span-4">${stats?.maxCombo}</div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Max B2B: </div>
+		  <div class="col-span-4">${stats?.maxB2B}</div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Perfect Clears: </div>
+		  <div class="col-span-4">${stats?.perfectClears}</div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Pieces: </div>
+		  <div class="col-span-4">${stats?.piecesPlaced} placed | ${stats?.piecesPerSecond} / s</div>
+	
+		  <div class="col-span-6 h-[5px]"></div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Keys: </div>
+		  <div class="col-span-4">${stats?.keysPressed} pressed | ${stats?.keysPerPiece} / pieces | ${stats?.keysPerSecond} / s</div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Holds: </div>
+		  <div class="col-span-4">${stats?.holds}</div>
+	
+		  <div class="col-span-2 ${TCS.modaleStatDetail}">Lines: </div>
+		  <div class="col-span-4">${stats?.linesCleared} cleared | ${stats?.linesPerMinute} / min</div>
+	
+		</div>
+	
+		<div class="h-[20px]"></div>
+	
+		<div class="grid grid-cols-6">
+	
+		  <div class="${TCS.modaleStatDetail} ${TCS.statRow1}">TYPE</div>
+		  <div class="${TCS.modaleStatDetail} ${TCS.statCol1}">Zero</div>
+		  <div class="${TCS.modaleStatDetail} ${TCS.statCol1}">Single</div>
+		  <div class="${TCS.modaleStatDetail} ${TCS.statCol1}">Double</div>
+		  <div class="${TCS.modaleStatDetail} ${TCS.statCol1}">Triple</div>
+		  <div class="${TCS.modaleStatDetail} ${TCS.statCol1}">Quad</div>
+	
+		  <div class="${TCS.modaleStatDetail}">Clears</div>
+		  <div class="${TCS.modaleStatDetail}">X</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.single}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.double}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.triple}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.quad}</div>
+	
+		  <div class="${TCS.modaleStatDetail}">Tspin</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.tspinZero}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.tspinSingle}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.tspinDouble}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.tspinTriple}</div>
+		  <div class="${TCS.modaleStatDetail}">X</div>
+	
+		  <div class="${TCS.modaleStatDetail}">Mini Tspin</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniTspinZero}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniTspinSingle}</div>
+		  <div class="${TCS.modaleStatDetail}">X</div>
+		  <div class="${TCS.modaleStatDetail}">X</div>
+		  <div class="${TCS.modaleStatDetail}">X</div>
+	
+		  <div class="${TCS.modaleStatDetail}">Mini Spin</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniSpinZero}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniSpinSingle}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniSpinDouble}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniSpinTriple}</div>
+		  <div class="${TCS.modaleStatDetail}">${stats?.miniSpinQuad}</div>
+		</div>
+	
+		<div class="h-[30px]"></div>
+		
+		<div id="returnHome" class="${TCS.tetrisEndGameButton}">
+			${imTexts.tetrisBoardReturnToMenu}
+		</div>
+	
+	  </div>
+	`
+	document.getElementById("returnHome")!.addEventListener("click", () => {
+		hideZoneGame();
+	})
+
 }
 
 const   movePiece = (direction: string) => {

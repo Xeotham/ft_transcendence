@@ -79,6 +79,11 @@ export const TCS = {
 
     tetrisWindowBkg : "fixed z-40 w-[680px] shadow-xl/30 bg-lime-50 px-8 py-5 top-16 left-1/2 -translate-x-1/2",
     tetrisWindowText : "font-sixtyfour text-[14px] relative text-stone-950",
+    tetrisEndGame: "fixed z-40 w-[900px] shadow-xl/30 bg-stone-950/85 px-8 py-5 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 align-center justify-center",
+    tetrisEndGameDetail: "font-pixelcode text-[14px] text-lime-50 font-medium text-left",
+    tetrisEndGameScore: "font-pixelcode text-[50px] text-stone-400 font-medium text-center",
+    tetrisEndGameButton: "p-[15px] flex justify-center w-full text-[20px] text-lime-50 bg-yellow-600 hover:bg-amber-400 hover:text-black transition-all duration-200 ease-in-out cursor-pointer hover:cursor-pointer",
+
 
     gameTitle : "font-sixtyfour text-[24px] text-amber-900 font-medium text-left",
     gameTexte : "font-sixtyfour text-[14px] relative text-stone-950",

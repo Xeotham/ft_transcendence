@@ -255,7 +255,7 @@
         "validate": "Valider",
         "keyChange": "Appuyez sur la touche"
       },
-        "board": {
+      "board": {
         "score": "Score",
         "level": "Niveau",
         "lines": "Lignes",
@@ -264,6 +264,7 @@
         "resume": "Reprendre",
         "quit": "Quitter",
         "gameOver": "Game over",
+        "ReturnToMenu": "Retour au menu",
         "newGame": "Nouvelle partie"
       },
       "createMultiplayerRoom": {

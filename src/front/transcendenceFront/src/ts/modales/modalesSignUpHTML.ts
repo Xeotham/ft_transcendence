@@ -13,8 +13,8 @@ export const modaleSignUpHTML = () => {
   <div id="signupTitle" class="${TCS.modaleTitre} pb-[30px]">
   ${imTexts.modalesSignupTitle}</div>
   
-  <div id="signupBack" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesFriendListBack}</div>
+  <span id="signupBack" class="${TCS.modaleTexteLink}">
+  ${imTexts.modalesFriendListBack}</span>
         
   <div id="signupText" class="${TCS.modaleTexte} pb-[40px]">
   ${imTexts.modalesSignupText}</div>

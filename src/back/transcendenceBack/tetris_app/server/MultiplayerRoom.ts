@@ -124,6 +124,7 @@ export class MultiplayerRoom {
 		this.playersRemaining = this.players.length;
 		this.isInGame = true;
 
+		this.settings.isInRoom = true;
 		for (const player of this.players)
 			player.setupGame(this.settings);
 		this.assignOpponents();
@@ -163,6 +164,7 @@ export class MultiplayerRoom {
 			if (this.playersRemaining >= 1)
 				return ;
 			this.players.forEach((player) => {
+				player.getSocket().send(JSON.stringify({type: "GAME_FINISH"}));
 				if (!player.getGame()?.getHasForfeit())
 					player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: this.code }));
 				player.setGame(undefined);
