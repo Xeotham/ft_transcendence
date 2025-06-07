@@ -143,7 +143,7 @@ export const modaleAvatarEvents = async () => {
 			const   file = fileInput.files[0];
 			try {
 				avatarBase64 = await processUploadedAvatar(file);
-				patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: avatarBase64});
+				patchToApi(`http://${address}/api/user/update-avatar`, {username: user.getUsername(), avatar: avatarBase64});
 				user.setAvatar(avatarBase64);
 				modaleDisplay(ModaleType.PROFILE);
 			} catch (error) {
@@ -161,7 +161,7 @@ export const modaleAvatarEvents = async () => {
 			if (!avatar)
 				return;
 			user.setAvatar(defaultAvatars[i].base64);
-			patchToApi(`http://${address}/api/user/update-user`, {username: user.getUsername(), type: "avatar", update: defaultAvatars[i].base64});
+			patchToApi(`http://${address}/api/user/update-avatar`, {username: user.getUsername(), avatar: defaultAvatars[i].base64});
 			modaleDisplay(ModaleType.PROFILE);
 		})
 	}

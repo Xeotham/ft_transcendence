@@ -129,21 +129,21 @@ const   handleChangeUsernameForm =  async () => {
 		const newUsername = (document.getElementById('newUsername') as HTMLInputElement).value;
 
 		if (previousUsername !== user.getUsername()) {
-			modaleAlert(imTexts.modalesEditEditUsernamePreviousError);
+			modaleAlert("Previous username is not correct");
 			return;
 		}
 
 		if (previousUsername === newUsername) {
-			modaleAlert(imTexts.modalesEditEditUsernameSameError);
+			modaleAlert("New username must be different from previous username");
 			return;
 		}
 		try {
-			await patchToApi(`http://${address}/api/user/update-user`, { username: user.getUsername(), type: "username", update: newUsername });
+			await patchToApi(`http://${address}/api/user/update-username`, { username: user.getUsername(), newUsername: newUsername });
 			user.setUsername(newUsername);
 			return await modaleDisplay(ModaleType.PROFILE);
 		}
-		catch (e) {
-			modaleAlert(imTexts.modalesEditUsernameError);
+		catch (e: any) {
+			modaleAlert(e.message);
 			return;
 		}
 	});

@@ -1,8 +1,25 @@
 import { FastifyInstance } from 'fastify';
 import {
-    registerUser, updateUser, loginUser, logoutUser,
-    getUserInfo, getFriends, addFriend, deleteFriend, addMessage, getMessage, createPongGame, getStat,
-    getGameHistory, updateParameter, getParameter, connectUser, disconnectUser, getAvatars, updatePassword
+    registerUser,
+    updateUser,
+    loginUser,
+    logoutUser,
+    getUserInfo,
+    getFriends,
+    addFriend,
+    deleteFriend,
+    addMessage,
+    getMessage,
+    createPongGame,
+    getStat,
+    getGameHistory,
+    updateParameter,
+    getParameter,
+    connectUser,
+    disconnectUser,
+    getAvatars,
+    updatePassword,
+    updateUsername, updateAvatar
 } from './controllers';
 
 
@@ -11,7 +28,6 @@ import {
 export default async function userRoutes(fastify: FastifyInstance)
 {
     fastify.post('/register', registerUser);
-    fastify.patch('/update-user', updateUser);
     fastify.post('/login', loginUser);
     fastify.post('/logout', logoutUser);
     fastify.get('/get-user', getUserInfo);
@@ -30,4 +46,6 @@ export default async function userRoutes(fastify: FastifyInstance)
     fastify.post('/disconnect-user', disconnectUser);
     fastify.get('/get-avatars', getAvatars);
     fastify.patch('/update-password', updatePassword);
+    fastify.patch('/update-username', updateUsername);
+    fastify.patch('/update-avatar', updateAvatar);
 }
