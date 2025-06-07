@@ -188,18 +188,49 @@ export class   keys {
 	private retry:                	string;
 
 	constructor() {
-		this.moveLeft               = "a";
-		this.moveRight              = "d";
-		this.rotateClockwise        = "ArrowRight";
-		this.rotateCounterClockwise = "ArrowLeft";
-		this.rotate180              = "w";
-		this.hardDrop               = "ArrowUp";
-		this.softDrop               = "ArrowDown";
-		this.hold                   = "Shift";
-		this.forfeit                = "Escape";
-		this.retry                  = "r";
+		interface   keybinds {
+			moveLeft: string;
+			moveRight: string;
+			rotateClockwise: string;
+			rotateCounterClockwise: string;
+			rotate180: string;
+			hardDrop: string;
+			softDrop: string;
+			hold: string;
+			forfeit: string;
+			retry: string;
+		}
+
+		const   keys: keybinds = JSON.parse(localStorage.getItem("tetrisKeybindings") || "{}");
+
+		this.moveLeft               = keys.moveLeft || "a";
+		this.moveRight              = keys.moveRight || "d";
+		this.rotateClockwise        = keys.rotateClockwise || "ArrowRight";
+		this.rotateCounterClockwise = keys.rotateCounterClockwise || "ArrowLeft";
+		this.rotate180              = keys.rotate180 || "w";
+		this.hardDrop               = keys.hardDrop || "ArrowUp";
+		this.softDrop               = keys.softDrop || "ArrowDown";
+		this.hold                   = keys.hold || "Shift";
+		this.forfeit                = keys.forfeit || "Escape";
+		this.retry                  = keys.retry || "r";
+
+		localStorage.setItem("tetrisKeybindings", JSON.stringify(this.getKeys()));
 	}
 	// Getters
+	getKeys() {
+		return {
+			moveLeft: this.moveLeft,
+			moveRight: this.moveRight,
+			rotateClockwise: this.rotateClockwise,
+			rotateCounterClockwise: this.rotateCounterClockwise,
+			rotate180: this.rotate180,
+			hardDrop: this.hardDrop,
+			softDrop: this.softDrop,
+			hold: this.hold,
+			forfeit: this.forfeit,
+			retry: this.retry,
+		}
+	};
 	getMoveLeft(): string { return this.moveLeft ; }
 	getMoveRight(): string { return this.moveRight ; }
 	getClockwiseRotate(): string { return this.rotateClockwise; }
@@ -234,55 +265,10 @@ export class   keys {
 		this.hold                   = "Shift";
 		this.forfeit                = "Escape";
 		this.retry					= "r";
-	}
 
-	async build() {
-
-		const   keys: { moveLeft: string, moveRight: string, rotateClockwise: string, rotateCounterClockwise: string, rotate180: string, hardDrop: string,
-			softDrop: string, hold: string, forfeit: string, retry: string,} = (await getFromApi(`http://${address}/api/user/get-parameter?username=${user.getUsername()}`)).parameter;
-
-
-		this.moveLeft               = keys.moveLeft || "a";
-		this.moveRight              = keys.moveRight || "d";
-		this.rotateClockwise       = keys.rotateClockwise || "ArrowRight";
-		this.rotateCounterClockwise = keys.rotateCounterClockwise || "ArrowLeft";
-		this.rotate180             = keys.rotate180 || "w";
-		this.hardDrop              = keys.hardDrop || "ArrowUp";
-		this.softDrop              = keys.softDrop || "ArrowDown";
-		this.hold                   = keys.hold || "Shift";
-		this.forfeit                = keys.forfeit || "Escape";
-		this.retry					= "r";
-		return this;
+		localStorage.setItem("tetrisKeybindings", JSON.stringify(this.getKeys()));
 	}
 
 }
 
-
-// export const syncKeys = async () => {
-// 	try {
-// 		const   keys: { moveLeft: string, moveRight: string, rotateClockwise: string, rotateCounterClockwise: string, rotate180: string, hardDrop: string,
-// 			softDrop: string, hold: string, forfeit: string, retry: string,} = (await getFromApi(`http://${address}/api/user/get-parameter?username=${user.getUsername()}`)).parameter;
-//
-// 		Object.entries(keys).forEach(([key, value]) => {
-// 			console.log(key, value)
-// 			setKey(key, value);
-// 		});
-// 		console.log(userKeys);
-//
-// 	}
-// 	catch (error) {
-// 		console.error("Error loading user keys:", error);
-// 	}
-// }
-
-export let userKeys: keys | null = null;
-
-(async () => {
-	if (!user.isAuthenticated())
-		return ;
-	const   newKeys = new keys();
-
-	userKeys = await newKeys.build();
-	// console.log("Loaded keys: ", newKeys);
-})()
-
+export let userKeys: keys = new keys();

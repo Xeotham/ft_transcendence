@@ -114,21 +114,6 @@ db.exec(` \
     UNIQUE (userId, gameId)
   );
 
-  CREATE TABLE IF NOT EXISTS parameter
-  (
-    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    userId              INTEGER NOT NULL,
-    moveLeft                VARCHAR(50) DEFAULT 'a',
-    moveRight               VARCHAR(50) DEFAULT 'd',
-    rotateClockwise		    VARCHAR(50) DEFAULT 'ArrowRight',
-    rotateCounterClockwise	VARCHAR(50) DEFAULT 'ArrowLeft',
-    rotate180			    VARCHAR(50) DEFAULT 'w',
-    hardDrop			    VARCHAR(50) DEFAULT 'ArrowUp',
-    softDrop			    VARCHAR(50) DEFAULT 'ArrowDown',
-    hold                    VARCHAR(50) DEFAULT 'Shift',
-    forfeit                 VARCHAR(50) DEFAULT 'Escape',
-    FOREIGN KEY (userId) REFERENCES user(id)
-  );
 
 `);
 

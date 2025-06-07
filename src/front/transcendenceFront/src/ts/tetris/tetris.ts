@@ -23,7 +23,7 @@ import {
 	searchGame,
 } from "./gameManagement.ts";
 
-import { patchToApi, resetGamesSocket, address, user } from "../utils.ts";
+import {resetGamesSocket, userKeys} from "../utils.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { zoneSet } from "../zone/zoneCore.ts";
 
@@ -131,10 +131,9 @@ export const changeKeys = (keyType: string) => {
 	const getNewKey = async (event: KeyboardEvent) => {
 		const newKey = event.key;
 		modify = false;
-		await patchToApi(`http://${address}/api/user/update-parameter`, {username: user.getUsername(), control: keyType, key: newKey})
 		setKey(keyType, newKey);
+		localStorage.setItem("tetrisKeybindings", JSON.stringify(userKeys?.getKeys()));
 
-		// console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
 		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
 		pressKey.remove();

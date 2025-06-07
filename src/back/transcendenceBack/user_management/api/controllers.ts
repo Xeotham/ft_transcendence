@@ -8,7 +8,6 @@ import { request } from 'http';
 import { createUserGameStatsPong, createUserGameStatsTetris, getUserStatsGame, getUserGameHistory, getGameDetailsById } from '../../database/models/GamesUsers';
 import { getMessageById, saveMessage } from '../../database/models/Message';
 import { saveGame, getGameById } from '../../database/models/Game';
-import { createParam, updateParam, getParamById } from '../../database/models/Parameter';
 import bcrypt from 'bcrypt';
 import path from 'path';
 import fs from 'fs';
@@ -68,8 +67,6 @@ export const registerUser = async (request: FastifyRequest, reply: FastifyReply)
 		const id = await createUser( username, hashedPassword as string, avatar );
 
 		createStats(Number(id));
-
-		createParam(Number(id));
 
 		return reply.status(201).send({ message: 'User registered successfully', id });
 	}
@@ -293,70 +290,6 @@ export const    addFriend = async (request: FastifyRequest, reply: FastifyReply)
 	return reply.status(201).send({ message: 'Friend request sent' });
 };
 
-
-// export const    addFriend = async (request: FastifyRequest, reply: FastifyReply) =>
-// {
-//     const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
-//
-//     const   user = getUserByUsername(username);
-//
-//     const   userFriend = getUserByUsername(usernameFriend);
-//
-//     if (!user || !userFriend)
-//         return reply.status(401).send({ message: 'Invalid username' });
-//
-//     if (user.id === userFriend.id)
-//         return reply.status(401).send({ message: 'User cannot add himself' });
-//
-//     if (userFriend.id)
-//     {
-//         const   user1Id = user.id as number;
-//         const   user2Id = userFriend.id as number;
-//         let     friendU1 = true;
-//         let     friendU2 = false;
-//         let     blockU1 = false;
-//         let     blockU2 = false;
-//         let     pos;
-//
-//         if (checkBlockStatus(user1Id, user2Id) > 0)
-//             return  reply.status(301).send({ message: 'Contact is blocked' });
-//
-//
-//         const status = checkFriendshipStatus( user1Id, user2Id );
-//         switch (status)
-//         {
-//             case 0:
-//                 createContact({ user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 });
-//                 return  reply.status(201).send({ message: 'Friend request sended' });
-//
-//             case 1:
-//                 return  reply.status(301).send({ message: 'Friend request already sended' });
-//
-//             case 2:
-//                 pos = checkPosContact(user1Id, user2Id);
-//                 friendU2 = true;
-//                 if (pos == 1)
-//                     modifyContact( user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 );
-//                 else if (pos == 2)
-//                     modifyContact( user2Id, user1Id, friendU2, friendU1, blockU2, blockU1 );
-//                 return  reply.status(201).send({ message: 'Friend request accepted' });
-//
-//             case 3:
-//                 return  reply.status(301).send({ message: 'Friend already added' });
-//
-//             case 4:
-//                 pos = checkPosContact(user1Id, user2Id);
-//                 if (pos == 1)
-//                     modifyContact( user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 );
-//                 else if (pos == 2)
-//                     modifyContact( user2Id, user1Id, friendU2, friendU1, blockU2, blockU1 );
-//                 return  reply.status(201).send({ message: 'Friend request sended' });
-//
-//         }
-//     }
-// };
-
-
 export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) =>
 {
 	const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
@@ -377,148 +310,6 @@ export const    deleteFriend = async (request: FastifyRequest, reply: FastifyRep
 	}
 	return reply.status(201).send({ message: 'Friend deleted' });
 };
-
-// export const    deleteFriend = async (request: FastifyRequest, reply: FastifyReply) =>
-// {
-//     const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
-//
-//     const   user = getUserByUsername(username);
-//
-//     const   userFriend = getUserByUsername(usernameFriend);
-//
-//     if (!user || !userFriend)
-//         return reply.status(401).send({ message: 'Invalid username' });
-//
-//     if (userFriend.id)
-//     {
-//         const   user1Id = user.id as number;
-//         const   user2Id = userFriend.id as number;
-//         const   friendU1 = false;
-//         const   friendU2 = false;
-//         const   blockU1 = false;
-//         const   blockU2 = false;
-//
-//         if (checkBlockStatus(user1Id, user2Id) > 0)
-//             return  reply.status(301).send({ message: 'Contact is blocked' });
-//
-//         const status = checkFriendshipStatus( user1Id, user2Id );
-//
-//         if (status == 0 || status == 4)
-//             return  reply.status(301).send({ message: 'User is not a contact' });
-//         else
-//         {
-//             const pos = checkPosContact(user1Id, user2Id);
-//             if (pos == 1)
-//                 modifyContact( user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 );
-//             else if (pos == 2)
-//                 modifyContact( user2Id, user1Id, friendU2, friendU1, blockU2, blockU1 );
-//             return  reply.status(201).send({ message: 'Friend deleted' });
-//         }
-//     }
-// };
-//
-// export const    blockContact = async (request: FastifyRequest, reply: FastifyReply) =>
-// {
-//     const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
-//
-//     const   user = getUserByUsername(username);
-//
-//     const   contact = getUserByUsername(usernameFriend);
-//
-//     if (!user || !contact)
-//         return reply.status(401).send({ message: 'Invalid username' });
-//
-//     if (!user)
-//         return reply.status(401).send({ message: 'Invalid username' });
-//
-//     if (contact.id)
-//     {
-//         const   user1Id = user.id as number;
-//         const   user2Id = contact.id as number;
-//         const   friendU1 = false;
-//         const   friendU2 = false;
-//         const   blockU1 = true;
-//         let     blockU2 = false;
-//         let     pos;
-//
-//         const blockStatus = checkBlockStatus(user1Id, user2Id)
-//         if (blockStatus == 1 || blockStatus == 3)
-//             return  reply.status(301).send({ message: 'Contact is already blocked' });
-//
-//
-//         const friendStatus = checkFriendshipStatus( user1Id, user2Id );
-//         if (friendStatus == 0)
-//         {
-//             createContact({ user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 });
-//             return  reply.status(201).send({ message: 'User blocked' });
-//         }
-//         else
-//         {
-//             if (blockStatus == 2)
-//                 blockU2 = true;
-//             pos = checkPosContact(user1Id, user2Id);
-//             if (pos == 1)
-//                 modifyContact( user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 );
-//             else
-//                 modifyContact( user2Id, user1Id, friendU2, friendU1, blockU2, blockU1 );
-//             return  reply.status(201).send({ message: 'User blocked' });
-//         }
-//     }
-// };
-//
-// export const    unblockContact = async (request: FastifyRequest, reply: FastifyReply) =>
-// {
-//     const   { username, usernameFriend } = request.body as { username: string, usernameFriend: string };
-//
-//     const   user = getUserByUsername(username);
-//
-//     const   contact = getUserByUsername(usernameFriend);
-//
-//     if (!user || !contact)
-//         return reply.status(401).send({ message: 'Invalid username' });
-//
-//     if (!user)
-//         return reply.status(401).send({ message: 'Invalid username' });
-//
-//     if (contact.id)
-//     {
-//         const   user1Id = user.id as number;
-//         const   user2Id = contact.id as number;
-//         const   friendU1 = false;
-//         const   friendU2 = false;
-//         const   blockU1 = false;
-//         let     blockU2 = false;
-//         let     pos;
-//
-//
-//         const blockStatus = checkBlockStatus(user1Id, user2Id)
-//         switch (blockStatus)
-//         {
-//             case 0:
-//                 return  reply.status(301).send({ message: 'Contact is already unblocked' });
-//             case 1:
-//                 pos = checkPosContact(user1Id, user2Id);
-//                 if (pos == 1)
-//                     modifyContact( user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 );
-//                 else
-//                     modifyContact( user2Id, user1Id, friendU2, friendU1, blockU2, blockU1 );
-//                 return  reply.status(201).send({ message: 'Contact unblocked' });
-//
-//             case 2:
-//                 return  reply.status(301).send({ message: 'Contact is already unblocked' });
-//
-//             case 3:
-//                 blockU2 = true;
-//                 pos = checkPosContact(user1Id, user2Id);
-//                 if (pos == 1)
-//                     modifyContact( user1Id, user2Id, friendU1, friendU2, blockU1, blockU2 );
-//                 else
-//                     modifyContact( user2Id, user1Id, friendU2, friendU1, blockU2, blockU1 );
-//                 return  reply.status(201).send({ message: 'Contact unblocked' });
-//
-//         }
-//     }
-// };
 
 /*--------------------------------------------------------------------------------------------*/
 /* Message */
@@ -709,40 +500,5 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
 		}));
 		// history: added
 		return  reply.status(201).send({ message: 'Game History sended', history:fullGameHistory });
-	}
-};
-
-/*--------------------------------------------------------------------------------------------*/
-/* Param */
-
-export const updateParameter = async (request: FastifyRequest, reply: FastifyReply) =>
-{
-	const { username, control, key } = request.body as { username: string, control: string, key: string };
-
-	// console.log("Updating parameter for user:", username, "Control:", control, "Key:", key);
-
-	const user = getUserByUsername(username);
-
-	if (!user)
-		return reply.status(400).send({ message: 'Invalid username' });
-
-	updateParam( user.id as number, control, key);
-
-	return reply.status(201).send({ message: 'Paramater updated successfully' });
-};
-
-export const    getParameter = async (request: FastifyRequest, reply: FastifyReply) =>
-{
-	const   { username } = request.query as { username: string };
-
-	const   user = getUserByUsername(username) as Users;
-
-	if (!user)
-		return reply.status(401).send({ message: 'Invalid username' });
-
-	if (user.id)
-	{
-		const parameter = getParamById(user.id);
-		return  reply.status(201).send({ message: 'Parameter sended', parameter: parameter });
 	}
 };

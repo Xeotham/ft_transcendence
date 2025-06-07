@@ -156,8 +156,9 @@ export const modaleFriendListEvents = () => {
 			const friendName = (document.getElementById('friendSearchInput') as HTMLInputElement).value;
 			await postToApi(`http://${address}/api/user/add-friend`, { username: user.getUsername(), usernameFriend: friendName });
 			await loadFriendList();
-			await modaleDisplay(ModaleType.FRIEND_LIST);
-
+			modale.content!.innerHTML = modaleFriendListHTML(friendListPage);
+			modaleDislpayPrevNextFriend();
+			modaleFriendListEvents();
 		}
 		catch (e: any) {
 			console.error("Error adding friend:", e.message);
@@ -191,6 +192,8 @@ export const modaleFriendListEvents = () => {
 
 	for (let i = 0; i < 10; i++) {
 		const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
+		if (!friendListLine)
+			continue;
 		friendListLine.addEventListener('click', () => {
 			friendList.setActualFriend(i + (friendListPage * friendListLength));
 			modaleDisplay(ModaleType.FRIEND_PROFILE);
