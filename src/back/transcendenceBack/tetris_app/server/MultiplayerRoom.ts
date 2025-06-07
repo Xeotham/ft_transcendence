@@ -135,7 +135,7 @@ export class MultiplayerRoom {
 			for (let i = 0; i < this.players.length; ++i) {
 				let lost: number = 0;
 				let games: any[] = [];
-				for (let j = (i + 1) % this.players.length; j - lost < 6; ++j) {
+				for (let j = i + 1; j - lost < 6; ++j) {
 					j %= this.players.length;
 					if (j === i)
 						break ;
@@ -153,7 +153,7 @@ export class MultiplayerRoom {
 		const interval = setInterval(sendOpponentsGames, 1000 / 10);
 
 		const endOfGame = (player: MultiplayerRoomPlayer) => {
-			// console.log("End of game for player " + player.getUsername() + " is at place " + this.playersRemaining);
+			console.log("End of game for player " + player.getUsername() + " is at place " + this.playersRemaining);
 			player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_FINISH", argument: this.playersRemaining }));
 			--this.playersRemaining;
 			if (player.getGame()?.getHasForfeit())
@@ -176,14 +176,15 @@ export class MultiplayerRoom {
 	}
 
 	private assignOpponents(): void {
-		if (this.players.length <= 1)
+		if (this.playersRemaining <= 1 || this.players.length <= 1)
 			return ;
 
 		let opponent: MultiplayerRoomPlayer;
 		for (const player of this.players) {
 			do {
 				opponent = this.players[Math.floor(Math.random() * this.players.length)];
-			} while (opponent === player || opponent === undefined);
+			} while (opponent === undefined || opponent === player ||
+			opponent.getGame() === undefined || opponent.getGame()?.isOver() || opponent.getGame()?.getHasForfeit());
 			player.getGame()?.setOpponent(opponent.getGame()!);
 		}
 	}

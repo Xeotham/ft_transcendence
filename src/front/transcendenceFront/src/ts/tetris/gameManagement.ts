@@ -331,6 +331,7 @@ const   messageHandler = (event: MessageEvent)=> {
 		case "MULTIPLAYER_OPPONENTS_GAMES":
 			// console.log("MULTIPLAYER_OPPONENTS_GAMES");
 			tetrisGameInformation.setOpponentsGames(res.argument as any[]);
+			loadTetrisPage("board");
 			return ;
 		case "GAME_FINISH":
 			console.log("Game Over");

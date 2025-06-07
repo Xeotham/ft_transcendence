@@ -13,9 +13,8 @@ import {
 	WIN_GOAL
 } from "./constants"
 import { WebSocket } from "ws";
-import {requestBody, delay, getRoomById, player} from "../utils";
+import { delay, getRoomById, player } from "../utils";
 import { botLogic, resetBot } from "./bot";
-import { Room } from "./Room";
 import { createPongGame } from "../../user_management/api/controllers";
 
 interface   playerScore {
@@ -135,9 +134,7 @@ export class Game {
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
 				resetBot(this.id, 1);
-				// HEERE
-				// console.log(this.players.player1?.username);
-				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
+ 				createPongGame(this.players, this.score, this.winner, this.isSolo, this.isBot);
 				resolve();
 			};
 
@@ -197,8 +194,8 @@ export class Game {
 
 		if (this.ball.y < 0)
 			this.ball.y = this.ball.size;
-		if (this.ball.y > HEIGHT)
-			this.ball.y = HEIGHT - this.ball.size;
+		if (this.ball.y + this.ball.size > HEIGHT)
+			this.ball.y = HEIGHT - this.ball.size - 1;
 
 		this.ball.x += speed * Math.cos(this.ball.orientation);
 		this.ball.y += speed * Math.sin(this.ball.orientation);

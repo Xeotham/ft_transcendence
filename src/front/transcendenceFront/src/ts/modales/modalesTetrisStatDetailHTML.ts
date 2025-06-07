@@ -6,8 +6,10 @@ import { tetrisGames } from "./modalesTetrisStatHTML.ts";
 
 interface GameUserInfo
 {
-  date: 	 string;
-  totalTime: 	number;
+  level:      string,
+  isInRoom:   boolean;
+  date:       string;
+  totalTime:  number;
   username?: string;
   userId: number;
   score: 	number;

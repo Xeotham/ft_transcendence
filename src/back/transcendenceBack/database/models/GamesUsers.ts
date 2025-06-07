@@ -16,6 +16,8 @@ interface GameUserInfo
 	totalTime: 	string;
 	userId: number;
 	score: 	number;
+	level: number;
+	isInRoom: boolean;
 	winner: boolean;
 	type: 	string;
 	maxCombo: number;
@@ -87,6 +89,8 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 			// console.log("Test");
 			// console.log(key);
 			// console.log(value);
+			if (key === "isInRoom")
+				return; // Skip isInRoom as it is not a valid column in the database
 			let stmt = db.prepare(` \
 				UPDATE gamesUsers \
 				SET ${key} = ? \
@@ -158,7 +162,7 @@ export const getUserGameHistory = (userId: number): number[] =>
 export const getGameDetailsById = (gameId: number): GameUserInfo[] =>
 {
 	const stmt = db.prepare(`
-		SELECT userId, score, winner, type, gameTime, totalTime, maxCombo, piecesPlaced, piecesPerSecond, attacksSent, attacksSentPerMinute, attacksReceived, attacksReceivedPerMinute, keysPressed, keysPerPiece, keysPerSecond, holds, linesCleared, linesPerMinute, maxB2b, perfectClears, single, double, triple, quad, tspinZero, tspinSingle, tspinDouble, tspinTriple, tspinQuad, miniTspinZero, miniTspinSingle, miniSpinZero, miniSpinSingle, miniSpinDouble, miniSpinTriple, miniSpinQuad
+		SELECT userId, score, winner, type, level, gameTime, totalTime, maxCombo, piecesPlaced, piecesPerSecond, attacksSent, attacksSentPerMinute, attacksReceived, attacksReceivedPerMinute, keysPressed, keysPerPiece, keysPerSecond, holds, linesCleared, linesPerMinute, maxB2b, perfectClears, single, double, triple, quad, tspinZero, tspinSingle, tspinDouble, tspinTriple, tspinQuad, miniTspinZero, miniTspinSingle, miniSpinZero, miniSpinSingle, miniSpinDouble, miniSpinTriple, miniSpinQuad
 		FROM gamesUsers
 		WHERE gameId = ?
 	`);
