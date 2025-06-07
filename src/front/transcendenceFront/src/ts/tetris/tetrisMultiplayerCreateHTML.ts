@@ -63,44 +63,44 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 		<form id="tetrisSettingsForm">
 		<div class="${TCS.tetrisWindowText} grid grid-cols-4 gap-x-[20px] gap-y-[6px]">
 
-			<div id="createMultiplayerRoomIsPrivate" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomIsPrivate}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="is-private" 
+			<label id="createMultiplayerRoomIsPrivate" class="col-span-3" for="is-private">
+				${imTexts.tetrisCreateMultiplayerRoomIsPrivate}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="is-private" name="is-private"
 			${s.isPrivate ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 			
-			<div id="createMultiplayerRoomIsVersus" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomIsVersus}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="is-versus" 
+			<label id="createMultiplayerRoomIsVersus" class="col-span-3" for="is-versus">
+				${imTexts.tetrisCreateMultiplayerRoomIsVersus}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="is-versus" name="is-versus"
 			${s.isVersus ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 
-			<div id="createMultiplayerRoomShowShadow" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomShowShadow}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="show-shadow" 
+			<label id="createMultiplayerRoomShowShadow" class="col-span-3" for="show-shadow">
+				${imTexts.tetrisCreateMultiplayerRoomShowShadow}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="show-shadow" name="show-shadow"
 			${s.showShadowPiece ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 
-			<div id="createMultiplayerRoomShowBags" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomShowBags}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="show-bags" 
+			<label id="createMultiplayerRoomShowBags" class="col-span-3" for="show-bags">
+				${imTexts.tetrisCreateMultiplayerRoomShowBags}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="show-bags" name="show-bags"
 			${s.showBags ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>	
 
-			<div id="createMultiplayerRoomHoldAllowed" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomHoldAllowed}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="hold-allowed" 
+			<label id="createMultiplayerRoomHoldAllowed" class="col-span-3" for="hold-allowed">
+				${imTexts.tetrisCreateMultiplayerRoomHoldAllowed}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="hold-allowed" name="hold-allowed"
 			${s.holdAllowed ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>	
 
-			<div id="createMultiplayerRoomShowHold" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomShowHold}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="show-hold" 
+			<label id="createMultiplayerRoomShowHold" class="col-span-3" for="show-hold">
+				${imTexts.tetrisCreateMultiplayerRoomShowHold}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="show-hold" name="show-hold"
 			${s.showHold ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 
-			<div id="createMultiplayerRoomInfiniteHold" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomInfiniteHold}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="infinite-hold" 
+			<label id="createMultiplayerRoomInfiniteHold" class="col-span-3" for="infinite-hold">
+				${imTexts.tetrisCreateMultiplayerRoomInfiniteHold}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="infinite-hold" name="infinite-hold"
 			${s.infiniteHold ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>	
 
-			<div id="createMultiplayerRoomInfiniteMovement" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomInfiniteMovement}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="infinite-movement" 
+			<label id="createMultiplayerRoomInfiniteMovement" class="col-span-3" for="infinite-movement">
+				${imTexts.tetrisCreateMultiplayerRoomInfiniteMovement}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="infinite-movement"  name="infinite-movement"
 			${s.infiniteMovement ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 
 			<div id="createMultiplayerRoomLockTime" class="col-span-3">
@@ -127,9 +127,9 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 			value="${s.level !== undefined ? s.level : "4"}" ${dis}
 			class="${TCS.formInputNumberBkg}"/></label></div>
 
-			<div id="createMultiplayerRoomIsLeveling" class="col-span-3">
-				${imTexts.tetrisCreateMultiplayerRoomIsLeveling}</div>
-			<div><label class="custom-checkbox"><input type="checkbox" id="is-leveling" 
+			<label id="createMultiplayerRoomIsLeveling" class="col-span-3" for="is-leveling">
+				${imTexts.tetrisCreateMultiplayerRoomIsLeveling}</label>
+			<div><label class="custom-checkbox"><input type="checkbox" id="is-leveling" name="is-leveling"
 			${s.isLevelling ? "checked" : ""} ${dis}/><span class="checkmark"></span></label></div>
 			
 		</div></form>
@@ -161,8 +161,32 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 		await copyToClipboard(code);
 	});
 
+	// document.getElementById("createMultiplayerRoomIsPrivate")?.addEventListener("click", () => {
+	// 	const checkbox = document.getElementById("is-private") as HTMLInputElement;
+	// 	if (checkbox) {
+	// 		checkbox.checked = !checkbox.checked;
+	// 		checkbox.dispatchEvent(new Event("change")); // Trigger the change event if needed
+	// 	}
+	// });
+
+
 	const form = document.getElementById("tetrisSettingsForm");
 	form?.addEventListener("change", saveMultiplayerRoomSettings);
+	// if (form) {
+	// 	const checkboxes = form.querySelectorAll<HTMLInputElement>("input[type='checkbox']");
+	// 	// console.log("Checkboxes found: ", checkboxes);
+	// 	checkboxes.forEach((checkbox) => {
+	// 		const parentDiv = checkbox.parentElement?.parentElement;
+	// 		console.log("Parent div found: '" + checkbox.parentElement?.id + "', for checkbox: " + checkbox.id);
+	// 		if (parentDiv) {
+	// 			parentDiv.addEventListener("click", () => {
+	// 				checkbox.checked = !checkbox.checked;
+	// 				checkbox.dispatchEvent(new Event("change")); // Trigger the change event if needed
+	// 			});
+	// 		}
+	// 	});
+	// }
+
 }
 
 export const saveMultiplayerRoomSettings = async () => {

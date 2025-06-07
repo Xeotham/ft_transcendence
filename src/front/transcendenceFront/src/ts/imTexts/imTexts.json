@@ -3,16 +3,16 @@
     "modales": {
       "signin": {
         "title": "Immanence",
-        "text": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À droite Pong pour jouer en solo contre notre IA, en multijoueur ou en tournoi.<br>À gauche Tetris est disponible en solo ou en multijoueur.",
+        "text": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À gauche Pong pour jouer en solo, contre notre IA, en multijoueur ou en tournoi.<br>À droite Tetris est disponible en solo ou en multijoueur.",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "enter": "Entrer",
         "noAccount": "Tu n'as pas de compte ?",
-        "register": "Enregistre-toi !"
+        "register": "Enregistre toi !"
       },
       "signup": {
         "title": "Inscription",
-        "text": "Enregistre toi!",
+        "text": "Enregistre toi !",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "passwordConfirm": "Confirmer le mot de passe",
@@ -20,8 +20,8 @@
       },
       "profile": {
         "username": "B3n05",
-        "userEdit": "éditer",
-        "deconect": "déconecter",
+        "userEdit": "Éditer",
+        "deconect": "Déconecter",
         "languageTitle": "Langue",
         "friendList": "Amis",
         "friendListLink": "Voir vos amis",

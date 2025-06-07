@@ -1,5 +1,5 @@
 import { Game, score, buttons, intervals, responseFormat, pongSfxPlayer } from "./utils.ts";
-import { address, user} from "../utils.ts";
+import {address, postToApi, user} from "../utils.ts";
 import { loadPongPage, pongGameInfo } from "./pong.ts";
 import { tourMessageHandler } from "./tournament.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
@@ -146,6 +146,7 @@ export class PongRoom {
 		this.socket.addEventListener("message", messageHandler);
 
 		window.onunload = () => {
+			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
 			if (this.socket) {
 				quit("LEAVE", "TOURNAMENT");
 				this.socket.close();
@@ -156,8 +157,7 @@ export class PongRoom {
 		localStorage.setItem("nav", JSON.stringify(navigator.userAgent.includes("Firefox")));
 		if (!navigator.userAgent.includes("Firefox")) {
 			window.onbeforeunload = (e) => {
-				localStorage.setItem("Before unload event triggered", "true");
-				console.log("Before unload event triggered");
+				postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
 				quit("LEAVE", "TOURNAMENT");
 				e.preventDefault();
 				return '';
