@@ -40,7 +40,8 @@
         "view": "voir le profil",
         "remove": "Supprimer",        
         "prev": "Précedent",
-        "next": "Suivant"
+        "next": "Suivant",
+        "noFriends": "Vous n'avez pas d'amis"
       },
       "friendProfile": {
         "back": "Retour",
@@ -53,7 +54,8 @@
         "back": "Retour au profil",
         "ratio": "Ratio 83%",
         "prev": "précedent",
-        "next": "Suivant"
+        "next": "Suivant",
+        "noStats": "Vous n'avez aucune partie de Pong"
       },
       "tetrisStats": {
         "title": "Tetris historique",
@@ -61,7 +63,8 @@
         "bestScore": "Meilleur score : 1 564 330 pt",
         "linkName": "»»»",
         "prev": "Précedent",
-        "next": "suivant"
+        "next": "suivant",
+        "noStats": "Vous n'avez aucune partie de Tetris"
       },
       "tetrisStatsDetail": {
         "title": "Tetris Stats Detail",

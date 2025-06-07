@@ -70,13 +70,18 @@ export const modalePongStatHTML = (page: number) => {
     <div id="PongStatsTitle" class="${TCS.modaleTitre}">
     ${imTexts.modalesPongStatsTitle}</div>
 
-    <div id="PongStatsBack" class="${TCS.modaleTexteLink}">
-      ${imTexts.modalesPongStatsBack}</div>
+    <span id="PongStatsBack" class="${TCS.modaleTexteLink}">
+    ${imTexts.modalesPongStatsBack}</span>
 
     <div class="h-[30px]"></div>
   `;
 
-  PongStatHTML += `<div id="donut-chart"></div>`;
+  if (pongHistory.length > 0) {
+    PongStatHTML += `<div id="donut-chart"></div>`;
+    PongStatHTML += `<div class="h-[10px]"></div>`;   
+  } else {
+    PongStatHTML += `<div class="${TCS.modaleTexteGris}">${imTexts.modalesPongStatsNoStats}</div>`;
+  }
 
   PongStatHTML += getModalePongStatListHTML(pongStatPage);
 
@@ -93,7 +98,7 @@ const formatPongStatLine = (index: number) => {
     if (!stat)
       return '';
     let formattedStat = `<span class='text-stone-400'>${stat.date}</span> - `;
-    formattedStat += stat.winner ? "<span class='text-green-500'>" : "<span class='text-red-500'>"
+    formattedStat += stat.winner ? "<span class='text-lime-400'>" : "<span class='text-rose-700'>"
     formattedStat += `${stat.score}/${stat.scoreOpponent}</span> - ${stat.opponent}`;
     return formattedStat;
 }
@@ -135,11 +140,13 @@ export const modalePongStatEvents = () => {
   if (!PongStatsBack || !PongStatsPrev || !PongStatsNext)
     return;
 
-  PongStatsBack.addEventListener('click', () => {
+  PongStatsBack.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.PROFILE);
   });
 
-  PongStatsPrev.addEventListener('click', () => {
+  PongStatsPrev.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     if (pongStatPage <= 0 || !modale.content)
       return;
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
@@ -148,7 +155,8 @@ export const modalePongStatEvents = () => {
     modalePongStatPie();
   });
 
-  PongStatsNext.addEventListener('click', () => {
+  PongStatsNext.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     if (pongStatPage >= pongListLength || !modale.content)
       return;
     if ((pongStatPage + 1) * pongListLength < pongHistory.length)
@@ -170,11 +178,13 @@ export const modaleFriendPongStatEvents = () => {
   if (!PongStatsBack || !PongStatsPrev || !PongStatsNext)
     return;
 
-  PongStatsBack.addEventListener('click', () => {
+  PongStatsBack.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.FRIEND_PROFILE);
   });
 
-  PongStatsPrev.addEventListener('click', () => {
+  PongStatsPrev.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     if (pongStatPage <= 0 || !modale.content)
       return;
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
@@ -183,7 +193,8 @@ export const modaleFriendPongStatEvents = () => {
     modalePongStatPie();
   });
 
-  PongStatsNext.addEventListener('click', () => {
+  PongStatsNext.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     if (pongStatPage >= pongListLength || !modale.content)
       return;
     if ((pongStatPage + 1) * pongListLength < pongHistory.length)
@@ -213,14 +224,22 @@ export const modaleDislpayPrevNextPong = () => {
 
 }
 
+const getPongHistoryWin = () => {
+  return pongHistory.filter((game) => game.winner).length;
+}
+
+const getPongHistoryLoose = () => {
+  return pongHistory.filter((game) => !game.winner).length;
+}
+
 export const modalePongStatPie = () => {
 
   const getChartOptions = () => {
     return {
-      series: [9, 6],
+      series: [getPongHistoryWin(), getPongHistoryLoose()],
       colors: ["#a3e635", "#be123c"], //lime-400, rose-700
       chart: {
-        height: 240, // 320 initiale
+        height: 220, // 320 initiale
         width: "100%",
         type: "donut",
       },
@@ -246,8 +265,8 @@ export const modalePongStatPie = () => {
                 show: true,
                 label: "Win rate",
                 fontFamily: "sixtyfour, sans-serif",
-                fontSize: "10px",
-                color: "#facc15", // yellow-400
+                fontSize: "12px",
+                color: "#f7fee7", // lime-50
                 formatter: function (w: any) {
                   const wins = w.globals.seriesTotals[0];
                   const total = w.globals.seriesTotals[0] + w.globals.seriesTotals[1];
@@ -258,7 +277,7 @@ export const modalePongStatPie = () => {
                 show: true,
                 fontFamily: "sixtyfour, sans-serif",
                 offsetY: -20,
-                fontSize: "20px",
+                fontSize: "22px",
                 color: "#facc15", // yellow-400
                 formatter: function (value: any) {
                   console.log('value formater', value);
@@ -266,7 +285,7 @@ export const modalePongStatPie = () => {
                 },
               },
             },
-            size: "80%",
+            size: "65%",
           },
         },
       },
@@ -303,7 +322,10 @@ export const modalePongStatPie = () => {
         axisBorder: {
           show: false,
         },
-      },
+      }, 
+      animations: {
+        speed: 100,
+      }
     }
   }
 
@@ -332,7 +354,7 @@ export const modalePongStatPie = () => {
     //             chart.updateSeries([55.1, 28.5, 1.4, 5.4]);
     //         }
 
-    //     } else {
+    //     } else {pongHistory
     //         chart.updateSeries([35.1, 23.5, 2.4, 5.4]);
     //     }
     // }

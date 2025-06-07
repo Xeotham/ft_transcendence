@@ -64,12 +64,15 @@ export const modaleFriendListHTML = (page: number) => {
     ${imTexts.modalesFriendListTitle}</div>
 
     <div id="friendListBack" class="${TCS.modaleTexteLink}">
-      ${imTexts.modalesFriendListBack}</div>
+    ${imTexts.modalesFriendListBack}</div>
 
-    <div class="h-[30px]"></div>
-  `;
+	<div class="h-[30px]"></div>
+	`;
 
-	friendListHTML += getModaleFriendListListHTML(friendListPage);
+  	friendListHTML += getModaleFriendListListHTML(friendListPage);
+
+	if (friendList.getFriendList().length === 0)
+		friendListHTML += `<div class="${TCS.modaleTexteGris}">${imTexts.modalesFriendListNoFriends}</div>`;
 
 	friendListHTML += `
     <div class="h-[30px]"></div>
@@ -109,10 +112,12 @@ const getModaleFriendListListHTML = (page: number) => {
 		<form id="friendSearchForm" class="${TCS.form}">
 			<input id="friendSearchInput" name="friendSearch" type="text" placeholder=" " class="${TCS.formInput}">		
 			<label for="friendSearch" class="${TCS.formLabel}">${imTexts.modalesFriendListUsername}</label>
+			<div class="h-[10px]"></div>
 			<button id="friendSearchButton" type="submit" class="${TCS.formButton}">${imTexts.modalesFriendListAdd}</button>
 		</form>
+		<div class="h-[10px]"></div>
 		<div id="modaleAlert" class="${TCS.modaleTexte}"></div>
-		<div class="h-[20px]"></div>
+		<div class="h-[10px]"></div>
 	`;
 
 
@@ -150,7 +155,7 @@ export const modaleFriendListEvents = () => {
 	if (!friendListBack || !friendListPrev || !friendListNext || !friendSearch)
 		return;
 
-	friendSearch?.addEventListener('submit', async (e) => {
+	friendSearch?.addEventListener('submit', async (e: Event) => {
 		e.preventDefault();
 		try {
 			const friendName = (document.getElementById('friendSearchInput') as HTMLInputElement).value;
@@ -166,11 +171,13 @@ export const modaleFriendListEvents = () => {
 		}
 	})
 
-	friendListBack?.addEventListener('click', () => {
+	friendListBack?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.PROFILE);
 	});
 
-	friendListPrev?.addEventListener('click', () => {
+	friendListPrev?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (friendListPage <= 0 || !modale.content)
 			return;
 		modale.content.innerHTML = modaleFriendListHTML(--friendListPage);
@@ -178,7 +185,8 @@ export const modaleFriendListEvents = () => {
 		modaleFriendListEvents();
 	});
 
-	friendListNext.addEventListener('click', () => {
+	friendListNext.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (friendListPage >= friendListLength || !modale.content)
 			return;
 		if ((friendListPage + 1) * friendListLength <= friendList.getFriendList().length) {
@@ -191,7 +199,10 @@ export const modaleFriendListEvents = () => {
 
 	for (let i = 0; i < 10; i++) {
 		const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
-		friendListLine.addEventListener('click', () => {
+		if (!friendListLine)
+			continue;
+		friendListLine.addEventListener('click', (e: Event) => {
+			e.stopPropagation();
 			friendList.setActualFriend(i + (friendListPage * friendListLength));
 			modaleDisplay(ModaleType.FRIEND_PROFILE);
 		});
