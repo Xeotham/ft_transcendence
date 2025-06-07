@@ -69,11 +69,11 @@ export const    pongTextureHandler = new class {
 		this.textures = {};
 		this.generateTextures();
 		this.fonts = {
-			"retro": "30px Arial",
-			"phantom": "30px 'PhantomFont', Arial, sans-serif",
-			"tv_world": "30px 'Fontsona4', Arial, sans-serif",
-			"retro1975": "30px 'C64Pro', Arial, sans-serif",
-			"dark_hour": "30px 'DarkHourFont', Arial, sans-serif"
+			"retro": "Arial",
+			"phantom": "'PhantomFont', Arial, sans-serif",
+			"tv_world": "'Fontsona4', Arial, sans-serif",
+			"retro1975": "'C64Pro', Arial, sans-serif",
+			"dark_hour": "'DarkHourFont', Arial, sans-serif"
 		}
 		if (!localStorage.getItem("pongPack"))
 			localStorage.setItem("pongPack", "retro1975");

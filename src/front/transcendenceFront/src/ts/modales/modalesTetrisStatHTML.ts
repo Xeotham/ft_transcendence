@@ -90,7 +90,7 @@ export const  loadTetrisStat = async (playerUsername: string) => {
 			newHistory.push(stat);
 		}
 	})
-	tetrisHistory = newHistory;
+	tetrisHistory = newHistory.sort((a, b) => {return b.score - a.score; });
 }
 
 export const modaleTetrisStatHTML = (page: number) => {

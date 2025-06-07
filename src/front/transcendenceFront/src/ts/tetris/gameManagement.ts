@@ -352,6 +352,12 @@ const	showStats = (stats: GameUserInfo) => {
 		return;
 	}
 
+	document.getElementById("scoreDiv")!.style.display = "none";
+	document.getElementById("levelDiv")!.style.display = "none";
+	document.getElementById("timeDiv")!.style.display = "none";
+	document.getElementById("goalDiv")!.style.display = "none";
+	document.getElementById("piecesDiv")!.style.display = "none";
+
 	endGameDiv.style.display = "block";
 
 	endGameDiv.innerHTML = `
