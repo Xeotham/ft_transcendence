@@ -1,5 +1,5 @@
 import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
-import {address, user} from "../utils.ts";
+import {address, postToApi, user} from "../utils.ts";
 import { loadPongPage, pongGameInfo } from "./pong.ts";
 import {quit, messageHandler, PongRoom} from "./game.ts";
 // @ts-ignore
@@ -57,6 +57,7 @@ export class   Tournament {
 		this.socket.addEventListener("message", messageHandler);
 
 		window.onunload = () => {
+			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
 			if (this.socket) {
 				quit("LEAVE", "TOURNAMENT");
 				this.socket.close();
@@ -65,6 +66,7 @@ export class   Tournament {
 		// Special handling for Chrome
 		if (!navigator.userAgent.includes("Firefox")) {
 			window.onbeforeunload = (e) => {
+				postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
 				quit("LEAVE", "TOURNAMENT");
 				e.preventDefault();
 				return '';

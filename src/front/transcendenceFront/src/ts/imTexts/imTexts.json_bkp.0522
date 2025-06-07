@@ -3,7 +3,7 @@
     "modales": {
       "signin": {
         "titre": "Immanence",
-        "texte": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À droite Pong pour jouer en solo contre notre IA, en multijoueur ou en tournoi.<br>À gauche Tetris est disponible en solo, en multijoueur ou en tournoi.",
+        "texte": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À gauche Pong pour jouer en solo contre notre IA, en multijoueur ou en tournoi.<br>À droite Tetris est disponible en solo, en multijoueur ou en tournoi.",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "enter": "Entrer",
@@ -20,7 +20,7 @@
       },
       "profile": {
         "username": "B3n05",
-        "userEdit": "éditer",
+        "userEdit": "Éditer",
         "deconect": "déconecter",
         "pongStats": "50 victoires pour 100 parties.",
         "tetrisStats": "Best score : 1000000pt",

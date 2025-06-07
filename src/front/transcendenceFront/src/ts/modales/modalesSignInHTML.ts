@@ -1,7 +1,7 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay, modaleAlert, modaleHide } from './modalesCore.ts';
-import {getFromApi, postToApi, address, user} from "../utils.ts";
+import { postToApi, address, user } from "../utils.ts";
 
 
 export const modaleSignInHTML = () => {

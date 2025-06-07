@@ -10,11 +10,13 @@ import page from "page";
 
 let socket: WebSocket | null = null;
 
-const socketClose = async () => {
+const socketClose = async (type: string) => {
 	console.log("WebSocket connection closed.");
 	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
 	postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
 		username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
+	if (type === "unload")
+		postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
 	tetrisGameInformation.getSocket()?.close();
 	tetrisGameInformation.setSocket(null);
 	tetrisGameInformation.setGameId(-1);
@@ -33,13 +35,14 @@ const socketInit = (socket: WebSocket) => {
 	socket.onmessage = messageHandler;
 	socket.onerror = err => { console.error("Error:", err) };
 	socket.onopen = () => { console.log("Connected to server") };
-	socket.onclose = socketClose;
+	socket.onclose = () => socketClose("close");
 
-	window.onunload = socketClose;
+	window.onunload = () => socketClose("unload");
 	// Special handling for Chrome
 	if (!navigator.userAgent.includes("Firefox"))
 		window.onbeforeunload = (e) => {
-			socketClose();
+			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
+			socketClose("unload");
 			e.preventDefault();
 			return e.returnValue = imTexts.tetrisRefreshConfirmation;
 		};
