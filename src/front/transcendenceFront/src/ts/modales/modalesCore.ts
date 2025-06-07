@@ -11,7 +11,8 @@ import {
 	modalePongStatEvents,
 	loadPongStat,
 	modaleDislpayPrevNextPong,
-	modaleFriendPongStatEvents
+	modaleFriendPongStatEvents,
+	modalePongStatPie
 } from './modalesPongStatHTML.ts';
 import {
 	modaleTetrisStatHTML,
@@ -102,6 +103,7 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
 			modale.content.innerHTML = modalePongStatHTML(0);
 			modaleDislpayPrevNextPong();
 			modalePongStatEvents();
+			modalePongStatPie();
 			break;
 		case ModaleType.TETRIS_STATS:
 			await loadTetrisStat(user.getUsername());
@@ -137,6 +139,7 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
 			modale.content.innerHTML = modalePongStatHTML(0);
 			modaleDislpayPrevNextPong();
 			modaleFriendPongStatEvents();
+			modalePongStatPie();
 			break ;
 		case ModaleType.FRIEND_TETRIS_STATS:
 			await loadTetrisStat(friendList.getActualFriend()?.username!);

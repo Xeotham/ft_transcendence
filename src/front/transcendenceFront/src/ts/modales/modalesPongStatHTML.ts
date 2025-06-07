@@ -2,6 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
 import {getFromApi,address} from "../utils.ts";
+import ApexCharts from 'apexcharts';
 
 
 let pongStatPage = 0;
@@ -75,7 +76,7 @@ export const modalePongStatHTML = (page: number) => {
     <div class="h-[30px]"></div>
   `;
 
-  PongStatHTML += modalePongStatDataViz();
+  PongStatHTML += `<div id="donut-chart"></div>`;
 
   PongStatHTML += getModalePongStatListHTML(pongStatPage);
 
@@ -144,6 +145,7 @@ export const modalePongStatEvents = () => {
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modaleDislpayPrevNextPong();
     modalePongStatEvents();
+    modalePongStatPie();
   });
 
   PongStatsNext.addEventListener('click', () => {
@@ -154,6 +156,7 @@ export const modalePongStatEvents = () => {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
       modalePongStatEvents();
+      modalePongStatPie();
     }
   });
 }
@@ -177,6 +180,7 @@ export const modaleFriendPongStatEvents = () => {
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modaleDislpayPrevNextPong();
     modaleFriendPongStatEvents();
+    modalePongStatPie();
   });
 
   PongStatsNext.addEventListener('click', () => {
@@ -187,6 +191,7 @@ export const modaleFriendPongStatEvents = () => {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
       modaleFriendPongStatEvents();
+      modalePongStatPie();
     }
   });
 }
@@ -208,12 +213,134 @@ export const modaleDislpayPrevNextPong = () => {
 
 }
 
-const modalePongStatDataViz = () => {
+export const modalePongStatPie = () => {
 
+  const getChartOptions = () => {
+    return {
+      series: [9, 6],
+      colors: ["#a3e635", "#be123c"], //lime-400, rose-700
+      chart: {
+        height: 240, // 320 initiale
+        width: "100%",
+        type: "donut",
+      },
+      stroke: {
+        colors: ["transparent"],
+        lineCap: "",
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            labels: {
+              show: true,
+              name: {
+                show: true,
+                fontFamily: "Sixtyfour, sans-serif",
+                fontSize: "8px",
+                fontWeight: "bold",
+                color: "#facc15", // yellow-400
+                offsetY: 20,
+              },
+              total: {
+                showAlways: true,
+                show: true,
+                label: "Win rate",
+                fontFamily: "sixtyfour, sans-serif",
+                fontSize: "10px",
+                color: "#facc15", // yellow-400
+                formatter: function (w: any) {
+                  const wins = w.globals.seriesTotals[0];
+                  const total = w.globals.seriesTotals[0] + w.globals.seriesTotals[1];
+                  return Math.round((wins / total) * 100) + '%';
+                },
+              },
+              value: {
+                show: true,
+                fontFamily: "sixtyfour, sans-serif",
+                offsetY: -20,
+                fontSize: "20px",
+                color: "#facc15", // yellow-400
+                formatter: function (value: any) {
+                  console.log('value formater', value);
+                  return Math.round((9/6 * 100)) + "%"
+                },
+              },
+            },
+            size: "80%",
+          },
+        },
+      },
+      grid: {
+        padding: {
+          top: -2,
+        },
+      },
+      labels: ["Win", "Loose"],
+      dataLabels: {
+        enabled: false,
+      },
+      legend: {
+        position: "bottom",
+        fontFamily: "Inter, sans-serif",
+        show: false
+      },
+      yaxis: {
+        labels: {
+          formatter: function (value: any) {
+            return value
+          },
+        },
+      },
+      xaxis: {
+        labels: {
+          formatter: function (value: any) {
+            return value
+          },
+        },
+        axisTicks: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+      },
+    }
+  }
 
-  let dataVizHTML = `
+  if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined') {
+    const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
+    chart.render();
 
-  `;
+    // Get all the checkboxes by their class name
+    // const checkboxes = document.querySelectorAll('#devices input[type="checkbox"]');
 
-  return dataVizHTML;
+    // Function to handle the checkbox change event
+    // function handleCheckboxChange(event: any, chart: any) {
+    //     const checkbox = event.target;
+    //     if (checkbox.checked) {
+    //         switch(checkbox.value) {
+    //           case 'desktop':
+    //             chart.updateSeries([15.1, 22.5, 4.4, 8.4]);
+    //             break;
+    //           case 'tablet':
+    //             chart.updateSeries([25.1, 26.5, 1.4, 3.4]);
+    //             break;
+    //           case 'mobile':
+    //             chart.updateSeries([45.1, 27.5, 8.4, 2.4]);
+    //             break;
+    //           default:
+    //             chart.updateSeries([55.1, 28.5, 1.4, 5.4]);
+    //         }
+
+    //     } else {
+    //         chart.updateSeries([35.1, 23.5, 2.4, 5.4]);
+    //     }
+    // }
+
+    // Attach the event listener to each checkbox
+    // checkboxes.forEach((checkbox) => {
+    //     checkbox.addEventListener('change', (event) => handleCheckboxChange(event, chart));
+    // });
+  }
+
 }
