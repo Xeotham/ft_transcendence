@@ -87,12 +87,13 @@ const formatFriendListLine = (index: number) => {
 	if (!friend) {
 		return "";
 	}
+	//colors: ["#a3e635", "#be123c"], //lime-400, rose-700
 
 	const   avatar = URL.createObjectURL(UserInfo.base64ToBlob(friend.avatar));
 	let formattedFriend = `
 	<div id="friendListLine${index}" class="w-full h-[40px] pb-[5px] flex flex-row-2 mb-[5px]">
 		<div class="w-[40px] h-[40px]">
-			<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
+			<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-lime-400" : TCS.gameFriendImg + " border-rose-700"}" alt="friend avatar"/>
 		</div>
 		<div class="${TCS.modaleFriendList} w-full h-[40px]">
 			${friend.username}
@@ -119,7 +120,6 @@ const getModaleFriendListListHTML = (page: number) => {
 		<div id="modaleAlert" class="${TCS.modaleTexte}"></div>
 		<div class="h-[10px]"></div>
 	`;
-
 
 	for (let i = 0; i < friendListLength; i++) {
 		listHTML += `

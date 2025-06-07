@@ -42,7 +42,6 @@ const tetrisBestScore = async () => {
   return `${imTexts.modalesProfileBestScore}: ${score}pts`;
 }
 
-
 export const modaleFriendProfileHTML = async () => {
 
   let ProfileHTML = `
@@ -58,8 +57,8 @@ export const modaleFriendProfileHTML = async () => {
     <div>
       <div id="friendProfileName" class="${TCS.modaleTitre}">${friendList.getActualFriend()?.username}</div>
       <div id="friendProfileStatus" class="${TCS.modaleTexte}">
-        <span id="friendProfileConnected" class="text-green-500">${imTexts.modalesFriendProfileConnected}</span>
-        <span id="friendProfileDisconnected" class="text-red-500">${imTexts.modalesFriendProfileDisconnected}</span>
+        <span id="friendProfileConnected" class="text-lime-400">${imTexts.modalesFriendProfileConnected}</span>
+        <span id="friendProfileDisconnected" class="text-rose-700">${imTexts.modalesFriendProfileDisconnected}</span>
         <div class="h-[3px]"></div>
         <span id="friendProfileFriendRemove" class="${TCS.modaleTexteLink}">${imTexts.modalesFriendProfileFriendRemove}</span>
       </div>

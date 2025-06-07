@@ -1,6 +1,7 @@
 import { 
   zoneSet, 
-  documentResize
+  documentResize,
+  zone
 } from './zoneCore.ts'
 
 // @ts-ignore
@@ -44,10 +45,12 @@ export const evRemOutDocument = () => {
 // click - PONG
 export const evAdClickPong = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zonePong"]');
-  // const target = document.getElementById('logoPong');
   if (target && !clickPongHandler) {
     clickPongHandler = () => {
-      page.show("/pong");
+      // if (zone.state === "TETRIS")
+      //   page.show("/");
+      // else
+        page.show("/pong");
     };
     target.addEventListener('click', clickPongHandler);    
   }
@@ -65,10 +68,12 @@ export const evRemClickPong = () => {
 // click - Tetris
 export const evAdClickTetris = () => {
   const target = document.querySelector<HTMLDivElement>('div[name="zoneTetris"]');
-  // const target = document.getElementById('logoTetris');
   if (target && !clickTetrisHandler) {
     clickTetrisHandler = () => {
-      page.show("/tetris");
+      // if (zone.state === "PONG")
+      //   page.show("/");
+      // else
+        page.show("/tetris");
     };
     target.addEventListener('click', clickTetrisHandler);    
   }

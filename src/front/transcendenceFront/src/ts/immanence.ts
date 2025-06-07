@@ -4,6 +4,8 @@ import { EL, setHtmlFront, awaitMedias, setZoneAvatar } from './zone/zoneHTML.ts
 import { modaleInit } from './modales/modalesCore.ts'
 import { startRouter } from "./page/router.ts";
 import { evAddDocResize } from './zone/zoneEvents.ts';
+import { language, imSetLanguage } from './imTexts/imTexts.ts';
+
 // @ts-ignore page
 import page from 'page';
 
@@ -12,6 +14,7 @@ import page from 'page';
 // MAIN  
 const main = () => {
     resetGamesSocket("home");
+    imSetLanguage(language);
     setHtmlFront();
     EL.init();
     if (!EL.check())
