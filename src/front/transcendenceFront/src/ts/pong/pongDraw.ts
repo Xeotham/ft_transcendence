@@ -132,7 +132,7 @@ export const drawGame =  (game: Game) => {
 // 					console.error(`Failed to load texture: ${key} from ${path}`, err);
 // 					reject(err)
 // 				};
-// 				// console.log(tetrisTextures[key]);
+// 				// console.log(tetrisTexturesHandler[key]);
 // 			});
 // 		})
 // 	);

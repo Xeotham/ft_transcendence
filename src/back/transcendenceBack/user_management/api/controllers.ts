@@ -97,35 +97,47 @@ export const    updatePassword = async (request: FastifyRequest, reply: FastifyR
 	}
 }
 
-export const    updateUser = async (request: FastifyRequest, reply: FastifyReply) =>
-{
+export const    updateUsername = async (request: FastifyRequest, reply: FastifyReply) => {
 	try {
-		const {username, type, update} = request.body as { username: string, type: string, update: string };
+		const { username, newUsername } = request.body as { username: string, newUsername: string };
 
 		const user = getUserByUsername(username);
 		if (!user)
 			return reply.status(400).send({message: 'User doesn\'t exist'});
 
-		if (type === "password") {
-			try {
-				const hashedPassword = await hashPassword(update);
+		if (getUserByUsername(newUsername))
+			return reply.status(400).send({message: 'Username already exists'});
 
-				updateUserById(user.id!, type, hashedPassword as string);
+		updateUserById(user.id!, 'username', newUsername);
 
-				return reply.status(201).send({message: 'User updated successfully'});
-			} catch (err) {
-				return reply.status(400).send({error: (err as Error).message});
-			}
-		} else {
-			updateUserById(user.id as number, type, update);
-
-			return reply.status(201).send({message: 'User updated successfully'});
-		}
+		return reply.status(201).send({message: 'User updated successfully'});
 	}
 	catch (e) {
-		console.error('Error updating user', e);
+		console.error('Error updating username', e);
+		return reply.status(500).send({ message: 'Internal server error' });
 	}
-};
+}
+
+export const    updateAvatar = async (request: FastifyRequest, reply: FastifyReply) => {
+	try {
+		const { username, avatar } = request.body as { username: string, avatar: string };
+
+		const user = getUserByUsername(username);
+		if (!user)
+			return reply.status(400).send({message: 'User doesn\'t exist'});
+
+		if (!avatar)
+			return reply.status(400).send({message: 'Avatar can\'t be empty'});
+
+		updateUserById(user.id!, 'avatar', avatar);
+
+		return reply.status(201).send({message: 'User updated successfully'});
+	}
+	catch (e) {
+		console.error('Error updating avatar', e);
+		return reply.status(500).send({ message: 'Internal server error' });
+	}
+}
 
 export const loginUser = async (request: FastifyRequest, reply: FastifyReply) =>
 {

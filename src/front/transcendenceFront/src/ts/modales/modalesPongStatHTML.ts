@@ -2,6 +2,7 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import {ModaleType, modaleDisplay, modale} from './modalesCore.ts';
 import {getFromApi,address, user} from "../utils.ts";
+import {modaleFriendTetrisStatEvents} from "./modalesTetrisStatHTML.ts";
 
 let pongStatPage = 0;
 
@@ -26,8 +27,7 @@ interface GameUserInfo
 
 let pongHistory: pongStats[] = []
 
-// const formatPongStat = (gameId: number, history: { gameId: number, username: string, date: string, score: number, winner: boolean, type: string }[]) => {
-const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) => {
+const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] }, playerUsername: string ) => {
   let stat: pongStats = {date: '', username: '', opponent: '', score: 0, scoreOpponent: 0, winner: false};
   const game1 = history.players[0];
   const game2 = history.players[1];
@@ -36,25 +36,24 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] } ) =
   }
 
   stat.date = game1.date;
-  stat.username = user.getUsername();
-  stat.opponent = game1.username === user.getUsername() ? game2.username : game1.username;
-  stat.score = game1.username === user.getUsername() ? game1.score : game2.score;
-  stat.scoreOpponent = game1.username === user.getUsername() ? game2.score : game1.score;
-  stat.winner = game1.username === user.getUsername() ? game1.winner : game2.winner;
+  stat.username = playerUsername;
+  stat.opponent = game1.username === playerUsername ? game2.username : game1.username;
+  stat.score = game1.username === playerUsername ? game1.score : game2.score;
+  stat.scoreOpponent = game1.username === playerUsername ? game2.score : game1.score;
+  stat.winner = game1.username === playerUsername ? game1.winner : game2.winner;
   return stat;
 
 }
 
-export const  loadPongStat = async () => {
-  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
+export const  loadPongStat = async (playerUsername: string) => {
+  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
   const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'pong');
-  // console.log(history);
   const newHistory: pongStats[] = [];
   history.forEach((game) => {
     if (game.players.length < 2) {
       return;
     }
-    const stat = formatPongStat(game);
+    const stat = formatPongStat(game, playerUsername);
     if (stat) {
       newHistory.push(stat);
     }
@@ -153,6 +152,39 @@ export const modalePongStatEvents = () => {
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
       modalePongStatEvents();
+    }
+  });
+}
+
+export const modaleFriendPongStatEvents = () => {
+
+  const PongStatsBack = document.getElementById('PongStatsBack') as HTMLAnchorElement;
+  const PongStatsPrev = document.getElementById('PongStatsPrev') as HTMLAnchorElement;
+  const PongStatsNext = document.getElementById('PongStatsNext') as HTMLAnchorElement;
+
+  if (!PongStatsBack || !PongStatsPrev || !PongStatsNext)
+    return;
+
+  PongStatsBack.addEventListener('click', () => {
+    modaleDisplay(ModaleType.FRIEND_PROFILE);
+  });
+
+  PongStatsPrev.addEventListener('click', () => {
+    if (pongStatPage <= 0 || !modale.content)
+      return;
+    modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
+    modaleDislpayPrevNextPong();
+    modaleFriendPongStatEvents();
+  });
+
+  PongStatsNext.addEventListener('click', () => {
+    if (pongStatPage >= 10 || !modale.content) // TODO: remplacer par le nombre de pages
+      return;
+    if ((pongStatPage + 1) * 10 < pongHistory.length)
+    {
+      modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
+      modaleDislpayPrevNextPong();
+      modaleFriendTetrisStatEvents();
     }
   });
 }

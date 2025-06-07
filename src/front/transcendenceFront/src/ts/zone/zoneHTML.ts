@@ -6,7 +6,6 @@ import { TCS } from '../TCS.ts';
 // Images
 import img_pong_bkg from '/src/medias/images/zones/fond_test_pong.png';
 import img_tetris_bkg from '/src/medias/images/zones/fond_test_tetris.png';
-import  { loadTetrisTextures } from "../tetris/tetris.ts";
 // import {loadPongTextures} from "../pong/pong.ts";
 
 //TMP
@@ -62,7 +61,6 @@ export const	EL = {
 
 // definir une palce pour le chargement des medias
 export const awaitMedias = async () => {
-	await loadTetrisTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
     // await loadPongTextures().then(() => {console.log("Textures Loaded");}).catch( (error) => (console.error(error)));
     await loadDefaultAvatars()
 }

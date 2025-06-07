@@ -8,85 +8,107 @@ import page from "page";
 
 export const modaleEditHTML = () => {
 
+/*
+	let friendListHTML =`
+    <div id="friendListTitle" class="${TCS.modaleTitre}">
+    ${imTexts.modalesFriendListTitle}</div>
+
+    <div id="friendListBack" class="${TCS.modaleTexteLink}">
+      ${imTexts.modalesFriendListBack}</div>
+
+    <div class="h-[30px]"></div>
+	*/
+
 	let SignUpHTML = `
 
     <div id="editUsername">
-        <div id="editUsernameTitle" class="${TCS.modaleTitre} pb-[30px]">
-            ${imTexts.modalesEditEditUsernameTitle}
-        </div>
+        <div id="editUsernameTitle" class="${TCS.modaleTitre}">
+		${imTexts.modalesEditEditUsernameTitle}</div>
+
         <div id="editUserBack" class="${TCS.modaleTexteLink}">
-			${imTexts.modalesFriendListBack}
-		</div>
-        <div id="editUsernameText" class="${TCS.modaleTexte} pb-[40px]">
-            ${imTexts.modalesEditEditUsernameText}
-        </div>
+		${imTexts.modalesFriendListBack}</div>
+
+		<div class="h-[30px]"></div>
+
+        <div id="editUsernameText" class="${TCS.modaleTexte} text-[20px]">
+        ${imTexts.modalesEditEditUsernameText}</div>
+
+		<div class="h-[20px]"></div>
+
         <form id="editUsernameForm" class="${TCS.form} w-full">
-            <div id="previousUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
+            
+			<div id="previousUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
                 <input type="text" name="previousUsername" id="previousUsername" class="${TCS.formInput}" placeholder=" " required />
                 <label for="previousUsername" name="previousUsernameLabel" id="previousUsernameLabel" class="${TCS.formLabel}">
-                    ${imTexts.modalesEditEditUsernamePrevious}
-                </label>
+                ${imTexts.modalesEditEditUsernamePrevious}</label>
             </div>
-            <div id="newUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
+            
+			<div id="newUsernameDiv" class="${TCS.formDivInput} pb-[6px]">
                 <input type="text" name="newUsername" id="newUsername" class="${TCS.formInput}" placeholder=" " required />
                 <label for="newUsername" name="newUsernameLabel" id="newUsernameLabel" class="${TCS.formLabel}">
-                    ${imTexts.modalesEditEditUsernameNew}
-                </label>
+				${imTexts.modalesEditEditUsernameNew}</label>
             </div>
-            <button type="submit" id="editUsernameButton" class="${TCS.formButton} -translate-y-[15px]">
-                ${imTexts.modalesEditEditUsernameSubmit}
-            </button>
-          </form>
+            
+			<button type="submit" id="editUsernameButton" class="${TCS.formButton} -translate-y-[15px]">
+			${imTexts.modalesEditEditUsernameSubmit}</button>
         </form>
+		
+		<div class="h-[10px]"></div>
+		
+		<a id="editChosePassword" class="${TCS.modaleTexteLink}">
+        ${imTexts.modalesEditChosePassword}</a>
+
+		<div class="h-[30px]"></div>
     </div>
 
     <div id="editPassword">
-	    <div id="editPasswordTitle" class="${TCS.modaleTitre} pb-[30px]">
-            ${imTexts.modalesEditEditPasswordTitle}
-        </div>
+	    <div id="editPasswordTitle" class="${TCS.modaleTitre}">
+        ${imTexts.modalesEditEditPasswordTitle}</div>
+
         <div id="editPasswordBack" class="${TCS.modaleTexteLink}">
-			${imTexts.modalesFriendListBack}
-		</div>       
-	        <div id="editPasswordText" class="${TCS.modaleTexte} pb-[40px]">
-	            ${imTexts.modalesEditEditPasswordText}
-	        </div>
-	        <form id="editPasswordForm" class="${TCS.form} w-full">
-	            <div id="previousPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
-	                <input type="password" name="previousPassword" id="previousPassword" class="${TCS.formInput}" placeholder=" " required />
-	                <label for="previousPassword" name="previousPasswordLabel" id="previousPasswordLabel" class="${TCS.formLabel}">
-	                    ${imTexts.modalesEditEditPasswordPrevious}
-	                </label>
-	            </div>
-	            <div id="newPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
-	                <input type="password" name="newPassword" id="newPassword" class="${TCS.formInput}" placeholder=" " required />
-	                <label for="newPassword" name="newPasswordLabel" id="newPasswordLabel" class="${TCS.formLabel}">
-	                    ${imTexts.modalesEditEditPasswordNew}
-	                </label>
-	            </div>
-	            <div id="confirmPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
-	                <input type="password" name="confirmPassword" id="confirmPassword" class="${TCS.formInput}" placeholder=" " required />
-	                <label for="confirmPassword" name="confirmPasswordLabel" id="confirmPasswordLabel" class="${TCS.formLabel}">
-	                    ${imTexts.modalesEditEditPasswordConfirm}
-	                </label>
-	            </div>
-	            <button type="submit" id="editPasswordButton" class="${TCS.formButton} -translate-y-[15px]">
-	                ${imTexts.modalesEditEditPasswordSubmit}
-	            </button>
-	          </form>
-	        </form>
+		${imTexts.modalesFriendListBack}</div>
+
+		<div class="h-[30px]"></div>
+
+        <div id="editPasswordText" class="${TCS.modaleTexte} text-[20px]">
+        ${imTexts.modalesEditEditPasswordText}</div>
+
+		<div class="h-[20px]"></div>
+
+		<form id="editPasswordForm" class="${TCS.form} w-full">
+			<div id="previousPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
+				<input type="password" name="previousPassword" id="previousPassword" class="${TCS.formInput}" placeholder=" " required />
+				<label for="previousPassword" name="previousPasswordLabel" id="previousPasswordLabel" class="${TCS.formLabel}">
+				${imTexts.modalesEditEditPasswordPrevious}</label>
+			</div>
+
+			<div id="newPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
+				<input type="password" name="newPassword" id="newPassword" class="${TCS.formInput}" placeholder=" " required />
+				<label for="newPassword" name="newPasswordLabel" id="newPasswordLabel" class="${TCS.formLabel}">
+					${imTexts.modalesEditEditPasswordNew}</label>
+			</div>
+
+			<div id="confirmPasswordDiv" class="${TCS.formDivInput} pb-[6px]">
+				<input type="password" name="confirmPassword" id="confirmPassword" class="${TCS.formInput}" placeholder=" " required />
+				<label for="confirmPassword" name="confirmPasswordLabel" id="confirmPasswordLabel" class="${TCS.formLabel}">
+				${imTexts.modalesEditEditPasswordConfirm}</label>
+			</div>
+
+			<button type="submit" id="editPasswordButton" class="${TCS.formButton} -translate-y-[15px]">
+			${imTexts.modalesEditEditPasswordSubmit}</button>
+		</form>
+
+		<div class="h-[10px]"></div>
+
+		<a id="editChoseUsername" class="${TCS.modaleTexteLink}">
+        ${imTexts.modalesEditChoseUsername}</a>
+
+		<div class="h-[30px]"></div>
     </div>
 
-	  <div id="modaleAlert" class="${TCS.modaleTexte}"></div>
+	<div id="modaleAlert" class="${TCS.modaleTexte}"></div>
     
-    <div id="editChose" class="${TCS.modaleTexte}">
-        <a id="editChoseUsername" class="${TCS.modaleTexteLink}">
-            ${imTexts.modalesEditChoseUsername}
-        </a>
-    /
-        <a id="editChosePassword" class="${TCS.modaleTexteLink}">
-            ${imTexts.modalesEditChosePassword}
-        </a>
-  </div>
+
 
   <div class="h-[40px]" />
 
@@ -107,21 +129,21 @@ const   handleChangeUsernameForm =  async () => {
 		const newUsername = (document.getElementById('newUsername') as HTMLInputElement).value;
 
 		if (previousUsername !== user.getUsername()) {
-			modaleAlert(imTexts.modalesEditEditUsernamePreviousError);
+			modaleAlert("Previous username is not correct");
 			return;
 		}
 
 		if (previousUsername === newUsername) {
-			modaleAlert(imTexts.modalesEditEditUsernameSameError);
+			modaleAlert("New username must be different from previous username");
 			return;
 		}
 		try {
-			await patchToApi(`http://${address}/api/user/update-user`, { username: user.getUsername(), type: "username", update: newUsername });
+			await patchToApi(`http://${address}/api/user/update-username`, { username: user.getUsername(), newUsername: newUsername });
 			user.setUsername(newUsername);
 			return await modaleDisplay(ModaleType.PROFILE);
 		}
-		catch (e) {
-			modaleAlert(imTexts.modalesEditUsernameError);
+		catch (e: any) {
+			modaleAlert(e.message);
 			return;
 		}
 	});

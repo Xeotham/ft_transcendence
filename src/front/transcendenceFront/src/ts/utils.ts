@@ -128,8 +128,7 @@ export const    patchToApi = async (url: string, data: any) => {
 
 	if (!fetched.ok)
 	{
-		let errorData = await fetched.json();
-		console.error('Error in patch:', errorData);
+		const errorData = await fetched.json();
 		if (fetched.status === 401 && errorData.disconnect) {
 			console.log("Disconnecting user due to 401 error");
 			localStorage.clear();
