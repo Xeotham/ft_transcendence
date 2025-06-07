@@ -4,7 +4,7 @@ import { imTexts } from "../imTexts/imTexts.ts";
 import { changeKeys } from "./tetris.ts";
 // @ts-ignore
 import  page from 'page';
-import {userKeys} from "../utils.ts";
+import { userKeys } from "./utils.ts";
 import {backgroundHandler, bgmPlayer, tetrisTexturesHandler} from "./utils.ts";
 
 export const tetrisSettings = async () => {
@@ -93,6 +93,9 @@ const tetrisSettingsHtml = async () => {
 			
 			<div id="forfeitName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyForfeit}</div>
 			<div id="forfeitKey" class="${TCS.gameBlockLink}">${userKeys?.getForfeit()}</div>
+			
+			<div id="retryName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsKeyRetry}</div>
+			<div id="retryKey" class="${TCS.gameBlockLink}">${userKeys?.getRetry()}</div>
 
 			<div class="col-span-2 h-[10px]"></div>
 
@@ -121,7 +124,8 @@ const tetrisSettingsEvents = () => {
 		hardDrop: document.getElementById("hardDropKey"),
 		softDrop: document.getElementById("softDropKey"),
 		hold: document.getElementById("holdKey"),
-		forfeit: document.getElementById("forfeitKey")
+		forfeit: document.getElementById("forfeitKey"),
+		retry: document.getElementById("retryKey"),
 	};
 	const   musicSelct = document.getElementById("musicSelect") as HTMLSelectElement;
 	const   bkgSelect = document.getElementById("bkgSelect") as HTMLSelectElement;
@@ -166,6 +170,7 @@ const tetrisSettingsEvents = () => {
 	elements.softDrop?.addEventListener("click", () => changeKeys("softDrop"));
 	elements.hold?.addEventListener("click", () => changeKeys("hold"));
 	elements.forfeit?.addEventListener("click", () => changeKeys("forfeit"));
+	elements.retry?.addEventListener("click", () => changeKeys("retry"));
 
 	document.getElementById("tetrisSettingsBack")?.addEventListener("click", () => {
 		page("/tetris");

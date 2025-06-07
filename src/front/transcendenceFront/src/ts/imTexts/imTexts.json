@@ -250,7 +250,8 @@
           "hardDrop": "Placer",
           "softDrop": "Bas",
           "hold": "Garder",
-          "forfeit": "Forfait"
+          "forfeit": "Forfait",
+          "retry": "Recommencer"
         },
         "validate": "Valider",
         "keyChange": "Appuyez sur la touche"
