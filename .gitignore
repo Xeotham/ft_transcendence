@@ -8,3 +8,4 @@ fastify-blog/
 !src/front/transcendenceFront/vite.config.js
 .data/back/*
 .data/front/*
+.idea
