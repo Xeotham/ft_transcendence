@@ -137,6 +137,13 @@ const   handleChangeUsernameForm =  async () => {
 			modaleAlert("New username must be different from previous username");
 			return;
 		}
+
+		if (newUsername !== newUsername.trim())
+		{
+			modaleAlert("Username cannot contain leading or trailing spaces");
+			return;
+		}
+
 		try {
 			await patchToApi(`http://${address}/api/user/update-username`, { username: user.getUsername(), newUsername: newUsername });
 			user.setUsername(newUsername);

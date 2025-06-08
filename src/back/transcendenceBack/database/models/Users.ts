@@ -93,7 +93,6 @@ export const logOutUserById = (id : number): void =>
 
 export const getUserByUsername = (username: string): User | undefined =>
 {
-	// console.log("Username:", username);
     const stmt = db.prepare('\
         SELECT * \
         FROM user \

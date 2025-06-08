@@ -17,7 +17,7 @@ export const signInUser = () => {
 			.then(() => {
 				localStorage.setItem("username", username);
 				user.setUsername(username);
-				alert("User signed in successfully!"); // TODO: change the alert to a modal text
+				// alert("User signed in successfully!"); // TODO: change the alert to a modal text
 				page.show("/");
 			})
 			.catch((error) => {

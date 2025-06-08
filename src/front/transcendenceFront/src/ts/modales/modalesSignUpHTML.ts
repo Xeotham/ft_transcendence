@@ -75,6 +75,12 @@ export const modaleSignUpEvents = () => {
 		const password = (document.getElementById("signupPassword") as HTMLInputElement).value;
 		const confirmPassword = (document.getElementById("signupPasswordConfirm") as HTMLInputElement).value;
 
+		if (username !== username.trim())
+		{
+			modaleAlert("Username cannot contain leading or trailing spaces");
+			return;
+		}
+
 		if (password !== confirmPassword) {
 			modaleAlert("Passwords do not match");
 			return;
