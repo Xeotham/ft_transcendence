@@ -50,7 +50,7 @@ interface GameUserInfo
 
 const getModaleTetrisStatListDetailsHTML = (gameIndex: number, playerUsername: string) => {
   const game = tetrisGames[gameIndex];
-  const player = game.players.find((p: GameUserInfo) => { return p.username === playerUsername });
+  const player = game.players.find((p: GameUserInfo) => { return p.username === playerUsername }); // TODO : error
 
 
   let listHTML = `
@@ -65,6 +65,9 @@ const getModaleTetrisStatListDetailsHTML = (gameIndex: number, playerUsername: s
 
       <div class="col-span-2 ${TCS.modaleStatDetailGrey}">Total Time: </div>
       <div class="col-span-4">${player?.totalTime}</div>
+      
+      <div class="col-span-2 ${TCS.modaleStatDetailGrey}">Level: </div>
+      <div class="col-span-4">${player?.level}</div>
 
       <div class="col-span-6 h-[5px]"></div>
 

@@ -45,6 +45,8 @@ const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string,
 	}
 
 	const   checkUsernameLength = (username: string) => {
+		if (!username || username.length === 0)
+			return "";
 		if (username.length > 9)
 			return username.slice(0, 9) + ".";
 		return username;
@@ -56,14 +58,14 @@ const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string,
 
 	if (pongGameInfo.getRoom()?.getPlayer() == "P2") {
 		writeText(`${checkUsernameLength(player2.username)}`, 30, player1Coord.x, player1Coord.y, "left");
-		writeText(`${player2.score} ${player1.score}`, 60, scoreCoord.x, scoreCoord.y, "center");
-		writeText(`${checkUsernameLength(player1.username)}`, 30, player2Coord.x, player2Coord.y, "right");
+		writeText(`${player2?.score} ${player1.score}`, 60, scoreCoord.x, scoreCoord.y, "center");
+		writeText(`${checkUsernameLength(player1?.username)}`, 30, player2Coord.x, player2Coord.y, "right");
 
 	}
 	else {
 		writeText(`${checkUsernameLength(player1.username)}`, 30, player1Coord.x, player1Coord.y, "left");
-		writeText(`${player1.score} ${player2.score}`, 60, scoreCoord.x, scoreCoord.y, "center");
-		writeText(`${checkUsernameLength(player2.username)}`, 30, player2Coord.x, player2Coord.y, "right");
+		writeText(`${player1.score} ${player2?.score}`, 60, scoreCoord.x, scoreCoord.y, "center");
+		writeText(`${checkUsernameLength(player2?.username)}`, 30, player2Coord.x, player2Coord.y, "right");
 	}
 }
 

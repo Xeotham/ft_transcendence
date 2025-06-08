@@ -314,21 +314,6 @@ const drawInfo = (x: number, y: number, gameInfo: tetrisGoalInfo) => {
 	piecesDiv.style.position = "absolute";
 	piecesDiv.style.left = `${x}px`;
 	piecesDiv.style.top = `${y + (spacing * 4)}px`;
-	// infosDiv.
-
-	// ctx.textAlign = "right";
-	// const   writeText = (text: string, x: number, y: number) => {
-	// 	ctx.font = "25px Arial";
-	// 	ctx.fillStyle = "black";
-	// 	ctx.strokeText(text, x, y);
-	// 	ctx.fillStyle = "white";
-	// 	ctx.fillText(text, x, y);
-	// }
-	// writeText("Score: " + gameInfo.score, x, y);
-	// writeText("Level: " + gameInfo.level, x, y + spacing);
-	// writeText("Time: " + (new Date(tetrisGameInformation.getGame()?.time || 0).toISOString().substring(14, 23)), x, y + (spacing * 2));
-	// writeText(`Goal: ${gameInfo.linesCleared} / ${gameInfo.lineClearGoal}`, x, y + (spacing * 3));
-	// writeText(`Pieces: ${gameInfo.piecesPlaced}, ${gameInfo.piecesPerSecond}/s`, x, y + (spacing * 4));
 }
 
 const   drawOpponentsList = (ctx: CanvasRenderingContext2D, x: number, y: number, opponents: tetrisGameInfo[]) => {

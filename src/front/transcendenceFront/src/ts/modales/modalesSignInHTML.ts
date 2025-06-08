@@ -2,9 +2,9 @@ import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay, modaleAlert, modaleHide } from './modalesCore.ts';
 import { postToApi, address, user } from "../utils.ts";
-import {backgroundHandler, bgmPlayer, tetrisTexturesHandler, userKeys} from "../tetris/utils.ts";
-import {setZoneAvatar} from "../zone/zoneHTML.ts";
-import {pongPackHandler} from "../pong/utils.ts";
+import { backgroundHandler, bgmPlayer, tetrisTexturesHandler, userKeys } from "../tetris/utils.ts";
+import { setZoneAvatar } from "../zone/zoneHTML.ts";
+import { pongPackHandler } from "../pong/utils.ts";
 
 
 export const modaleSignInHTML = () => {

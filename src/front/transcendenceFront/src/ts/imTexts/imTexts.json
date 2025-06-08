@@ -3,7 +3,7 @@
     "modales": {
       "signin": {
         "title": "Immanence",
-        "text": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À gauche Pong pour jouer en solo, contre notre IA, en multijoueur ou en tournoi.<br>À droite Tetris est disponible en solo ou en multijoueur.",
+        "text": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À gauche, Pong pour jouer en solo, contre notre IA, en multijoueur ou en tournoi.<br>À droite, Tetris est disponible en solo ou en multijoueur.",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "enter": "Entrer",
@@ -12,7 +12,7 @@
       },
       "signup": {
         "title": "Inscription",
-        "text": "Enregistre toi !",
+        "text": "Tu es le bienvenue !",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "passwordConfirm": "Confirmer le mot de passe",
@@ -81,10 +81,10 @@
         "uploadLink": "Sélectionner un fichier"
       },
       "edit": {
-        "choseUsername": "Changer username",
-        "chosePassword": "Changer mot de passe",
+        "choseUsername": "Changer mon username",
+        "chosePassword": "Changer le mot de passe",
         "editUsername": {
-            "title": "Édition profile",
+            "title": "Éditer le profile",
             "text": "Nom d'utilisateur",
             "previous": "Entrez votre ancien nom d'utilisateur",
             "new": "Entrez votre nouveau nom d'utilisateur",
@@ -94,7 +94,7 @@
             "cancel": "Annuler"
         },
         "editPassword": {
-            "title": "Édition profile",
+            "title": "Éditer le profile",
             "text": "Mot de passe",
             "previous": "Entrez votre ancien mot de passe",
             "new": "Entrez votre nouveau mot de passe",

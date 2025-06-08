@@ -8,8 +8,7 @@ import img_logo_tetris from '/src/medias/images/zones/logoTetris.png';
 export const   tetrisEmptyHtml = () => {
 	if (!EL.contentTetris)
 		return ;
-	
-	EL.contentTetris.innerHTML = ``;
+	EL.contentTetris.innerHTML = '';
 }
 
 export const tetrisLogoHtml = () => {

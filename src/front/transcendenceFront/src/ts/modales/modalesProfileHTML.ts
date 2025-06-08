@@ -96,7 +96,7 @@ export const modaleProfileHTML = async () => {
 //imTextsSet(imTextsJson[language]);
 
 const profileUserLanguageEvents = () => {
-  console.log("language", language);
+  // console.log("language", language);
 
   if (language != 'fr') {
     const profileUserLanguageFR = document.getElementById('profileUserLanguageFR') as HTMLSpanElement;
@@ -139,7 +139,7 @@ const profileUserLanguageEvents = () => {
   }
 
   const setLanguage = (language: string, e: Event) => {
-    console.log("setLanguage", language);
+    // console.log("setLanguage", language);
     e.stopPropagation();
     imSetLanguage(language as SupportedLanguages);
     modaleDisplay(ModaleType.NONE);

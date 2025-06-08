@@ -3,7 +3,7 @@
     "modales": {
       "signin": {
         "title": "Immanence",
-        "text": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À gauche Pong pour jouer en solo, contre notre IA, en multijoueur ou en tournoi.<br>À droite Tetris est disponible en solo ou en multijoueur.",
+        "text": "Nous te proposons de jouer à deux jeux, dans deux salles, avec deux ambiances différentes.<br>À gauche, Pong pour jouer en solo, contre notre IA, en multijoueur ou en tournoi.<br>À droite, Tetris est disponible en solo ou en multijoueur.",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "enter": "Entrer",

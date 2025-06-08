@@ -1,26 +1,30 @@
-import {TCS} from '../TCS.ts';
-import {imTexts} from '../imTexts/imTexts.ts';
+import { TCS } from '../TCS.ts';
+import { imTexts } from '../imTexts/imTexts.ts';
 
-import {modaleAlert, modaleDisplay, modaleHide, ModaleType} from './modalesCore.ts';
-import {address, postToApi, user} from "../utils.ts";
+import { modaleAlert, modaleDisplay, modaleHide, ModaleType } from './modalesCore.ts';
+import { address, postToApi, user } from "../utils.ts";
 // @ts-ignore
 import page from "page";
-import {setZoneAvatar} from "../zone/zoneHTML.ts";
-import {backgroundHandler, bgmPlayer, tetrisTexturesHandler, userKeys} from "../tetris/utils.ts";
-import {pongPackHandler} from "../pong/utils.ts";
+import { setZoneAvatar } from "../zone/zoneHTML.ts";
+import { backgroundHandler, bgmPlayer, tetrisTexturesHandler, userKeys } from "../tetris/utils.ts";
+import { pongPackHandler } from "../pong/utils.ts";
 
 export const modaleSignUpHTML = () => {
 
 	let SignUpHTML = `
 
-  <div id="signupTitle" class="${TCS.modaleTitre} pb-[30px]">
+  <div id="signupTitle" class="${TCS.modaleTitre}">
   ${imTexts.modalesSignupTitle}</div>
   
   <span id="signupBack" class="${TCS.modaleTexteLink}">
   ${imTexts.modalesFriendListBack}</span>
-        
-  <div id="signupText" class="${TCS.modaleTexte} pb-[40px]">
+  
+  <div class="h-[30px]"></div>
+  
+  <div id="signupText" class="${TCS.modaleTexte}">
   ${imTexts.modalesSignupText}</div>
+  
+  <div class="h-[30px]"></div>
   
   <form id="signupForm" class="${TCS.form} w-full">
     <div id="signupUsernameDiv" class="${TCS.formDivInput} pb-[6px]">

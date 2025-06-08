@@ -154,7 +154,6 @@ export class PongRoom {
 			}
 		}
 		// Special handling for Chrome
-		console.log("User agent: " + navigator.userAgent);
 		localStorage.setItem("nav", JSON.stringify(navigator.userAgent.includes("Firefox")));
 		if (!navigator.userAgent.includes("Firefox")) {
 			window.onbeforeunload = (e) => {
@@ -393,14 +392,16 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return ;
 		case "FINISH":
-			if (pongGameInfo.getRoom()?.getPlayer() === "SPEC")
+			if (pongGameInfo.getRoom()?.getPlayer() === "SPEC") {
+				showWinner(res.data);
 				return quit("LEAVE", "PONG");
+			}
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
 			if (pongGameInfo.getMatchType() === "TOURNAMENT" && res.data !== pongGameInfo.getRoom()?.getPlayer())
 				pongGameInfo.getTournament()?.setLostTournament(true);
 			showWinner(res.data);
-			console.log(res);
+			// console.log(res);
 			return quit("LEAVE", "PONG");
 		case "SCORE":
 			const   score: score = res.data;
@@ -419,6 +420,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 			console.log("Starting Spectator mode");
 			// console.log("Starting Spectator mode at placement: " + pongGameInfo.getRoom()?.getSpecPlacement());
 			loadPongPage("board");
+			document.getElementById("pongEndGame")!.style.display = "none";
 			return document.getElementById("quit")?.addEventListener("click", () => quit());
 		case "EFFECT":
 			effectHandler(res.data);

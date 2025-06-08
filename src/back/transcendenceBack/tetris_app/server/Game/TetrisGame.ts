@@ -331,7 +331,7 @@ export class TetrisGame {
 		if ((!this.infiniteMovement && this.nbMoves > 14) ||
 			(this.lockTime >= 0 && this.msSinceLockPhase >= this.lockTime)) {
 			// console.log("Lock phase reached, locking piece at " + this.msSinceLockPhase + " ms");
-			// this.nbMoves >= 500 ? console.log("Max time reached") : console.log("Max moves reached");
+			// this.lockTime >= 500 ? console.log("Max time reached") : console.log("Max moves reached");
 			this.shouldLock = true;
 			this.resetLockPhase();
 			this.shouldLock = true;

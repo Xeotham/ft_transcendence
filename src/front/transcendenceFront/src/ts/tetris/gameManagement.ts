@@ -99,7 +99,7 @@ export const resetSocket = (leaveType: string = "game") => {
 
 	if ((leaveType === "game" && tetrisGameInformation.getRoomCode() === "") ||
 		leaveType === "room") {
-		console.log("Closing socket");
+		// console.log("Closing socket");
 		tetrisGameInformation.getSocket()?.close();
 		tetrisGameInformation.setSocket(null);
 		tetrisGameInformation.resetSettings();
@@ -282,9 +282,10 @@ const   messageHandler = (event: MessageEvent)=> {
 		return;
 	switch (res.type) {
 		case 'GAME_START':
-			console.log("GAME_START");
+			// console.log("GAME_START");
 			tetrisGameInformation.setGame(res.game);
 			tetrisGameInformation.setGameId(res.game.gameId);
+			tetrisGameInformation.setOpponentsGames([]);
 			bgmPlayer.play();
 			tetrisBoardHtml();
 			loadTetrisPage("board");
@@ -324,10 +325,10 @@ const   messageHandler = (event: MessageEvent)=> {
 			return ;
 		case "STATS":
 			// console.log("Stats:", res.argument);
-			showStats(res.argument);
+			showStats(res.argument); // TODO : error
 			return;
 		case "MULTIPLAYER_FINISH":
-			console.log("The multiplayer game has finished. You ended up at place " + res.argument);
+			// console.log("The multiplayer game has finished. You ended up at place " + res.argument);
 			return ;
 		case "MULTIPLAYER_OPPONENTS_GAMES":
 			// console.log("MULTIPLAYER_OPPONENTS_GAMES");
@@ -372,6 +373,9 @@ const	showStats = (stats: GameUserInfo) => {
 	
 		  <div class="col-span-2 ${TCS.modaleStatDetail}">Total Time: </div>
 		  <div class="col-span-4">${stats?.totalTime}</div>
+
+ 		  <div class="col-span-2 ${TCS.modaleStatDetail}">Level: </div>
+		  <div class="col-span-4">${stats?.level}</div>
 	
 		  <div class="col-span-6 h-[5px]"></div>
 	

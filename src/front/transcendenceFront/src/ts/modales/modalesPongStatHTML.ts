@@ -280,8 +280,7 @@ export const modalePongStatPie = () => {
                 fontSize: "22px",
                 color: "#facc15", // yellow-400
                 formatter: function (value: any) {
-                  console.log('value formater', value);
-                  return Math.round((9/6 * 100)) + "%"
+                  return value;
                 },
               },
             },

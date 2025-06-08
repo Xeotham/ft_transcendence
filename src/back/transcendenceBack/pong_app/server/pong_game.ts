@@ -130,6 +130,7 @@ export class Game {
 				let winner = this.winner?.username;
 				// if (this.isSolo)
 				// 	winner = this.score.player1.score >= WIN_GOAL ? "P1" : "P2";
+				this.sendData({ type: "GAME", data: this.toJSON() }, true);
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();
