@@ -362,7 +362,7 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 export const createPongGame = (players: {player1: player | null, player2: player | null}, score: any, winner: player | null, solo: boolean, bot: boolean) =>
 {
 	// console.log(players.player1?.username, score, winner?.username, solo);
-	if (solo === true && bot === false)
+	if (solo === true)
 	{
 		// console.log("return solo game");
 		return ;
@@ -374,31 +374,6 @@ export const createPongGame = (players: {player1: player | null, player2: player
     if (players.player1?.username === players.player2?.username)
         return;
 
-    if (bot === true)
-    {
-        const   player1 = getUserByUsername(players.player1?.username!) as Users;
-
-		if (!player1)
-		{
-			console.log("Invalid User");
-			return ;
-		}
-
-
-		if (player1.id)
-		{
-			if (score.player1.score < 0)
-				return ;
-
-			const gameId = saveGame("");
-
-			createUserGameStatsPong(player1.id, gameId, score.player1, winner === players.player1, "pong");
-			updateStats(player1.id);
-			// console.log("return bot game");
-		}
-	}
-	else
-	{
 		const   player1 = getUserByUsername(players.player1?.username!) as Users;
 		const   player2 = getUserByUsername(players.player2?.username!) as Users;
 
@@ -420,7 +395,6 @@ export const createPongGame = (players: {player1: player | null, player2: player
 			updateStats(player2.id);
 			// console.log("return multiplayer game");
 		}
-	}
 };
 
 export const createTetrisGame = (data: TetrisGame) =>
