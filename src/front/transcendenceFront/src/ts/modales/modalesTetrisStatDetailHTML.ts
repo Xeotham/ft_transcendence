@@ -50,7 +50,7 @@ interface GameUserInfo
 
 const getModaleTetrisStatListDetailsHTML = (gameIndex: number, playerUsername: string) => {
   const game = tetrisGames[gameIndex];
-  const player = game.players.find((p: GameUserInfo) => { return p.username === playerUsername });
+  const player = game.player;
 
 
   let listHTML = `

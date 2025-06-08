@@ -6,9 +6,9 @@ import { getFromApi, address } from "../utils.ts";
 let 	tetrisStatPage = 0;
 const 	tetrisListLength = 10;
 
-let tetrisHistory: tetrisStats[] = []
+export let tetrisHistory: tetrisStats[] = []
 export let indexGame: number = 0;
-export let tetrisGames: { gameId: number, players: GameUserInfo[] }[];
+export let tetrisGames: { gameId: number, player: GameUserInfo }[];
 
 interface tetrisStats {
 	id: number;
@@ -76,10 +76,28 @@ const formatTetrisStat = (history:{  gameId: number, players: GameUserInfo[] }, 
 
 }
 
+const   sortHistory = (playerUsername: string, history: { gameId: number, players: GameUserInfo[] }[]) => {
+	const   newHistory: { gameId: number, player: GameUserInfo }[] = [];
+
+	history.forEach((game) => {
+		if (!game.players.length) {
+			return;
+		}
+		const player: GameUserInfo | undefined = game.players.find((p: GameUserInfo) => p.username === playerUsername);
+		if (player) {
+			newHistory.push({ gameId: game.gameId, player: player });
+		}
+	})
+	return newHistory.sort((a, b) => {
+		return b.player.score - a.player.score;
+	});
+}
+
 export const  loadTetrisStat = async (playerUsername: string) => {
 	const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
 	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e :any)  => e.players[0].type === 'tetris');
-	tetrisGames = history;
+	console.log(history)
+	tetrisGames = sortHistory(playerUsername, history);
 	const newHistory: tetrisStats[] = [];
 	history.forEach((game) => {
 		if (!game.players.length) {
