@@ -1,9 +1,9 @@
-type SupportedLanguages = 'fr' | 'en' | 'de' | 'ja';
+export type SupportedLanguages = 'fr' | 'en' | 'de' | 'es';
 
 import imTextsJsonLoad from './imTexts.json';
 export const imTextsJson = imTextsJsonLoad; 
 export const imTexts: {[key: string]: string} = {};
-export let language: SupportedLanguages = 'fr';
+export let language: SupportedLanguages = localStorage.getItem('language') as SupportedLanguages || "fr";
 
 function imTextsSet(obj: any, prefix: string = '') {
     for (const key in obj) {
@@ -20,5 +20,8 @@ function imTextsSet(obj: any, prefix: string = '') {
     }
 }
 
-// Initialisation avec la langue par défaut
-imTextsSet(imTextsJson[language]);
+export const imSetLanguage = (lang: SupportedLanguages) => {
+    imTextsSet(imTextsJson[lang]);
+    language = lang;
+    localStorage.setItem('language', lang);
+}

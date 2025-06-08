@@ -64,12 +64,15 @@ export const modaleFriendListHTML = (page: number) => {
     ${imTexts.modalesFriendListTitle}</div>
 
     <div id="friendListBack" class="${TCS.modaleTexteLink}">
-      ${imTexts.modalesFriendListBack}</div>
+    ${imTexts.modalesFriendListBack}</div>
 
-    <div class="h-[30px]"></div>
-  `;
+	<div class="h-[30px]"></div>
+	`;
 
-	friendListHTML += getModaleFriendListListHTML(friendListPage);
+  	friendListHTML += getModaleFriendListListHTML(friendListPage);
+
+	if (friendList.getFriendList().length === 0)
+		friendListHTML += `<div class="${TCS.modaleTexteGris}">${imTexts.modalesFriendListNoFriends}</div>`;
 
 	friendListHTML += `
     <div class="h-[30px]"></div>
@@ -84,12 +87,13 @@ const formatFriendListLine = (index: number) => {
 	if (!friend) {
 		return "";
 	}
+	//colors: ["#a3e635", "#be123c"], //lime-400, rose-700
 
 	const   avatar = URL.createObjectURL(UserInfo.base64ToBlob(friend.avatar));
 	let formattedFriend = `
 	<div id="friendListLine${index}" class="w-full h-[40px] pb-[5px] flex flex-row-2 mb-[5px]">
 		<div class="w-[40px] h-[40px]">
-			<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-green-500" : TCS.gameFriendImg + " border-red-500"}" alt="friend avatar"/>
+			<img src="${avatar}" class="${ friend.connected ? TCS.gameFriendImg + " border-lime-400" : TCS.gameFriendImg + " border-rose-700"}" alt="friend avatar"/>
 		</div>
 		<div class="${TCS.modaleFriendList} w-full h-[40px]">
 			${friend.username}
@@ -109,12 +113,13 @@ const getModaleFriendListListHTML = (page: number) => {
 		<form id="friendSearchForm" class="${TCS.form}">
 			<input id="friendSearchInput" name="friendSearch" type="text" placeholder=" " class="${TCS.formInput}">		
 			<label for="friendSearch" class="${TCS.formLabel}">${imTexts.modalesFriendListUsername}</label>
+			<div class="h-[10px]"></div>
 			<button id="friendSearchButton" type="submit" class="${TCS.formButton}">${imTexts.modalesFriendListAdd}</button>
 		</form>
+		<div class="h-[10px]"></div>
 		<div id="modaleAlert" class="${TCS.modaleTexte}"></div>
-		<div class="h-[20px]"></div>
+		<div class="h-[10px]"></div>
 	`;
-
 
 	for (let i = 0; i < friendListLength; i++) {
 		listHTML += `
@@ -150,7 +155,7 @@ export const modaleFriendListEvents = () => {
 	if (!friendListBack || !friendListPrev || !friendListNext || !friendSearch)
 		return;
 
-	friendSearch?.addEventListener('submit', async (e) => {
+	friendSearch?.addEventListener('submit', async (e: Event) => {
 		e.preventDefault();
 		try {
 			const friendName = (document.getElementById('friendSearchInput') as HTMLInputElement).value;
@@ -166,11 +171,13 @@ export const modaleFriendListEvents = () => {
 		}
 	})
 
-	friendListBack?.addEventListener('click', () => {
+	friendListBack?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.PROFILE);
 	});
 
-	friendListPrev?.addEventListener('click', () => {
+	friendListPrev?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (friendListPage <= 0 || !modale.content)
 			return;
 		modale.content.innerHTML = modaleFriendListHTML(--friendListPage);
@@ -178,7 +185,8 @@ export const modaleFriendListEvents = () => {
 		modaleFriendListEvents();
 	});
 
-	friendListNext.addEventListener('click', () => {
+	friendListNext.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (friendListPage >= friendListLength || !modale.content)
 			return;
 		if ((friendListPage + 1) * friendListLength <= friendList.getFriendList().length) {
@@ -191,7 +199,10 @@ export const modaleFriendListEvents = () => {
 
 	for (let i = 0; i < 10; i++) {
 		const friendListLine = document.getElementById('friendListLine' + i) as HTMLAnchorElement;
-		friendListLine.addEventListener('click', () => {
+		if (!friendListLine)
+			continue;
+		friendListLine.addEventListener('click', (e: Event) => {
+			e.stopPropagation();
 			friendList.setActualFriend(i + (friendListPage * friendListLength));
 			modaleDisplay(ModaleType.FRIEND_PROFILE);
 		});

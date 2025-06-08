@@ -1,5 +1,5 @@
 import { TCS } from '../TCS.ts';
-import { imTexts } from '../imTexts/imTexts.ts';
+import { imTexts, language, imSetLanguage, SupportedLanguages } from '../imTexts/imTexts.ts';
 import { ModaleType, modaleDisplay } from './modalesCore.ts';
 
 // import avatarImg from '../../medias/avatars/avatar1.png';
@@ -27,7 +27,7 @@ const pongWinRate = async () => {
 
 const tetrisBestScore = async () => {
   const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e) => e.players[0].type === 'tetris');
+  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e: any) => e.players[0].type === 'tetris');
   if (!history.length)
     return `${imTexts.modalesProfileBestScore}: No game played`;
   let score: number = 0;
@@ -46,60 +46,105 @@ export const modaleProfileHTML = async () => {
   let ProfileHTML = `
       
   <div class="flex flex-row items-start justify-start gap-4">
-    <div id="profileAvatar" class="${TCS.modaleAvatarProfil} ">
+    <div id="profileAvatar" class="${TCS.modaleAvatarProfil}">
       <img src="${user.getAvatar()}"/>
     </div>
     <div>
       <div id="profileUsername" class="${TCS.modaleTitre}">${user.getUsername()}</div>
       <div id="profileUserEdit" class="${TCS.modaleTexte}">
-        <a id="profileUserEditLink" class="${TCS.modaleTexteLink}">
-        ${imTexts.modalesProfileUserEdit}</a>
+        <a id="profileUserEditLink" class="${TCS.modaleTexteLink}">${imTexts.modalesProfileUserEdit}</a>
         /
-        <a id="profileDeconectLink" class="${TCS.modaleTexteLink}">
-        ${imTexts.modalesProfileDeconect}</a>
+        <a id="profileDeconectLink" class="${TCS.modaleTexteLink}">${imTexts.modalesProfileDeconect}</a>
       </div>
     </div>
   </div>
 
   <div class="h-[30px]"></div>
   
-  <span class="${TCS.modaleTexte} text-[24px]">
-  ${imTexts.modalesProfileLanguageTitle}</span>
+  <span class="${TCS.modaleTexte} text-[24px]">${imTexts.modalesProfileLanguageTitle}</span>
   <div id="profileUserLanguage" class="${TCS.modaleTexte}">
-    fr -
-    <span class="${TCS.modaleTexteLink}">en</span> -
-    <span class="${TCS.modaleTexteLink}">es</span> -
-    <span class="${TCS.modaleTexteLink}">de</span>
+    <span id="profileUserLanguageFR" class="${TCS.modaleTexte}">FR</span>
+    <span id="profileUserLanguageEN" class="${TCS.modaleTexte}">EN</span>
+    <span id="profileUserLanguageES" class="${TCS.modaleTexte}">ES</span>
+    <span id="profileUserLanguageDE" class="${TCS.modaleTexte}">DE</span>
   </div>
 
   <div class="h-[30px]"></div>
   
-  <span class="${TCS.modaleTexte} text-[24px]">
-  ${imTexts.modalesProfileFriendList + `(${friendList.getFriendList().length})`}</span><br>
-  <span id="modlaleFriendListLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfileFriendListLink}</span>
+  <div class="${TCS.modaleTexte} text-[24px]">${imTexts.modalesProfileFriendList} (${friendList.getFriendList().length})</div>
+  <div id="modlaleFriendListLink" class="${TCS.modaleTexteLink}">${imTexts.modalesProfileFriendListLink}</div>
  
   <div class="h-[30px]"></div>
 
-  <span class="${TCS.modaleTexte} text-[24px]">Pong</span><br>
-  <span id="modalePongStats" class="${TCS.modaleTexte}">
-  ${await pongWinRate()}</span><br>
-  <span id="modalePongStatsLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfilePongStatsLink}</span>
+  <div class="${TCS.modaleTexte} text-[24px]">Pong</div>
+  <div id="modalePongStats" class="${TCS.modaleTexte}">${await pongWinRate()}</div>
+  <div id="modalePongStatsLink" class="${TCS.modaleTexteLink}">${imTexts.modalesProfilePongStatsLink}</div>
 
   <div class="h-[30px]"></div>
 
-  <span class="${TCS.modaleTexte} text-[24px]">Tetris</span><br>
-  <span id="modaleTetrisStats" class="${TCS.modaleTexte}">
-  ${await tetrisBestScore()}</span><br>
-  <span id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">
-  ${imTexts.modalesProfileTetrisStatsLink}</span>
+  <div class="${TCS.modaleTexte} text-[24px]">Tetris</div>
+  <div id="modaleTetrisStats" class="${TCS.modaleTexte}">${await tetrisBestScore()}</div>
+  <div id="modaleTetrisStatsLink" class="${TCS.modaleTexteLink}">${imTexts.modalesProfileTetrisStatsLink}</div>
 
   <div class="h-[30px]"></div>
-
 `;
 
   return ProfileHTML;
+}
+
+//imTextsSet(imTextsJson[language]);
+
+const profileUserLanguageEvents = () => {
+  console.log("language", language);
+
+  if (language != 'fr') {
+    const profileUserLanguageFR = document.getElementById('profileUserLanguageFR') as HTMLSpanElement;
+    if (profileUserLanguageFR) {
+      profileUserLanguageFR.className = TCS.modaleTexteLink;
+      profileUserLanguageFR.addEventListener('click', (e: Event) => {
+        setLanguage('fr', e);
+      });
+    }
+  }
+
+  if (language != 'en') {
+    const profileUserLanguageEN = document.getElementById('profileUserLanguageEN') as HTMLSpanElement;
+    if (profileUserLanguageEN) {
+      profileUserLanguageEN.className = TCS.modaleTexteLink;
+      profileUserLanguageEN.addEventListener('click', (e: Event) => {
+        setLanguage('en', e);
+      });
+    }
+  }
+
+  if (language != 'es') {
+    const profileUserLanguageES = document.getElementById('profileUserLanguageES') as HTMLSpanElement;
+    if (profileUserLanguageES) {
+      profileUserLanguageES.className = TCS.modaleTexteLink;
+      profileUserLanguageES.addEventListener('click', (e: Event) => {
+        setLanguage('es', e);
+      });
+    }
+  }
+
+  if (language != 'de') {
+    const profileUserLanguageDE = document.getElementById('profileUserLanguageDE') as HTMLSpanElement;
+    if (profileUserLanguageDE) {
+      profileUserLanguageDE.className = TCS.modaleTexteLink;
+      profileUserLanguageDE.addEventListener('click', (e: Event) => {
+        setLanguage('de', e);
+      });
+    }
+  }
+
+  const setLanguage = (language: string, e: Event) => {
+    console.log("setLanguage", language);
+    e.stopPropagation();
+    imSetLanguage(language as SupportedLanguages);
+    modaleDisplay(ModaleType.NONE);
+    page.show(document.location.pathname);
+    modaleDisplay(ModaleType.PROFILE);
+  }
 }
 
 export const modaleProfileEvents = () => {
@@ -147,4 +192,6 @@ export const modaleProfileEvents = () => {
   modaleTetrisStatsLink?.addEventListener('click', () => {
     modaleDisplay(ModaleType.TETRIS_STATS);
   });
+
+  profileUserLanguageEvents();
 }

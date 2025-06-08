@@ -40,7 +40,8 @@
         "view": "voir le profil",
         "remove": "Supprimer",        
         "prev": "Précedent",
-        "next": "Suivant"
+        "next": "Suivant",
+        "noFriends": "Vous n'avez pas d'amis"
       },
       "friendProfile": {
         "back": "Retour",
@@ -53,7 +54,8 @@
         "back": "Retour au profil",
         "ratio": "Ratio 83%",
         "prev": "précedent",
-        "next": "Suivant"
+        "next": "Suivant",
+        "noStats": "Vous n'avez aucune partie de Pong"
       },
       "tetrisStats": {
         "title": "Tetris historique",
@@ -61,7 +63,8 @@
         "bestScore": "Meilleur score : 1 564 330 pt",
         "linkName": "»»»",
         "prev": "Précedent",
-        "next": "suivant"
+        "next": "suivant",
+        "noStats": "Vous n'avez aucune partie de Tetris"
       },
       "tetrisStatsDetail": {
         "title": "Tetris Stats Detail",
@@ -180,7 +183,7 @@
       }
     },
     "tetris": {
-      "refreshConfirmation" : "Êtes-vous sûr de vouloir quitter la page ?",
+      "refreshConfirmation": "Êtes-vous sûr de vouloir quitter la page ?",
       "logo": {
         "title": "Tetris",
         "subtitle": "Le jeu de puzzle légendaire"
@@ -300,6 +303,918 @@
         "join": " » Rejoindre"
       }
     }
-  }
+  },
+"en": {
+    "modales": {
+      "signin": {
+        "title": "Immanence",
+        "text": "We offer you two games, in two rooms, with two different atmospheres.<br>On the left, Pong to play solo, against our AI, multiplayer or in tournament.<br>On the right, Tetris is available in solo or multiplayer.",
+        "username": "Username",
+        "password": "Password",
+        "enter": "Enter",
+        "noAccount": "Don't have an account?",
+        "register": "Register!"
+      },
+      "signup": {
+        "title": "Registration",
+        "text": "Register!",
+        "username": "Username",
+        "password": "Password",
+        "passwordConfirm": "Confirm password",
+        "enter": "Continue"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "Edit",
+        "deconect": "Disconnect",
+        "languageTitle": "Language",
+        "friendList": "Friends",
+        "friendListLink": "View your friends",
+        "winrate": "Ratio",
+        "victories": "Victories",
+        "defeats": "Defeats",
+        "bestScore": "Best score",
+        "pongStatsLink": "View more Pong Stats",
+        "tetrisStatsLink": "View more Tetris Stats"
+      },
+      "friendList": {
+        "title": "My friends",
+        "back": "Back to profile",
+        "username": "Enter a username",
+        "add": "Add to my friend list",
+        "view": "view profile",
+        "remove": "Remove",
+        "prev": "Previous",
+        "next": "Next",
+        "noFriends": "You have no friends"
+      },
+      "friendProfile": {
+        "back": "Back",
+        "connected": "Online",
+        "disconnected": "Offline",
+        "friendRemove": "Remove"
+      },
+      "pongStats": {
+        "title": "Pong history",
+        "back": "Back to profile",
+        "ratio": "Ratio 83%",
+        "prev": "Previous",
+        "next": "Next",
+        "noStats": "You have no Pong games"
+      },
+      "tetrisStats": {
+        "title": "Tetris history",
+        "back": "Back to profile",
+        "bestScore": "Best score: 1,564,330 pts",
+        "linkName": "»»»",
+        "prev": "Previous",
+        "next": "Next",
+        "noStats": "You have no Tetris games"
+      },
+      "tetrisStatsDetail": {
+        "title": "Tetris Stats Detail",
+        "back": "Back to profile",
+        "text": "The devil is in the details"
+      },
+      "avatar": {
+        "title": "Avatar selection",
+        "text": "Avatar selection",
+        "back": "Back to profile",
+        "ok": "ok",
+        "cancel": "cancel",
+        "uploadTitle": "Upload an image",
+        "uploadLink": "Select a file"
+      },
+      "edit": {
+        "choseUsername": "Change username",
+        "chosePassword": "Change password",
+        "editUsername": {
+            "title": "Profile edit",
+            "text": "Username",
+            "previous": "Enter your previous username",
+            "new": "Enter your new username",
+            "sameError": "Your new username is identical to the old one!",
+            "previousError": "Your previous username is incorrect!",
+            "submit": "Submit",
+            "cancel": "Cancel"
+        },
+        "editPassword": {
+            "title": "Profile edit",
+            "text": "Password",
+            "previous": "Enter your previous password",
+            "new": "Enter your new password",
+            "confirm": "Confirm your new password",
+            "submit": "Submit",
+            "cancel": "Cancel",
+            "confirmError": "Passwords do not match.",
+            "sameError": "Your new password is identical to the old one!",
+            "previousError": "Your previous password is incorrect!"
+        }
+      }
+    },
+    "pong": {
+      "logo": {
+        "title": "Pong",
+        "subtitle": "The classic table tennis game"
+      },
+      "nav": {
+        "title": "Pong",
+        "solo": "Solo",
+        "versus": "Versus",
+        "tournament": "Tournament",
+        "settings": "Settings",
+        "home": "Back"
+      },
+      "solo": {
+        "title": "Pong Solo",
+        "solo": "Local game",
+        "bot": "Game against Bot",
+        "back": "Back"
+      },
+      "versus": {
+        "title": "Pong Versus",
+        "join": "Public game",
+        "private": "Create private game",
+        "joinPrivRoom": "Private game",
+        "spectate": "Spectator mode",
+        "back": "Back"
+      },
+      "tournament": {
+        "title": "Pong Tournament",
+        "create": "Create",
+        "play": "Play",
+        "back": "Back"
+      },
+      "modales": {
+        "back": "Back",
+        "joinTitle": "Join game",
+        "joinText": "Waiting for opponent",
+        "specRoomTitle": "Spectator mode info",
+        "specRoomText1": "Room Info:",
+        "specRoomText2": "Room Number:",
+        "specRoomButton": "Watch the game",
+        "tournamentInfoTitle": "Pong Tournament",
+        "tournamentInfoName": "Name:",
+        "tournamentInfoNumber": "Id:",
+        "tournamentInfoStarted": "The tournament is closed.",
+        "tournamentInfoNotStarted": "The tournament is open.",
+        "tournamentInfoJoin": "Join tournament",
+        "tournamentListTitle": "Tournament list",
+        "versusCreateTitle": "Private versus",
+        "versusCreateText": "Invitation code:",
+        "versusCreateCopy": "Copy",
+        "versusJoinTitle": "Join private versus",
+        "versusJoinText": "Enter your invitation code",
+        "versusJoinSubmit": "Join",
+        "versusListTitle": "Match list",
+        "versusListEmpty": "No games available",
+        "tournamentList2Title": "Tournament list",
+        "tournamentList2Text": "No tournaments available",
+        "tournamentCreateTitle": "Tournament creation",
+        "tournamentCreateText": "Enter tournament name",
+        "tournamentCreateSubmit": "Create",
+        "tournamentEndTitle": "Tournament ended",
+        "tournamentEndWinner": " won the tournament!",
+        "tournamentFoundTitle": "Your tournament",
+        "tournamentFoundStart": "Start tournament",
+        "tournamentFoundShuffle": "Shuffle tree",
+        "tournamentFoundQuit": "Leave tournament",
+        "tournamentFoundWait": "Waiting for next match",
+        "tournamentJoinConfirm": "Join match",
+        "tournamentJoinConfirmText": "You have an opponent!",
+        "tournamentJoinConfirmStart": "Play!",
+        "tournamentJoinConfirmTimer": "Time remaining",
+        "SettingsTitle": "Settings"
+      }
+    },
+    "tetris": {
+      "refreshConfirmation": "Are you sure you want to leave the page?",
+      "logo": {
+        "title": "Tetris",
+        "subtitle": "The legendary puzzle game"
+      },
+      "nav": {
+        "title": "Tetris",
+        "solo": "Solo",
+        "versus": "Versus",
+        "join": "Game list",
+        "create": "Create a game",
+        "settings": "Settings",
+        "home": "Back"
+      },
+      "settings": {
+        "title": "Tetris Settings",
+        "back": "Back",
+        "mino": {
+          "title": "Tetriminos",
+          "name":[
+              "Style 1",
+              "Style 2",
+              "Style 3",
+              "Style 4",
+              "Style 5",
+              "Style 6",
+              "Style 7",
+              "Style 8"
+            ],
+            "select": 3,
+            "nb": 8
+        },
+        "bkg": {
+          "title": "Background",
+          "name":[
+            "Background 1",
+            "Background 2",
+            "Background 3",
+            "Background 4",
+            "Background 5",
+            "Background 6"
+          ],
+          "select": 3,
+          "nb": 6
+        },
+        "music": {
+          "title": "Music",
+          "name":[
+            "Music 1",
+            "Music 2",
+            "Music 3",
+            "Music 4",
+            "Music 5",
+            "Music 6"
+          ],
+          "select": 3,
+          "nb": 6
+        },
+        "key": {
+          "title": "Keys",
+          "role": "action",
+          "keys": "keys",
+          "moveLeft": "Left",
+          "moveRight": "Right",
+          "rotateClockwise": "Rotate",
+          "rotateCounterclockwise": "Counter-rotate",
+          "rotate180": "180° rotation",
+          "hardDrop": "Place",
+          "softDrop": "Down",
+          "hold": "Hold",
+          "forfeit": "Forfeit"
+        },
+        "validate": "Validate",
+        "keyChange": "Press the key"
+      },
+        "board": {
+        "score": "Score",
+        "level": "Level",
+        "lines": "Lines",
+        "next": "Next",
+        "pause": "Pause",
+        "resume": "Resume",
+        "quit": "Quit",
+        "gameOver": "Game over",
+        "newGame": "New game"
+      },
+      "createMultiplayerRoom": {
+        "title": "Room creation",
+        "back": "Back",
+        "copyCode": "copy",
+        "start": "Start",
+        "nbPlayers": "participant(s)",
+        "settingsTitle": "Settings",
+        "isPrivate": "Private",
+        "isVersus": "Versus",
+        "showShadow": "Show shadow",
+        "showBags": "Show bag",
+        "holdAllowed": "Allow hold",
+        "showHold": "Show hold",
+        "infiniteHold": "Infinite hold",
+        "infiniteMovement": "Infinite movement",
+        "lockTime": "Lock time (ms)",
+        "spawnARE": "Spawn ARE",
+        "softDropAmp": "Soft drop multiplier",
+        "level": "Starting level",
+        "isLeveling": "Progressive levels"
+      },
+      "displayMultiplayerRoom": {
+        "title": "Tetris rooms",
+        "back": "Back",
+        "codeTitle": "Private",
+        "codeLabel": "Room Code",
+        "codeSubmit": "Join",
+        "listTitle": "Public",
+        "refresh": "refresh",
+        "noList": "No games available",
+        "join": " » Join"
+      }
+    }
+},
+"de": {
+    "modales": {
+      "signin": {
+        "title": "Immanenz",
+        "text": "Wir bieten Ihnen zwei Spiele in zwei Räumen mit zwei verschiedenen Atmosphären.<br>Links Pong zum Einzelspiel, gegen unsere KI, im Mehrspielermodus oder im Turnier.<br>Rechts ist Tetris im Einzel- oder Mehrspielermodus verfügbar.",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "enter": "Eintreten",
+        "noAccount": "Kein Konto?",
+        "register": "Registrieren!"
+      },
+      "signup": {
+        "title": "Registrierung",
+        "text": "Registrieren!",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "passwordConfirm": "Passwort bestätigen",
+        "enter": "Weiter"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "Bearbeiten",
+        "deconect": "Abmelden",
+        "languageTitle": "Sprache",
+        "friendList": "Freunde",
+        "friendListLink": "Freunde anzeigen",
+        "winrate": "Verhältnis",
+        "victories": "Siege",
+        "defeats": "Niederlagen",
+        "bestScore": "Beste Punktzahl",
+        "pongStatsLink": "Mehr Pong-Statistiken",
+        "tetrisStatsLink": "Mehr Tetris-Statistiken"
+      },
+      "friendList": {
+        "title": "Meine Freunde",
+        "back": "Zurück zum Profil",
+        "username": "Benutzernamen eingeben",
+        "add": "Zur Freundesliste hinzufügen",
+        "view": "Profil anzeigen",
+        "remove": "Entfernen",
+        "prev": "Zurück",
+        "next": "Weiter",
+        "noFriends": "Sie haben keine Freunde"
+      },
+      "friendProfile": {
+        "back": "Zurück",
+        "connected": "Online",
+        "disconnected": "Offline",
+        "friendRemove": "Entfernen"
+      },
+      "pongStats": {
+        "title": "Pong-Verlauf",
+        "back": "Zurück zum Profil",
+        "ratio": "Verhältnis 83%",
+        "prev": "Zurück",
+        "next": "Weiter",
+        "noStats": "Sie haben keine Pong-Spiele"
+      },
+      "tetrisStats": {
+        "title": "Tetris-Verlauf",
+        "back": "Zurück zum Profil",
+        "bestScore": "Beste Punktzahl: 1.564.330 Pkt",
+        "linkName": "»»»",
+        "prev": "Zurück",
+        "next": "Weiter",
+        "noStats": "Sie haben keine Tetris-Spiele"
+      },
+      "tetrisStatsDetail": {
+        "title": "Tetris-Statistik-Details",
+        "back": "Zurück zum Profil",
+        "text": "Der Teufel steckt im Detail"
+      },
+      "avatar": {
+        "title": "Avatar-Auswahl",
+        "text": "Avatar-Auswahl",
+        "back": "Zurück zum Profil",
+        "ok": "OK",
+        "cancel": "Abbrechen",
+        "uploadTitle": "Bild hochladen",
+        "uploadLink": "Datei auswählen"
+      },
+      "edit": {
+        "choseUsername": "Benutzernamen ändern",
+        "chosePassword": "Passwort ändern",
+        "editUsername": {
+            "title": "Profil bearbeiten",
+            "text": "Benutzername",
+            "previous": "Vorherigen Benutzernamen eingeben",
+            "new": "Neuen Benutzernamen eingeben",
+            "sameError": "Ihr neuer Benutzername ist identisch mit dem alten!",
+            "previousError": "Ihr vorheriger Benutzername ist falsch!",
+            "submit": "Bestätigen",
+            "cancel": "Abbrechen"
+        },
+        "editPassword": {
+            "title": "Profil bearbeiten",
+            "text": "Passwort",
+            "previous": "Vorheriges Passwort eingeben",
+            "new": "Neues Passwort eingeben",
+            "confirm": "Neues Passwort bestätigen",
+            "submit": "Bestätigen",
+            "cancel": "Abbrechen",
+            "confirmError": "Passwörter stimmen nicht überein.",
+            "sameError": "Ihr neues Passwort ist identisch mit dem alten!",
+            "previousError": "Ihr vorheriges Passwort ist falsch!"
+        }
+      }
+    },
+    "pong": {
+      "logo": {
+        "title": "Pong",
+        "subtitle": "Das klassische Tischtennisspiel"
+      },
+      "nav": {
+        "title": "Pong",
+        "solo": "Solo",
+        "versus": "Gegen",
+        "tournament": "Turnier",
+        "settings": "Einstellungen",
+        "home": "Zurück"
+      },
+      "solo": {
+        "title": "Pong Solo",
+        "solo": "Lokales Spiel",
+        "bot": "Spiel gegen Bot",
+        "back": "Zurück"
+      },
+      "versus": {
+        "title": "Pong Gegen",
+        "join": "Öffentliches Spiel",
+        "private": "Privates Spiel erstellen",
+        "joinPrivRoom": "Privates Spiel",
+        "spectate": "Zuschauermodus",
+        "back": "Zurück"
+      },
+      "tournament": {
+        "title": "Pong Turnier",
+        "create": "Erstellen",
+        "play": "Spielen",
+        "back": "Zurück"
+      },
+      "modales": {
+        "back": "Zurück",
+        "joinTitle": "Spiel beitreten",
+        "joinText": "Warten auf Gegner",
+        "specRoomTitle": "Zuschauermodus Info",
+        "specRoomText1": "Raum Info:",
+        "specRoomText2": "Raum Nummer:",
+        "specRoomButton": "Spiel zuschauen",
+        "tournamentInfoTitle": "Pong Turnier",
+        "tournamentInfoName": "Name:",
+        "tournamentInfoNumber": "Id:",
+        "tournamentInfoStarted": "Das Turnier ist geschlossen.",
+        "tournamentInfoNotStarted": "Das Turnier ist offen.",
+        "tournamentInfoJoin": "Turnier beitreten",
+        "tournamentListTitle": "Turnierliste",
+        "versusCreateTitle": "Privates Gegen",
+        "versusCreateText": "Einladungscode:",
+        "versusCreateCopy": "Kopieren",
+        "versusJoinTitle": "Privates Spiel beitreten",
+        "versusJoinText": "Einladungscode eingeben",
+        "versusJoinSubmit": "Beitreten",
+        "versusListTitle": "Spieleliste",
+        "versusListEmpty": "Keine Spiele verfügbar",
+        "tournamentList2Title": "Turnierliste",
+        "tournamentList2Text": "Keine Turniere verfügbar",
+        "tournamentCreateTitle": "Turnier erstellen",
+        "tournamentCreateText": "Turniername eingeben",
+        "tournamentCreateSubmit": "Erstellen",
+        "tournamentEndTitle": "Turnier beendet",
+        "tournamentEndWinner": " hat das Turnier gewonnen!",
+        "tournamentFoundTitle": "Ihr Turnier",
+        "tournamentFoundStart": "Turnier starten",
+        "tournamentFoundShuffle": "Baum mischen",
+        "tournamentFoundQuit": "Turnier verlassen",
+        "tournamentFoundWait": "Warten auf nächstes Spiel",
+        "tournamentJoinConfirm": "Spiel beitreten",
+        "tournamentJoinConfirmText": "Sie haben einen Gegner!",
+        "tournamentJoinConfirmStart": "Spielen!",
+        "tournamentJoinConfirmTimer": "Verbleibende Zeit",
+        "SettingsTitle": "Einstellungen"
+      }
+    },
+    "tetris": {
+      "refreshConfirmation": "Sind Sie sicher, dass Sie die Seite verlassen möchten?",
+      "logo": {
+        "title": "Tetris",
+        "subtitle": "Das legendäre Puzzlespiel"
+      },
+      "nav": {
+        "title": "Tetris",
+        "solo": "Solo",
+        "versus": "Gegen",
+        "join": "Spieleliste",
+        "create": "Spiel erstellen",
+        "settings": "Einstellungen",
+        "home": "Zurück"
+      },
+      "settings": {
+        "title": "Tetris Einstellungen",
+        "back": "Zurück",
+        "mino": {
+          "title": "Tetriminos",
+          "name":[
+              "Stil 1",
+              "Stil 2",
+              "Stil 3",
+              "Stil 4",
+              "Stil 5",
+              "Stil 6",
+              "Stil 7",
+              "Stil 8"
+            ],
+            "select": 3,
+            "nb": 8
+        },
+        "bkg": {
+          "title": "Hintergrund",
+          "name":[
+            "Hintergrund 1",
+            "Hintergrund 2",
+            "Hintergrund 3",
+            "Hintergrund 4",
+            "Hintergrund 5",
+            "Hintergrund 6"
+          ],
+          "select": 3,
+          "nb": 6
+        },
+        "music": {
+          "title": "Musik",
+          "name":[
+            "Musik 1",
+            "Musik 2",
+            "Musik 3",
+            "Musik 4",
+            "Musik 5",
+            "Musik 6"
+          ],
+          "select": 3,
+          "nb": 6
+        },
+        "key": {
+          "title": "Tasten",
+          "role": "Aktion",
+          "keys": "Tasten",
+          "moveLeft": "Links",
+          "moveRight": "Rechts",
+          "rotateClockwise": "Drehen",
+          "rotateCounterclockwise": "Gegen drehen",
+          "rotate180": "180° Drehung",
+          "hardDrop": "Platzieren",
+          "softDrop": "Runter",
+          "hold": "Halten",
+          "forfeit": "Aufgeben"
+        },
+        "validate": "Bestätigen",
+        "keyChange": "Taste drücken"
+      },
+      "board": {
+        "score": "Punktzahl",
+        "level": "Level",
+        "lines": "Linien",
+        "next": "Weiter",
+        "pause": "Pause",
+        "resume": "Fortsetzen",
+        "quit": "Beenden",
+        "gameOver": "Spiel vorbei",
+        "newGame": "Neues Spiel"
+      },
+      "createMultiplayerRoom": {
+        "title": "Raum erstellen",
+        "back": "Zurück",
+        "copyCode": "kopieren",
+        "start": "Starten",
+        "nbPlayers": "Teilnehmer",
+        "settingsTitle": "Einstellungen",
+        "isPrivate": "Privat",
+        "isVersus": "Gegen",
+        "showShadow": "Schatten anzeigen",
+        "showBags": "Tasche anzeigen",
+        "holdAllowed": "Halten erlauben",
+        "showHold": "Halten anzeigen",
+        "infiniteHold": "Unendliches Halten",
+        "infiniteMovement": "Unendliche Bewegung",
+        "lockTime": "Verriegelungszeit (ms)",
+        "spawnARE": "Spawn ARE",
+        "softDropAmp": "Weicher Fall-Multiplikator",
+        "level": "Startlevel",
+        "isLeveling": "Progressive Level"
+      },
+      "displayMultiplayerRoom": {
+        "title": "Tetris Räume",
+        "back": "Zurück",
+        "codeTitle": "Privat",
+        "codeLabel": "Raum-Code",
+        "codeSubmit": "Beitreten",
+        "listTitle": "Öffentlich",
+        "refresh": "aktualisieren",
+        "noList": "Keine Spiele verfügbar",
+        "join": " » Beitreten"
+      }
+    }
+},
+"es": {
+    "modales": {
+      "signin": {
+        "title": "Inmanencia",
+        "text": "Te ofrecemos dos juegos, en dos salas, con dos ambientes diferentes.<br>A la izquierda Pong para jugar en solitario, contra nuestra IA, en multijugador o en torneo.<br>A la derecha Tetris está disponible en solitario o multijugador.",
+        "username": "Nombre de usuario",
+        "password": "Contraseña",
+        "enter": "Entrar",
+        "noAccount": "¿No tienes cuenta?",
+        "register": "¡Regístrate!"
+      },
+      "signup": {
+        "title": "Registro",
+        "text": "¡Regístrate!",
+        "username": "Nombre de usuario",
+        "password": "Contraseña",
+        "passwordConfirm": "Confirmar contraseña",
+        "enter": "Continuar"
+      },
+      "profile": {
+        "username": "B3n05",
+        "userEdit": "Editar",
+        "deconect": "Desconectar",
+        "languageTitle": "Idioma",
+        "friendList": "Amigos",
+        "friendListLink": "Ver tus amigos",
+        "winrate": "Ratio",
+        "victories": "Victorias",
+        "defeats": "Derrotas",
+        "bestScore": "Mejor puntuación",
+        "pongStatsLink": "Ver más estadísticas de Pong",
+        "tetrisStatsLink": "Ver más estadísticas de Tetris"
+      },
+      "friendList": {
+        "title": "Mis amigos",
+        "back": "Volver al perfil",
+        "username": "Introduce un nombre de usuario",
+        "add": "Añadir a mi lista de amigos",
+        "view": "ver perfil",
+        "remove": "Eliminar",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "noFriends": "No tienes amigos"
+      },
+      "friendProfile": {
+        "back": "Volver",
+        "connected": "Conectado",
+        "disconnected": "Desconectado",
+        "friendRemove": "Eliminar"
+      },
+      "pongStats": {
+        "title": "Historial de Pong",
+        "back": "Volver al perfil",
+        "ratio": "Ratio 83%",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "noStats": "No tienes partidas de Pong"
+      },
+      "tetrisStats": {
+        "title": "Historial de Tetris",
+        "back": "Volver al perfil",
+        "bestScore": "Mejor puntuación: 1.564.330 pts",
+        "linkName": "»»»",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "noStats": "No tienes partidas de Tetris"
+      },
+      "tetrisStatsDetail": {
+        "title": "Detalles de estadísticas de Tetris",
+        "back": "Volver al perfil",
+        "text": "El diablo está en los detalles"
+      },
+      "avatar": {
+        "title": "Selección de avatar",
+        "text": "Selección de avatar",
+        "back": "Volver al perfil",
+        "ok": "ok",
+        "cancel": "cancelar",
+        "uploadTitle": "Subir una imagen",
+        "uploadLink": "Seleccionar archivo"
+      },
+      "edit": {
+        "choseUsername": "Cambiar nombre de usuario",
+        "chosePassword": "Cambiar contraseña",
+        "editUsername": {
+            "title": "Editar perfil",
+            "text": "Nombre de usuario",
+            "previous": "Introduce tu nombre de usuario anterior",
+            "new": "Introduce tu nuevo nombre de usuario",
+            "sameError": "¡Tu nuevo nombre de usuario es idéntico al anterior!",
+            "previousError": "¡Tu nombre de usuario anterior es incorrecto!",
+            "submit": "Enviar",
+            "cancel": "Cancelar"
+        },
+        "editPassword": {
+            "title": "Editar perfil",
+            "text": "Contraseña",
+            "previous": "Introduce tu contraseña anterior",
+            "new": "Introduce tu nueva contraseña",
+            "confirm": "Confirma tu nueva contraseña",
+            "submit": "Enviar",
+            "cancel": "Cancelar",
+            "confirmError": "Las contraseñas no coinciden.",
+            "sameError": "¡Tu nueva contraseña es idéntica a la anterior!",
+            "previousError": "¡Tu contraseña anterior es incorrecta!"
+        }
+      }
+    },
+    "pong": {
+      "logo": {
+        "title": "Pong",
+        "subtitle": "El clásico juego de tenis de mesa"
+      },
+      "nav": {
+        "title": "Pong",
+        "solo": "Solo",
+        "versus": "Versus",
+        "tournament": "Torneo",
+        "settings": "Ajustes",
+        "home": "Volver"
+      },
+      "solo": {
+        "title": "Pong Solo",
+        "solo": "Partida local",
+        "bot": "Partida contra Bot",
+        "back": "Volver"
+      },
+      "versus": {
+        "title": "Pong Versus",
+        "join": "Partida pública",
+        "private": "Crear partida privada",
+        "joinPrivRoom": "Partida privada",
+        "spectate": "Modo espectador",
+        "back": "Volver"
+      },
+      "tournament": {
+        "title": "Torneo de Pong",
+        "create": "Crear",
+        "play": "Jugar",
+        "back": "Volver"
+      },
+      "modales": {
+        "back": "Volver",
+        "joinTitle": "Unirse a partida",
+        "joinText": "Esperando oponente",
+        "specRoomTitle": "Información modo espectador",
+        "specRoomText1": "Info sala:",
+        "specRoomText2": "Número sala:",
+        "specRoomButton": "Ver partida",
+        "tournamentInfoTitle": "Torneo de Pong",
+        "tournamentInfoName": "Nombre:",
+        "tournamentInfoNumber": "Id:",
+        "tournamentInfoStarted": "El torneo está cerrado.",
+        "tournamentInfoNotStarted": "El torneo está abierto.",
+        "tournamentInfoJoin": "Unirse al torneo",
+        "tournamentListTitle": "Lista de torneos",
+        "versusCreateTitle": "Versus privado",
+        "versusCreateText": "Código de invitación:",
+        "versusCreateCopy": "Copiar",
+        "versusJoinTitle": "Unirse a versus privado",
+        "versusJoinText": "Introduce tu código de invitación",
+        "versusJoinSubmit": "Unirse",
+        "versusListTitle": "Lista de partidas",
+        "versusListEmpty": "No hay partidas disponibles",
+        "tournamentList2Title": "Lista de torneos",
+        "tournamentList2Text": "No hay torneos disponibles",
+        "tournamentCreateTitle": "Crear torneo",
+        "tournamentCreateText": "Introduce el nombre del torneo",
+        "tournamentCreateSubmit": "Crear",
+        "tournamentEndTitle": "Torneo terminado",
+        "tournamentEndWinner": " ha ganado el torneo!",
+        "tournamentFoundTitle": "Tu torneo",
+        "tournamentFoundStart": "Iniciar torneo",
+        "tournamentFoundShuffle": "Mezclar árbol",
+        "tournamentFoundQuit": "Salir del torneo",
+        "tournamentFoundWait": "Esperando siguiente partida",
+        "tournamentJoinConfirm": "Unirse a partida",
+        "tournamentJoinConfirmText": "¡Tienes un oponente!",
+        "tournamentJoinConfirmStart": "¡Jugar!",
+        "tournamentJoinConfirmTimer": "Tiempo restante",
+        "SettingsTitle": "Ajustes"
+      }
+    },
+    "tetris": {
+      "refreshConfirmation": "¿Estás seguro de que quieres salir de la página?",
+      "logo": {
+        "title": "Tetris",
+        "subtitle": "El legendario juego de puzzle"
+      },
+      "nav": {
+        "title": "Tetris",
+        "solo": "Solo",
+        "versus": "Versus",
+        "join": "Lista de partidas",
+        "create": "Crear partida",
+        "settings": "Ajustes",
+        "home": "Volver"
+      },
+      "settings": {
+        "title": "Ajustes de Tetris",
+        "back": "Volver",
+        "mino": {
+          "title": "Tetriminos",
+          "name":[
+              "Estilo 1",
+              "Estilo 2",
+              "Estilo 3",
+              "Estilo 4",
+              "Estilo 5",
+              "Estilo 6",
+              "Estilo 7",
+              "Estilo 8"
+            ],
+            "select": 3,
+            "nb": 8
+        },
+        "bkg": {
+          "title": "Fondo",
+          "name":[
+            "Fondo 1",
+            "Fondo 2",
+            "Fondo 3",
+            "Fondo 4",
+            "Fondo 5",
+            "Fondo 6"
+          ],
+          "select": 3,
+          "nb": 6
+        },
+        "music": {
+          "title": "Música",
+          "name":[
+            "Música 1",
+            "Música 2",
+            "Música 3",
+            "Música 4",
+            "Música 5",
+            "Música 6"
+          ],
+          "select": 3,
+          "nb": 6
+        },
+        "key": {
+          "title": "Teclas",
+          "role": "acción",
+          "keys": "teclas",
+          "moveLeft": "Izquierda",
+          "moveRight": "Derecha",
+          "rotateClockwise": "Rotar",
+          "rotateCounterclockwise": "Rotar al revés",
+          "rotate180": "Rotación 180°",
+          "hardDrop": "Colocar",
+          "softDrop": "Abajo",
+          "hold": "Mantener",
+          "forfeit": "Rendirse"
+        },
+        "validate": "Validar",
+        "keyChange": "Presiona la tecla"
+      },
+      "board": {
+        "score": "Puntuación",
+        "level": "Nivel",
+        "lines": "Líneas",
+        "next": "Siguiente",
+        "pause": "Pausa",
+        "resume": "Reanudar",
+        "quit": "Salir",
+        "gameOver": "Game over",
+        "newGame": "Nueva partida"
+      },
+      "createMultiplayerRoom": {
+        "title": "Crear sala",
+        "back": "Volver",
+        "copyCode": "copiar",
+        "start": "Iniciar",
+        "nbPlayers": "participante(s)",
+        "settingsTitle": "Ajustes",
+        "isPrivate": "Privado",
+        "isVersus": "Versus",
+        "showShadow": "Mostrar sombra",
+        "showBags": "Mostrar bolsa",
+        "holdAllowed": "Permitir mantener",
+        "showHold": "Mostrar mantener",
+        "infiniteHold": "Mantener infinito",
+        "infiniteMovement": "Movimiento infinito",
+        "lockTime": "Tiempo de bloqueo (ms)",
+        "spawnARE": "Spawn ARE",
+        "softDropAmp": "Multiplicador de caída suave",
+        "level": "Nivel inicial",
+        "isLeveling": "Niveles progresivos"
+      },
+      "displayMultiplayerRoom": {
+        "title": "Salas de Tetris",
+        "back": "Volver",
+        "codeTitle": "Privada",
+        "codeLabel": "Código de sala",
+        "codeSubmit": "Unirse",
+        "listTitle": "Pública",
+        "refresh": "actualizar",
+        "noList": "No hay partidas disponibles",
+        "join": " » Unirse"
+      }
+    }
+}
 }
 

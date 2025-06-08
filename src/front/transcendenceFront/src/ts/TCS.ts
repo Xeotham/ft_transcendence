@@ -68,7 +68,6 @@ export const TCS = {
     pongNavButton : "font-sixtyfour text-[28px] text-lime-50 bg-yellow-600 hover:bg-amber-400 px-0 py-0 me-0 mb-[5px] px-[5px] px-[10px] transition-all duration-200 ease-in-out hover:scale-110 shadow-xl/30 hover:shadow-xl/50 cursor-pointer hover:cursor-pointer",
 
     // TETRIS
-
     tetrisLogo : "font-sixtyfour text-[120px] flex items-center justify-center h-full w-full text-yellow-600 text-shadow-lg text-shadow-stone-900/40",
     tetrisTitre : "font-sixtyfour text-[42px] flex items-center justify-center text-yellow-600 text-shadow-lg text-shadow-stone-900/40",
     tetrisNav0 : "flex flex-col items-center justify-center",//fade-in-up

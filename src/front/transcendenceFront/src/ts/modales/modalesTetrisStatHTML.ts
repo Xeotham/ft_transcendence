@@ -98,20 +98,26 @@ export const modaleTetrisStatHTML = (page: number) => {
 	tetrisStatPage = page;
 
 	let TetrisStatHTML = `
-  <div id="TetrisStatsTitle" class="${TCS.modaleTitre}">
-  ${imTexts.modalesTetrisStatsTitle}</div>
+	<div id="TetrisStatsTitle" class="${TCS.modaleTitre}">
+	${imTexts.modalesTetrisStatsTitle}</div>
 
-  <div id="TetrisStatsBack" class="${TCS.modaleTexteLink}">
-    ${imTexts.modalesTetrisStatsBack}</div>
+	<div id="TetrisStatsBack" class="${TCS.modaleTexteLink}">
+		${imTexts.modalesTetrisStatsBack}</div>
 
-  <div class="h-[30px]"></div>
-  `;
+		<div class="h-[30px]"></div>
+	`;
 
+	if (tetrisHistory.length > 0) {
+		//TetrisStatHTML += `<div id="donut-chart"></div>`;
+		//TetrisStatHTML += `<div class="h-[20px]"></div>`;
+	} else {
+		TetrisStatHTML += `<div class="${TCS.modaleTexteGris}">${imTexts.modalesTetrisStatsNoStats}</div>`;
+	}
 	TetrisStatHTML += getModaleTetrisStatListHTML(tetrisStatPage);
 
 	TetrisStatHTML += `
     <div class="h-[30px]"></div>
-  `;
+  	`;
 
 	return TetrisStatHTML;
 }
@@ -160,7 +166,8 @@ export const modaleTetrisStatLineEvents = () => {
 
 	for (let i = 0; i < tetrisListLength && tetrisHistory[(tetrisStatPage * tetrisListLength) + i]; i++) {
 		const tetrisStatsLine = document.getElementById(`tetrisStatLine${i}`) as HTMLAnchorElement;
-		tetrisStatsLine?.addEventListener('click', () => {
+		tetrisStatsLine?.addEventListener('click', (e: Event) => {
+			e.stopPropagation();
 			let index = Number(tetrisStatsLine.id.slice(14, tetrisStatsLine.id.length));
 			index += (tetrisStatPage * tetrisListLength);
 			indexGame = index;
@@ -173,7 +180,8 @@ export const modaleFriendTetrisStatLineEvents = () => {
 
 	for (let i = 0; i < tetrisListLength && tetrisHistory[(tetrisStatPage * tetrisListLength) + i]; i++) {
 		const tetrisStatsLine = document.getElementById(`tetrisStatLine${i}`) as HTMLAnchorElement;
-		tetrisStatsLine?.addEventListener('click', () => {
+		tetrisStatsLine?.addEventListener('click', (e: Event) => {
+			e.stopPropagation();
 			let index = Number(tetrisStatsLine.id.slice(14, tetrisStatsLine.id.length));
 			index += (tetrisStatPage * tetrisListLength);
 			indexGame = index;
@@ -192,11 +200,13 @@ export const modaleTetrisStatEvents = () => {
 		return;
 
 
-	TetrisStatsBack.addEventListener('click', () => {
+	TetrisStatsBack.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.PROFILE);
 	});
 
-	TetrisStatsPrev.addEventListener('click', () => {
+	TetrisStatsPrev.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (tetrisStatPage <= 0 || !modale.content)
 			return;
 		modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
@@ -205,7 +215,8 @@ export const modaleTetrisStatEvents = () => {
 		modaleTetrisStatLineEvents();
 	});
 
-	TetrisStatsNext.addEventListener('click', () => {
+	TetrisStatsNext.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
 			return;
 		if ((tetrisStatPage + 1) * tetrisListLength < tetrisHistory.length)
@@ -228,10 +239,12 @@ export const modaleFriendTetrisStatEvents = () => {
 		return;
 
 
-	TetrisStatsBack?.addEventListener('click', () => {
+	TetrisStatsBack?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.FRIEND_PROFILE);
 	});
-	TetrisStatsPrev?.addEventListener('click', () => {
+	TetrisStatsPrev?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (tetrisStatPage <= 0 || !modale.content)
 			return;
 		modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
@@ -240,7 +253,8 @@ export const modaleFriendTetrisStatEvents = () => {
 		modaleFriendTetrisStatLineEvents();
 	});
 
-	TetrisStatsNext?.addEventListener('click', () => {
+	TetrisStatsNext?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
 			return;
 		if ((tetrisStatPage + 1) * tetrisListLength < tetrisHistory.length)

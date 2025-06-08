@@ -201,7 +201,7 @@ export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
 	const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
 	if (!bkgModale)
 		return;
-
+	//showModaleProfile ??
 	if (modaleType === ModaleType.SIGNIN || modaleType === ModaleType.SIGNUP || modaleType === ModaleType.NONE) {
 		bkgModale.removeEventListener('click', () => {
 			// TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
