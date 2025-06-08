@@ -96,7 +96,6 @@ const   sortHistory = (playerUsername: string, history: { gameId: number, player
 export const  loadTetrisStat = async (playerUsername: string) => {
 	const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
 	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e :any)  => e.players[0].type === 'tetris');
-	console.log(history)
 	tetrisGames = sortHistory(playerUsername, history);
 	const newHistory: tetrisStats[] = [];
 	history.forEach((game) => {
