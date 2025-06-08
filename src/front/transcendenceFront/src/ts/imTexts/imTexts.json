@@ -201,45 +201,13 @@
         "title": "Paramètres Tetris",
         "back": "Retour",
         "mino": {
-          "title": "Tetriminos",
-          "name":[
-              "Style 1",
-              "Style 2",
-              "Style 3",
-              "Style 4",
-              "Style 5",
-              "Style 6",
-              "Style 7",
-              "Style 8"
-            ],
-            "select": 3,
-            "nb": 8
+          "title": "Tetriminos"
         },
         "bkg": {
-          "title": "Fond d'écran",
-          "name":[
-            "Background 1",
-            "Background 2",
-            "Background 3",
-            "Background 4",
-            "Background 5",
-            "Background 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Fond d'écran"
         },
         "music": {
-          "title": "Musique",
-          "name":[
-            "Music 1",
-            "Music 2",
-            "Music 3",
-            "Music 4",
-            "Music 5",
-            "Music 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Musique"
         },
         "key": {
           "title": "Touches",
@@ -507,45 +475,13 @@
         "title": "Tetris Settings",
         "back": "Back",
         "mino": {
-          "title": "Tetriminos",
-          "name":[
-              "Style 1",
-              "Style 2",
-              "Style 3",
-              "Style 4",
-              "Style 5",
-              "Style 6",
-              "Style 7",
-              "Style 8"
-            ],
-            "select": 3,
-            "nb": 8
+          "title": "Tetriminos"
         },
         "bkg": {
-          "title": "Background",
-          "name":[
-            "Background 1",
-            "Background 2",
-            "Background 3",
-            "Background 4",
-            "Background 5",
-            "Background 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Background"
         },
         "music": {
-          "title": "Music",
-          "name":[
-            "Music 1",
-            "Music 2",
-            "Music 3",
-            "Music 4",
-            "Music 5",
-            "Music 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Music"
         },
         "key": {
           "title": "Keys",
@@ -811,45 +747,13 @@
         "title": "Tetris Einstellungen",
         "back": "Zurück",
         "mino": {
-          "title": "Tetriminos",
-          "name":[
-              "Stil 1",
-              "Stil 2",
-              "Stil 3",
-              "Stil 4",
-              "Stil 5",
-              "Stil 6",
-              "Stil 7",
-              "Stil 8"
-            ],
-            "select": 3,
-            "nb": 8
+          "title": "Tetriminos"
         },
         "bkg": {
-          "title": "Hintergrund",
-          "name":[
-            "Hintergrund 1",
-            "Hintergrund 2",
-            "Hintergrund 3",
-            "Hintergrund 4",
-            "Hintergrund 5",
-            "Hintergrund 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Hintergrund"
         },
         "music": {
-          "title": "Musik",
-          "name":[
-            "Musik 1",
-            "Musik 2",
-            "Musik 3",
-            "Musik 4",
-            "Musik 5",
-            "Musik 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Musik"
         },
         "key": {
           "title": "Tasten",
@@ -1115,45 +1019,13 @@
         "title": "Ajustes de Tetris",
         "back": "Volver",
         "mino": {
-          "title": "Tetriminos",
-          "name":[
-              "Estilo 1",
-              "Estilo 2",
-              "Estilo 3",
-              "Estilo 4",
-              "Estilo 5",
-              "Estilo 6",
-              "Estilo 7",
-              "Estilo 8"
-            ],
-            "select": 3,
-            "nb": 8
+          "title": "Tetriminos"
         },
         "bkg": {
-          "title": "Fondo",
-          "name":[
-            "Fondo 1",
-            "Fondo 2",
-            "Fondo 3",
-            "Fondo 4",
-            "Fondo 5",
-            "Fondo 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Fondo"
         },
         "music": {
-          "title": "Música",
-          "name":[
-            "Música 1",
-            "Música 2",
-            "Música 3",
-            "Música 4",
-            "Música 5",
-            "Música 6"
-          ],
-          "select": 3,
-          "nb": 6
+          "title": "Música"
         },
         "key": {
           "title": "Teclas",
