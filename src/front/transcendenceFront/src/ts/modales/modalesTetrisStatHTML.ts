@@ -270,8 +270,7 @@ export const modaleFriendTetrisStatEvents = () => {
 		e.stopPropagation();
 		modaleDisplay(ModaleType.FRIEND_PROFILE);
 	});
-	TetrisStatsPrev?.addEventListener('click', (e: Event) => {
-		e.stopPropagation();
+	TetrisStatsPrev?.addEventListener('click', () => {
 		if (tetrisStatPage <= 0 || !modale.content)
 			return;
 		modale.content.innerHTML = modaleTetrisStatHTML(--tetrisStatPage);
@@ -280,7 +279,7 @@ export const modaleFriendTetrisStatEvents = () => {
 		modaleFriendTetrisStatLineEvents();
 	});
 
-	TetrisStatsNext?.addEventListener('click', (e: Event) => {
+	TetrisStatsNext?.addEventListener('click', (e) => {
 		e.stopPropagation();
 		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
 			return;

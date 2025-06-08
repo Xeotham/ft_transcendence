@@ -64,7 +64,8 @@ export const modaleSignUpEvents = () => {
 	if (!signupForm)
 		return;
 
-	signupBack.addEventListener('click', () => {
+	signupBack.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.SIGNIN);
 	});
 	signupForm.addEventListener('submit', (event: SubmitEvent) => {
@@ -81,11 +82,8 @@ export const modaleSignUpEvents = () => {
 
 		const data = {username: username, password: password};
 
-		// console.log(data);
 		postToApi(`http://${address}/api/user/register`, data)
 			.then(async () => {
-				// console.log("User registered successfully");
-				// alert("Registered successfully!");
 				const info = await postToApi(`http://${address}/api/user/login`, data);
 				user.setToken(info.token);
 				user.setUsername(info.user.username);

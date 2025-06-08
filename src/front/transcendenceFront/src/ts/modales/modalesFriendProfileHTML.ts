@@ -109,12 +109,14 @@ export const modaleFriendProfileEvents = () => {
   const friendPongStats = document.getElementById('modaleFriendPongStatsLink') as HTMLAnchorElement;
   const friendTetrisStats = document.getElementById('modaleFriendTetrisStatsLink') as HTMLAnchorElement;
 
-  friendProfileBack?.addEventListener('click', () => {
+  friendProfileBack?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     friendList.setActualFriend(null);
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  friendProfileFriendRemove?.addEventListener('click', async () => {
+  friendProfileFriendRemove?.addEventListener('click', async (e: Event) => {
+    e.stopPropagation();
     try {
       await postToApi(`http://${address}/api/user/delete-friend`, { username: user.getUsername(), usernameFriend: friendList.getActualFriend()?.username });
     }
@@ -126,11 +128,13 @@ export const modaleFriendProfileEvents = () => {
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  friendPongStats?.addEventListener('click', () => {
+  friendPongStats?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.FRIEND_PONG_STATS);
   })
 
-  friendTetrisStats?.addEventListener('click', () => {
+  friendTetrisStats?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.FRIEND_TETRIS_STATS);
   });
 

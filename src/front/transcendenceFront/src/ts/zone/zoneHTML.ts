@@ -115,7 +115,8 @@ export const setZoneAvatar = (show: boolean = true) => {
       });
     } else {
       EL.zoneAvatar.classList.remove(TCS.avatarHidden);
-      EL.zoneAvatar.addEventListener('click', () => {
+      EL.zoneAvatar.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
         modaleDisplay(ModaleType.PROFILE);
       });
     }
