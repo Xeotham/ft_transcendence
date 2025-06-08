@@ -57,25 +57,35 @@ interface GameUserInfo {
 
 
 const socketClose = async (type: string) => {
-	console.log("WebSocket connection closed.");
-	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
-	postToApi(`http://${address}/api/tetris/quitRoom`, { argument: "quit", gameId: tetrisGameInformation.getGameId(),
-		username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode() });
-	if (type === "unload")
-		postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
-	tetrisGameInformation.getSocket()?.close();
-	tetrisGameInformation.setSocket(null);
-	tetrisGameInformation.setGameId(-1);
-	tetrisGameInformation.setGame(null);
-	tetrisGameInformation.setRoomOwner(false);
-	if (tetrisGameInformation.getRoomCode() !== "")
-		console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
-	tetrisGameInformation.setRoomCode("");
-	tetrisGameInformation.resetSettings();
-	if (zone.state === "TETRIS")
-		loadTetrisPage("idle");
-	bgmPlayer.stop();
-	resetSocket("game");
+	try {
+		console.log("WebSocket connection closed.");
+		postToApi(`http://${address}/api/tetris/forfeit`, {
+			argument: "forfeit",
+			gameId: tetrisGameInformation.getGameId()
+		}).catch();
+		postToApi(`http://${address}/api/tetris/quitRoom`, {
+			argument: "quit", gameId: tetrisGameInformation.getGameId(),
+			username: user.getUsername(), roomCode: tetrisGameInformation.getRoomCode()
+		}).catch();
+		if (type === "unload")
+			postToApi(`http://${address}/api/user/disconnect-user`, {username: user.getUsername()}).catch();
+		tetrisGameInformation.getSocket()?.close();
+		tetrisGameInformation.setSocket(null);
+		tetrisGameInformation.setGameId(-1);
+		tetrisGameInformation.setGame(null);
+		tetrisGameInformation.setRoomOwner(false);
+		if (tetrisGameInformation.getRoomCode() !== "")
+			console.log("Leaving room : " + tetrisGameInformation.getRoomCode());
+		tetrisGameInformation.setRoomCode("");
+		tetrisGameInformation.resetSettings();
+		if (zone.state === "TETRIS")
+			loadTetrisPage("idle");
+		bgmPlayer.stop();
+		resetSocket("game");
+	}
+	catch (error) {
+		return ;
+	}
 }
 
 const socketInit = (socket: WebSocket) => {
@@ -156,7 +166,7 @@ export const joinRoom = (roomCode: string) => {
 export const startRoom = () => {
 	if (!tetrisGameInformation.getRoomOwner())
 		return console.log("You are not the owner of the room");
-	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "start", gameId: 0, roomCode: tetrisGameInformation.getRoomCode() });
+	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "start", gameId: 0, roomCode: tetrisGameInformation.getRoomCode() }).catch();
 }
 
 const   btbEffect = (btb: string) => {
@@ -467,7 +477,7 @@ const   movePiece = (direction: string) => {
 	}
 
 	const   repeat = async () => {
-		postToApi(`http://${address}/api/tetris/movePiece`, { argument: arg, gameId: tetrisGameInformation.getGameId() });
+		postToApi(`http://${address}/api/tetris/movePiece`, { argument: arg, gameId: tetrisGameInformation.getGameId() }).catch();
 		if (tetrisGameInformation.getKeyFirstMove(direction)) {
 			tetrisGameInformation.setKeyFirstMove(direction, false);
 			tetrisGameInformation.setKeyTimeout(direction, new TimeoutKey(repeat, 150));
@@ -521,28 +531,28 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys?.getClockwiseRotate().toUpperCase():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "clockwise", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "clockwise", gameId: tetrisGameInformation.getGameId() }).catch();
 				return ;
 			case userKeys?.getCounterclockwise():
 			case userKeys?.getCounterclockwise().toLowerCase():
 			case userKeys?.getCounterclockwise().toUpperCase():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "counter-clockwise", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "counter-clockwise", gameId: tetrisGameInformation.getGameId() }).catch();
 				return ;
 			case userKeys?.getRotate180():
 			case userKeys?.getRotate180().toLowerCase():
 			case userKeys?.getRotate180().toUpperCase():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "180", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/rotatePiece`, { argument: "180", gameId: tetrisGameInformation.getGameId() }).catch();
 				return ;
 			case userKeys?.getHardDrop():
 			case userKeys?.getHardDrop().toLowerCase():
 			case userKeys?.getHardDrop().toUpperCase():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Hard", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Hard", gameId: tetrisGameInformation.getGameId() }).catch();
 				return ;
 			case userKeys?.getSoftDrop():
 			case userKeys?.getSoftDrop().toLowerCase():
@@ -550,7 +560,7 @@ const gameControllers = async (finish: boolean = false) => {
 				if (event.repeat || keyStates.softDrop)
 					return ;
 				keyStates.softDrop = true;
-				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Soft", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Soft", gameId: tetrisGameInformation.getGameId() }).catch();
 				return ;
 			case userKeys?.getHold():
 			case userKeys?.getHold().toLowerCase():
@@ -558,7 +568,7 @@ const gameControllers = async (finish: boolean = false) => {
 				// console.log("holding Piece.");
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}/api/tetris/holdPiece`, { argument: "hold", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/holdPiece`, { argument: "hold", gameId: tetrisGameInformation.getGameId() }).catch();
 				loadTetrisPage("board");
 				return ;
 			case userKeys?.getForfeit():
@@ -571,7 +581,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys?.getRetry().toUpperCase():
 				if (event.repeat)
 					return ;
-				postToApi(`http://${address}/api/tetris/retry`, { argument: "retry", gameId: tetrisGameInformation.getGameId() });
+				postToApi(`http://${address}/api/tetris/retry`, { argument: "retry", gameId: tetrisGameInformation.getGameId() }).catch();
 				return;
 		}
 	}
@@ -608,7 +618,7 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys?.getSoftDrop().toLowerCase():
 			case userKeys?.getSoftDrop().toUpperCase():
 				keyStates.softDrop = false;
-				return postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Normal", gameId: tetrisGameInformation.getGameId() });
+				return postToApi(`http://${address}/api/tetris/dropPiece`, { argument: "Normal", gameId: tetrisGameInformation.getGameId() }).catch();
 		}
 	}
 
@@ -630,6 +640,6 @@ const gameControllers = async (finish: boolean = false) => {
 }
 
 export const   forfeit = () => {
-	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() });
+	postToApi(`http://${address}/api/tetris/forfeit`, { argument: "forfeit", gameId: tetrisGameInformation.getGameId() }).catch();
 	hideZoneGame();
 }

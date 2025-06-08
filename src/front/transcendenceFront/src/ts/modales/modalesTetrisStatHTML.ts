@@ -94,20 +94,30 @@ const   sortHistory = (playerUsername: string, history: { gameId: number, player
 }
 
 export const  loadTetrisStat = async (playerUsername: string) => {
-	const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
-	const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e :any)  => e.players[0].type === 'tetris');
-	tetrisGames = sortHistory(playerUsername, history);
-	const newHistory: tetrisStats[] = [];
-	history.forEach((game) => {
-		if (!game.players.length) {
-			return;
-		}
-		const stat = formatTetrisStat(game, playerUsername);
-		if (stat) {
-			newHistory.push(stat);
-		}
-	})
-	tetrisHistory = newHistory.sort((a, b) => {return b.score - a.score; });
+	try {
+		const get: any = await getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
+		const history: {
+			gameId: number,
+			players: GameUserInfo[]
+		}[] = get.history.filter((e: any) => e.players[0].type === 'tetris');
+		tetrisGames = sortHistory(playerUsername, history);
+		const newHistory: tetrisStats[] = [];
+		history.forEach((game) => {
+			if (!game.players.length) {
+				return;
+			}
+			const stat = formatTetrisStat(game, playerUsername);
+			if (stat) {
+				newHistory.push(stat);
+			}
+		})
+		tetrisHistory = newHistory.sort((a, b) => {
+			return b.score - a.score;
+		});
+	}
+	catch (e) {
+		return ;
+	}
 }
 
 export const modaleTetrisStatHTML = (page: number) => {

@@ -13,25 +13,11 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 30s # Add a start period to allow the container time to initialize
+      start_period: 30s
     networks:
       transcendence:
     restart: always
     init: true
-
-#  portainer:
-#    image: portainer/portainer-ce:latest
-#    container_name: portainer
-#    ports:
-#      - "9000:9000"
-#      - "9443:9443"
-#    networks:
-#      transcendence:
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    restart: always
-#    init: true
-
   front:
     build:
       context: front
@@ -45,26 +31,14 @@ services:
     depends_on:
       back:
           condition: service_healthy
-    volumes:
-      - ./front/transcendenceFront:/app
+#    volumes:
+#      - ./front/transcendenceFront:/app
     networks:
       transcendence:
     restart: always
     init: true
 
 volumes:
-  back_volume:
-    driver: local
-    driver_opts:
-      type: none
-      device: ../.data/tmp_back
-      o: bind
-  front_volume:
-    driver: local
-    driver_opts:
-      type: none
-      device: ../.data/front
-      o: bind
   database_volume:
     driver: local
     driver_opts:

@@ -20,25 +20,38 @@ interface GameUserInfo
 }
 
 const pongWinRate = async () => {
-  const stats = await getFromApi(`http://${address}/api/user/get-stat?username=${user.getUsername()}`);
-  const victories: number = stats.stats.pongWin;
-  let defeats: number = stats.stats.pongLose;
-  return `${imTexts.modalesProfileWinrate}: ${victories} ${imTexts.modalesProfileVictories} / ${defeats} ${imTexts.modalesProfileDefeats}`;
+  try {
+    const stats = await getFromApi(`http://${address}/api/user/get-stat?username=${user.getUsername()}`);
+    const victories: number = stats.stats.pongWin;
+    let defeats: number = stats.stats.pongLose;
+    return `${imTexts.modalesProfileWinrate}: ${victories} ${imTexts.modalesProfileVictories} / ${defeats} ${imTexts.modalesProfileDefeats}`;
+  }
+  catch (error) {
+    return "Error fetching Pong stats";
+  }
 }
 
 const tetrisBestScore = async () => {
-  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e: any) => e.players[0].type === 'tetris');
-  if (!history.length)
-    return `${imTexts.modalesProfileBestScore}: No game played`;
-  let score: number = 0;
-  history.forEach((game) => {
-    game.players.forEach((player) => {
-      if (user.getUsername() === player.username && player.score > score)
-        score = player.score;
+  try {
+    const get: any = await getFromApi(`http://${address}/api/user/get-game-history?username=${user.getUsername()}`);
+    const history: {
+      gameId: number,
+      players: GameUserInfo[]
+    }[] = get.history.filter((e: any) => e.players[0].type === 'tetris');
+    if (!history.length)
+      return `${imTexts.modalesProfileBestScore}: No game played`;
+    let score: number = 0;
+    history.forEach((game) => {
+      game.players.forEach((player) => {
+        if (user.getUsername() === player.username && player.score > score)
+          score = player.score;
+      })
     })
-  })
-  return `${imTexts.modalesProfileBestScore}: ${score}pts`;
+    return `${imTexts.modalesProfileBestScore}: ${score}pts`;
+  }
+  catch (error) {
+    return "Error fetching Tetris stats";
+  }
 }
 
 

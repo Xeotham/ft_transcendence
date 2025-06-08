@@ -103,7 +103,6 @@ export const    postToApi = async (url: string, data: any) => {
 	{
 		let errorData = await fetched.json();
 		if (fetched.status === 401 && errorData.disconnect) {
-			console.log("Disconnecting user due to 401 error");
 			localStorage.clear();
 			user.resetUser();
 		}
@@ -130,7 +129,6 @@ export const    patchToApi = async (url: string, data: any) => {
 	{
 		const errorData = await fetched.json();
 		if (fetched.status === 401 && errorData.disconnect) {
-			console.log("Disconnecting user due to 401 error");
 			localStorage.clear();
 			user.resetUser();
 		}
@@ -151,10 +149,8 @@ export const    getFromApi = async (url: string) => {
 		}
 	});
 	if (!response.ok) {
-		console.error("Error:", ((await response.json()).message) || response.statusText);
 		const   errorData = await response.json();
 		if (response.status === 401 && errorData.disconnect) {
-			console.error("Disconnecting user due to 401 error");
 			localStorage.clear();
 			user.resetUser();
 		}
