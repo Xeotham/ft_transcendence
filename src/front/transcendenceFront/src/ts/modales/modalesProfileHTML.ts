@@ -7,6 +7,7 @@ import { getFromApi, postToApi, address, user, resetGamesSocket } from "../utils
 // @ts-ignore
 import  page from "page";
 import {friendList} from "./modalesFriendListHTML.ts";
+import {userKeys} from "../tetris/utils.ts";
 
 interface GameUserInfo
 {

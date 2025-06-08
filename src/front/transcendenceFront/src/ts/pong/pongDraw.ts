@@ -18,8 +18,6 @@ const   drawBackground = (ctx: CanvasRenderingContext2D, width: number, height: 
 		const x = (width - img.width) / 2;
 		const y = (height - img.height) / 2;
 		ctx.drawImage(img, x, y);
-		// TODO: discuss this with matheo
-		// ctx.drawImage(img, 0, 0, width, height);
 	}
 }
 
@@ -37,25 +35,35 @@ const   drawBall = (ctx: CanvasRenderingContext2D, coord: { x: number, y: number
 }
 
 const   drawScore = (ctx: CanvasRenderingContext2D, player1: { username: string, score: number }, player2: { username: string, score: number }, canvas: HTMLCanvasElement) => {
-	ctx.textAlign = "center";
-
-	const   writeText = (text: string, x: number, y: number) => {
-		ctx.font = pongTextureHandler.getFont()!;
+	const   writeText = (text: string, fontSize: number, x: number, y: number, align: CanvasTextAlign) => {
+		ctx.textAlign = align;
+		ctx.font = `${fontSize}px ${pongTextureHandler.getFont()!}`;
 		ctx.fillStyle = "black";
 		ctx.strokeText(text, x, y);
 		ctx.fillStyle = "white";
 		ctx.fillText(text, x, y);
 	}
-	const   player1Coord = { x: (canvas.width / 2) - 200, y: (canvas.height / 2) - (boardHeight / 2) - 30 };
-	const   player2Coord = { x: (canvas.width / 2) + 200, y: (canvas.height / 2) - (boardHeight / 2) - 30 };
+
+	const   checkUsernameLength = (username: string) => {
+		if (username.length > 9)
+			return username.slice(0, 9) + ".";
+		return username;
+	}
+
+	const   player1Coord = { x: (canvas.width / 2) - 400, y: (canvas.height / 2) - (boardHeight / 2) - 30 };
+	const   player2Coord = { x: (canvas.width / 2) + 400, y: (canvas.height / 2) - (boardHeight / 2) - 30 };
+	const   scoreCoord = { x: (canvas.width / 2), y: (canvas.height / 2) - (boardHeight / 2) - 30 };
 
 	if (pongGameInfo.getRoom()?.getPlayer() == "P2") {
-		writeText(`${player1.username}: ${player1.score}`, player2Coord.x, player2Coord.y);
-		writeText(`${player2.username}: ${player2.score}`, player1Coord.x, player1Coord.y);
+		writeText(`${checkUsernameLength(player2.username)}`, 30, player1Coord.x, player1Coord.y, "left");
+		writeText(`${player2.score} ${player1.score}`, 60, scoreCoord.x, scoreCoord.y, "center");
+		writeText(`${checkUsernameLength(player1.username)}`, 30, player2Coord.x, player2Coord.y, "right");
+
 	}
 	else {
-		writeText(`${player1.username}: ${player1.score}`, player1Coord.x, player1Coord.y);
-		writeText(`${player2.username}: ${player2.score}`, player2Coord.x, player2Coord.y);
+		writeText(`${checkUsernameLength(player1.username)}`, 30, player1Coord.x, player1Coord.y, "left");
+		writeText(`${player1.score} ${player2.score}`, 60, scoreCoord.x, scoreCoord.y, "center");
+		writeText(`${checkUsernameLength(player2.username)}`, 30, player2Coord.x, player2Coord.y, "right");
 	}
 }
 
@@ -103,37 +111,3 @@ export const drawGame =  (game: Game) => {
 	drawPaddle(ctx, paddle1Coord!, false); // User paddle
 	drawPaddle(ctx, paddle2Coord!, true); // Opponent paddle
 }
-
-
-
-//
-// export const pongTextures: { [key: string]: HTMLImageElement } = {};
-//
-// export const loadPongTextures = () => {
-//
-// 	const   texturePaths = {
-// 		"BACKGROUND": '/src/medias/textures/pong/background.jpg',
-// 		"BOARD": '/src/medias/textures/pong/pongBoard.png',
-// 		"PADDLE": '/src/medias/textures/pong/pongPaddle.png',
-// 		"BALL": '/src/medias/textures/pong/pongBall.png',
-// 	}
-//
-// 	return Promise.all(
-// 		Object.entries(texturePaths).map(([key, path]) => {
-// 			return new Promise<void>((resolve, reject) => {
-// 				const img = new Image();
-// 				// console.log(`Loading texture: ${key} from ${path}`);
-// 				img.src = path;
-// 				img.onload = () => {
-// 					pongTextures[key] = img;
-// 					resolve();
-// 				};
-// 				img.onerror = (err) => {
-// 					console.error(`Failed to load texture: ${key} from ${path}`, err);
-// 					reject(err)
-// 				};
-// 				// console.log(tetrisTexturesHandler[key]);
-// 			});
-// 		})
-// 	);
-// };

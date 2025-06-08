@@ -4,7 +4,7 @@ import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils
 import { pongGameInfo } from "./pong.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { quit } from "./game.ts";
-import { showZoneGame } from "../zone/zoneCore.ts";
+import {hideZoneGame, showZoneGame} from "../zone/zoneCore.ts";
 import { pongSettingsHtml } from "./pongSettingsHTML.ts";
 import { getTournamentInfo } from "./tournament.ts";
 
@@ -445,7 +445,7 @@ const   pongDrawBoardHtml = () => {
 		<div class="absolute z-50 top-[10px] right-[10px]">
 			<button class="${TCS.pongButton}" id="quitPong">Quit</button>
 		</div>
-
+		<div id="pongEndGame" class="${TCS.tetrisEndGame}"></div>
 		<div id="pongGameCanvas" class="absolute z-25 w-full h-full flex items-center justify-center bg-black">		
 			<canvas id="pongCanvas" width="${window.innerWidth}" height="${window.innerHeight}"></canvas>
 		</div>
@@ -487,6 +487,7 @@ const   pongQuitButton = () => {
 
 	quitButton.addEventListener("click", () => {
 		quit();
+		hideZoneGame();
 		page("/pong");
 	});
 }

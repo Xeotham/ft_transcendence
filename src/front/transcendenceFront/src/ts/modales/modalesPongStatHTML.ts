@@ -59,7 +59,7 @@ export const  loadPongStat = async (playerUsername: string) => {
       newHistory.push(stat);
     }
   })
-  pongHistory = newHistory;
+  pongHistory = newHistory.reverse();
 }
 
 export const modalePongStatHTML = (page: number) => {

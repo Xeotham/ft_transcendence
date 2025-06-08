@@ -23,10 +23,10 @@ import {
 	searchGame,
 } from "./gameManagement.ts";
 
-import { patchToApi, resetGamesSocket, address, user } from "../utils.ts";
+import {resetGamesSocket} from "../utils.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { zoneSet } from "../zone/zoneCore.ts";
-import {searchForWorkspaceRoot} from "vite";
+import  { userKeys } from "./utils.ts";
 
 
 // userKeys.getKeysFromApi().then().catch();
@@ -133,10 +133,9 @@ export const changeKeys = (keyType: string) => {
 	const getNewKey = async (event: KeyboardEvent) => {
 		const newKey = event.key;
 		modify = false;
-		await patchToApi(`http://${address}/api/user/update-parameter`, {username: user.getUsername(), control: keyType, key: newKey})
 		setKey(keyType, newKey);
+		localStorage.setItem("tetrisKeybindings", JSON.stringify(userKeys?.getKeys()));
 
-		// console.log("New key set:", newKey);
 		document.removeEventListener("keydown", getNewKey);
 		//document.getElementById(keyType)!.innerText = newKey === ' ' ? "Space" : newKey;
 		pressKey.remove();
@@ -279,7 +278,7 @@ const   drawBoard = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
 
 }
 
-const drawInfo = (ctx: CanvasRenderingContext2D, x: number, y: number, gameInfo: tetrisGoalInfo) => {
+const drawInfo = (x: number, y: number, gameInfo: tetrisGoalInfo) => {
 
 
 	const   spacing = 31;
@@ -411,7 +410,7 @@ const   drawGame = () => {
 	drawBackground(ctx, 0, 0, canvas.width, canvas.height);
 	drawBoard(ctx, boardCoord.x, boardCoord.y);
 	drawMatrix(ctx, game.matrix, matrixCoord.x, matrixCoord.y, minoSize);
-	drawInfo(ctx, infoCoord.x, infoCoord.y, gameInfo);
+	drawInfo(infoCoord.x, infoCoord.y, gameInfo);
 	if (opponents && opponents.length > 0)
 		drawOpponents(ctx, opponentsCoord.x, opponentsCoord.y, opponents);
 

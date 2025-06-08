@@ -128,8 +128,8 @@ export class Game {
 					this.winner = (this.score.player1.score >= WIN_GOAL) ? this.players.player1 : this.players.player2;
 				this.over = true;
 				let winner = this.winner?.username;
-				if (this.isSolo)
-					winner = this.score.player1.score >= WIN_GOAL ? "P1" : "P2";
+				// if (this.isSolo)
+				// 	winner = this.score.player1.score >= WIN_GOAL ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);
 				getRoomById(this.id)?.removeAllSpectators();

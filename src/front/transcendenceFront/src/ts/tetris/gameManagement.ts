@@ -1,9 +1,10 @@
 import { bgmPlayer, tetrisSfxPlayer, tetrisRes, TimeoutKey } from "./utils.ts";
 import { loadTetrisPage, tetrisGameInformation } from "./tetris.ts";
-import { postToApi, address, user, userKeys, getFromApi } from "../utils.ts";
+import { postToApi, address, user, getFromApi } from "../utils.ts";
 import { tetrisBoardHtml } from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
+import  { userKeys } from "./utils.ts";
 
 // @ts-ignore
 import page from "page";
@@ -352,6 +353,12 @@ const	showStats = (stats: GameUserInfo) => {
 		return;
 	}
 
+	document.getElementById("scoreDiv")!.style.display = "none";
+	document.getElementById("levelDiv")!.style.display = "none";
+	document.getElementById("timeDiv")!.style.display = "none";
+	document.getElementById("goalDiv")!.style.display = "none";
+	document.getElementById("piecesDiv")!.style.display = "none";
+
 	endGameDiv.style.display = "block";
 
 	endGameDiv.innerHTML = `
@@ -558,6 +565,8 @@ const gameControllers = async (finish: boolean = false) => {
 			case userKeys?.getRetry():
 			case userKeys?.getRetry().toLowerCase():
 			case userKeys?.getRetry().toUpperCase():
+				if (event.repeat)
+					return ;
 				postToApi(`http://${address}/api/tetris/retry`, { argument: "retry", gameId: tetrisGameInformation.getGameId() });
 				return;
 		}

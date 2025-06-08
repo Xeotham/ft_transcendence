@@ -5,6 +5,9 @@ import {modaleAlert, modaleDisplay, modaleHide, ModaleType} from './modalesCore.
 import {address, postToApi, user} from "../utils.ts";
 // @ts-ignore
 import page from "page";
+import {setZoneAvatar} from "../zone/zoneHTML.ts";
+import {backgroundHandler, bgmPlayer, tetrisTexturesHandler, userKeys} from "../tetris/utils.ts";
+import {pongPackHandler} from "../pong/utils.ts";
 
 export const modaleSignUpHTML = () => {
 
@@ -83,6 +86,12 @@ export const modaleSignUpEvents = () => {
 				user.setToken(info.token);
 				user.setUsername(info.user.username);
 				user.setAvatar(info.user.avatar);
+				userKeys.resetKeys();
+				pongPackHandler.setPack("retro1975");
+				backgroundHandler.setActualBackground("bkg_1");
+				tetrisTexturesHandler.setTexture("minimalist");
+				bgmPlayer.choseBgm("none");
+				setZoneAvatar(true);
 				modaleHide()
 			})
 			.catch((error) => {

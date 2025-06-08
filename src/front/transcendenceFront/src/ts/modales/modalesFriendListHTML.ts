@@ -163,6 +163,9 @@ export const modaleFriendListEvents = () => {
 			await loadFriendList();
 			await modaleDisplay(ModaleType.FRIEND_LIST);
 
+			// modale.content!.innerHTML = modaleFriendListHTML(friendListPage);
+			// modaleDislpayPrevNextFriend();
+			// modaleFriendListEvents(); // TODO : jsp quel merge prendre
 		}
 		catch (e: any) {
 			console.error("Error adding friend:", e.message);

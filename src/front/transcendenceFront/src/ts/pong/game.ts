@@ -8,6 +8,7 @@ import  page from "page";
 // @ts-ignore
 import { loadPongHtml } from "./pongHTML.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
+import {TCS} from "../TCS.ts";
 
 
 export class PongRoom {
@@ -227,13 +228,14 @@ export const   quit = (msg: string = "LEAVE", force: string = "", winner: number
 	if (!matchType)
 		return ;
 	quitRoom(msg);
-	if (matchType === "TOURNAMENT")
+	if (matchType === "TOURNAMENT") {
 		quitTournament(msg, winner);
+		return ;
+	}
+
 	if (pongGameInfo.getMatchType() === "TOURNAMENT" && matchType === "PONG") {
 		loadPongPage("match-found")
 	}
-
-	hideZoneGame();
 
 }
 
@@ -346,6 +348,33 @@ const   effectHandler = (effect: string) => {
 	}
 }
 
+const   showWinner = (winner: string) => {
+	const   endGameDiv = document.getElementById("pongEndGame") as HTMLDivElement;
+
+	if (!endGameDiv) {
+		hideZoneGame()
+		return;
+	}
+
+	endGameDiv.style.display = "block";
+
+	endGameDiv.innerHTML = `
+		<div id="tetrisStatsDetailText" class="${TCS.modaleStatDetail}">
+			<div class="${TCS.modaleTitre} text-center">GAME OVER</div>
+			<div class="h-[15px]"></div>
+			<div class="${TCS.tetrisEndGameScore}">Winner: ${winner}</div>
+			<div class="h-[30px]"></div>
+			<div id="returnHome" class="${TCS.tetrisEndGameButton}">
+				${imTexts.tetrisBoardReturnToMenu}
+			</div>
+		</div>
+	`
+
+	document.getElementById("returnHome")?.addEventListener("click", () => {
+		hideZoneGame();
+	})
+}
+
 const	gameMessageHandler = (res: responseFormat) => {
 	switch (res.message) {
 		case "PREP":
@@ -356,6 +385,7 @@ const	gameMessageHandler = (res: responseFormat) => {
 		case "START":
 			// console.log("Starting game");
 			loadPongHtml("board");
+			document.getElementById("pongEndGame")!.style.display = "none";
 			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
 				return ;
 			document.addEventListener("keydown", keyHandler);
@@ -365,15 +395,12 @@ const	gameMessageHandler = (res: responseFormat) => {
 		case "FINISH":
 			if (pongGameInfo.getRoom()?.getPlayer() === "SPEC")
 				return quit("LEAVE", "PONG");
-			if (pongGameInfo.getRoom()?.getIsSolo())
-				console.log(res.data + " won!");
-			else {
-				res.data === pongGameInfo.getRoom()?.getPlayer() ? console.log("You won!") : console.log("You lost!");
-			}
 			document.removeEventListener("keydown", keyHandler);
 			document.removeEventListener("keyup", keyHandler);
 			if (pongGameInfo.getMatchType() === "TOURNAMENT" && res.data !== pongGameInfo.getRoom()?.getPlayer())
 				pongGameInfo.getTournament()?.setLostTournament(true);
+			showWinner(res.data);
+			console.log(res);
 			return quit("LEAVE", "PONG");
 		case "SCORE":
 			const   score: score = res.data;
@@ -413,6 +440,7 @@ export const keyHandler = (event: KeyboardEvent) => {
 
 	if (event.code === "Escape") {
 		quit();
+		hideZoneGame();
 	}
 
 	async function sendPaddleMovement(key: string, p: string) {
