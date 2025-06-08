@@ -7,6 +7,8 @@ import ApexCharts from 'apexcharts';
 
 let pongStatPage = 0;
 const pongListLength = 10;
+let pongChart: ApexCharts | null = null;
+
 interface pongStats {
   date: string;
   username: string;
@@ -131,7 +133,15 @@ const getModalePongStatListHTML = (page: number) => {
   return listHTML;
 }
 
+const destroyPieChart = () => {
+  if (pongChart) {
+    pongChart.destroy();
+    pongChart = null;
+  }
+}
+
 export const modalePongStatEvents = () => {
+  destroyPieChart();
 
   const PongStatsBack = document.getElementById('PongStatsBack') as HTMLAnchorElement;
   const PongStatsPrev = document.getElementById('PongStatsPrev') as HTMLAnchorElement;
@@ -142,6 +152,7 @@ export const modalePongStatEvents = () => {
 
   PongStatsBack.addEventListener('click', (e: Event) => {
     e.stopPropagation();
+    destroyPieChart();
     modaleDisplay(ModaleType.PROFILE);
   });
 
@@ -149,6 +160,7 @@ export const modalePongStatEvents = () => {
     e.stopPropagation();
     if (pongStatPage <= 0 || !modale.content)
       return;
+    destroyPieChart();
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modaleDislpayPrevNextPong();
     modalePongStatEvents();
@@ -161,6 +173,7 @@ export const modalePongStatEvents = () => {
       return;
     if ((pongStatPage + 1) * pongListLength < pongHistory.length)
     {
+      destroyPieChart();
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
       modalePongStatEvents();
@@ -170,6 +183,7 @@ export const modalePongStatEvents = () => {
 }
 
 export const modaleFriendPongStatEvents = () => {
+  destroyPieChart();
 
   const PongStatsBack = document.getElementById('PongStatsBack') as HTMLAnchorElement;
   const PongStatsPrev = document.getElementById('PongStatsPrev') as HTMLAnchorElement;
@@ -180,6 +194,7 @@ export const modaleFriendPongStatEvents = () => {
 
   PongStatsBack.addEventListener('click', (e: Event) => {
     e.stopPropagation();
+    destroyPieChart();
     modaleDisplay(ModaleType.FRIEND_PROFILE);
   });
 
@@ -187,6 +202,7 @@ export const modaleFriendPongStatEvents = () => {
     e.stopPropagation();
     if (pongStatPage <= 0 || !modale.content)
       return;
+    destroyPieChart();
     modale.content.innerHTML = modalePongStatHTML(--pongStatPage);
     modaleDislpayPrevNextPong();
     modaleFriendPongStatEvents();
@@ -199,6 +215,7 @@ export const modaleFriendPongStatEvents = () => {
       return;
     if ((pongStatPage + 1) * pongListLength < pongHistory.length)
     {
+      destroyPieChart();
       modale.content.innerHTML = modalePongStatHTML(++pongStatPage);
       modaleDislpayPrevNextPong();
       modaleFriendPongStatEvents();
@@ -233,15 +250,19 @@ const getPongHistoryLoose = () => {
 }
 
 export const modalePongStatPie = () => {
+  destroyPieChart();
 
   const getChartOptions = () => {
     return {
       series: [getPongHistoryWin(), getPongHistoryLoose()],
       colors: ["#a3e635", "#be123c"], //lime-400, rose-700
       chart: {
-        height: 220, // 320 initiale
+        height: 220,
         width: "100%",
         type: "donut",
+        animations: {
+          enabled: false // Désactiver les animations pour éviter les problèmes de transformation
+        }
       },
       stroke: {
         colors: ["transparent"],
@@ -322,46 +343,11 @@ export const modalePongStatPie = () => {
           show: false,
         },
       }, 
-      animations: {
-        speed: 100,
-      }
     }
   }
 
   if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
-    chart.render();
-
-    // Get all the checkboxes by their class name
-    // const checkboxes = document.querySelectorAll('#devices input[type="checkbox"]');
-
-    // Function to handle the checkbox change event
-    // function handleCheckboxChange(event: any, chart: any) {
-    //     const checkbox = event.target;
-    //     if (checkbox.checked) {
-    //         switch(checkbox.value) {
-    //           case 'desktop':
-    //             chart.updateSeries([15.1, 22.5, 4.4, 8.4]);
-    //             break;
-    //           case 'tablet':
-    //             chart.updateSeries([25.1, 26.5, 1.4, 3.4]);
-    //             break;
-    //           case 'mobile':
-    //             chart.updateSeries([45.1, 27.5, 8.4, 2.4]);
-    //             break;
-    //           default:
-    //             chart.updateSeries([55.1, 28.5, 1.4, 5.4]);
-    //         }
-
-    //     } else {pongHistory
-    //         chart.updateSeries([35.1, 23.5, 2.4, 5.4]);
-    //     }
-    // }
-
-    // Attach the event listener to each checkbox
-    // checkboxes.forEach((checkbox) => {
-    //     checkbox.addEventListener('change', (event) => handleCheckboxChange(event, chart));
-    // });
+    pongChart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
+    pongChart.render();
   }
-
 }
