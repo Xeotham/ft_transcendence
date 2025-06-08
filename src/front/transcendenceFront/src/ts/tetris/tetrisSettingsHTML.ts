@@ -45,12 +45,14 @@ const tetrisSettingsHtml = async () => {
 			<div id="bkgName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsBkgTitle}</div>
 			<div id="bkgKey" class="${TCS.gameSelect}">
 				<select id="bkgSelect" class="w-full">
-					<option class="${TCS.gameOption}" value="bkg_1" ${backgroundHandler.getActualBackground() === "bkg_1" ? "selected" : "" }>Background1</option>
-					<option class="${TCS.gameOption}" value="bkg_2" ${backgroundHandler.getActualBackground() === "bkg_2" ? "selected" : "" }>Background2</option>
-					<option class="${TCS.gameOption}" value="bkg_3" ${backgroundHandler.getActualBackground() === "bkg_3" ? "selected" : "" }>Background3</option>
-					<option class="${TCS.gameOption}" value="bkg_4" ${backgroundHandler.getActualBackground() === "bkg_4" ? "selected" : "" }>Background4</option>
-					<option class="${TCS.gameOption}" value="bkg_5" ${backgroundHandler.getActualBackground() === "bkg_5" ? "selected" : "" }>Background5</option>
-					<option class="${TCS.gameOption}" value="bkg_6" ${backgroundHandler.getActualBackground() === "bkg_6" ? "selected" : "" }>Background6</option>
+					<option class="${TCS.gameOption}" value="bkg_1" ${backgroundHandler.getActualBackground() === "bkg_1" ? "selected" : "" }>Neon Circle</option>
+					<option class="${TCS.gameOption}" value="bkg_2" ${backgroundHandler.getActualBackground() === "bkg_2" ? "selected" : "" }>Minimal tetris</option>
+					<option class="${TCS.gameOption}" value="bkg_3" ${backgroundHandler.getActualBackground() === "bkg_3" ? "selected" : "" }>Cloud</option>
+					<option class="${TCS.gameOption}" value="bkg_4" ${backgroundHandler.getActualBackground() === "bkg_4" ? "selected" : "" }>Kiki & Jiji</option>
+					<option class="${TCS.gameOption}" value="bkg_5" ${backgroundHandler.getActualBackground() === "bkg_5" ? "selected" : "" }>Flowers</option>
+					<option class="${TCS.gameOption}" value="bkg_6" ${backgroundHandler.getActualBackground() === "bkg_6" ? "selected" : "" }>Cyberpunk pixel</option>
+					<option class="${TCS.gameOption}" value="bkg_7" ${backgroundHandler.getActualBackground() === "bkg_7" ? "selected" : "" }>Wall of cubes</option>
+					<option class="${TCS.gameOption}" value="bkg_8" ${backgroundHandler.getActualBackground() === "bkg_8" ? "selected" : "" }>2001: A Space Odyssey</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
@@ -59,11 +61,13 @@ const tetrisSettingsHtml = async () => {
 			<div id="musicName" class="${TCS.gameBlockLabel}">${imTexts.tetrisSettingsMusicTitle}</div>
 			<div id="musicKey" class="${TCS.gameSelect}">
 				<select id="musicSelect" class="w-full">
-					<option class="${TCS.gameOption}" value="none" ${bgmPlayer.getActualBgm() === "none" ? "selected" : "" } >No Music</option>
+					<option class="${TCS.gameOption}" value="none" ${bgmPlayer.getActualBgm() === "none" ? "selected" : "" }>No Music</option>
 					<option class="${TCS.gameOption}" value="bgm1" ${bgmPlayer.getActualBgm() === "bgm1" ? "selected" : "" }>Disturbing the peace (PEAK)</option>
 					<option class="${TCS.gameOption}" value="bgm2" ${bgmPlayer.getActualBgm() === "bgm2" ? "selected" : "" }>Brain Power</option>
 					<option class="${TCS.gameOption}" value="bgm3" ${bgmPlayer.getActualBgm() === "bgm3" ? "selected" : "" }>Jump Up, Super Star!</option>
 					<option class="${TCS.gameOption}" value="bgm4" ${bgmPlayer.getActualBgm() === "bgm4" ? "selected" : "" }>A Cruel Angel's Thesis</option>
+					<option class="${TCS.gameOption}" value="bgm5" ${bgmPlayer.getActualBgm() === "bgm5" ? "selected" : "" }>Submerciful</option>
+					<option class="${TCS.gameOption}" value="bgm6" ${bgmPlayer.getActualBgm() === "bgm6" ? "selected" : "" }>Chirpsichord</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
