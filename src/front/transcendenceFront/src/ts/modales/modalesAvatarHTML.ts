@@ -7,14 +7,19 @@ import { modaleAlert } from './modalesCore.ts';
 let   defaultAvatars: { url: string, base64: string }[] = [];
 
 export const    loadDefaultAvatars = async () => {
-	const   avatars: string[] = (await getFromApi(`http://${address}/api/user/get-avatars`)).avatars;
+	try {
+		const avatars: string[] = (await getFromApi(`http://${address}/api/user/get-avatars`)).avatars;
 
-	avatars.forEach((avatar) => {
-		defaultAvatars.push({
-			url: URL.createObjectURL(UserInfo.base64ToBlob(avatar)),
-			base64: avatar
+		avatars.forEach((avatar) => {
+			defaultAvatars.push({
+				url: URL.createObjectURL(UserInfo.base64ToBlob(avatar)),
+				base64: avatar
+			})
 		})
-	})
+	}
+	catch(err) {
+		window.location.reload();
+	}
 }
 
 export let modaleAvatarHTML = () => {
@@ -161,7 +166,7 @@ export const modaleAvatarEvents = async () => {
 			if (!avatar)
 				return;
 			user.setAvatar(defaultAvatars[i].base64);
-			patchToApi(`http://${address}/api/user/update-avatar`, {username: user.getUsername(), avatar: defaultAvatars[i].base64});
+			patchToApi(`http://${address}/api/user/update-avatar`, {username: user.getUsername(), avatar: defaultAvatars[i].base64}).catch();
 			modaleDisplay(ModaleType.PROFILE);
 		})
 	}

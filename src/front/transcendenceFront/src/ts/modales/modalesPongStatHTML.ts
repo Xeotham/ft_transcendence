@@ -47,19 +47,27 @@ const formatPongStat = (history:{  gameId: number, players: GameUserInfo[] }, pl
 }
 
 export const  loadPongStat = async (playerUsername: string) => {
-  const get: any = await  getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
-  const history: { gameId: number, players: GameUserInfo[] }[] = get.history.filter((e: any) => e.players[0].type === 'pong');
-  const newHistory: pongStats[] = [];
-  history.forEach((game) => {
-    if (game.players.length < 2) {
-      return;
-    }
-    const stat = formatPongStat(game, playerUsername);
-    if (stat) {
-      newHistory.push(stat);
-    }
-  })
-  pongHistory = newHistory.reverse();
+  try {
+    const get: any = await getFromApi(`http://${address}/api/user/get-game-history?username=${playerUsername}`);
+    const history: {
+      gameId: number,
+      players: GameUserInfo[]
+    }[] = get.history.filter((e: any) => e.players[0].type === 'pong');
+    const newHistory: pongStats[] = [];
+    history.forEach((game) => {
+      if (game.players.length < 2) {
+        return;
+      }
+      const stat = formatPongStat(game, playerUsername);
+      if (stat) {
+        newHistory.push(stat);
+      }
+    })
+    pongHistory = newHistory.reverse();
+  }
+  catch (error) {
+    pongHistory = [];
+  }
 }
 
 export const modalePongStatHTML = (page: number) => {

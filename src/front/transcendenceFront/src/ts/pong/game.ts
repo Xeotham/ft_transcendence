@@ -147,17 +147,22 @@ export class PongRoom {
 		this.socket.addEventListener("message", messageHandler);
 
 		window.onunload = () => {
-			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
-			if (this.socket) {
-				quit("LEAVE", "TOURNAMENT");
-				this.socket.close();
+			try {
+				postToApi(`http://${address}/api/user/disconnect-user`, {username: user.getUsername()});
+				if (this.socket) {
+					quit("LEAVE", "TOURNAMENT");
+					this.socket.close();
+				}
+			}
+			catch(error) {
+				return ;
 			}
 		}
 		// Special handling for Chrome
 		localStorage.setItem("nav", JSON.stringify(navigator.userAgent.includes("Firefox")));
 		if (!navigator.userAgent.includes("Firefox")) {
 			window.onbeforeunload = (e) => {
-				postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
+				postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() }).catch();
 				quit("LEAVE", "TOURNAMENT");
 				e.preventDefault();
 				return '';
