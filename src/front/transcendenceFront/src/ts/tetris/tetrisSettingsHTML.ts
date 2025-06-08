@@ -132,19 +132,23 @@ const tetrisSettingsEvents = () => {
 	const   minoSelect = document.getElementById("minoSelect") as HTMLSelectElement;
 
 	musicSelct?.addEventListener("change", (e) => {
-		const selectedValue = e.target?.value;
+		if (!e.target)
+			return;
+		const selectedValue = (e.target as HTMLSelectElement).value;
 		bgmPlayer.choseBgm(selectedValue);
 	})
 
 	bkgSelect?.addEventListener("change", (e) => {
-		const selectedValue = e.target?.value;
-
+		if (!e.target)
+			return;
+		const selectedValue = (e.target as HTMLSelectElement).value;
 		backgroundHandler.setActualBackground(selectedValue);
 	})
 
 	minoSelect?.addEventListener("change", (e) => {
-		const selectedValue = e.target?.value;
-
+		if (!e.target)
+			return;
+		const selectedValue = (e.target as HTMLSelectElement).value;
 		tetrisTexturesHandler.setTexture(selectedValue);
 	})
 
