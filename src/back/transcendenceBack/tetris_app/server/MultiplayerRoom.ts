@@ -1,6 +1,5 @@
 import { WebSocket } from "ws";
 import { TetrisGame } from "./Game/TetrisGame";
-import { multiplayerRoomLst } from "../api/controllers";
 import { codeNameExists, isUpperCase } from "../utils";
 import { MultiplayerRoomPlayer } from "./MultiplayerRoomPlayer";
 
@@ -63,7 +62,6 @@ export class MultiplayerRoom {
 		if (this.players.length <= 0) {
 			socket.send(JSON.stringify({type: "MULTIPLAYER_JOIN", argument: "OWNER"}));
 			this.players.push(new MultiplayerRoomPlayer(socket, username, true));
-			// console.log("Making " + username + " the owner");
 		}
 		else {
 			this.players.push(new MultiplayerRoomPlayer(socket, username));
@@ -81,9 +79,7 @@ export class MultiplayerRoom {
 		player.getSocket()?.send(JSON.stringify({ type: "MULTIPLAYER_LEAVE"}));
 		this.players.splice(this.players.indexOf(player), 1);
 
-		// console.log("Is" + player.getUsername() + " owner: " + player.isOwner());
 		const nonOwner: MultiplayerRoomPlayer | undefined = this.players.find((aPlayer => !aPlayer.isOwner()));
-		// console.log("Non owner?: " + nonOwner?.getUsername());
 		if (player.isOwner() && nonOwner !== undefined) {
 			nonOwner.setOwner(true);
 			nonOwner.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: "OWNER" }))
@@ -112,7 +108,6 @@ export class MultiplayerRoom {
 		if (codeNameExists(result))
 			return this.generateInviteCode();
 		for (const player of this.players) {
-			// console.log("Sending code to player " + player.getUsername());
 			player.getSocket().send(JSON.stringify({ type: "MULTIPLAYER_JOIN", argument: result }));
 		}
 		return result;
@@ -143,8 +138,6 @@ export class MultiplayerRoom {
 						++lost;
 						continue;
 					}
-					// console.log("Sending game of " + j + " to " + i);
-					// console.log("Sending game of " + this.players[j].getUsername() + " to " + this.players[i].getUsername());
 					games.push(this.players[j].getGame()?.toJSON());
 				}
 				this.players[i].getSocket().send(JSON.stringify({ type: "MULTIPLAYER_OPPONENTS_GAMES", argument: games }));

@@ -4,8 +4,6 @@ import {
 	boardHeight, ballSize, pongTextureHandler,
 } from "./utils.ts";
 
-// export const pongGameInfo: gameInformation = new gameInformation();
-
 // @ts-ignore
 import  page from "page"
 import {pongGameInfo} from "./pong.ts";

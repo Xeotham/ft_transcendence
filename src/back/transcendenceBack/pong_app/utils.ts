@@ -1,21 +1,10 @@
 import { Room } from "./server/Room";
 import { Tournament } from "./server/tournament";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 import { WebSocket } from "ws";
-import { Tournaments, deleteTournament } from "./api/tournament-controllers";
+import { Tournaments } from "./api/tournament-controllers";
 import { Rooms } from "./api/game-controllers";
 
-// const { Room } = require('./server/Room');
-// const { Tournament } = require('./server/tournament');
-// const { FastifyReply, FastifyRequest } = require('fastify');
-// const { WebSocket } = require('ws');
-// const { Tournaments } = require('./api/tournament-controllers');
-// const { Rooms } = require('./api/game-controllers');
-//
-// type RoomType = typeof Room;
-// type TournamentType = typeof Tournament;
-// type FastifyRequestType = typeof FastifyRequest;
-// type FastifyReplyType = typeof FastifyReply;
 
 export interface   player {
 	username: string;
@@ -120,7 +109,6 @@ export function getRoomById(id: number): Room | undefined {
 		if (tour.getRoomById(id) !== undefined)
 			return tour.getRoomById(id);
 	}
-	// console.log("Room with id " + id + " not found");
 }
 
 export function getTournamentById(id: number): Tournament | undefined {

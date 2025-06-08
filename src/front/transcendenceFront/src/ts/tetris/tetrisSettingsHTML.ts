@@ -5,7 +5,7 @@ import { changeKeys } from "./tetris.ts";
 // @ts-ignore
 import  page from 'page';
 import { userKeys } from "./utils.ts";
-import {backgroundHandler, bgmPlayer, tetrisTexturesHandler} from "./utils.ts";
+import { backgroundHandler, bgmPlayer, tetrisTexturesHandler } from "./utils.ts";
 
 export const tetrisSettings = async () => {
 	await tetrisSettingsHtml();

@@ -1,7 +1,5 @@
 import { Pos } from "./Pos";
 import { Mino } from "./Mino";
-import { ATetrimino } from "./ATetrimino";
-import * as tc from "./tetrisConstants";
 
 export class Matrix {
 
@@ -131,14 +129,11 @@ export class Matrix {
 	public shiftUp(lines: number = 1): string {
 		if (lines < 1)
 			return "";
-		// console.log("Shifting up " + lines + " lines");
 		for (let i = 0; i < lines; ++i)
 			if (!this.isRowEmpty(i))
 				return "Top Out";
 		for (let x = 0; x < this.size.getX(); ++x)
-			// console.log("Shifting x " + x);
 			for (let y = lines; y < this.size.getY(); ++y)
-				// console.log("Shifting column [" + y + "][" + x + "] to [" + (y - lines) + "][" + x + "]");
 				this.matrix[y - lines][x] = this.matrix[y][x];
 		return "";
 	}

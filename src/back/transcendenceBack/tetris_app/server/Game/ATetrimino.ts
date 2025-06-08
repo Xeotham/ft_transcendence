@@ -84,9 +84,6 @@ export abstract class ATetrimino {
 			const endPos: Pos = (direction === "180" ? end.rotationPoints180[i] : end.rotationPoints[i]);
 			const dist = startPos.distanceToPos(endPos);
 
-			// if (direction === "180") {
-			// 	console.log("startPos: " + startPos, ", endPos: " + endPos, ", dist: " + dist);
-			// }
 			const collides = () => {
 				for (let j = 0; j < struct.nbBlocks; ++j)
 					if (matrix.isMinoAt(this.coordinates.add(end.blocks[j]).add(dist)))
@@ -106,7 +103,6 @@ export abstract class ATetrimino {
 	}
 
 	protected getSpin(matrix: Matrix, rotationPointUsed: number): string {
-		// console.log("Rotation point used: ", rotationPointUsed);
 		if (rotationPointUsed === -1)
 			return "-1";
 		if (this.canFall(matrix))
@@ -131,9 +127,7 @@ export abstract class ATetrimino {
 
 	public isColliding(matrix: Matrix, offset: Pos = new Pos(0, 0)): boolean {
 		const struct = this.getStruct();
-		// console.log("Struct: ", struct);
 		const block: tc.block = struct[tc.ROTATIONS[this.rotation]];
-		// console.log("Block: ", block);
 		for (let i = 0; i < struct.nbBlocks; ++i) {
 			const pos: Pos = this.coordinates.add(block?.blocks[i]).add(offset);
 			if (matrix.isMinoAt(pos))
@@ -185,7 +179,6 @@ export abstract class ATetrimino {
 	}
 
 	public canSlide(matrix: Matrix) {
-		// console.log("Can slide on left: " + !this.isColliding(matrix, new Pos(-1, 0)) + " and right: " + !this.isColliding(matrix, new Pos(1, 0)));
 		return !this.isColliding(matrix, new Pos(1, 0)) || !this.isColliding(matrix, new Pos(-1, 0));
 	}
 

@@ -8,7 +8,7 @@ import { pongPackHandler } from "../pong/utils.ts";
 
 
 export const modaleSignInHTML = () => {
-  let SignInHTML = `
+	let SignInHTML = `
 
   <div id="signinTitle" class="${TCS.modaleTitre} pb-[30px]">
   ${imTexts.modalesSigninTitle}</div>
@@ -44,49 +44,49 @@ export const modaleSignInHTML = () => {
 
 `;
 
-  return SignInHTML;
+	return SignInHTML;
 }
 
 export const modaleSignInEvents = () => {
 
-  const signinForm = document.getElementById('signinForm') as HTMLFormElement;
-  const signinRegisterLink = document.getElementById('signinRegisterLink') as HTMLAnchorElement;
+	const signinForm = document.getElementById('signinForm') as HTMLFormElement;
+	const signinRegisterLink = document.getElementById('signinRegisterLink') as HTMLAnchorElement;
 
-  if (!signinForm || !signinRegisterLink)
-    return;
+	if (!signinForm || !signinRegisterLink)
+		return;
 
-  signinForm.addEventListener('submit', (event: SubmitEvent) => {
-    event.preventDefault();
+	signinForm.addEventListener('submit', (event: SubmitEvent) => {
+		event.preventDefault();
 
-    const   username = (document.getElementById("signinUsername") as HTMLInputElement).value;
-    const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
+		const   username = (document.getElementById("signinUsername") as HTMLInputElement).value;
+		const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
 
-    const   data = { username: username, password:  password };
-    // console.log(data);
-    postToApi(`http://${address}/api/user/login`, data)
-        .then(async (info: any) => {
-            localStorage.setItem("username", username);
-            user.setToken(info.token);
-            user.setUsername(info.user.username);
-            user.setAvatar(info.user.avatar);
-            userKeys.resetKeys();
-            pongPackHandler.setPack("retro1975");
-            backgroundHandler.setActualBackground("bkg_1");
-            tetrisTexturesHandler.setTexture("minimalist");
-            bgmPlayer.choseBgm("none");
-            setZoneAvatar(true);
-            modaleHide();
-        })
-        .catch((error) => {
-          console.error("Error logging in:", error.status, error.message);
-          modaleAlert(error.message);
-        });
-  });
+		const   data = { username: username, password:  password };
+		// console.log(data);
+		postToApi(`http://${address}/api/user/login`, data)
+			.then(async (info: any) => {
+				localStorage.setItem("username", username);
+				user.setToken(info.token);
+				user.setUsername(info.user.username);
+				user.setAvatar(info.user.avatar);
+				userKeys.resetKeys();
+				pongPackHandler.setPack("retro1975");
+				backgroundHandler.setActualBackground("bkg_1");
+				tetrisTexturesHandler.setTexture("minimalist");
+				bgmPlayer.choseBgm("none");
+				setZoneAvatar(true);
+				modaleHide();
+			})
+			.catch((error) => {
+				console.error("Error logging in:", error.status, error.message);
+				modaleAlert(error.message);
+			});
+	});
 
-  signinRegisterLink.addEventListener('click', (e: Event) => {
-    e.stopPropagation();
-    modaleDisplay(ModaleType.SIGNUP);
-  });
+	signinRegisterLink.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
+		modaleDisplay(ModaleType.SIGNUP);
+	});
 
 }
 

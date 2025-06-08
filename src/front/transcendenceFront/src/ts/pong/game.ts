@@ -1,5 +1,5 @@
 import { Game, score, buttons, intervals, responseFormat, pongSfxPlayer } from "./utils.ts";
-import {address, postToApi, user} from "../utils.ts";
+import { address, postToApi, user } from "../utils.ts";
 import { loadPongPage, pongGameInfo } from "./pong.ts";
 import { tourMessageHandler } from "./tournament.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
@@ -8,7 +8,7 @@ import  page from "page";
 // @ts-ignore
 import { loadPongHtml } from "./pongHTML.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
-import {TCS} from "../TCS.ts";
+import { TCS } from "../TCS.ts";
 
 
 export class PongRoom {
@@ -270,7 +270,6 @@ const   quitRoom = (msg: string = "LEAVE") => {
 		socket.close();
 	}
 	pongGameInfo.resetRoom();
-	// TODO hide game zone
 	page.show("/pong");
 }
 
@@ -313,7 +312,6 @@ export const   messageHandler = (event: MessageEvent)=> {
 				console.log("data: " + res.data);
 			return ;
 		case "ALERT":
-			// alert(res.message);
 			return console.log("%c[" + res.type + "]%c : " + res.message, "color: red", "color: reset");
 		case "ERROR":
 			//fallthrough
@@ -387,7 +385,6 @@ const	gameMessageHandler = (res: responseFormat) => {
 
 			return  pongGameInfo.getRoom()?.prepareGame(roomNumber, player);
 		case "START":
-			// console.log("Starting game");
 			loadPongHtml("board");
 			document.getElementById("pongEndGame")!.style.display = "none";
 			if (pongGameInfo?.getRoom()?.getPlayer() === "SPEC")
@@ -463,7 +460,6 @@ export const keyHandler = (event: KeyboardEvent) => {
 		if (isSolo && (key === "KeyS" || key === "KeyX"))
 			direction = key === "KeyS" ? "up" : "down";
 
-		// TODO : replace with Constants
 		if (direction === "" || (direction === "up" &&  paddle.y <= 0) || (direction === "down" && paddle.y >= 400 - 80))
 			return;
 		fetch(`http://${address}/api/pong/movePaddle`, {

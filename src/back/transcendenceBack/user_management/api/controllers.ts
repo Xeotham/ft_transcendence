@@ -4,16 +4,15 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { createUser, updateUserById, getUserByUsername, getUserById, logUserById, logOutUserById, getUsernameById, hashPassword } from '../../database/models/Users';
 import { createContact, deleteContact, getUserContactById } from '../../database/models/Contact';
 import { createStats, getStatsById, updateStats } from '../../database/models/Stat' ;
-import { request } from 'http';
 import { createUserGameStatsPong, createUserGameStatsTetris, getUserStatsGame, getUserGameHistory, getGameDetailsById } from '../../database/models/GamesUsers';
 import { getMessageById, saveMessage } from '../../database/models/Message';
 import { saveGame, getGameById } from '../../database/models/Game';
 import bcrypt from 'bcrypt';
 import path from 'path';
 import fs from 'fs';
-import {player} from "../../pong_app/utils";
+import { player } from "../../pong_app/utils";
 import jwt from 'jsonwebtoken';
-import {TetrisGame} from "../../tetris_app/server/Game/TetrisGame";
+import { TetrisGame } from "../../tetris_app/server/Game/TetrisGame";
 
 interface Users {
 	id?:            number;
@@ -203,9 +202,6 @@ export const    connectUser = async (request: FastifyRequest, reply: FastifyRepl
 	if (!user)
 		return reply.status(401).send({ message: 'Invalid username' });
 
-	// if (user.connected)
-	//     return reply.status(401).send({ message: 'User already connected' });
-
 	logUserById(user.id as number);
 
 	return reply.status(201).send({ message: 'User connected successfully', user: { username: user.username, avatar: user.avatar } });
@@ -361,12 +357,8 @@ export const    getMessage = async (request: FastifyRequest, reply: FastifyReply
 // createGame modified
 export const createPongGame = (players: {player1: player | null, player2: player | null}, score: any, winner: player | null, solo: boolean, bot: boolean) =>
 {
-	// console.log(players.player1?.username, score, winner?.username, solo);
 	if (solo === true)
-	{
-		// console.log("return solo game");
 		return ;
-	}
 
 	if (players.player1?.username === players.player2?.username)
 		return;
@@ -385,7 +377,6 @@ export const createPongGame = (players: {player1: player | null, player2: player
 			if (score.player1.score < 0 && score.player2.score < 0)
 				return ;
 
-			// TO DO : change date
 			const gameId = saveGame("");
 
 			createUserGameStatsPong(player1.id, gameId, score.player1, players.player1?.username === winner?.username, "pong");
@@ -393,14 +384,11 @@ export const createPongGame = (players: {player1: player | null, player2: player
 
 			updateStats(player1.id);
 			updateStats(player2.id);
-			// console.log("return multiplayer game");
 		}
 };
 
 export const createTetrisGame = (data: TetrisGame) =>
 {
-	// console.log("TetrisGame");
-	// console.log(data.getUsername());
 	const   player1 = getUserByUsername(data.getUsername()) as Users;
 
 	if (!player1)
@@ -420,7 +408,6 @@ export const createTetrisGame = (data: TetrisGame) =>
 
 		const gameTetrisId = data.getGameId();
 
-		// console.log(data.getStats());
 		createUserGameStatsTetris(player1.id, gameId, data.getScore(), true, "tetris", gameTetrisId, data.getStats());
 		updateStats(player1.id);
 
@@ -443,7 +430,6 @@ export const    getStat = async (request: FastifyRequest, reply: FastifyReply) =
 	if (user.id)
 	{
 		const stat = getStatsById(user.id);
-		// stats: added
 		return  reply.status(201).send({ message: 'Stat sended', stats:stat });
 	}
 };
@@ -472,7 +458,6 @@ export const    getGameHistory = async (request: FastifyRequest, reply: FastifyR
 			})
 			return { gameId: id, players: gameDetails };
 		}));
-		// history: added
 		return  reply.status(201).send({ message: 'Game History sended', history:fullGameHistory });
 	}
 };

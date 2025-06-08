@@ -1,5 +1,5 @@
 import db from '../db';
-import {createUserGameStatsPong, createUserGameStatsTetris, getUserStatsGame} from './GamesUsers';
+import { getUserStatsGame } from './GamesUsers';
 
 
 interface Stat

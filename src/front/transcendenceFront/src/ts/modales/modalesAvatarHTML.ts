@@ -1,7 +1,7 @@
 import { TCS } from '../TCS.ts';
 import { imTexts } from '../imTexts/imTexts.ts';
 import { modaleDisplay, ModaleType } from './modalesCore.ts';
-import {patchToApi, address, user, UserInfo, getFromApi} from "../utils.ts";
+import { patchToApi, address, user, UserInfo, getFromApi } from "../utils.ts";
 import { modaleAlert } from './modalesCore.ts';
 
 let   defaultAvatars: { url: string, base64: string }[] = [];

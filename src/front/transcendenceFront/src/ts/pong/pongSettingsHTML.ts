@@ -4,7 +4,7 @@ import { imTexts } from "../imTexts/imTexts.ts";
 
 // @ts-ignore
 import  page from 'page';
-import {pongPackHandler, pongTextureHandler} from "./utils.ts";
+import { pongPackHandler } from "./utils.ts";
 
 export const   pongSettingsHtml = () => {
 	if (!EL.contentPong)

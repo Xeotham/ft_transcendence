@@ -35,7 +35,7 @@ import {
 } from './modalesFriendListHTML.ts';
 import { modaleFriendProfileHTML, modaleFriendProfileEvents } from './modalesFriendProfileHTML.ts';
 import { user } from '../utils.ts';
-import {modaleEditEvents, modaleEditHTML} from "./modalesUserEditHTML.ts";
+import { modaleEditEvents, modaleEditHTML } from "./modalesUserEditHTML.ts";
 
 ///////////////////////////////////////////
 // Variables
@@ -126,7 +126,6 @@ export const modaleDisplay = async (modaleType: ModaleType) => {
 			modaleFriendListEvents();
 			break;
 		case ModaleType.FRIEND_PROFILE:
-			//modale.content.innerHTML = modaleFriendProfileHTML(0);
 			modale.content.innerHTML = await modaleFriendProfileHTML();
 			modaleFriendProfileEvents();
 			break;
@@ -201,19 +200,16 @@ export const modaleSetBkgCloseEvent = (modaleType: ModaleType) => {
 	const bkgModale = document.getElementById('bkgModale') as HTMLDivElement;
 	if (!bkgModale)
 		return;
-	//showModaleProfile ??
+
 	if (modaleType === ModaleType.SIGNIN || modaleType === ModaleType.SIGNUP || modaleType === ModaleType.NONE) {
 		bkgModale.removeEventListener('click', () => {
-			// TODO pourquoi a la deconection on a encore une action sur la zone du fond ?
-			// e.stopPropagation();
-			// modaleHide();
+
 		});
 		bkgModale.classList.remove('hover:cursor-pointer');
 		bkgModale.classList.add('hover:cursor-default');
 		return;
 	}
 
-	// console.log("modaleSetBkgCloseEvent: " + modaleType);
 	bkgModale.addEventListener('click', (e) => {
 		e.stopPropagation();
 		modaleHide();

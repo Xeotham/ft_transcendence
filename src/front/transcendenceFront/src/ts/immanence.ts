@@ -6,9 +6,6 @@ import { startRouter } from "./page/router.ts";
 import { evAddDocResize } from './zone/zoneEvents.ts';
 import { language, imSetLanguage } from './imTexts/imTexts.ts';
 
-// @ts-ignore page
-import page from 'page';
-
 ///////////////////////////////////////////
 
 // MAIN  
@@ -53,5 +50,4 @@ window.onbeforeunload = async () => {
 // Start the app
 document.addEventListener('DOMContentLoaded', () => {
     main();
-    // syncKeys()
 });

@@ -75,12 +75,9 @@ rm_logs:
 	@ if docker image ls | grep -q front; then \
 		echo "" > $$(docker inspect --format='{{.LogPath}}' front); \
 	fi
-#	@ rm -f adminer.log ftp.log portainer.log redis.log static_page.log mariadb.log nginx.log wordpress.log
 	@ echo "$(GREEN)Logs deleted!$(BASE_COLOR)"
 
 clean: down
-# 	@ echo "$(RED)Removing files in .data...$(BASE_COLOR)"
-# 	@ sudo rm -rf ~/.data/database/* ~/.data/web/* ~/.data/vsftpd/* ~/.data/log/vsftpd/*
 	@ echo "$(RED)Removing all docker image...$(BASE_COLOR)"
 	@ docker system prune -af >/dev/null
 	@ if [ -n "$$(docker ps -qa)" ]; then \

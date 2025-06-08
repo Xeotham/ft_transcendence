@@ -1,14 +1,7 @@
 import { WebSocket } from "ws";
 import { Game } from "./pong_game";
 import { getTournamentById, responseFormat, player } from "../utils";
-import {Rooms} from "../api/game-controllers";
-
-// const { WebSocket } = require('ws');
-// const { Game } = require('./pong_game');
-// const { getTournamentById, responseFormat } = require('../utils');
-//
-// type GameType = typeof Game;
-// type responseFormatType = typeof responseFormat;
+import { Rooms } from "../api/game-controllers";
 
 export class Room {
 	private readonly id:	number;
@@ -60,8 +53,7 @@ export class Room {
 	getInviteCode() { return this.inviteCode; }
 	getIsPrivate() { return this.privRoom; }
 
-	// setP1(socket: WebSocket) { this.P1 = socket; }
-	// setP2(socket: WebSocket) { this.P2 = socket; }
+
 	setFull(bool: boolean) { this.full = bool; }
 	setP1Ready(bool: boolean) { this.isP1Ready = bool; }
 	setP2Ready(bool: boolean) { this.isP2Ready = bool; }
@@ -127,7 +119,6 @@ export class Room {
 		this.started = true;
 		this.sendData({ type: "INFO", message: "The game is starting" });
 		this.sendData({ type: "GAME", message: "START" }, true);
-		// console.log("Starting game " + this.id + " is In tournament : " + this.isInTournament);
 		if (!this.isInTournament)
 			this.game.gameLoop();
 		else
@@ -138,10 +129,8 @@ export class Room {
 
 	addSpectator(socket: WebSocket) {
 		this.spectators.push(socket);
-		// this.game?.addSpectator(socket);
 		console.log("Spectator added to room " + this.id + " at placement " + (this.spectators.length - 1));
 		socket.send(JSON.stringify({ type: "GAME", message: "SPEC", data: (this.spectators.length - 1), roomId: this.id }));
-		// this.game?.sendScore();
 	}
 
 	removeSpectator(index: number, sendPlacementChange: boolean = true) {

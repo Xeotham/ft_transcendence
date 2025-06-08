@@ -19,8 +19,6 @@ export const startRouter = () => {
 	pongRouter();
 	// TETRIS
 	tetrisRouter();
-	// LOGIN
-	// loginRouter();
 	// 404
 	page('*', () => {
 		console.log("404 Not Found: " + document.location.pathname);
@@ -89,14 +87,3 @@ const tetrisRouter = () => {
 	});
 }
 
-// const loginRouter = () => {
-// 	page('/login', () => {
-// 		loginUser();
-// 		zoneSet("HOME");
-// 	});
-	
-// 	page('/sign-up', () => {
-// 		signUpUser();
-// 		zoneSet("HOME");
-// 	});
-// }

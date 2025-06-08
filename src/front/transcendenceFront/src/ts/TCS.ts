@@ -22,7 +22,6 @@ export const TCS = {
     avatarHidden : "hidden",
 
     // zoneModale
-    //modale : "fixed z-40 w-[680px] shadow-xl/30 bg-black/80 px-8 py-5 top-16 left-1/2 -translate-x-1/2 backdrop-blur-sm",
     zoneModale : "fixed z-40 w-screen h-screen",
     bkgModale : "fixed inset-0 w-screen h-screen backdrop-blur-xs",
     contentModale : "fixed z-40 w-[680px] shadow-xl/30 bg-stone-950 px-8 py-5 top-16 left-1/2 -translate-x-1/2",

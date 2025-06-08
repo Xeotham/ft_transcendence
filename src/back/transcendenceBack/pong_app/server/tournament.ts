@@ -1,18 +1,7 @@
 import { deleteTournament } from "../api/tournament-controllers";
-import {delay, idGenerator, player, requestBody} from "../utils";
-import * as Constants from "./constants"
+import { delay, idGenerator, player } from "../utils";
 import { WebSocket } from "ws";
 import { Room } from "./Room";
-
-// const { Tournaments } = require('../api/tournament-controllers');
-// const { idGenerator, requestBody } = require('../utils');
-// const Constants = require('./constants');
-// const { WebSocket } = require('ws');
-// const { Room } = require('./Room');
-
-// type requestType = typeof requestBody;
-// type RoomType = typeof Room;
-
 
 const	idGenRoom = idGenerator();
 
@@ -131,12 +120,8 @@ export class Tournament {
 		for (let i = this.positions.length - 1; i > 0; --i) { // Fisher-Yates shuffle, to shuffle the player's positions
 			const j = Math.floor(Math.random() * (i + 1));
 			[this.positions[i], this.positions[j]] = [this.positions[j], this.positions[i]];
-			// const temp = this.positions[i];
-			// this.positions[i] = this.positions[j];
-			// this.positions[j] = temp;
+
 		}
-		// for (let i = 0; i < this.positions.length; ++i)
-		// 	this.players[this.positions[i]].socket.send(JSON.stringify({ type: "INFO", message: "You are in position " + i }));
 		console.log("\x1b[38;5;82mTournament shuffled\x1b[0m");
 		this.needShuffle = false;
 		this.printTree();
@@ -210,9 +195,7 @@ export class Tournament {
 			room.setFull(true);
 			room.startGame();
 			room.getGame()?.forfeit("P2");
-			// console.log("Solo winner index 1:" + room.getGame()?.getWinner());
-			// console.log("Solo winner index 2:" + this.rooms[0][this.nbRoomsTop - 1].getGame()?.getWinner());
-		}
+			}
 	}
 
 	async nextRound(roomId: number) {
@@ -231,9 +214,6 @@ export class Tournament {
 
 			console.log("\x1b[38;5;204mThe Grand winner is " + winner?.username + "\x1b[0m");
 			this.sendToAll({type: "INFO", message: "Tournament ended"});
-			// this.sendToAll({
-			// 	type: "ALERT", message: "The Grand winner is " + winner?.username,
-			// });
 			this.sendToAll({type: "LEAVE", data: "TOURNAMENT", winner: (winner !== undefined ? winner?.username : "Nobody")});
 			deleteTournament(this.id);
 			return;

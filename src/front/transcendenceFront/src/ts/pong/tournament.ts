@@ -1,11 +1,9 @@
-import {responseFormat, RoomInfo, TournamentInfo} from "./utils.ts";
-import {address, postToApi, user} from "../utils.ts";
+import { responseFormat, TournamentInfo } from "./utils.ts";
+import { address, postToApi, user } from "../utils.ts";
 import { loadPongPage, pongGameInfo } from "./pong.ts";
-import {quit, messageHandler, PongRoom} from "./game.ts";
+import { quit, messageHandler, PongRoom } from "./game.ts";
 // @ts-ignore
 import  page from "page";
-import { joinSpectate } from "./spectate.ts";
-import {loadPongHtml} from "./pongHTML.ts";
 
 export class   Tournament {
 	private tournamentId: number;
@@ -90,7 +88,6 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 			pongGameInfo.getTournament()?.setOwner(true);
 			console.log("You are the owner of the tournament");
 			tournamentFound();
-			// loadPage("room-found");
 			return ;
 		case "PREP":
 			const tournamentId = typeof res.tourId === "number" ? res.tourId : -1;
@@ -99,7 +96,6 @@ export const   tourMessageHandler = async (res: responseFormat) => {
 			pongGameInfo.getTournament()?.prepTournament(tournamentId, tourPlacement, res.data === "CHANGE_PLACEMENT");
 			if (!pongGameInfo.getTournament()?.getIsOwner())
 				loadPongPage("match-found");
-			// loadPage("room-found");
 			return ;
 		case "CREATE":
 			console.log("Creating a pong room for a tournament instance");
@@ -121,11 +117,6 @@ export const   getTournamentName = async () => {
 		const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
 		createTournament(name);
 	})
-
-	// document.getElementById("submit")?.addEventListener("click", () => {
-    //     const name: string = (document.getElementById("tournamentName") as HTMLInputElement).value;
-    //     createTournament(name);
-    // });
 }
 
 const   createTournament = async (name: string) => {
@@ -159,7 +150,6 @@ export const    listTournaments = () => {
 
 //
 export const getTournamentInfo = (id: number) => {
-	// console.log("Id: " + id);
     fetch(`http://${address}/api/pong/get_tournament_info?id=${id}`, {
         method: "GET",
         headers: {

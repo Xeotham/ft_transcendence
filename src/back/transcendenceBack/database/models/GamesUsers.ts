@@ -60,7 +60,6 @@ interface GameIdRow
 
 export const createUserGameStatsPong = (userId: number, gameId: number, score: {username: string, score: number}, winner: boolean, type:string): void =>
 {
-	// console.log("userId : " + userId + ", gameId : " + gameId + ", score : " + score + ", winner : " + winner + ", type : " + type);
 	const win = (winner === true ? 1 : 0);
 	const stmt = db.prepare('\
 		INSERT INTO gamesUsers (userId, gameId, score, winner, type) \
@@ -73,7 +72,6 @@ export const createUserGameStatsPong = (userId: number, gameId: number, score: {
 export const createUserGameStatsTetris = (userId: number, gameId: number, score: number, winner: boolean, type:string, gameTetrisId: number,tetrisStat: {[key: string]: any} ): void =>
 {
 	const win = (winner === true ? 1 : 0);
-	// console.log(userId, gameId, score, winner, type, gameTetrisId);
 	let stmt = db.prepare('\
 		INSERT INTO gamesUsers (userId, gameId, score, winner, type, gameTetrisId) \
 		VALUES (?, ?, ?, ?, ?, ?) \
@@ -82,13 +80,9 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 	stmt.run(userId, gameId, score, win, type, gameTetrisId);
 
 
-	// console.log("Tetris stats: ", tetrisStat);
 
 	try {
 		Object.entries(tetrisStat).forEach(([key, value]) => {
-			// console.log("Test");
-			// console.log(key);
-			// console.log(value);
 			if (key === "isInRoom")
 				return; // Skip isInRoom as it is not a valid column in the database
 			let stmt = db.prepare(` \
@@ -102,31 +96,6 @@ export const createUserGameStatsTetris = (userId: number, gameId: number, score:
 	catch (e) {
 		console.error("Error updating Tetris stats:", e);
 	}
-
-	// Object.entries(tetrisStat).forEach(([key, value]) => {
-	// 	console.log("Test");
-	// 	console.log(key);
-	// 	console.log(value);
-	// 	let stmt = db.prepare(` \
-	// 		UPDATE gamesUsers \
-	// 		SET ${key} = ? \
-	// 		WHERE userId = ? AND gameId = ?\
-	// 		`);
-	// 	stmt.run(value, userId, gameId);
-	// })
-
-	//
-	// Object.keys(tetrisStat as object).forEach((key) => {
-	// 	console.log("Test");
-	// 	console.log(key);
-	// 	console.log(tetrisStat[key]);
-	// 	let stmt = db.prepare(` \
-	// 		UPDATE gamesUsers \
-	// 		SET ${key} = ? \
-	// 		WHERE userId = ? AND gameId = ?\
-	// 		`);
-	// 	stmt.run(tetrisStat[key], userId, gameId);
-	// });
 };
 
 

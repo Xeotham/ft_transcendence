@@ -9,12 +9,11 @@ dotenv.config();
 const dbPath = "./database/transcendenceDb/transcendence.sqlite";
 const dbDir = path.dirname(dbPath);
 
-// Ensure the directory exists
 if (!fs.existsSync(dbDir)) {
 	fs.mkdirSync(dbDir, { recursive: true });
 }
 
-const db = new Database(dbPath); /* process.env.DATABASE_URL */
+const db = new Database(dbPath);
 
 db.exec(` \
 

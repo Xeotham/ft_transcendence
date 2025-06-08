@@ -2,7 +2,7 @@ import { ATetrimino } from "../ATetrimino";
 import { Pos } from "../Pos";
 import * as tc from "../tetrisConstants";
 import IJson from "./IJson.json";
-import {Matrix} from "../Matrix";
+import { Matrix } from "../Matrix";
 
 export class I extends ATetrimino {
 

@@ -12,19 +12,6 @@ import {
 	getRoomByInviteCode
 } from "../utils";
 
-// const Fastify = require('fastify');
-// const { WebSocket } = require("ws");
-// const { Room } = require('../server/Room');
-// const { FastifyRequest, FastifyReply } = require('fastify');
-// const { requestBody, RoomInfo, idGenerator, quitPong, quitTournament, getRoomById, isPlayerInTournament } = require("../utils");
-//
-// type FastifyRequestType = typeof FastifyRequest;
-// type FastifyReplyType = typeof FastifyReply;
-// type requestBodyType = typeof requestBody;
-// type RoomType = typeof Room;
-// type RoomInfoType = typeof RoomInfo;
-
-
 export const	Rooms: Room[] = [];
 
 const idGenRoom = idGenerator();
@@ -128,8 +115,6 @@ export const joinBot = async (socket: WebSocket, req: FastifyRequest<{Querystrin
 export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }>, reply: FastifyReply) => {
 	let room = getRoomById(request.body.roomId);
 	const	player: string | "P1" | "P2" = request.body.P;
-	// console.log("startConfirm : " + player + " in room : " + request.body.roomId);
-	// console.log("room : " + room);
 
 	if (!room)
 		return;
@@ -142,8 +127,6 @@ export const startConfirm = async (request: FastifyRequest<{ Body: requestBody }
 
 	if (!room.getP1Ready() || !room.getP2Ready())
 		return ;
-		// return playerSocket?.send(JSON.stringify({type: "INFO", message: "Players not ready"}));
-
 	room.startGame();
 }
 

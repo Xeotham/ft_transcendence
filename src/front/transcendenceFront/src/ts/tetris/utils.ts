@@ -1,4 +1,4 @@
-// import {syncKeys} from "../utils.ts";
+
 export const clamp = (value: number, min: number, max: number): number => {
 	return Math.max(min, Math.min(value, max));
 }
@@ -55,13 +55,11 @@ export class    TimeoutKey {
 		this.callback = callback;
 	}
 	pause() {
-		// console.log("Pause timer");
 		clearTimeout(this.timer);
 		this.timer = 0;
 		this.remaining -= Date.now() - this.start;
 	}
 	resume() {
-		// console.log("Resume timer");
 		if (this.timer !== 0) {
 			return ;
 		}
@@ -155,7 +153,6 @@ export const    tetrisSfxPlayer = new class {
 	}
 
 	async play(name: string) {
-		// this.actualSfx = name;
 		if (this.sfx[name]) {
 			const   sound = new Audio(this.sfx[name].src);
 			sound.volume = 0.3;
@@ -572,7 +569,6 @@ export interface    tetrisRes {
 export type loadTetrisType = "empty" | "logo" | "idle" | "setting" | "keybindings" | "change-key" | "board" | "multiplayer-room" | "display-multiplayer-room";
 
 export const    setKey = (keyType: string, value: string) => {
-	//TODO: Add Retry key
 	switch (keyType) {
 		case "moveLeft":
 			return userKeys?.setMoveLeft(value);
@@ -677,15 +673,7 @@ export const    tetriminoPatterns: {[key: string]: number[][]} = {
 }
 
 export const    minoSize = 32;
-// export const    boardWidth = minoSize * 10;
-// export const    boardHeight = minoSize * 23;
-// export const    boardCoord = {x: 4 * minoSize + borderSize, y: 0}
 export const    holdWidth = (minoSize * 4);
 export const    holdHeight = (minoSize * 4);
-// export const    holdCoord = {x: 0, y: 0}
 export const    bagWidth = minoSize * 4;
 export const    bagHeight = minoSize * 23;
-// export const    bagCoord = {x: (14 * minoSize) + (borderSize * 2), y: 0}
-
-// export const    canvasWidth = boardWidth + bagWidth + holdWidth + (borderSize * 2);
-// export const    canvasHeight = boardHeight;

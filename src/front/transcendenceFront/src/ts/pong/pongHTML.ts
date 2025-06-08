@@ -4,7 +4,7 @@ import { loadHtmlArg, loadPongHtmlType, RoomInfo, TournamentInfo } from "./utils
 import { pongGameInfo } from "./pong.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
 import { quit } from "./game.ts";
-import {hideZoneGame, showZoneGame} from "../zone/zoneCore.ts";
+import { hideZoneGame, showZoneGame } from "../zone/zoneCore.ts";
 import { pongSettingsHtml } from "./pongSettingsHTML.ts";
 import { getTournamentInfo } from "./tournament.ts";
 
@@ -66,12 +66,11 @@ const   emptyHtml = () => {
 const   logoHtml = () => {
 	if (!EL.contentPong)
 		return ;
-	//EL.contentPong.innerHTML = `<div id="logoPong" class="${TCS.pongLogo}">Pong</div>`;
 	EL.contentPong.innerHTML = `
 	<div id="logoPong" class="w-full h-full m-40 flex justify-center items-center">
 		<img src="${img_pong_logo}" alt="pong" class="w-full h-auto" />
 	</div>
-	`; //w-[350]
+	`;
 }
 
 const   idleHtml = () => {
@@ -213,7 +212,7 @@ const   pongTournamentInfoHtml = (tourId: number, started: boolean, name: string
 	EL.contentPong.innerHTML = html;
 }
 
-const   pongVersusPrivateHtml = (inviteCode: string) => { //TODO pong versus create private room
+const   pongVersusPrivateHtml = (inviteCode: string) => {
 	if (!EL.contentPong) return ;
 
 	EL.contentPong.innerHTML = `
@@ -389,8 +388,6 @@ const   pongTournamentEndPage = (winner: number) => {
 
 const   pongTournamentFoundHtml = () => {
 	if (!EL.contentPong || !pongGameInfo.getTournament()) return ;
-
-	//todo quit2 event
 
 	let html= `
 	<div class="${TCS.tetrisWindowBkg}">

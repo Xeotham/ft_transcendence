@@ -244,7 +244,7 @@ export const modaleTetrisStatEvents = () => {
 
 	TetrisStatsNext.addEventListener('click', (e: Event) => {
 		e.stopPropagation();
-		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
+		if (tetrisStatPage >= tetrisListLength || !modale.content)
 			return;
 		if ((tetrisStatPage + 1) * tetrisListLength < tetrisHistory.length)
 		{
@@ -281,7 +281,7 @@ export const modaleFriendTetrisStatEvents = () => {
 
 	TetrisStatsNext?.addEventListener('click', (e) => {
 		e.stopPropagation();
-		if (tetrisStatPage >= tetrisListLength || !modale.content) // TODO: remplacer par le nombre de pages
+		if (tetrisStatPage >= tetrisListLength || !modale.content)
 			return;
 		if ((tetrisStatPage + 1) * tetrisListLength < tetrisHistory.length)
 		{

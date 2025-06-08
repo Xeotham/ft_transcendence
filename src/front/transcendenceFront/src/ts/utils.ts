@@ -21,7 +21,6 @@ export class UserInfo {
 
 		for (let i = 0; i < length; i++)
 			result += characters.charAt(Math.floor(Math.random() * characters.length));
-		// console.log("Generated username:", result);
 		return result;
 	}
 
@@ -87,8 +86,6 @@ export const	address = import.meta.env.VITE_API_ADDRESS;
 export const	user = new UserInfo();
 
 export const    postToApi = async (url: string, data: any) => {
-	// console.log("Token: ", user.getToken());
-
 	const fetched = await fetch(url, {
 		method: 'POST', // Specify the HTTP method
 		headers: {
@@ -167,6 +164,5 @@ export const    resetGamesSocket = (type: string) => {
 		pongGameInfo.getRoom()?.getSocket()?.close();
 	if (pongGameInfo.getTournament()?.getSocket() && type !== "pong")
 		pongGameInfo.getTournament()?.getSocket()?.close();
-	// window.onunload = null;
 	window.onbeforeunload = null;
 }

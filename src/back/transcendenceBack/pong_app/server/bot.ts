@@ -1,10 +1,7 @@
-import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
-import { WebSocket } from "ws";
-import { movePaddle } from '../api/game-controllers';
 import { getRoomById } from '../utils';
 import { Room } from './Room';
 import * as constants from "./constants";
-import { clamp, mod } from '../../tetris_app/server/Game/utils';
+import { mod } from '../../tetris_app/server/Game/utils';
 
 let intervalIds: {[id: number]: number} = {};
 

@@ -19,10 +19,7 @@ export const tetrisLogoHtml = () => {
 		<div class="w-full h-full m-40 flex justify-center items-center">
 			<img id="logoTetris" src="${img_logo_tetris}" alt="tetris" class="w-full h-auto" />
 		</div>
-	`; //w-[400px]
-	// EL.contentTetris.innerHTML = `
-	// 	<div id="logoTetris" class="${TCS.tetrisLogo}">Tetris</div>
-	// `
+	`;
 }
 
 export const tetrisIdleHtml = () => {

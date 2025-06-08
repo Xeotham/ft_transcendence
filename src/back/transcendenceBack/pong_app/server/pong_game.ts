@@ -110,7 +110,6 @@ export class Game {
 			let botInterval: number = 0;
 			if (this.isBot)
 				botInterval = setInterval(() => {
-			// console.log("rotation in calss Game is " + this.ball.orientation)
 				botLogic(this.toJSON(), this.id);
 			}, 1000) as unknown as number; // once per second
 
@@ -128,8 +127,6 @@ export class Game {
 					this.winner = (this.score.player1.score >= WIN_GOAL) ? this.players.player1 : this.players.player2;
 				this.over = true;
 				let winner = this.winner?.username;
-				// if (this.isSolo)
-				// 	winner = this.score.player1.score >= WIN_GOAL ? "P1" : "P2";
 				this.sendData({ type: "GAME", data: this.toJSON() }, true);
 				this.sendData({ type: "GAME", data: winner, message: "FINISH" }, true);
 				console.log("The winner of the room " + this.id + " is " + winner);

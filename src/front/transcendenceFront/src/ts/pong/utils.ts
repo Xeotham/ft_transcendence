@@ -1,7 +1,5 @@
-import {PongRoom} from "./game.ts";
-import {Tournament} from "./tournament.ts";
-// import {pongTextures} from "./pong.ts";
-
+import { PongRoom } from "./game.ts";
+import { Tournament } from "./tournament.ts";
 
 export const    pongSfxPlayer = new class {
 	private readonly    sfx: {
@@ -123,7 +121,6 @@ export const    pongTextureHandler = new class {
 			Object.entries(path).map(([key, path]) => {
 				return new Promise<void>((resolve, reject) => {
 					const img = new Image();
-					// console.log(`Loading texture: ${key} from ${path}`);
 					img.src = path;
 					img.onload = () => {
 						this.textures[pack][key] = img;
@@ -243,8 +240,6 @@ export interface	TournamentInfo {
 	started:	boolean;
 }
 
-// Game.ts
-
 export interface intervals {
 	ArrowUp: number | null;
 	ArrowDown: number | null;
@@ -280,16 +275,6 @@ export interface    loadHtmlArg {
 export type loadPongHtmlType = "empty" | "logo" | "idle" | "match-found" | "tournament-found" | "board" | "confirm" | "tournament-name"
 	| "spec-room-info" | "tour-info" | "list-rooms" | "list-tournaments" | "draw-game" | "tournament-end"
 	| "priv-room-create" | "priv-room-code" | "nav-offline" | "nav-online" | "nav-tournament" | "nav-setting";
-
-/*
-export type loadPongHtmlType = 
-"empty" | "logo" | "idle" | 
-"pongSolo" | "pongVersus" | "pongTournament" | "pongSettings" | 
-"pongDrawBoard" | "pongDrawGame" | 
-"pongVersusJoin" | "pongVersusJoinConfirm" | "pongVersusJoinPrivRoom"| "pongVersusSpectate" | "pongVersusList" | "pongVersusPrivate" |
-"pongTournamentInfo"  | "pongTournamentPlay" | "pongTournamentList" | "pongTournamentFound" | "pongTournamentName" | "pongTournamentEnd" |
-"pongconfirm" | "list-rooms" | "tournament-end";
-*/
 
 export const    boardWidth = 800;
 export const    boardHeight = 400;

@@ -1,5 +1,4 @@
-// import  { loginHtml, logoutHtml,signUpHtml } from "./htmlPage.ts";
-import {postToApi, address, user} from "../utils.ts";
+import { postToApi, address, user } from "../utils.ts";
 // @ts-ignore
 import page from "page";
 
@@ -12,12 +11,10 @@ export const signInUser = () => {
 		const   password = (document.getElementById("signinPassword") as HTMLInputElement).value;
 
 		const   data = { username: username, password:  password };
-		// console.log(data);
 		postToApi(`http://${address}/api/user/login`, data)
 			.then(() => {
 				localStorage.setItem("username", username);
 				user.setUsername(username);
-				// alert("User signed in successfully!"); // TODO: change the alert to a modal text
 				page.show("/");
 			})
 			.catch((error) => {
@@ -63,9 +60,7 @@ export const    signUpUser = () => {
 		const username = (document.getElementById("username") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
 		const confirmPassword = (document.getElementById("password_confirm") as HTMLInputElement).value;
-		// const avatar = (document.getElementById("avatar") as HTMLInputElement).value;
 		const avatar = "sss";
-		// console.log(username, password, confirmPassword, avatar);
 
 		if (password !== confirmPassword) {
 			alert("Passwords do not match");
@@ -77,9 +72,7 @@ export const    signUpUser = () => {
 		console.log(data);
 		postToApi(`http://${address}/api/user/register`, data)
 		.then(() => {
-			// console.log("User registered successfully");
 			alert("Registered successfully!");
-			// page.show("/login");
 		})
 		.catch((error) => {
 			console.error("Error signing up:", error.status, error.message);

@@ -6,7 +6,6 @@ import { roomInfo } from "./utils.ts";
 import { resetGamesSocket } from "../utils.ts";
 // @ts-ignore
 import  page from 'page';
-import { saveMultiplayerRoomSettings } from "./tetrisMultiplayerCreateHTML.ts";
 
 (window as any).joinRoom = joinRoom;
 
@@ -59,11 +58,9 @@ const tetrisDisplayMultiplayerRoomHtml = (rooms: roomInfo[]) => {
 		<div class='h-[10px]'></div>`;
 
 	if (rooms.length === 0) {
-		// No rooms
 		html += `
 		<div class="font-sixtyfour text-[14px] text-stone-400 italic">
 		${imTexts.tetrisDisplayMultiplayerRoomNoList}</div>`;
-		//return;
 	} else {
 		// List of rooms
 		rooms.forEach((room: roomInfo) => {
@@ -102,22 +99,4 @@ const tetrisDisplayMultiplayerRoomEvents = () => {
 
 	document.getElementById("tetrisDisplayMultiplayerRefresh")?.addEventListener("click", () => 
 		getMultiplayerRooms());
-
-
-
-
-	// document.getElementById("is-private")?.addEventListener("click", () => {
-	// 	console.log("Saving is private setting?");
-	// });
-	// document.getElementById("is-versus")?.addEventListener("click", () => saveMultiplayerRoomSettings());
-	// document.getElementById("show-shadow")?.addEventListener("click", () => saveMultiplayerRoomSettings());
-	// document.getElementById("show-bags")?.addEventListener("click", () => saveMultiplayerRoomSettings());
-	// document.getElementById("hold-allowed")?.addEventListener("click", () => saveMultiplayerRoomSettings());
-	// document.getElementById("infinite-hold")?.addEventListener("click", () => saveMultiplayerRoomSettings());
-	// document.getElementById("infinite-movement")?.addEventListener("click", () => saveMultiplayerRoomSettings());
-	// document.getElementById("lock-time")?.addEventListener("change", () => saveMultiplayerRoomSettings());
-	// document.getElementById("spawn-ARE")?.addEventListener("change", () => saveMultiplayerRoomSettings());
-	// document.getElementById("soft-drop-amp")?.addEventListener("change", () => saveMultiplayerRoomSettings());
-	// document.getElementById("level")?.addEventListener("change", () => saveMultiplayerRoomSettings());
-	// document.getElementById("is-leveling")?.addEventListener("click", () => saveMultiplayerRoomSettings());
 }

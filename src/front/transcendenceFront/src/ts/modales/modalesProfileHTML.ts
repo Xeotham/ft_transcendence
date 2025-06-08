@@ -6,8 +6,7 @@ import { ModaleType, modaleDisplay } from './modalesCore.ts';
 import { getFromApi, postToApi, address, user, resetGamesSocket } from "../utils.ts";
 // @ts-ignore
 import  page from "page";
-import {friendList} from "./modalesFriendListHTML.ts";
-import {userKeys} from "../tetris/utils.ts";
+import { friendList } from "./modalesFriendListHTML.ts";
 
 interface GameUserInfo
 {

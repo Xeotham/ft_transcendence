@@ -19,13 +19,9 @@ const tetrisMultiplayerRoomHtml = (code: string) => {
 	if (!EL.contentTetris)
 		return;
 
-	// console.log("code: ", code);
-	// if (!tetrisGameInformation.getRoomOwner())
-	// 	return ;
 	let dis: string = tetrisGameInformation.getRoomOwner() ? "" : "disabled";
 
 	const s = tetrisGameInformation.getSettings();
-	// console.log("Printing Settings: ", s);
 
 	EL.contentTetris.innerHTML = `
 	<div class="${TCS.tetrisWindowBkg}">
@@ -161,32 +157,8 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 		await copyToClipboard(code);
 	});
 
-	// document.getElementById("createMultiplayerRoomIsPrivate")?.addEventListener("click", () => {
-	// 	const checkbox = document.getElementById("is-private") as HTMLInputElement;
-	// 	if (checkbox) {
-	// 		checkbox.checked = !checkbox.checked;
-	// 		checkbox.dispatchEvent(new Event("change")); // Trigger the change event if needed
-	// 	}
-	// });
-
-
 	const form = document.getElementById("tetrisSettingsForm");
 	form?.addEventListener("change", saveMultiplayerRoomSettings);
-	// if (form) {
-	// 	const checkboxes = form.querySelectorAll<HTMLInputElement>("input[type='checkbox']");
-	// 	// console.log("Checkboxes found: ", checkboxes);
-	// 	checkboxes.forEach((checkbox) => {
-	// 		const parentDiv = checkbox.parentElement?.parentElement;
-	// 		console.log("Parent div found: '" + checkbox.parentElement?.id + "', for checkbox: " + checkbox.id);
-	// 		if (parentDiv) {
-	// 			parentDiv.addEventListener("click", () => {
-	// 				checkbox.checked = !checkbox.checked;
-	// 				checkbox.dispatchEvent(new Event("change")); // Trigger the change event if needed
-	// 			});
-	// 		}
-	// 	});
-	// }
-
 }
 
 export const saveMultiplayerRoomSettings = async () => {

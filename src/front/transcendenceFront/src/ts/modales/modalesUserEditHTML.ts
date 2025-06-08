@@ -1,23 +1,12 @@
-import {TCS} from '../TCS.ts';
-import {imTexts} from '../imTexts/imTexts.ts';
+import { TCS } from '../TCS.ts';
+import { imTexts } from '../imTexts/imTexts.ts';
 
-import {modaleAlert, modaleDisplay, ModaleType} from './modalesCore.ts';
-import {address, patchToApi, user} from "../utils.ts";
+import { modaleAlert, modaleDisplay, ModaleType } from './modalesCore.ts';
+import { address, patchToApi, user } from "../utils.ts";
 // @ts-ignore
 import page from "page";
 
 export const modaleEditHTML = () => {
-
-/*
-	let friendListHTML =`
-    <div id="friendListTitle" class="${TCS.modaleTitre}">
-    ${imTexts.modalesFriendListTitle}</div>
-
-    <div id="friendListBack" class="${TCS.modaleTexteLink}">
-      ${imTexts.modalesFriendListBack}</div>
-
-    <div class="h-[30px]"></div>
-	*/
 
 	let SignUpHTML = `
 

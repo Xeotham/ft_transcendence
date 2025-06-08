@@ -12,7 +12,6 @@ import  page from "page"
 export const	pongGameInfo: gameInformation = new gameInformation();
 
 export const loadPongPage = (page: loadPongHtmlType, arg: loadHtmlArg | null = null) => {
-	// console.log("Loading Pong page: " + page);
 	switch (page) {
 		case "empty":
 			return emptyPage();

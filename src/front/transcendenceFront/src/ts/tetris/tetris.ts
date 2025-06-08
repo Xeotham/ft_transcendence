@@ -223,7 +223,6 @@ const   drawTetrimino = (ctx: CanvasRenderingContext2D, pattern: number[][], coo
 	}
 }
 
-// TODO: Fix the hold piece drawing
 const   drawHold = (ctx: CanvasRenderingContext2D, hold: tetriminoInfo, holdCoord: {x: number, y: number}) => {
 	
 	const   pattern = tetriminoPatterns[hold.name];

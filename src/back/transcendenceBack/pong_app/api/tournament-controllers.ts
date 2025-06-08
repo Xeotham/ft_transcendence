@@ -13,7 +13,6 @@ export const createTournament = async (socket: WebSocket, req: FastifyRequest< {
 
 	const	tournamentName = req.query.name;
 	const   username = req.query.username!;
-	// console.log("is Player in tournament : " + isPlayerInTournament(socket) + " is Player in room : " + isPlayerInRoom(socket));
 
 	if (isPlayerInTournament(socket) || isPlayerInRoom(socket)) {
 		socket.send(JSON.stringify({type: "INFO", message: "You are already in a room"}));

@@ -4,11 +4,11 @@ import { postToApi, address, user, getFromApi } from "../utils.ts";
 import { tetrisBoardHtml } from "./tetrisHTML.ts";
 import { hideZoneGame, zone } from "../zone/zoneCore.ts";
 import { imTexts } from "../imTexts/imTexts.ts";
-import  { userKeys } from "./utils.ts";
+import { userKeys } from "./utils.ts";
+import { TCS } from "../TCS.ts";
 
 // @ts-ignore
 import page from "page";
-import {TCS} from "../TCS.ts";
 
 let socket: WebSocket | null = null;
 
@@ -334,14 +334,11 @@ const   messageHandler = (event: MessageEvent)=> {
 			effectPlayer(res.argument as string, res.value);
 			return ;
 		case "STATS":
-			// console.log("Stats:", res.argument);
-			showStats(res.argument); // TODO : error
+			showStats(res.argument);
 			return;
 		case "MULTIPLAYER_FINISH":
-			// console.log("The multiplayer game has finished. You ended up at place " + res.argument);
 			return ;
 		case "MULTIPLAYER_OPPONENTS_GAMES":
-			// console.log("MULTIPLAYER_OPPONENTS_GAMES");
 			tetrisGameInformation.setOpponentsGames(res.argument as any[]);
 			loadTetrisPage("board");
 			return ;
@@ -349,7 +346,6 @@ const   messageHandler = (event: MessageEvent)=> {
 			console.log("Game Over");
 			resetSocket("game");
 			bgmPlayer.stop();
-			// hideZoneGame();
 			return ;
 		default:
 			console.log("Unknown message type: " + res.type);

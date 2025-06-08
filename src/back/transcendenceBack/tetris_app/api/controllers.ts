@@ -11,7 +11,6 @@ export const    tetrisMatchmaking = async (socket: WebSocket, req: FastifyReques
 	if (!req.query.username)
 		return console.log("No username");
 
-	// console.log("Joining matchmaking for username: " + req.query.username);
 	for (const room of multiplayerRoomLst) {
 		if (room.getIsInGame() || room.isPrivate() || !room.getIsVersus() || room.getPlayers().length >= 2)
 			continue ;
@@ -38,7 +37,6 @@ export const    tetrisCreateRoom = async (socket: WebSocket, req: FastifyRequest
 	if (!request)
 		return;
 
-	// console.log("Creating a new room");
 	const room = new MultiplayerRoom(socket, request.username, false, request.code);
 	multiplayerRoomLst.push(room);
 }
@@ -66,7 +64,6 @@ export const    tetrisJoinRoom = async (socket: WebSocket, req: FastifyRequest<{
 }
 
 export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
-	// console.log("Tetris Room Command");
 	const request: tetrisReq = req.body;
 	if (!request)
 		return reply.status(400).send({message: "No body"});
@@ -80,7 +77,6 @@ export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}
 			room.startGames();
 			break ;
 		case "settings":
-			// console.log("Settings: ", JSON.stringify(request.prefix));
 			room.setSettings(request.prefix);
 			break ;
 	}
@@ -90,7 +86,6 @@ export const    tetrisRoomCommand = async (req: FastifyRequest<{Body: tetrisReq}
 export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
 	try {
 		const   request: tetrisReq = req.body;
-		// console.log("Request: " + request + ", username: " + request?.username);
 		if (!request)
 			return reply.status(400).send({message: "No body"});
 		if (!request.username)
@@ -98,7 +93,6 @@ export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, 
 
 		deleteTetrisGame(request.gameId);
 		const room = getTetrisRoom(request.roomCode);
-		// console.log("Code Given: " + request.roomCode + ", Room found: " + room?.getCode());
 		if (room) {
 			console.log("Tetris QuitRoom with code : " + request?.roomCode + " for " + request?.username);
 			room.removePlayer(request.username);
@@ -115,7 +109,6 @@ export const    tetrisQuitRoom = async (req: FastifyRequest<{Body: tetrisReq}>, 
 
 export const    retryGame = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
 	const   request = req.body;
-	// console.log("Retrying the game");
 
 	reply.status(200).send({message: "Forfeiting the game"});
 
@@ -125,7 +118,6 @@ export const    retryGame = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 	let   game = getTetrisGame(request.gameId);
 	if (!game)
 		return reply.status(400).send({message: "Game not found"});
-	// console.log("Game found: " + game.getGameId());
 
 	game.retry();
 	reply.status(200).send({message: "Retrying the game"});
@@ -162,7 +154,6 @@ export const    movePiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 		case "right":
 			game.move(request.argument);
 			reply.status(200).send({message: "Moving Piece " + request.argument})
-			// return console.log("Moving " + request.argument);
 			return ;
 		default:
 			return reply.status(400).send({message: "Invalid argument"});
@@ -184,7 +175,6 @@ export const    rotatePiece = async (req: FastifyRequest<{Body: tetrisReq}>, rep
 			case "clockwise":
 			case "counter-clockwise":
 			case "180":
-				// console.log("Rotating piece " + request.argument);
 				reply.status(200).send({message: "Rotating piece " + request.argument});
 				return game?.rotate(request.argument);
 			default:
@@ -212,7 +202,6 @@ export const    dropPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 		case "Normal":
 			game.changeFallSpeed(request.argument);
 			reply.status(200).send({message: request.argument + " Dropping the piece"});
-			// return console.log(request.argument + " Dropping the piece");
 			return ;
 		default:
 			return reply.status(400).send({message: "Invalid argument"});
@@ -220,7 +209,6 @@ export const    dropPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 }
 
 export const    holdPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply: FastifyReply) => {
-	// reply.status(200).send({message:message"Holding the piece"});
 	const   request = req.body;
 	if (!request)
 		return reply.status(400).send({message: "No body"});
@@ -228,7 +216,6 @@ export const    holdPiece = async (req: FastifyRequest<{Body: tetrisReq}>, reply
 	const   game = getTetrisGame(request.gameId);
 	if (!game)
 		return reply.status(400).send({message: "Game not found"});
-	// console.log("Holding the piece");
 
 	game.swap();
 	reply.status(200).send({message: "Holding the piece"});
