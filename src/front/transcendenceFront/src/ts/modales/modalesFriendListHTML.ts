@@ -112,7 +112,7 @@ const getModaleFriendListListHTML = (page: number) => {
 	let listHTML = `
 		<form id="friendSearchForm" class="${TCS.form}">
 			<input id="friendSearchInput" name="friendSearch" type="text" placeholder=" " class="${TCS.formInput}">		
-			<label for="friendSearch" class="${TCS.formLabel}">${imTexts.modalesFriendListUsername}</label>
+			<label for="friendSearchInput" class="${TCS.formLabel}">${imTexts.modalesFriendListUsername}</label>
 			<div class="h-[10px]"></div>
 			<button id="friendSearchButton" type="submit" class="${TCS.formButton}">${imTexts.modalesFriendListAdd}</button>
 		</form>
