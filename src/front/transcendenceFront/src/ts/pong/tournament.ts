@@ -57,7 +57,7 @@ export class   Tournament {
 		this.socket.addEventListener("message", messageHandler);
 
 		window.onunload = () => {
-			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
+			postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() }).catch();
 			if (this.socket) {
 				quit("LEAVE", "TOURNAMENT");
 				this.socket.close();
@@ -66,7 +66,7 @@ export class   Tournament {
 		// Special handling for Chrome
 		if (!navigator.userAgent.includes("Firefox")) {
 			window.onbeforeunload = (e) => {
-				postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() });
+				postToApi(`http://${address}/api/user/disconnect-user`, { username: user.getUsername() }).catch();
 				quit("LEAVE", "TOURNAMENT");
 				e.preventDefault();
 				return '';

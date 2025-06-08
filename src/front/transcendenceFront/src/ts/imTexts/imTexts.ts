@@ -21,6 +21,10 @@ function imTextsSet(obj: any, prefix: string = '') {
 }
 
 export const imSetLanguage = (lang: SupportedLanguages) => {
+    if (lang !== 'fr' && lang !== 'en' && lang !== 'de' && lang !== 'es') {
+        lang = "fr";
+    }
+
     imTextsSet(imTextsJson[lang]);
     language = lang;
     localStorage.setItem('language', lang);

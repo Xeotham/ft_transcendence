@@ -152,7 +152,7 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 	document.getElementById("startCustom")?.addEventListener("click", async () => {
 		await saveMultiplayerRoomSettings();
 		await postToApi(`http://${address}/api/tetris/roomCommand`,
-			{ argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() });
+			{ argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() }).catch();
 		startRoom();
 	});
 
@@ -190,44 +190,54 @@ const tetrisMultiplayerRoomEvents = (code: string) => {
 }
 
 export const saveMultiplayerRoomSettings = async () => {
-	let values: {[key: string]: any} = {};
-	values["versus"] = (document.getElementById("is-versus") as HTMLInputElement)?.checked;
-	values["0"] = parseInt((document.getElementById("lock-time") as HTMLInputElement).value, 10);
-	values["1"] = parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value, 10);
-	values["2"] = parseFloat((document.getElementById("soft-drop-amp") as HTMLInputElement).value);
-	values["3"] = parseInt((document.getElementById("level") as HTMLInputElement).value, 10);
-	const nbPlayers = ((await getFromApi(`http://${address}/api/tetris/getMultiplayerRooms`))
-		.find((room: any) => room?.roomCode === tetrisGameInformation.getRoomCode())?.nbPlayers) || 0;
-	values["versus"] === true && nbPlayers > 2 ? values["versus"] = false : true;
-	typeof values["1"] !== "number" || isNaN(values["0"]) ? values["0"] = 500 : values["0"] = clamp(values["0"], -1, abs(values["0"]));
-	typeof values["1"] !== "number" || isNaN(values["1"]) ? values["1"] = 0 : values["1"] = clamp(values["1"], 0, abs(values["1"])); // Spawn ARE must be >= 0 and positive
-	typeof values["2"] !== "number" || isNaN(values["2"]) ? values["2"] = 1.5 : values["2"] = clamp(values["2"], 0.1, abs(values["2"])); // Soft drop amp must be > 0 && positive
-	typeof values["3"] !== "number" || isNaN(values["3"]) ? values["3"] = 4 : values["3"] = clamp(values["3"], 1, 15); // Level must be between 1 and 15
+	try {
+		let values: { [key: string]: any } = {};
+		values["versus"] = (document.getElementById("is-versus") as HTMLInputElement)?.checked;
+		values["0"] = parseInt((document.getElementById("lock-time") as HTMLInputElement).value, 10);
+		values["1"] = parseInt((document.getElementById("spawn-ARE") as HTMLInputElement).value, 10);
+		values["2"] = parseFloat((document.getElementById("soft-drop-amp") as HTMLInputElement).value);
+		values["3"] = parseInt((document.getElementById("level") as HTMLInputElement).value, 10);
+		const nbPlayers = ((await getFromApi(`http://${address}/api/tetris/getMultiplayerRooms`))
+			.find((room: any) => room?.roomCode === tetrisGameInformation.getRoomCode())?.nbPlayers) || 0;
+		values["versus"] === true && nbPlayers > 2 ? values["versus"] = false : true;
+		typeof values["1"] !== "number" || isNaN(values["0"]) ? values["0"] = 500 : values["0"] = clamp(values["0"], -1, abs(values["0"]));
+		typeof values["1"] !== "number" || isNaN(values["1"]) ? values["1"] = 0 : values["1"] = clamp(values["1"], 0, abs(values["1"])); // Spawn ARE must be >= 0 and positive
+		typeof values["2"] !== "number" || isNaN(values["2"]) ? values["2"] = 1.5 : values["2"] = clamp(values["2"], 0.1, abs(values["2"])); // Soft drop amp must be > 0 && positive
+		typeof values["3"] !== "number" || isNaN(values["3"]) ? values["3"] = 4 : values["3"] = clamp(values["3"], 1, 15); // Level must be between 1 and 15
 
-	(document.getElementById("is-versus") as HTMLInputElement)!.checked = values["versus"];
-	(document.getElementById("lock-time") as HTMLInputElement)!.value = values["0"].toString();
-	(document.getElementById("spawn-ARE") as HTMLInputElement)!.value = values["1"].toString();
-	(document.getElementById("soft-drop-amp") as HTMLInputElement)!.value = values["2"].toString();
-	(document.getElementById("level") as HTMLInputElement)!.value = values["3"].toString();
+		(document.getElementById("is-versus") as HTMLInputElement)!.checked = values["versus"];
+		(document.getElementById("lock-time") as HTMLInputElement)!.value = values["0"].toString();
+		(document.getElementById("spawn-ARE") as HTMLInputElement)!.value = values["1"].toString();
+		(document.getElementById("soft-drop-amp") as HTMLInputElement)!.value = values["2"].toString();
+		(document.getElementById("level") as HTMLInputElement)!.value = values["3"].toString();
 
-	tetrisGameInformation.setSettings({
-		"isPrivate": (document.getElementById("is-private") as HTMLInputElement)?.checked,
-		"isVersus": values["versus"],
-		"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
-		"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
-		"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,
-		"showHold": (document.getElementById("show-hold") as HTMLInputElement)?.checked,
-		"infiniteHold": (document.getElementById("infinite-hold") as HTMLInputElement)?.checked,
-		"infiniteMovement": (document.getElementById("infinite-movement") as HTMLInputElement)?.checked,
-		"lockTime": values["0"],
-		"spawnARE": values["1"],
-		"softDropAmp": values["2"],
-		"level": values["3"],
-		"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
-		"canRetry": tetrisGameInformation.getSettings().canRetry,
-	});
+		tetrisGameInformation.setSettings({
+			"isPrivate": (document.getElementById("is-private") as HTMLInputElement)?.checked,
+			"isVersus": values["versus"],
+			"showShadowPiece": (document.getElementById("show-shadow") as HTMLInputElement)?.checked,
+			"showBags": (document.getElementById("show-bags") as HTMLInputElement)?.checked,
+			"holdAllowed": (document.getElementById("hold-allowed") as HTMLInputElement)?.checked,
+			"showHold": (document.getElementById("show-hold") as HTMLInputElement)?.checked,
+			"infiniteHold": (document.getElementById("infinite-hold") as HTMLInputElement)?.checked,
+			"infiniteMovement": (document.getElementById("infinite-movement") as HTMLInputElement)?.checked,
+			"lockTime": values["0"],
+			"spawnARE": values["1"],
+			"softDropAmp": values["2"],
+			"level": values["3"],
+			"isLevelling": (document.getElementById("is-leveling") as HTMLInputElement)?.checked,
+			"canRetry": tetrisGameInformation.getSettings().canRetry,
+		});
 
-	postToApi(`http://${address}/api/tetris/roomCommand`, { argument: "settings", gameId: 0, roomCode: tetrisGameInformation.getRoomCode(), prefix: tetrisGameInformation.getSettings() });
+		postToApi(`http://${address}/api/tetris/roomCommand`, {
+			argument: "settings",
+			gameId: 0,
+			roomCode: tetrisGameInformation.getRoomCode(),
+			prefix: tetrisGameInformation.getSettings()
+		});
+	}
+	catch (error) {
+		return ;
+	}
 }
 export const copyToClipboard = async (code: string) => {
 	if (code.length > 0) {

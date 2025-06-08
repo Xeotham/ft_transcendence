@@ -50,6 +50,7 @@ const tetrisSettingsHtml = async () => {
 					<option class="${TCS.gameOption}" value="bkg_3" ${backgroundHandler.getActualBackground() === "bkg_3" ? "selected" : "" }>Background3</option>
 					<option class="${TCS.gameOption}" value="bkg_4" ${backgroundHandler.getActualBackground() === "bkg_4" ? "selected" : "" }>Background4</option>
 					<option class="${TCS.gameOption}" value="bkg_5" ${backgroundHandler.getActualBackground() === "bkg_5" ? "selected" : "" }>Background5</option>
+					<option class="${TCS.gameOption}" value="bkg_6" ${backgroundHandler.getActualBackground() === "bkg_6" ? "selected" : "" }>Background6</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
@@ -62,6 +63,7 @@ const tetrisSettingsHtml = async () => {
 					<option class="${TCS.gameOption}" value="bgm1" ${bgmPlayer.getActualBgm() === "bgm1" ? "selected" : "" }>Disturbing the peace (PEAK)</option>
 					<option class="${TCS.gameOption}" value="bgm2" ${bgmPlayer.getActualBgm() === "bgm2" ? "selected" : "" }>Brain Power</option>
 					<option class="${TCS.gameOption}" value="bgm3" ${bgmPlayer.getActualBgm() === "bgm3" ? "selected" : "" }>Jump Up, Super Star!</option>
+					<option class="${TCS.gameOption}" value="bgm4" ${bgmPlayer.getActualBgm() === "bgm4" ? "selected" : "" }>A Cruel Angel's Thesis</option>
 				</select>
 			</div>
 			<div class="col-span-2 h-[20px]"></div>
