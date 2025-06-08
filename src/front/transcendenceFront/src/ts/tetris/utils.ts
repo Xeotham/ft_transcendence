@@ -158,7 +158,7 @@ export const    tetrisSfxPlayer = new class {
 		// this.actualSfx = name;
 		if (this.sfx[name]) {
 			const   sound = new Audio(this.sfx[name].src);
-			sound.volume = 0.2;
+			sound.volume = 0.3;
 			sound.play();
 		}
 	}
