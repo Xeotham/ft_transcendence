@@ -191,16 +191,20 @@ export const modaleEditEvents = async (actualForm: string = "username") => {
 	const   editUserBack = document.getElementById('editUserBack') as HTMLAnchorElement;
 	const   editPasswordBack = document.getElementById('editPasswordBack') as HTMLAnchorElement;
 
-	editUserBack.addEventListener('click', async () => {
+	editUserBack.addEventListener('click', async (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.PROFILE);
 	});
-	editPasswordBack.addEventListener('click', async () => {
+	editPasswordBack.addEventListener('click', async (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.PROFILE);
 	})
-	editChoseUsername?.addEventListener('click', () => {
+	editChoseUsername?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleEditEvents("username");
 	});
-	editChosePassword?.addEventListener('click', () => {
+	editChosePassword?.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleEditEvents("password");
 	});
 

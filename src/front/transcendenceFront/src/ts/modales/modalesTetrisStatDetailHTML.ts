@@ -173,7 +173,8 @@ export const modaleTetrisStatDetailEvents = () => {
   if (!tetrisStatsDetailBack)
     return;
 
-  tetrisStatsDetailBack.addEventListener('click', () => {
+  tetrisStatsDetailBack.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.TETRIS_STATS);
   });
 }
@@ -184,7 +185,8 @@ export const modaleFriendTetrisStatDetailEvents = () => {
   if (!tetrisStatsDetailBack)
     return;
 
-  tetrisStatsDetailBack.addEventListener('click', () => {
+  tetrisStatsDetailBack.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.FRIEND_TETRIS_STATS);
   });
 }

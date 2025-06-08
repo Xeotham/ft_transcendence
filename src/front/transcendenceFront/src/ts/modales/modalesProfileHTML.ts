@@ -103,6 +103,7 @@ const profileUserLanguageEvents = () => {
     if (profileUserLanguageFR) {
       profileUserLanguageFR.className = TCS.modaleTexteLink;
       profileUserLanguageFR.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
         setLanguage('fr', e);
       });
     }
@@ -113,6 +114,7 @@ const profileUserLanguageEvents = () => {
     if (profileUserLanguageEN) {
       profileUserLanguageEN.className = TCS.modaleTexteLink;
       profileUserLanguageEN.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
         setLanguage('en', e);
       });
     }
@@ -123,6 +125,7 @@ const profileUserLanguageEvents = () => {
     if (profileUserLanguageES) {
       profileUserLanguageES.className = TCS.modaleTexteLink;
       profileUserLanguageES.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
         setLanguage('es', e);
       });
     }
@@ -133,6 +136,7 @@ const profileUserLanguageEvents = () => {
     if (profileUserLanguageDE) {
       profileUserLanguageDE.className = TCS.modaleTexteLink;
       profileUserLanguageDE.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
         setLanguage('de', e);
       });
     }
@@ -157,15 +161,18 @@ export const modaleProfileEvents = () => {
   const modalePongStatsLink =   document.getElementById('modalePongStatsLink') as HTMLAnchorElement;
   const modaleTetrisStatsLink = document.getElementById('modaleTetrisStatsLink') as HTMLAnchorElement;
 
-  profileAvatar?.addEventListener('click', () => {
+  profileAvatar?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.AVATAR);
   });
 
-  profileUserEditLink?.addEventListener('click', () => {
+  profileUserEditLink?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.EDIT_PROFILE);
   });
 
-  profileDeconectLink?.addEventListener('click', () => {
+  profileDeconectLink?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     const username = { username: user.getUsername()};
     resetGamesSocket("home");
     postToApi(`http://${address}/api/user/logout`, username)
@@ -181,16 +188,18 @@ export const modaleProfileEvents = () => {
         });
   });
 
-  modaleFriendListLink?.addEventListener('click', () => {
-    // console.log("profileFriendListLink <<<<<<<<");
+  modaleFriendListLink?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.FRIEND_LIST);
   });
 
-  modalePongStatsLink?.addEventListener('click', () => {
+  modalePongStatsLink?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.PONG_STATS);
   });
 
-  modaleTetrisStatsLink?.addEventListener('click', () => {
+  modaleTetrisStatsLink?.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.TETRIS_STATS);
   });
 

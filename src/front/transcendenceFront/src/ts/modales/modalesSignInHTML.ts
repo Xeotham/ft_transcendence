@@ -83,8 +83,8 @@ export const modaleSignInEvents = () => {
         });
   });
 
-  signinRegisterLink.addEventListener('click', () => {
-    // console.log("signinRegisterLink: click");
+  signinRegisterLink.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
     modaleDisplay(ModaleType.SIGNUP);
   });
 

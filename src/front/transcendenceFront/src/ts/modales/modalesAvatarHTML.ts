@@ -133,7 +133,8 @@ export const modaleAvatarEvents = async () => {
 		return;
 	}
 
-	avatarBack.addEventListener('click', () => {
+	avatarBack.addEventListener('click', (e: Event) => {
+		e.stopPropagation();
 		modaleDisplay(ModaleType.PROFILE);
 	});
 
@@ -157,7 +158,8 @@ export const modaleAvatarEvents = async () => {
 		const avatar = document.getElementById(`profileAvatar${i}`) as HTMLDivElement;
 		if (!avatar)
 			continue;
-		avatar.addEventListener('click', async () => {
+		avatar.addEventListener('click', async (e: Event) => {
+			e.stopPropagation();
 			if (!avatar)
 				return;
 			user.setAvatar(defaultAvatars[i].base64);
